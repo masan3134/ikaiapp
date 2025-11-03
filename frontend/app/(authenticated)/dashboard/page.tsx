@@ -28,7 +28,7 @@ export default function DashboardPage() {
   }, []);
 
   // Check if user has required role
-  const hasAccess = user?.role === 'ADMIN' || user?.role === 'MANAGER';
+  const hasAccess = user?.role === 'ADMIN' || user?.role === 'MANAGER' || user?.role === 'SUPER_ADMIN';
 
   if (!hasAccess) {
     return (

@@ -10,7 +10,7 @@ router.get(
   '/stats',
   authenticateToken,
   enforceOrganizationIsolation,
-  authorize(['ADMIN', 'MANAGER']),
+  authorize(['ADMIN', 'MANAGER', 'SUPER_ADMIN']),
   getDashboardStats
 );
 

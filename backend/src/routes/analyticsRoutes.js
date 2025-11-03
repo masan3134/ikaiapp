@@ -30,9 +30,9 @@ const router = express.Router();
 
 router.get('/summary', authenticateToken, enforceOrganizationIsolation, getSummary);
 
-router.get('/time-to-hire', authenticateToken, enforceOrganizationIsolation, authorize(['ADMIN', 'MANAGER']), getTimeToHire);
+router.get('/time-to-hire', authenticateToken, enforceOrganizationIsolation, authorize(['ADMIN', 'MANAGER', 'SUPER_ADMIN']), getTimeToHire);
 
-router.get('/funnel', authenticateToken, enforceOrganizationIsolation, authorize(['ADMIN', 'MANAGER']), getFunnel);
+router.get('/funnel', authenticateToken, enforceOrganizationIsolation, authorize(['ADMIN', 'MANAGER', 'SUPER_ADMIN']), getFunnel);
 
 router.get('/score-distribution', authenticateToken, enforceOrganizationIsolation, getScoreDistribution);
 
