@@ -15,10 +15,14 @@ const processor = async (job) => {
   console.log(`⚙️ Processing analysis ${analysisId} with ${candidateIds.length} CVs (Direct Gemini)`);
 
   try {
-    // 1. Set analysis status to PROCESSING
-    await prisma.analysis.update({
+    // 1. Get analysis and set status to PROCESSING
+    const analysis = await prisma.analysis.update({
       where: { id: analysisId },
       data: { status: 'PROCESSING' },
+      select: {
+        id: true,
+        organizationId: true
+      }
     });
 
     // 2. Fetch job posting
@@ -97,6 +101,7 @@ const processor = async (job) => {
             data: {
               analysisId,
               candidateId: result.candidateId,
+              organizationId: analysis.organizationId,
               experienceScore: result.scores?.experienceScore || result.experienceScore || null,
               educationScore: result.scores?.educationScore || result.educationScore || null,
               technicalScore: result.scores?.technicalScore || result.technicalScore || null,
