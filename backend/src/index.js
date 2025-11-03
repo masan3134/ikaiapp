@@ -203,6 +203,11 @@ apiV1Router.use('/analytics', analyticsRoutes);
   const organizationRoutes = require('./routes/organizationRoutes');
   const onboardingRoutes = require('./routes/onboardingRoutes');
 
+// PHASE 4: Super Admin Dashboard
+  const superAdminRoutes = require('./routes/superAdminRoutes');
+  const { authenticateToken } = require('./middleware/auth');
+  const { requireSuperAdmin } = require('./middleware/superAdmin');
+
 // NEW FEATURE: Job Offer System (Phase 1 + 2 + 3)
   const offerRoutes = require('./routes/offerRoutes');
   const templateRoutes = require('./routes/templateRoutes');
@@ -216,6 +221,9 @@ apiV1Router.use('/analytics', analyticsRoutes);
   // Multi-tenant organization routes
   apiV1Router.use('/organizations', organizationRoutes);
   apiV1Router.use('/onboarding', onboardingRoutes);
+
+  // Super Admin Dashboard (PHASE 4)
+  apiV1Router.use('/super-admin', authenticateToken, requireSuperAdmin, superAdminRoutes);
 
   // CRITICAL: Register public routes BEFORE authenticated routes to avoid conflict
   apiV1Router.use('/offers/public', publicOfferRoutes); // Public routes (NO AUTH)

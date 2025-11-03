@@ -15,6 +15,7 @@ enum Role {
   ADMIN
   MANAGER
   HR_SPECIALIST
+  SUPER_ADMIN
 }
 
 enum SubscriptionPlan {

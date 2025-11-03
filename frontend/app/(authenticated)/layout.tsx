@@ -19,7 +19,8 @@ import {
   ChevronRight,
   Plus,
   BarChart3,
-  Layers
+  Layers,
+  Settings
 } from 'lucide-react';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { useAuthStore } from '@/lib/store/authStore';
@@ -44,6 +45,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     { name: 'İş İlanları', path: '/job-postings', icon: Briefcase },
     { name: 'Adaylar', path: '/candidates', icon: Users },
     { name: 'Geçmiş Analizlerim', path: '/analyses', icon: Clock },
+    // Super Admin link (only for SUPER_ADMIN role)
+    ...(user?.role === 'SUPER_ADMIN' ? [{ name: 'Süper Yönetici', path: '/super-admin', icon: Settings }] : []),
   ];
 
   // Offer submenu items
