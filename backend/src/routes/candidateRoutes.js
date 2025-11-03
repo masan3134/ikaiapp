@@ -13,6 +13,7 @@ const {
 const { authenticateToken } = require('../middleware/auth');
 const { enforceOrganizationIsolation } = require('../middleware/organizationIsolation');
 const { upload, handleMulterError } = require('../middleware/upload');
+const { trackCvUpload } = require('../middleware/usageTracking');
 
 const router = express.Router();
 
@@ -25,6 +26,7 @@ router.post(
   '/upload',
   authenticateToken,
   enforceOrganizationIsolation,
+  trackCvUpload,
   upload.single('cv'),
   handleMulterError,
   uploadCV

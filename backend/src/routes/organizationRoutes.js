@@ -66,7 +66,45 @@ router.get('/me/usage', async (req, res) => {
   try {
     const org = req.organization;
 
+    // Calculate percentages
+    const analysisPercentage = Math.min(100, Math.round((org.monthlyAnalysisCount / org.maxAnalysisPerMonth) * 100));
+    const cvPercentage = Math.min(100, Math.round((org.monthlyCvCount / org.maxCvPerMonth) * 100));
+    const userPercentage = Math.min(100, Math.round((org.totalUsers / org.maxUsers) * 100));
+
+    // Generate warnings (>80% usage)
+    const warnings = [];
+    if (analysisPercentage >= 80) {
+      warnings.push({
+        type: 'analysis',
+        message: `Aylık analiz limitinizin %${analysisPercentage}'ine ulaştınız`,
+        severity: analysisPercentage >= 100 ? 'critical' : 'warning'
+      });
+    }
+    if (cvPercentage >= 80) {
+      warnings.push({
+        type: 'cv',
+        message: `Aylık CV yükleme limitinizin %${cvPercentage}'ine ulaştınız`,
+        severity: cvPercentage >= 100 ? 'critical' : 'warning'
+      });
+    }
+    if (userPercentage >= 80) {
+      warnings.push({
+        type: 'user',
+        message: `Kullanıcı limitinizin %${userPercentage}'ine ulaştınız`,
+        severity: userPercentage >= 100 ? 'critical' : 'warning'
+      });
+    }
+
     const usage = {
+      // Raw counts
+      monthlyAnalysisCount: org.monthlyAnalysisCount,
+      maxAnalysisPerMonth: org.maxAnalysisPerMonth,
+      monthlyCvCount: org.monthlyCvCount,
+      maxCvPerMonth: org.maxCvPerMonth,
+      totalUsers: org.totalUsers,
+      maxUsers: org.maxUsers,
+
+      // Detailed breakdown (backward compatibility)
       analyses: {
         used: org.monthlyAnalysisCount,
         limit: org.maxAnalysisPerMonth,
@@ -81,7 +119,20 @@ router.get('/me/usage', async (req, res) => {
         used: org.totalUsers,
         limit: org.maxUsers,
         remaining: Math.max(0, org.maxUsers - org.totalUsers)
-      }
+      },
+
+      // Percentages
+      percentages: {
+        analysis: analysisPercentage,
+        cv: cvPercentage,
+        user: userPercentage
+      },
+
+      // Warnings
+      warnings,
+
+      // Plan info
+      plan: org.plan
     };
 
     return res.json({

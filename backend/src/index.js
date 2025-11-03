@@ -388,10 +388,15 @@ app.listen(PORT, async () => {
     logger.warn('⚠️  Error Monitoring WebSocket failed to start:', { error: error.message });
   }
 
-  // Setup cron jobs (Phase 3: Feature #12 - Expiration)
+  // Setup cron jobs
   try {
+    // Phase 3: Offer Expiration
     const { setupExpirationCron } = require('./jobs/offerExpirationJob');
     setupExpirationCron();
+
+    // Phase 3: Monthly Usage Reset
+    const { resetMonthlyUsage } = require('./jobs/resetMonthlyUsage');
+    resetMonthlyUsage();
   } catch (error) {
     logger.error('❌ Cron job setup error:', { error: error.message });
   }

@@ -10,6 +10,7 @@ import { getDashboardStats } from '@/lib/services/dashboardService';
 import { useAuthStore } from '@/lib/store/authStore';
 import { parseApiError } from '@/lib/utils/errorHandler';
 import LoadingSkeleton from '@/components/ui/LoadingSkeleton';
+import UsageWidget from '@/components/UsageWidget';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -119,6 +120,11 @@ export default function DashboardPage() {
               Sistem genel bakış ve istatistikler
               {isAdmin && <span className="ml-2 text-sm text-purple-600 font-medium">(Admin Görünümü)</span>}
             </p>
+          </div>
+
+          {/* Usage Widget */}
+          <div className="mb-8">
+            <UsageWidget />
           </div>
 
           {/* Stats Cards */}

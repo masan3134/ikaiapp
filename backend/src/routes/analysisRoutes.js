@@ -19,6 +19,7 @@ const {
 const { authenticateToken } = require('../middleware/auth');
 const { enforceOrganizationIsolation } = require('../middleware/organizationIsolation');
 const { validateRequest } = require('../middleware/validationMiddleware');
+const { trackAnalysisUsage } = require('../middleware/usageTracking');
 
 const router = express.Router();
 
@@ -26,6 +27,7 @@ const router = express.Router();
 router.post('/',
   authenticateToken,
   enforceOrganizationIsolation,
+  trackAnalysisUsage,
   [
     body('jobPostingId').isUUID().withMessage('Gecerli bir is ilani IDsi gereklidir.'),
     body('candidateIds').isArray({ min: 1 }).withMessage('En az bir aday secilmelidir.'),
