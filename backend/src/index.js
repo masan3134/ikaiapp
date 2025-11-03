@@ -248,6 +248,10 @@ apiV1Router.use('/errors', errorLoggingRoutes);
 const cacheRoutes = require('./routes/cacheRoutes');
 apiV1Router.use('/cache', cacheRoutes);
 
+// 🆕 Team management routes
+const teamRoutes = require('./routes/teamRoutes');
+apiV1Router.use('/team', teamRoutes);
+
 // Metrics route
 const { metricsRoutes } = require('./routes/metricsRoutes');
 apiV1Router.use('/metrics', metricsRoutes);

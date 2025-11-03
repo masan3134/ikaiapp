@@ -575,11 +575,90 @@ async function sendOfferEmail(offerId) {
   }
 }
 
+/**
+ * Send team invitation email
+ * @param {string} to - Recipient email
+ * @param {object} data - { inviterName, organizationName, invitationLink, role }
+ */
+async function sendInvitationEmail(to, data) {
+  const { inviterName, organizationName, invitationLink, role } = data;
+
+  const roleTranslations = {
+    ADMIN: 'Yönetici',
+    MANAGER: 'Müdür',
+    HR_SPECIALIST: 'İK Uzmanı',
+    USER: 'Kullanıcı'
+  };
+
+  const mailOptions = {
+    from: `"İKAI HR Platform" <${process.env.GMAIL_USER}>`,
+    to,
+    subject: `${organizationName} - Takım Daveti`,
+    html: `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="UTF-8">
+        <style>
+          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+          .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+          .content { background: #f9fafb; padding: 30px; border: 1px solid #e5e7eb; }
+          .button { display: inline-block; background: #3b82f6; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; margin: 20px 0; font-weight: bold; }
+          .footer { text-align: center; color: #6b7280; font-size: 12px; margin-top: 20px; }
+          .info-box { background: #eff6ff; border-left: 4px solid #3b82f6; padding: 15px; margin: 20px 0; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>🎉 Takım Daveti</h1>
+          </div>
+          <div class="content">
+            <p>Merhaba,</p>
+            <p><strong>${inviterName}</strong> sizi <strong>${organizationName}</strong> organizasyonuna katılmaya davet ediyor!</p>
+
+            <div class="info-box">
+              <p style="margin: 0;"><strong>Rol:</strong> ${roleTranslations[role] || role}</p>
+              <p style="margin: 5px 0 0 0;"><strong>Organizasyon:</strong> ${organizationName}</p>
+            </div>
+
+            <p>Daveti kabul etmek ve hesabınızı oluşturmak için aşağıdaki butona tıklayın:</p>
+
+            <div style="text-align: center;">
+              <a href="${invitationLink}" class="button">Daveti Kabul Et</a>
+            </div>
+
+            <p style="font-size: 12px; color: #6b7280; margin-top: 20px;">
+              Davet linki 7 gün boyunca geçerlidir. Eğer bu daveti siz talep etmediyseniz, bu e-postayı görmezden gelebilirsiniz.
+            </p>
+          </div>
+          <div class="footer">
+            <p>© 2025 İKAI HR Platform. Tüm hakları saklıdır.</p>
+            <p>Bu otomatik bir e-postadır, lütfen yanıtlamayın.</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log(`Invitation email sent to ${to}`);
+    return true;
+  } catch (error) {
+    console.error('Send invitation email error:', error);
+    throw error;
+  }
+}
+
 module.exports = {
   sendAnalysisEmail,
   sendInterviewInvitation,
   sendInterviewRescheduleNotification,
   sendEmail,
   sendGenericEmail,
-  sendOfferEmail
+  sendOfferEmail,
+  sendInvitationEmail
 };

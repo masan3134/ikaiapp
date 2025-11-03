@@ -1,0 +1,201 @@
+{
+  "phase": "Phase 1 - Team Management Backend API",
+  "duration": "1.5-2 hours",
+  "priority": "CRITICAL",
+  "dependencies": [],
+  "description": "Create backend API endpoints for organization team management with full CRUD operations, email invitations, and role-based access control",
+
+  "tasks": [
+    {
+      "id": "1.1",
+      "title": "Create Team Controller",
+      "file": "backend/src/controllers/teamController.js",
+      "priority": "HIGH",
+      "estimatedTime": "30 minutes",
+      "description": "Create controller with 6 functions for team management",
+      "dependencies": [],
+      "code": "const { PrismaClient } = require('@prisma/client');\nconst prisma = new PrismaClient();\nconst { sendInvitationEmail } = require('../services/emailService');\nconst crypto = require('crypto');\n\n/**\n * GET /api/v1/team\n * Get all team members for current organization\n * Query params: page, limit, search, role\n */\nexports.getTeamMembers = async (req, res) => {\n  try {\n    const { page = 1, limit = 10, search = '', role } = req.query;\n    const skip = (page - 1) * limit;\n\n    const where = {\n      organizationId: req.organizationId,\n      ...(search && {\n        OR: [\n          { email: { contains: search, mode: 'insensitive' } },\n          { name: { contains: search, mode: 'insensitive' } }\n        ]\n      }),\n      ...(role && { role })\n    };\n\n    const [users, total] = await Promise.all([\n      prisma.user.findMany({\n        where,\n        skip: parseInt(skip),\n        take: parseInt(limit),\n        select: {\n          id: true,\n          email: true,\n          name: true,\n          role: true,\n          isActive: true,\n          isOnboarded: true,\n          createdAt: true,\n          updatedAt: true\n        },\n        orderBy: { createdAt: 'desc' }\n      }),\n      prisma.user.count({ where })\n    ]);\n\n    res.json({\n      success: true,\n      data: {\n        users,\n        pagination: {\n          page: parseInt(page),\n          limit: parseInt(limit),\n          total,\n          pages: Math.ceil(total / limit)\n        }\n      }\n    });\n  } catch (error) {\n    console.error('Get team members error:', error);\n    res.status(500).json({\n      success: false,\n      message: 'Takım üyeleri alınırken hata oluştu'\n    });\n  }\n};\n\n/**\n * GET /api/v1/team/:id\n * Get single team member details\n */\nexports.getTeamMember = async (req, res) => {\n  try {\n    const { id } = req.params;\n\n    const user = await prisma.user.findFirst({\n      where: {\n        id,\n        organizationId: req.organizationId\n      },\n      select: {\n        id: true,\n        email: true,\n        name: true,\n        role: true,\n        isActive: true,\n        isOnboarded: true,\n        createdAt: true,\n        updatedAt: true\n      }\n    });\n\n    if (!user) {\n      return res.status(404).json({\n        success: false,\n        message: 'Kullanıcı bulunamadı'\n      });\n    }\n\n    res.json({\n      success: true,\n      data: user\n    });\n  } catch (error) {\n    console.error('Get team member error:', error);\n    res.status(500).json({\n      success: false,\n      message: 'Kullanıcı bilgileri alınırken hata oluştu'\n    });\n  }\n};\n\n/**\n * POST /api/v1/team/invite\n * Invite new team member via email\n * Body: { email, role, name? }\n */\nexports.inviteTeamMember = async (req, res) => {\n  try {\n    const { email, role, name } = req.body;\n\n    // Validation\n    if (!email || !role) {\n      return res.status(400).json({\n        success: false,\n        message: 'Email ve rol gereklidir'\n      });\n    }\n\n    // Check if user already exists in this organization\n    const existingUser = await prisma.user.findFirst({\n      where: {\n        email,\n        organizationId: req.organizationId\n      }\n    });\n\n    if (existingUser) {\n      return res.status(400).json({\n        success: false,\n        message: 'Bu email adresi zaten organizasyonda kayıtlı'\n      });\n    }\n\n    // Check user limit based on plan\n    const organization = await prisma.organization.findUnique({\n      where: { id: req.organizationId },\n      include: { users: true }\n    });\n\n    const userCount = organization.users.length;\n    const maxUsers = organization.maxUsers || 999999;\n\n    if (userCount >= maxUsers) {\n      return res.status(403).json({\n        success: false,\n        message: `Kullanıcı limiti aşıldı (Maksimum: ${maxUsers})`\n      });\n    }\n\n    // Generate invitation token\n    const invitationToken = crypto.randomBytes(32).toString('hex');\n    const invitationExpiry = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days\n\n    // Create user with pending status\n    const newUser = await prisma.user.create({\n      data: {\n        email,\n        name: name || email.split('@')[0],\n        role,\n        organizationId: req.organizationId,\n        isActive: true,\n        isOnboarded: false,\n        invitationToken,\n        invitationExpiry,\n        password: crypto.randomBytes(32).toString('hex') // Temporary password\n      },\n      select: {\n        id: true,\n        email: true,\n        name: true,\n        role: true,\n        isActive: true,\n        createdAt: true\n      }\n    });\n\n    // Send invitation email\n    const invitationLink = `${process.env.FRONTEND_URL}/accept-invitation?token=${invitationToken}`;\n    await sendInvitationEmail(email, {\n      inviterName: req.user.name || req.user.email,\n      organizationName: organization.name,\n      invitationLink,\n      role\n    });\n\n    res.status(201).json({\n      success: true,\n      message: 'Davetiye başarıyla gönderildi',\n      data: newUser\n    });\n  } catch (error) {\n    console.error('Invite team member error:', error);\n    res.status(500).json({\n      success: false,\n      message: 'Davet gönderilirken hata oluştu'\n    });\n  }\n};\n\n/**\n * PATCH /api/v1/team/:id\n * Update team member (role, name)\n * Body: { role?, name?, isActive? }\n */\nexports.updateTeamMember = async (req, res) => {\n  try {\n    const { id } = req.params;\n    const { role, name, isActive } = req.body;\n\n    // Check if user exists in organization\n    const user = await prisma.user.findFirst({\n      where: {\n        id,\n        organizationId: req.organizationId\n      }\n    });\n\n    if (!user) {\n      return res.status(404).json({\n        success: false,\n        message: 'Kullanıcı bulunamadı'\n      });\n    }\n\n    // Prevent updating SUPER_ADMIN role\n    if (user.role === 'SUPER_ADMIN') {\n      return res.status(403).json({\n        success: false,\n        message: 'SUPER_ADMIN kullanıcıları düzenlenemez'\n      });\n    }\n\n    // Prevent self-demotion from ADMIN\n    if (user.id === req.user.id && role && role !== 'ADMIN') {\n      return res.status(403).json({\n        success: false,\n        message: 'Kendi admin yetkilerinizi kaldıramazsınız'\n      });\n    }\n\n    const updateData = {};\n    if (role) updateData.role = role;\n    if (name) updateData.name = name;\n    if (typeof isActive === 'boolean') updateData.isActive = isActive;\n\n    const updatedUser = await prisma.user.update({\n      where: { id },\n      data: updateData,\n      select: {\n        id: true,\n        email: true,\n        name: true,\n        role: true,\n        isActive: true,\n        updatedAt: true\n      }\n    });\n\n    res.json({\n      success: true,\n      message: 'Kullanıcı başarıyla güncellendi',\n      data: updatedUser\n    });\n  } catch (error) {\n    console.error('Update team member error:', error);\n    res.status(500).json({\n      success: false,\n      message: 'Kullanıcı güncellenirken hata oluştu'\n    });\n  }\n};\n\n/**\n * PATCH /api/v1/team/:id/toggle\n * Toggle team member active status\n */\nexports.toggleTeamMember = async (req, res) => {\n  try {\n    const { id } = req.params;\n\n    const user = await prisma.user.findFirst({\n      where: {\n        id,\n        organizationId: req.organizationId\n      }\n    });\n\n    if (!user) {\n      return res.status(404).json({\n        success: false,\n        message: 'Kullanıcı bulunamadı'\n      });\n    }\n\n    // Prevent toggling SUPER_ADMIN\n    if (user.role === 'SUPER_ADMIN') {\n      return res.status(403).json({\n        success: false,\n        message: 'SUPER_ADMIN kullanıcıları devre dışı bırakılamaz'\n      });\n    }\n\n    // Prevent self-toggle\n    if (user.id === req.user.id) {\n      return res.status(403).json({\n        success: false,\n        message: 'Kendi hesabınızı devre dışı bırakamazsınız'\n      });\n    }\n\n    const updatedUser = await prisma.user.update({\n      where: { id },\n      data: { isActive: !user.isActive },\n      select: {\n        id: true,\n        email: true,\n        name: true,\n        isActive: true\n      }\n    });\n\n    res.json({\n      success: true,\n      message: `Kullanıcı ${updatedUser.isActive ? 'aktif' : 'pasif'} hale getirildi`,\n      data: updatedUser\n    });\n  } catch (error) {\n    console.error('Toggle team member error:', error);\n    res.status(500).json({\n      success: false,\n      message: 'Kullanıcı durumu değiştirilirken hata oluştu'\n    });\n  }\n};\n\n/**\n * DELETE /api/v1/team/:id\n * Soft delete team member (set isActive = false + deletedAt)\n */\nexports.deleteTeamMember = async (req, res) => {\n  try {\n    const { id } = req.params;\n\n    const user = await prisma.user.findFirst({\n      where: {\n        id,\n        organizationId: req.organizationId\n      }\n    });\n\n    if (!user) {\n      return res.status(404).json({\n        success: false,\n        message: 'Kullanıcı bulunamadı'\n      });\n    }\n\n    // Prevent deleting SUPER_ADMIN\n    if (user.role === 'SUPER_ADMIN') {\n      return res.status(403).json({\n        success: false,\n        message: 'SUPER_ADMIN kullanıcıları silinemez'\n      });\n    }\n\n    // Prevent self-delete\n    if (user.id === req.user.id) {\n      return res.status(403).json({\n        success: false,\n        message: 'Kendi hesabınızı silemezsiniz'\n      });\n    }\n\n    // Soft delete (keep user in DB but mark as deleted)\n    await prisma.user.update({\n      where: { id },\n      data: {\n        isActive: false,\n        deletedAt: new Date(),\n        email: `deleted_${Date.now()}_${user.email}` // Unique email for soft delete\n      }\n    });\n\n    res.json({\n      success: true,\n      message: 'Kullanıcı başarıyla silindi'\n    });\n  } catch (error) {\n    console.error('Delete team member error:', error);\n    res.status(500).json({\n      success: false,\n      message: 'Kullanıcı silinirken hata oluştu'\n    });\n  }\n};"
+    },
+    {
+      "id": "1.2",
+      "title": "Create Team Routes",
+      "file": "backend/src/routes/teamRoutes.js",
+      "priority": "HIGH",
+      "estimatedTime": "15 minutes",
+      "description": "Create Express router with 6 endpoints",
+      "dependencies": ["1.1"],
+      "code": "const express = require('express');\nconst router = express.Router();\nconst { authenticateToken } = require('../middleware/auth');\nconst { enforceOrganizationIsolation } = require('../middleware/organizationIsolation');\nconst { authorize } = require('../middleware/authorize');\nconst {\n  getTeamMembers,\n  getTeamMember,\n  inviteTeamMember,\n  updateTeamMember,\n  toggleTeamMember,\n  deleteTeamMember\n} = require('../controllers/teamController');\n\n// All routes require authentication, organization isolation, and ADMIN/SUPER_ADMIN role\nconst adminOnly = [authenticateToken, enforceOrganizationIsolation, authorize(['ADMIN', 'SUPER_ADMIN'])];\n\n// GET /api/v1/team - List all team members\nrouter.get('/', ...adminOnly, getTeamMembers);\n\n// GET /api/v1/team/:id - Get single team member\nrouter.get('/:id', ...adminOnly, getTeamMember);\n\n// POST /api/v1/team/invite - Invite new team member\nrouter.post('/invite', ...adminOnly, inviteTeamMember);\n\n// PATCH /api/v1/team/:id - Update team member\nrouter.patch('/:id', ...adminOnly, updateTeamMember);\n\n// PATCH /api/v1/team/:id/toggle - Toggle active status\nrouter.patch('/:id/toggle', ...adminOnly, toggleTeamMember);\n\n// DELETE /api/v1/team/:id - Delete team member\nrouter.delete('/:id', ...adminOnly, deleteTeamMember);\n\nmodule.exports = router;"
+    },
+    {
+      "id": "1.3",
+      "title": "Register Team Routes in Main App",
+      "file": "backend/src/index.js",
+      "priority": "HIGH",
+      "estimatedTime": "5 minutes",
+      "description": "Add team routes to Express app",
+      "dependencies": ["1.2"],
+      "instructions": [
+        "Open backend/src/index.js",
+        "Find the line where routes are registered (around line 80-100)",
+        "Add: const teamRoutes = require('./routes/teamRoutes');",
+        "Add: apiV1Router.use('/team', teamRoutes);"
+      ],
+      "codeToAdd": "// Team management routes\nconst teamRoutes = require('./routes/teamRoutes');\napiV1Router.use('/team', teamRoutes);"
+    },
+    {
+      "id": "1.4",
+      "title": "Update Prisma Schema (Add deletedAt field)",
+      "file": "backend/prisma/schema.prisma",
+      "priority": "MEDIUM",
+      "estimatedTime": "10 minutes",
+      "description": "Add soft delete fields to User model",
+      "dependencies": [],
+      "instructions": [
+        "Open backend/prisma/schema.prisma",
+        "Find the User model",
+        "Add: deletedAt DateTime? field",
+        "Add: invitationToken String? field",
+        "Add: invitationExpiry DateTime? field"
+      ],
+      "codeToAdd": "model User {\n  // ... existing fields\n  deletedAt         DateTime?\n  invitationToken   String?\n  invitationExpiry  DateTime?\n}"
+    },
+    {
+      "id": "1.5",
+      "title": "Run Prisma Migration",
+      "command": "docker exec ikai-backend npx prisma migrate dev --name add_team_management_fields",
+      "priority": "HIGH",
+      "estimatedTime": "5 minutes",
+      "description": "Create and apply migration for new fields",
+      "dependencies": ["1.4"]
+    },
+    {
+      "id": "1.6",
+      "title": "Create Email Service (Invitation)",
+      "file": "backend/src/services/emailService.js",
+      "priority": "MEDIUM",
+      "estimatedTime": "20 minutes",
+      "description": "Add email template for team invitations",
+      "dependencies": [],
+      "instructions": [
+        "Check if emailService.js exists",
+        "If not, create new file",
+        "Add sendInvitationEmail function"
+      ],
+      "code": "const nodemailer = require('nodemailer');\n\n// Gmail SMTP transporter\nconst transporter = nodemailer.createTransport({\n  service: 'gmail',\n  auth: {\n    user: process.env.GMAIL_USER,\n    pass: process.env.GMAIL_APP_PASSWORD\n  }\n});\n\n/**\n * Send team invitation email\n * @param {string} to - Recipient email\n * @param {object} data - { inviterName, organizationName, invitationLink, role }\n */\nexports.sendInvitationEmail = async (to, data) => {\n  const { inviterName, organizationName, invitationLink, role } = data;\n\n  const roleTranslations = {\n    ADMIN: 'Yönetici',\n    MANAGER: 'Müdür',\n    HR_SPECIALIST: 'İK Uzmanı',\n    USER: 'Kullanıcı'\n  };\n\n  const mailOptions = {\n    from: `\"İKAI HR Platform\" <${process.env.GMAIL_USER}>`,\n    to,\n    subject: `${organizationName} - Takım Daveti`,\n    html: `\n      <!DOCTYPE html>\n      <html>\n      <head>\n        <meta charset=\"UTF-8\">\n        <style>\n          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }\n          .container { max-width: 600px; margin: 0 auto; padding: 20px; }\n          .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }\n          .content { background: #f9fafb; padding: 30px; border: 1px solid #e5e7eb; }\n          .button { display: inline-block; background: #3b82f6; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; margin: 20px 0; font-weight: bold; }\n          .footer { text-align: center; color: #6b7280; font-size: 12px; margin-top: 20px; }\n          .info-box { background: #eff6ff; border-left: 4px solid #3b82f6; padding: 15px; margin: 20px 0; }\n        </style>\n      </head>\n      <body>\n        <div class=\"container\">\n          <div class=\"header\">\n            <h1>🎉 Takım Daveti</h1>\n          </div>\n          <div class=\"content\">\n            <p>Merhaba,</p>\n            <p><strong>${inviterName}</strong> sizi <strong>${organizationName}</strong> organizasyonuna katılmaya davet ediyor!</p>\n            \n            <div class=\"info-box\">\n              <p style=\"margin: 0;\"><strong>Rol:</strong> ${roleTranslations[role] || role}</p>\n              <p style=\"margin: 5px 0 0 0;\"><strong>Organizasyon:</strong> ${organizationName}</p>\n            </div>\n\n            <p>Daveti kabul etmek ve hesabınızı oluşturmak için aşağıdaki butona tıklayın:</p>\n            \n            <div style=\"text-align: center;\">\n              <a href=\"${invitationLink}\" class=\"button\">Daveti Kabul Et</a>\n            </div>\n\n            <p style=\"font-size: 12px; color: #6b7280; margin-top: 20px;\">\n              Davet linki 7 gün boyunca geçerlidir. Eğer bu daveti siz talep etmediyseniz, bu e-postayı görmezden gelebilirsiniz.\n            </p>\n          </div>\n          <div class=\"footer\">\n            <p>© 2025 İKAI HR Platform. Tüm hakları saklıdır.</p>\n            <p>Bu otomatik bir e-postadır, lütfen yanıtlamayın.</p>\n          </div>\n        </div>\n      </body>\n      </html>\n    `\n  };\n\n  try {\n    await transporter.sendMail(mailOptions);\n    console.log(`Invitation email sent to ${to}`);\n    return true;\n  } catch (error) {\n    console.error('Send invitation email error:', error);\n    throw error;\n  }\n};"
+    },
+    {
+      "id": "1.7",
+      "title": "Test Backend Endpoints",
+      "priority": "HIGH",
+      "estimatedTime": "15 minutes",
+      "description": "Test all 6 endpoints with curl or Postman",
+      "dependencies": ["1.3", "1.5"],
+      "testCommands": [
+        {
+          "name": "Get team members",
+          "curl": "curl -H 'Authorization: Bearer YOUR_TOKEN' http://localhost:8102/api/v1/team"
+        },
+        {
+          "name": "Invite team member",
+          "curl": "curl -X POST -H 'Authorization: Bearer YOUR_TOKEN' -H 'Content-Type: application/json' -d '{\"email\":\"test@example.com\",\"role\":\"USER\"}' http://localhost:8102/api/v1/team/invite"
+        },
+        {
+          "name": "Toggle user active",
+          "curl": "curl -X PATCH -H 'Authorization: Bearer YOUR_TOKEN' http://localhost:8102/api/v1/team/USER_ID/toggle"
+        }
+      ]
+    }
+  ],
+
+  "verification": {
+    "checks": [
+      "✅ teamController.js created with 6 functions",
+      "✅ teamRoutes.js created with 6 endpoints",
+      "✅ Routes registered in index.js",
+      "✅ Prisma schema updated with deletedAt, invitationToken, invitationExpiry",
+      "✅ Migration created and applied",
+      "✅ Email service has sendInvitationEmail function",
+      "✅ All endpoints return 200/201 for valid requests",
+      "✅ Authorization works (403 for non-admin users)"
+    ]
+  },
+
+  "apiEndpoints": [
+    {
+      "method": "GET",
+      "path": "/api/v1/team",
+      "description": "List all team members with pagination, search, and filter",
+      "auth": "ADMIN, SUPER_ADMIN",
+      "queryParams": {
+        "page": "number (default: 1)",
+        "limit": "number (default: 10)",
+        "search": "string (email or name)",
+        "role": "string (USER, ADMIN, MANAGER, HR_SPECIALIST)"
+      },
+      "response": {
+        "success": true,
+        "data": {
+          "users": [],
+          "pagination": {
+            "page": 1,
+            "limit": 10,
+            "total": 0,
+            "pages": 0
+          }
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/team/:id",
+      "description": "Get single team member details",
+      "auth": "ADMIN, SUPER_ADMIN"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/team/invite",
+      "description": "Invite new team member via email",
+      "auth": "ADMIN, SUPER_ADMIN",
+      "body": {
+        "email": "string (required)",
+        "role": "string (required)",
+        "name": "string (optional)"
+      }
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/team/:id",
+      "description": "Update team member role/name/status",
+      "auth": "ADMIN, SUPER_ADMIN",
+      "body": {
+        "role": "string (optional)",
+        "name": "string (optional)",
+        "isActive": "boolean (optional)"
+      }
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/team/:id/toggle",
+      "description": "Toggle team member active status",
+      "auth": "ADMIN, SUPER_ADMIN"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/team/:id",
+      "description": "Soft delete team member",
+      "auth": "ADMIN, SUPER_ADMIN"
+    }
+  ],
+
+  "securityRules": [
+    "✅ All endpoints require authentication (authenticateToken)",
+    "✅ All endpoints enforce organization isolation (only see own org users)",
+    "✅ Only ADMIN and SUPER_ADMIN can access",
+    "✅ Cannot modify/delete SUPER_ADMIN users",
+    "✅ Cannot self-demote from ADMIN role",
+    "✅ Cannot self-toggle or self-delete",
+    "✅ User limit enforced based on organization plan"
+  ],
+
+  "nextSteps": "Once Phase 1 is complete and tested, proceed to Phase 2 (Frontend UI)"
+}

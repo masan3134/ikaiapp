@@ -1,0 +1,114 @@
+{
+  "phase": "Phase 3 - Navigation & Sidebar Integration",
+  "duration": "0.5 hours",
+  "priority": "MEDIUM",
+  "dependencies": ["Phase 2 - Frontend UI must be complete"],
+  "description": "Add team management link to sidebar navigation with proper access control and styling",
+
+  "tasks": [
+    {
+      "id": "3.1",
+      "title": "Update Sidebar Component",
+      "file": "frontend/components/Sidebar.tsx",
+      "priority": "HIGH",
+      "estimatedTime": "20 minutes",
+      "description": "Add 'Takım Yönetimi' menu item to sidebar",
+      "dependencies": [],
+      "instructions": [
+        "1. Find the Sidebar component",
+        "2. Locate the menu items array or navigation list",
+        "3. Add new menu item for Team Management",
+        "4. Add role-based visibility (only ADMIN and SUPER_ADMIN)",
+        "5. Use Users icon from lucide-react",
+        "6. Set active state when on /team route"
+      ],
+      "codeToAdd": "// Import Users icon at top\nimport { Users, ... } from 'lucide-react';\n\n// Inside component, add to menu items:\nconst menuItems = [\n  // ... existing items\n  {\n    name: 'Takım Yönetimi',\n    href: '/team',\n    icon: Users,\n    roles: ['ADMIN', 'SUPER_ADMIN'] // Only visible to admins\n  },\n  // ... rest of items\n];\n\n// Render logic:\n{menuItems.map((item) => {\n  // Check if user has required role\n  if (item.roles && !item.roles.includes(user?.role)) {\n    return null; // Don't render if user doesn't have permission\n  }\n  \n  const isActive = pathname === item.href;\n  \n  return (\n    <Link\n      key={item.href}\n      href={item.href}\n      className={`\n        flex items-center gap-3 px-4 py-3 rounded-lg transition-colors\n        ${isActive \n          ? 'bg-blue-50 text-blue-600 font-semibold' \n          : 'text-gray-700 hover:bg-gray-100'\n        }\n      `}\n    >\n      <item.icon size={20} />\n      <span>{item.name}</span>\n    </Link>\n  );\n})}"
+    },
+    {
+      "id": "3.2",
+      "title": "Verify Sidebar Integration",
+      "priority": "HIGH",
+      "estimatedTime": "10 minutes",
+      "description": "Test sidebar navigation and access control",
+      "dependencies": ["3.1"],
+      "testChecks": [
+        "✅ 'Takım Yönetimi' appears in sidebar for ADMIN users",
+        "✅ Menu item does NOT appear for USER role",
+        "✅ Clicking menu item navigates to /team",
+        "✅ Active state highlights when on /team page",
+        "✅ Icon displays correctly (Users icon)",
+        "✅ Hover state works",
+        "✅ Mobile responsive (if applicable)"
+      ]
+    }
+  ],
+
+  "sidebarPlacement": {
+    "suggestedPosition": "After 'Dashboard' or 'Adaylar' section",
+    "category": "Administration",
+    "alternatives": [
+      "Top level menu item (recommended)",
+      "Under 'Ayarlar' submenu",
+      "New 'Yönetim' section with other admin tools"
+    ]
+  },
+
+  "accessControl": {
+    "visibleTo": ["ADMIN", "SUPER_ADMIN"],
+    "hiddenFrom": ["USER", "MANAGER", "HR_SPECIALIST"],
+    "behavior": "Menu item completely hidden for unauthorized users (no disabled state)"
+  },
+
+  "visualDesign": {
+    "icon": "Users (lucide-react)",
+    "activeState": {
+      "background": "bg-blue-50",
+      "textColor": "text-blue-600",
+      "fontWeight": "font-semibold"
+    },
+    "defaultState": {
+      "textColor": "text-gray-700",
+      "hoverBackground": "hover:bg-gray-100"
+    }
+  },
+
+  "mobileSidebar": {
+    "requirement": "If sidebar has mobile hamburger menu, ensure team management appears there too",
+    "closeOnNavigation": true
+  },
+
+  "breadcrumbs": {
+    "route": "/team",
+    "breadcrumb": "Ana Sayfa > Takım Yönetimi",
+    "optionalUpdate": "If breadcrumbs component exists, add /team route"
+  },
+
+  "verification": {
+    "checks": [
+      "✅ Menu item visible to ADMIN users",
+      "✅ Menu item hidden from USER role",
+      "✅ Navigation works (/team route)",
+      "✅ Active state correct",
+      "✅ Icon displays",
+      "✅ Hover/focus states work",
+      "✅ Mobile sidebar includes item (if applicable)"
+    ]
+  },
+
+  "finalChecklist": [
+    "✅ Phase 1: All 6 backend endpoints working",
+    "✅ Phase 2: Frontend page renders and all modals work",
+    "✅ Phase 3: Sidebar navigation integrated",
+    "✅ End-to-end test: ADMIN can invite user from sidebar → team page",
+    "✅ Security test: USER cannot access /team (403 or redirect)",
+    "✅ Email test: Invitation email received",
+    "✅ Commit all changes to git"
+  ],
+
+  "exampleSidebarCode": {
+    "beforeUpdate": "// Example: Current sidebar structure\nconst menuItems = [\n  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },\n  { name: 'İş İlanları', href: '/job-postings', icon: Briefcase },\n  { name: 'Adaylar', href: '/candidates', icon: Users },\n  // ... more items\n];",
+    "afterUpdate": "// After adding team management\nconst menuItems = [\n  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },\n  { name: 'İş İlanları', href: '/job-postings', icon: Briefcase },\n  { name: 'Adaylar', href: '/candidates', icon: Users },\n  { \n    name: 'Takım Yönetimi', \n    href: '/team', \n    icon: Users, \n    roles: ['ADMIN', 'SUPER_ADMIN'] \n  },\n  // ... more items\n];"
+  },
+
+  "completionMessage": "🎉 Team Management feature complete! All 3 phases implemented:\n✅ Phase 1: Backend API (6 endpoints)\n✅ Phase 2: Frontend UI (table, modals, search, filter)\n✅ Phase 3: Navigation integration\n\nUsers can now:\n- View team members\n- Invite new users via email\n- Edit roles and names\n- Toggle active/inactive\n- Delete users\n\nAll with proper organization isolation and role-based access control."
+}
