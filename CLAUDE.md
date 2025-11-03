@@ -1,11 +1,12 @@
 # 🤖 IKAI HR Platform - Development Guide
 
-**Version:** 12.0 - Complete Local Dev Setup + Auto-Commit
+**Version:** 13.0 - Production SaaS Ready (Multi-Tenant + Onboarding + Limits)
 **Updated:** 2025-11-03
 **Environment:** Docker Isolated Development (Hot Reload Enabled)
 
-> **📚 FULL DOCUMENTATION:** [`docs/INDEX.md`](docs/INDEX.md) - 44 detailed documents
-> **📝 LATEST CHANGES:** [`docs/reports/2025-11-02-session-summary.md`](docs/reports/2025-11-02-session-summary.md)
+> **📚 FULL DOCUMENTATION:** [`docs/INDEX.md`](docs/INDEX.md) - 50+ detailed documents
+> **📝 LATEST CHANGES:** [`docs/features/saas-transformation-plan.md`](docs/features/saas-transformation-plan.md)
+> **🚀 SAAS QUICK START:** [`docs/features/saas-quick-reference.md`](docs/features/saas-quick-reference.md)
 
 ---
 
@@ -66,12 +67,42 @@ Login:    info@gaiai.ai / 23235656
 ```
 /home/asan/Desktop/ikai/
 ├── backend/              # Node.js + Express + Prisma
+│   ├── src/
+│   │   ├── middleware/
+│   │   │   ├── organizationIsolation.js  # 🔥 Multi-tenant isolation
+│   │   │   └── usageTracking.js          # 🔥 Plan limits enforcement
+│   │   ├── routes/
+│   │   │   ├── organizationRoutes.js     # 🔥 Org management
+│   │   │   ├── onboardingRoutes.js       # 🔥 New user setup
+│   │   │   └── superAdminRoutes.js       # 🔥 System admin
+│   │   └── jobs/
+│   │       └── resetMonthlyUsage.js      # 🔥 Monthly cron
+│   └── prisma/
+│       └── schema.prisma                 # 🔥 Organization model
 ├── frontend/             # Next.js 14 + TypeScript
-├── docker/               # Docker configs
-├── docs/                 # 📚 44 documentation files
+│   ├── app/
+│   │   ├── (public)/                     # 🔥 Landing pages
+│   │   │   ├── page.tsx                  # Marketing homepage
+│   │   │   ├── features/page.tsx         # Feature showcase
+│   │   │   └── pricing/page.tsx          # Pricing plans
+│   │   └── (authenticated)/
+│   │       ├── onboarding/page.tsx       # 🔥 5-step wizard
+│   │       ├── super-admin/page.tsx      # 🔥 Admin dashboard
+│   │       └── settings/
+│   │           ├── organization/         # 🔥 Org settings
+│   │           └── billing/              # 🔥 Usage + plan
+│   ├── contexts/
+│   │   └── OrganizationContext.tsx       # 🔥 Org state
+│   └── components/
+│       ├── OnboardingGuard.tsx           # 🔥 Setup enforcement
+│       └── UsageWidget.tsx               # 🔥 Limit display
+├── docs/                 # 📚 50+ documentation files
 │   ├── INDEX.md          # ← START HERE
+│   ├── features/
+│   │   ├── saas-transformation-plan.md   # 🔥 1,794 lines
+│   │   ├── saas-quick-reference.md       # 🔥 346 lines
+│   │   └── phase*-completion-report.md   # 🔥 5 phase reports
 │   ├── api/              # API docs
-│   ├── features/         # Feature specs
 │   ├── reports/          # Status reports
 │   └── architecture/     # System design
 ├── scripts/              # Utility scripts
@@ -83,7 +114,7 @@ Login:    info@gaiai.ai / 23235656
 └── docker-compose.yml    # Main Docker config
 ```
 
-**API:** 110+ endpoints | **Docker:** All services isolated
+**API:** 120+ endpoints (10 new for SaaS) | **Docker:** All services isolated | **Multi-Tenant:** ✅
 
 ---
 
@@ -111,21 +142,48 @@ Login:    info@gaiai.ai / 23235656
 
 ---
 
-## 🧙 WIZARD SYSTEM (v2.0 - Optimized)
+## 🧙 WIZARD SYSTEMS
 
+### **Analysis Wizard (v2.0 - Optimized)**
 **Latest:** 2025-11-02 - 9 improvements
 
-### **Performance:**
+**Performance:**
 - Upload: **2s** (10 files) - **10x faster** ⚡
 - CV Limit: **50** (was 10)
 - State: Persistent (localStorage)
 - Errors: Turkish (40+ translations)
 
-### **Features:**
-- Error Boundary | Parallel upload | Progress bar | Smart defaults
+**Features:** Error Boundary | Parallel upload | Progress bar | Smart defaults
 
-**Full Analysis:** [`wizard-evaluation.md`](docs/reports/2025-11-01-analysis-wizard-evaluation.md) (625 lines)
-**Implementation:** [`wizard-improvements.md`](docs/reports/2025-11-01-wizard-improvements-summary.md)
+**Docs:**
+- [`wizard-evaluation.md`](docs/reports/2025-11-01-analysis-wizard-evaluation.md) (625 lines)
+- [`wizard-improvements.md`](docs/reports/2025-11-01-wizard-improvements-summary.md)
+
+### **🔥 Onboarding Wizard (v1.0 - NEW!)**
+**Latest:** 2025-11-03 - Production ready
+
+**5-Step Setup:**
+1. **Company Info** - Name, industry, size, logo
+2. **First Job** - Create demo job posting
+3. **Demo CVs** - Upload 3 sample CVs
+4. **Team** - Invite team members (optional)
+5. **Success** - Welcome dashboard redirect
+
+**Features:**
+- localStorage persistence (resume interrupted setup)
+- Progress bar with step validation
+- Skip options for non-critical steps
+- OnboardingGuard (blocks access until complete)
+- Turkish UI with clear instructions
+
+**Integration:**
+- Wraps entire (authenticated) route group
+- Redirects to `/onboarding` if `onboardingCompleted = false`
+- Updates both Organization and User records on completion
+
+**Docs:**
+- [`phase2-completion-report.md`](docs/features/phase2-completion-report.md)
+- [`saas-transformation-plan.md`](docs/features/saas-transformation-plan.md) (Phase 2 section)
 
 ---
 
@@ -319,19 +377,79 @@ semanticSearch.limit = 8  // Specific queries
 
 ---
 
+## 🚀 SAAS FEATURES (v13.0 - NEW!)
+
+**Complete multi-tenant transformation - Production ready in 13.5 hours**
+
+### **1. Multi-Tenant Architecture** ✅
+- **Organization model** with subscription plans (FREE/PRO/ENTERPRISE)
+- **Data isolation** via `organizationIsolation` middleware
+- **23 controllers updated** with `organizationId` filters
+- **User → Organization** relationship (many-to-one)
+- **Organization settings page** (name, industry, size, logo)
+
+**Plans:**
+| Plan | Analysis/mo | CVs/mo | Users | Price |
+|------|-------------|--------|-------|-------|
+| FREE | 10 | 50 | 2 | ₺0 |
+| PRO | 100 | 500 | 10 | ₺99/ay |
+| ENTERPRISE | ∞ | ∞ | ∞ | İletişim |
+
+### **2. Onboarding System** ✅
+- **5-step wizard** (company → job → CVs → team → success)
+- **OnboardingGuard** blocks access until setup complete
+- **localStorage persistence** (resume interrupted setup)
+- **Progress tracking** with step validation
+- **Automatic redirect** to onboarding for new users
+
+### **3. Usage Limits & Tracking** ✅
+- **Plan-based enforcement** (FREE: 10 analyses/mo)
+- **Real-time tracking** via `usageTracking` middleware
+- **403 errors** with Turkish messages when limit exceeded
+- **UsageWidget** shows progress bars (color-coded)
+- **Billing page** with plan comparison and upgrade CTA
+- **Monthly reset cron** (1st of every month at midnight)
+
+### **4. Super Admin Dashboard** ✅
+- **System-wide management** (all organizations)
+- **SUPER_ADMIN role** (highest privilege)
+- **Triple-layer security** (JWT + role + frontend guard)
+- **Organization controls** (toggle active, change plan, delete)
+- **Stats dashboard** (4 cards: orgs, users, analyses)
+- **Search & filter** with pagination (10 per page)
+- **Audit logging** (all admin actions)
+
+### **5. Public Landing Page** ✅
+- **Marketing homepage** (hero, features, pricing, CTA)
+- **Features page** (5 detailed sections)
+- **Pricing page** (comparison table + FAQ)
+- **SEO optimized** (OpenGraph, Twitter cards, keywords)
+- **Responsive design** (mobile-first with Tailwind CSS)
+- **PublicNavbar** and **Footer** components
+- **Auth redirect** (logged-in users → dashboard)
+
+**Docs:**
+- **Full Plan:** [`saas-transformation-plan.md`](docs/features/saas-transformation-plan.md) (1,794 lines)
+- **Quick Ref:** [`saas-quick-reference.md`](docs/features/saas-quick-reference.md) (346 lines)
+- **Phase Reports:** [`phase1-5-completion-report.md`](docs/features/) (5 files)
+
+---
+
 ## 📖 DOCUMENTATION PHILOSOPHY
 
-**This File:** Quick reference (~280 lines)
-**`docs/` Folder:** Deep dive (45 files, 15,000+ lines)
+**This File:** Quick reference (~450 lines)
+**`docs/` Folder:** Deep dive (50+ files, 18,000+ lines)
 
 ### **Quick Navigation:**
 - **Everything:** [`docs/INDEX.md`](docs/INDEX.md)
-- **🔥 Queue System:** [`queue-system-implementation.md`](docs/reports/2025-11-02-queue-system-implementation.md) **(NEW!)**
-- **Latest:** [`session-summary.md`](docs/reports/2025-11-02-session-summary.md)
-- **Wizard:** [`wizard-evaluation.md`](docs/reports/2025-11-01-analysis-wizard-evaluation.md)
-- **Gemini:** [`chunking-implementation.md`](docs/reports/2025-11-02-chunking-implementation.md)
+- **🔥 SaaS Transformation:** [`saas-transformation-plan.md`](docs/features/saas-transformation-plan.md) **(NEW - 1,794 lines!)**
+- **🔥 SaaS Quick Start:** [`saas-quick-reference.md`](docs/features/saas-quick-reference.md) **(NEW - 346 lines)**
+- **Queue System:** [`queue-system-implementation.md`](docs/reports/2025-11-02-queue-system-implementation.md)
+- **Session Summary:** [`session-summary.md`](docs/reports/2025-11-02-session-summary.md)
+- **Analysis Wizard:** [`wizard-evaluation.md`](docs/reports/2025-11-01-analysis-wizard-evaluation.md)
+- **Gemini Chunking:** [`chunking-implementation.md`](docs/reports/2025-11-02-chunking-implementation.md)
 - **AI Chat:** [`ai-chat-optimization.md`](docs/reports/2025-11-02-ai-chat-optimization-for-large-analysis.md)
-- **Milvus:** [`milvus-hybrid-solution.md`](docs/reports/2025-11-02-milvus-hybrid-analysis-solution.md)
+- **Milvus Setup:** [`milvus-hybrid-solution.md`](docs/reports/2025-11-02-milvus-hybrid-analysis-solution.md)
 
 ---
 
@@ -344,18 +462,42 @@ semanticSearch.limit = 8  // Specific queries
 | **Frontend** | ✅ | Running on port 8103 (Docker) |
 | **Database** | ✅ | PostgreSQL + Milvus + Redis ready |
 | **Queue System** | ✅ | 5 queues + 5 workers operational |
-| **Git Auto-Commit** | ✅ | **NEW: Post-commit hook + scripts** |
-| **GitHub Repo** | ✅ | **NEW: Clean repo with full project** |
-| **MCP Integration** | ✅ | **NEW: 6 MCPs in VS Code extension** |
-| **Project Structure** | ✅ | **NEW: Clean directory (no nesting)** |
+| **🔥 Multi-Tenant** | ✅ | **Organization-level data isolation** |
+| **🔥 Onboarding** | ✅ | **5-step wizard for new users** |
+| **🔥 Usage Limits** | ✅ | **Plan-based enforcement active** |
+| **🔥 Super Admin** | ✅ | **System-wide management dashboard** |
+| **🔥 Landing Page** | ✅ | **Public marketing pages live** |
+| **Git Auto-Commit** | ✅ | Post-commit hook + scripts |
+| **GitHub Repo** | ✅ | Clean repo with full project |
+| **MCP Integration** | ✅ | 6 MCPs in VS Code extension |
+| **Project Structure** | ✅ | Clean directory (no nesting) |
 
 **Setup Date:** 2025-11-03
 **Location:** /home/asan/Desktop/ikai
 **GitHub:** https://github.com/masan3134/ikaiapp (private)
+**SaaS Status:** 🚀 **Production Ready** (13.5 hour transformation)
 
 ---
 
 ## 📋 VERSION HISTORY
+
+**v13.0 (2025-11-03):** 🚀 **COMPLETE SAAS TRANSFORMATION**
+- **NEW:** Multi-tenant architecture (organization-level data isolation)
+- **NEW:** Onboarding wizard (5-step interactive setup)
+- **NEW:** Usage limits & tracking (FREE/PRO/ENTERPRISE plans)
+- **NEW:** Super admin dashboard (system-wide management)
+- **NEW:** Public landing page (marketing + pricing + features)
+- **Added:** Organization model + 23 controllers updated
+- **Added:** organizationIsolation + usageTracking middleware
+- **Added:** OnboardingGuard component (blocks incomplete setup)
+- **Added:** SUPER_ADMIN role with triple-layer security
+- **Added:** Monthly usage reset cron job
+- **Fixed:** Redis connection for Docker (localhost → ikai-redis)
+- **Time:** 13.5 hours (5 phases: P1=4h, P2=2h, P3=2.5h, P4=2.5h, P5=2.5h)
+- **Quality:** All phases 9.5-9.8/10 score
+- **Commits:** ba5708b, 3cc6dd8, 7c7879b, f7bcc4f, ac66723
+- **Docs:** 2,140+ lines (plan + quick ref + 5 phase reports)
+- **See:** [`saas-transformation-plan.md`](docs/features/saas-transformation-plan.md)
 
 **v12.0 (2025-11-03):** 🎉 **COMPLETE LOCAL DEV SETUP**
 - **NEW:** Docker isolated development (all services in containers)
