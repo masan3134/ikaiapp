@@ -13,13 +13,6 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [validationError, setValidationError] = useState('');
 
-  // Redirect if already authenticated
-  useEffect(() => {
-    if (isAuthenticated) {
-      router.push('/dashboard');
-    }
-  }, [isAuthenticated, router]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setValidationError('');
@@ -37,9 +30,31 @@ export default function LoginPage() {
     }
 
     try {
-      // Başarılı giriş sonrası yönlendirme, aşağıdaki useEffect tarafından
-      // otomatik olarak yapılacaktır. Bu sayede state'in güncellenmesi beklenir.
+      // Login first
       await login(email, password);
+
+      // Check onboarding status
+      const token = localStorage.getItem('token');
+      if (token) {
+        const res = await fetch('http://localhost:8102/api/v1/organizations/me', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          const org = data.data;
+
+          // Redirect based on onboarding status
+          if (org.onboardingCompleted) {
+            router.push('/dashboard');
+          } else {
+            router.push('/onboarding');
+          }
+        } else {
+          // Fallback to dashboard if org fetch fails
+          router.push('/dashboard');
+        }
+      }
     } catch (err: any) {
       // useAuthStore zaten hata durumunu yönetiyor.
       // Konsola yazdırmak, geliştirme sırasında hata ayıklama için yararlıdır.

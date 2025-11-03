@@ -9,6 +9,8 @@ interface Organization {
   primaryColor?: string;
   plan: 'FREE' | 'PRO' | 'ENTERPRISE';
   isActive: boolean;
+  onboardingCompleted: boolean;
+  onboardingStep?: number;
 }
 
 interface Usage {

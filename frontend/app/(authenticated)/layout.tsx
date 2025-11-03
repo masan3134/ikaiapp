@@ -24,6 +24,7 @@ import {
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { useAuthStore } from '@/lib/store/authStore';
 import { OrganizationProvider } from '@/contexts/OrganizationContext';
+import { OnboardingGuard } from '@/components/OnboardingGuard';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -61,6 +62,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   return (
     <ProtectedRoute>
       <OrganizationProvider>
+        <OnboardingGuard>
         <div className="min-h-screen bg-gray-50">
         {/* Mobile Header */}
         <div className="lg:hidden bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
@@ -243,6 +245,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           </main>
         </div>
         </div>
+        </OnboardingGuard>
       </OrganizationProvider>
     </ProtectedRoute>
   );

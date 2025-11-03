@@ -201,6 +201,7 @@ apiV1Router.use('/analytics', analyticsRoutes);
 
 // NEW FEATURE: Multi-Tenant Organizations
   const organizationRoutes = require('./routes/organizationRoutes');
+  const onboardingRoutes = require('./routes/onboardingRoutes');
 
 // NEW FEATURE: Job Offer System (Phase 1 + 2 + 3)
   const offerRoutes = require('./routes/offerRoutes');
@@ -214,6 +215,7 @@ apiV1Router.use('/analytics', analyticsRoutes);
 
   // Multi-tenant organization routes
   apiV1Router.use('/organizations', organizationRoutes);
+  apiV1Router.use('/onboarding', onboardingRoutes);
 
   // CRITICAL: Register public routes BEFORE authenticated routes to avoid conflict
   apiV1Router.use('/offers/public', publicOfferRoutes); // Public routes (NO AUTH)
