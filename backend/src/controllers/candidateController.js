@@ -10,6 +10,7 @@ const prisma = new PrismaClient();
 async function getAllCandidates(req, res) {
   try {
     const userId = req.user.id;
+    const organizationId = req.organizationId;
     const { page = 1, limit = 20 } = req.query;
 
     // Pagination
@@ -19,6 +20,7 @@ async function getAllCandidates(req, res) {
 
     const where = {
       userId,
+      organizationId,
       isDeleted: false
     };
 
@@ -68,6 +70,7 @@ async function checkDuplicateFile(req, res) {
   try {
     const { fileName } = req.body;
     const userId = req.user.id;
+    const organizationId = req.organizationId;
 
     if (!fileName) {
       return res.status(400).json({
@@ -80,6 +83,7 @@ async function checkDuplicateFile(req, res) {
     const existingCandidate = await prisma.candidate.findFirst({
       where: {
         userId,
+        organizationId,
         sourceFileName: fileName,
         isDeleted: false
       }
@@ -113,6 +117,7 @@ const { sanitizeFileName } = require('../utils/fileName');
 async function uploadCV(req, res) {
   try {
     const userId = req.user.id;
+    const organizationId = req.organizationId;
 
     // Check if file was uploaded
     if (!req.file) {
@@ -130,6 +135,7 @@ async function uploadCV(req, res) {
     const existingCandidate = await prisma.candidate.findFirst({
       where: {
         userId,
+        organizationId,
         sourceFileName: originalFileName,
         isDeleted: false
       }
@@ -159,6 +165,7 @@ async function uploadCV(req, res) {
     const candidate = await prisma.candidate.create({
       data: {
         userId,
+        organizationId,
         sourceFileName: originalFileName, // Store original for duplicate check
         fileUrl,
         firstName: '',
@@ -203,6 +210,7 @@ async function getCandidateById(req, res) {
   try {
     const { id } = req.params;
     const userId = req.user.id;
+    const organizationId = req.organizationId;
 
     const candidate = await prisma.candidate.findUnique({
       where: { id },
@@ -233,7 +241,7 @@ async function getCandidateById(req, res) {
     }
 
     // Check ownership
-    if (candidate.userId !== userId) {
+    if (candidate.userId !== userId || candidate.organizationId !== organizationId) {
       return res.status(403).json({
         error: 'Forbidden',
         message: 'Bu adaya erişim yetkiniz yok'
@@ -258,6 +266,7 @@ async function deleteCandidate(req, res) {
   try {
     const { id } = req.params;
     const userId = req.user.id;
+    const organizationId = req.organizationId;
 
     // Get candidate
     const candidate = await prisma.candidate.findUnique({
@@ -279,7 +288,7 @@ async function deleteCandidate(req, res) {
     }
 
     // Check ownership
-    if (candidate.userId !== userId) {
+    if (candidate.userId !== userId || candidate.organizationId !== organizationId) {
       return res.status(403).json({
         error: 'Forbidden',
         message: 'Bu adayı silme yetkiniz yok'

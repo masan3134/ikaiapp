@@ -1,16 +1,15 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
-/**
- * Creates a new negotiation message for an offer.
- * Can be initiated by the candidate or a company user.
- * @param {string} offerId - The ID of the job offer.
- * @param {object} data - The negotiation data (message, counterSalary, etc.).
- * @param {string} initiator - 'candidate' or 'company'.
- * @param {string} userId - The ID of the user initiating (if company).
- * @returns {Promise<object>} The created negotiation.
- */
-async function createNegotiation(offerId, data, initiator, userId = null) {
+async function createNegotiation(offerId, data, initiator, userId = null, organizationId) {
+  const offer = await prisma.jobOffer.findFirst({
+    where: { id: offerId, organizationId }
+  });
+
+  if (!offer) {
+    throw new Error('Offer not found or access denied');
+  }
+
   const negotiation = await prisma.offerNegotiation.create({
     data: {
       offerId,
@@ -18,39 +17,43 @@ async function createNegotiation(offerId, data, initiator, userId = null) {
       message: data.message,
       counterSalary: data.counterSalary,
       counterBenefits: data.counterBenefits,
-      // If initiator is company, link to user
       ...(initiator === 'company' && { responder: { connect: { id: userId } } }),
     },
   });
   return negotiation;
 }
 
-/**
- * Responds to a negotiation.
- * @param {string} negotiationId - The ID of the negotiation.
- * @param {object} responseData - The response data (response message, status).
- * @param {string} userId - The ID of the user responding.
- * @returns {Promise<object>} The updated negotiation.
- */
-async function respondToNegotiation(negotiationId, responseData, userId) {
-  const negotiation = await prisma.offerNegotiation.update({
+async function respondToNegotiation(negotiationId, responseData, userId, organizationId) {
+  const negotiation = await prisma.offerNegotiation.findUnique({
+    where: { id: negotiationId },
+    include: { offer: true }
+  });
+
+  if (!negotiation || negotiation.offer.organizationId !== organizationId) {
+    throw new Error('Negotiation not found or access denied');
+  }
+
+  const updated = await prisma.offerNegotiation.update({
     where: { id: negotiationId },
     data: {
-      status: responseData.status, // 'accepted', 'rejected'
+      status: responseData.status,
       response: responseData.response,
       respondedAt: new Date(),
       respondedBy: userId,
     },
   });
-  return negotiation;
+  return updated;
 }
 
-/**
- * Gets all negotiation history for an offer.
- * @param {string} offerId - The ID of the job offer.
- * @returns {Promise<object[]>} A list of negotiations.
- */
-async function getNegotiations(offerId) {
+async function getNegotiations(offerId, organizationId) {
+  const offer = await prisma.jobOffer.findFirst({
+    where: { id: offerId, organizationId }
+  });
+
+  if (!offer) {
+    throw new Error('Offer not found or access denied');
+  }
+
   return prisma.offerNegotiation.findMany({
     where: { offerId },
     orderBy: { createdAt: 'asc' },

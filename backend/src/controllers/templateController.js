@@ -12,7 +12,10 @@ class TemplateController {
    */
   async createTemplate(req, res) {
     try {
-      const template = await templateService.createTemplate(req.body);
+      const template = await templateService.createTemplate({
+        ...req.body,
+        organizationId: req.organizationId
+      });
 
       res.status(201).json({
         success: true,
@@ -20,7 +23,6 @@ class TemplateController {
         data: template
       });
     } catch (error) {
-      console.error('❌ Create template error:', error);
       res.status(500).json({
         success: false,
         error: error.message
@@ -39,7 +41,8 @@ class TemplateController {
       const templates = await templateService.getTemplates({
         categoryId,
         isActive: isActive === 'true' ? true : isActive === 'false' ? false : undefined,
-        search
+        search,
+        organizationId: req.organizationId
       });
 
       res.json({
@@ -47,7 +50,6 @@ class TemplateController {
         data: templates
       });
     } catch (error) {
-      console.error('❌ Get templates error:', error);
       res.status(500).json({
         success: false,
         error: error.message
@@ -62,14 +64,13 @@ class TemplateController {
   async getTemplateById(req, res) {
     try {
       const { id } = req.params;
-      const template = await templateService.getTemplateById(id);
+      const template = await templateService.getTemplateById(id, req.organizationId);
 
       res.json({
         success: true,
         data: template
       });
     } catch (error) {
-      console.error('❌ Get template error:', error);
       res.status(404).json({
         success: false,
         error: error.message
@@ -84,7 +85,7 @@ class TemplateController {
   async updateTemplate(req, res) {
     try {
       const { id } = req.params;
-      const template = await templateService.updateTemplate(id, req.body);
+      const template = await templateService.updateTemplate(id, req.body, req.organizationId);
 
       res.json({
         success: true,
@@ -92,7 +93,6 @@ class TemplateController {
         data: template
       });
     } catch (error) {
-      console.error('❌ Update template error:', error);
       res.status(500).json({
         success: false,
         error: error.message
@@ -107,14 +107,13 @@ class TemplateController {
   async deleteTemplate(req, res) {
     try {
       const { id } = req.params;
-      await templateService.deleteTemplate(id);
+      await templateService.deleteTemplate(id, req.organizationId);
 
       res.json({
         success: true,
         message: 'Şablon silindi'
       });
     } catch (error) {
-      console.error('❌ Delete template error:', error);
       res.status(500).json({
         success: false,
         error: error.message
@@ -129,7 +128,7 @@ class TemplateController {
   async activateTemplate(req, res) {
     try {
       const { id } = req.params;
-      const template = await templateService.toggleTemplateStatus(id, true);
+      const template = await templateService.toggleTemplateStatus(id, true, req.organizationId);
 
       res.json({
         success: true,
@@ -137,7 +136,6 @@ class TemplateController {
         data: template
       });
     } catch (error) {
-      console.error('❌ Activate template error:', error);
       res.status(500).json({
         success: false,
         error: error.message
@@ -152,7 +150,7 @@ class TemplateController {
   async deactivateTemplate(req, res) {
     try {
       const { id } = req.params;
-      const template = await templateService.toggleTemplateStatus(id, false);
+      const template = await templateService.toggleTemplateStatus(id, false, req.organizationId);
 
       res.json({
         success: true,
@@ -160,7 +158,6 @@ class TemplateController {
         data: template
       });
     } catch (error) {
-      console.error('❌ Deactivate template error:', error);
       res.status(500).json({
         success: false,
         error: error.message
@@ -177,7 +174,7 @@ class TemplateController {
     try {
       const { id } = req.params;
       const userId = req.user.id;
-      const offer = await templateService.createOfferFromTemplate(id, req.body, userId);
+      const offer = await templateService.createOfferFromTemplate(id, req.body, userId, req.organizationId);
 
       res.status(201).json({
         success: true,
@@ -185,7 +182,6 @@ class TemplateController {
         data: offer
       });
     } catch (error) {
-      console.error('❌ Create offer from template error:', error);
       res.status(500).json({
         success: false,
         error: error.message
@@ -199,14 +195,16 @@ class TemplateController {
    */
   async createTemplateCategory(req, res) {
     try {
-      const category = await templateService.createTemplateCategory(req.body);
+      const category = await templateService.createTemplateCategory({
+        ...req.body,
+        organizationId: req.organizationId
+      });
       res.status(201).json({
         success: true,
         message: 'Şablon kategorisi oluşturuldu',
         data: category
       });
     } catch (error) {
-      console.error('❌ Create template category error:', error);
       res.status(500).json({
         success: false,
         error: error.message
@@ -220,13 +218,12 @@ class TemplateController {
    */
   async getTemplateCategories(req, res) {
     try {
-      const categories = await templateService.getTemplateCategories();
+      const categories = await templateService.getTemplateCategories(req.organizationId);
       res.json({
         success: true,
         data: categories
       });
     } catch (error) {
-      console.error('❌ Get template categories error:', error);
       res.status(500).json({
         success: false,
         error: error.message
@@ -241,13 +238,12 @@ class TemplateController {
   async getTemplateCategoryById(req, res) {
     try {
       const { id } = req.params;
-      const category = await templateService.getTemplateCategoryById(id);
+      const category = await templateService.getTemplateCategoryById(id, req.organizationId);
       res.json({
         success: true,
         data: category
       });
     } catch (error) {
-      console.error('❌ Get template category by ID error:', error);
       res.status(404).json({
         success: false,
         error: error.message
@@ -262,14 +258,13 @@ class TemplateController {
   async updateTemplateCategory(req, res) {
     try {
       const { id } = req.params;
-      const category = await templateService.updateTemplateCategory(id, req.body);
+      const category = await templateService.updateTemplateCategory(id, req.body, req.organizationId);
       res.json({
         success: true,
         message: 'Şablon kategorisi güncellendi',
         data: category
       });
     } catch (error) {
-      console.error('❌ Update template category error:', error);
       res.status(500).json({
         success: false,
         error: error.message
@@ -284,13 +279,12 @@ class TemplateController {
   async deleteTemplateCategory(req, res) {
     try {
       const { id } = req.params;
-      await templateService.deleteTemplateCategory(id);
+      await templateService.deleteTemplateCategory(id, req.organizationId);
       res.json({
         success: true,
         message: 'Şablon kategorisi silindi'
       });
     } catch (error) {
-      console.error('❌ Delete template category error:', error);
       res.status(500).json({
         success: false,
         error: error.message

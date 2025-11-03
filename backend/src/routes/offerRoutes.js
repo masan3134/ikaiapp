@@ -2,9 +2,10 @@ const express = require('express');
 const router = express.Router();
 const offerController = require('../controllers/offerController');
 const { authenticateToken } = require('../middleware/auth');
+const { enforceOrganizationIsolation } = require('../middleware/organizationIsolation');
 
-// All routes require authentication
 router.use(authenticateToken);
+router.use(enforceOrganizationIsolation);
 
 // Wizard endpoint (must be before '/' to avoid conflict)
 router.post('/wizard', offerController.createOfferFromWizard);

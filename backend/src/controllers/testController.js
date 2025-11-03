@@ -23,6 +23,7 @@ async function createTest(req, res) {
   try {
     const { jobPostingId, analysisId } = req.body;
     const userId = req.user.id;
+    const organizationId = req.organizationId;
 
     if (!jobPostingId) {
       return res.status(400).json({
@@ -31,14 +32,12 @@ async function createTest(req, res) {
       });
     }
 
-    // Queue test generation (async processing with Gemini API)
     const job = await testGenerationQueue.add('generate-test', {
       jobPostingId,
       userId,
-      analysisId
+      analysisId,
+      organizationId
     });
-
-    console.log(`📋 Test generation queued (job ${job.id}) for ${analysisId ? `analysis ${analysisId}` : `job ${jobPostingId}`}`);
 
     return res.json({
       success: true,
@@ -47,7 +46,6 @@ async function createTest(req, res) {
       note: 'Test birkaç saniye içinde hazır olacak'
     });
   } catch (error) {
-    console.error('Test generation error:', error);
     res.status(500).json({
       error: 'Generation Failed',
       message: error.message || 'Test oluşturulamadı'
@@ -71,8 +69,11 @@ async function sendTestEmail(req, res) {
       });
     }
 
-    const test = await prisma.assessmentTest.findUnique({
-      where: { id: testId },
+    const test = await prisma.assessmentTest.findFirst({
+      where: {
+        id: testId,
+        organizationId: req.organizationId
+      },
       include: {
         jobPosting: true
       }
@@ -95,8 +96,6 @@ async function sendTestEmail(req, res) {
       testUrl,
       jobTitle: test.jobPosting.title
     });
-
-    console.log(`📧 Test email queued for ${recipientEmail}`);
 
     return res.json({
       success: true,
@@ -192,6 +191,7 @@ async function sendTestEmail(req, res) {
 async function getAllTests(req, res) {
   try {
     const userId = req.user.id;
+    const organizationId = req.organizationId;
     const { jobPostingId, status, search, page = 1, limit = 20 } = req.query;
 
     const pageInt = parseInt(page, 10);
@@ -199,14 +199,14 @@ async function getAllTests(req, res) {
     const skip = (pageInt - 1) * limitInt;
 
     const where = {
-      createdBy: userId
+      createdBy: userId,
+      organizationId
     };
 
     if (jobPostingId) {
       where.jobPostingId = jobPostingId;
     }
 
-    // Build tests query
     const tests = await prisma.assessmentTest.findMany({
       where,
       include: {
@@ -243,7 +243,6 @@ async function getAllTests(req, res) {
       }
     });
   } catch (error) {
-    console.error('Get tests error:', error);
     res.status(500).json({
       error: 'Fetch Failed',
       message: error.message || 'Testler getirilemedi'
@@ -391,15 +390,11 @@ async function submitPublicTest(req, res) {
       metadata
     );
 
-    console.log(`✅ Test submitted by ${candidateEmail}, score: ${result.score}`);
-
     return res.json({
       success: true,
       message: 'Test başarıyla tamamlandı. Değerlendirmeniz kaydedildi.'
     });
   } catch (error) {
-    console.error('Submit test error:', error);
-
     if (error.message === 'Invalid or expired test') {
       return res.status(410).json({
         error: 'Expired',
@@ -431,8 +426,8 @@ async function getTestSubmissions(req, res) {
   try {
     const { testId } = req.params;
     const { candidateEmail } = req.query;
+    const organizationId = req.organizationId;
 
-    // Build where clause
     const where = {};
 
     if (testId) {
@@ -443,12 +438,15 @@ async function getTestSubmissions(req, res) {
       where.candidateEmail = candidateEmail;
     }
 
-    // If neither testId nor candidateEmail provided, return error
     if (!testId && !candidateEmail) {
       return res.status(400).json({
         error: 'Validation Error',
         message: 'testId veya candidateEmail parametresi gereklidir'
       });
+    }
+
+    if (testId) {
+      where.test = { organizationId };
     }
 
     const submissions = await prisma.testSubmission.findMany({
@@ -458,7 +456,7 @@ async function getTestSubmissions(req, res) {
           select: {
             id: true,
             token: true,
-            questions: true, // Include questions with correct answers for HR
+            questions: true,
             expiresAt: true,
             jobPosting: {
               select: {
@@ -486,7 +484,6 @@ async function getTestSubmissions(req, res) {
       submissions
     });
   } catch (error) {
-    console.error('Get submissions error:', error);
     res.status(500).json({
       error: 'Server Error',
       message: 'Sonuçlar alınamadı'

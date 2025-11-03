@@ -23,26 +23,19 @@ const {
   getTopJobs
 } = require('../controllers/analyticsController');
 const { authenticateToken } = require('../middleware/auth');
+const { enforceOrganizationIsolation } = require('../middleware/organizationIsolation');
 const { authorize } = require('../middleware/authorize');
 
 const router = express.Router();
 
-// All analytics endpoints require authentication
-// Some require ADMIN/MANAGER roles
+router.get('/summary', authenticateToken, enforceOrganizationIsolation, getSummary);
 
-// Summary (all roles)
-router.get('/summary', authenticateToken, getSummary);
+router.get('/time-to-hire', authenticateToken, enforceOrganizationIsolation, authorize(['ADMIN', 'MANAGER']), getTimeToHire);
 
-// Time-to-hire analytics (ADMIN/MANAGER only)
-router.get('/time-to-hire', authenticateToken, authorize(['ADMIN', 'MANAGER']), getTimeToHire);
+router.get('/funnel', authenticateToken, enforceOrganizationIsolation, authorize(['ADMIN', 'MANAGER']), getFunnel);
 
-// Funnel analytics (ADMIN/MANAGER only)
-router.get('/funnel', authenticateToken, authorize(['ADMIN', 'MANAGER']), getFunnel);
+router.get('/score-distribution', authenticateToken, enforceOrganizationIsolation, getScoreDistribution);
 
-// Score distribution (all roles)
-router.get('/score-distribution', authenticateToken, getScoreDistribution);
-
-// Top performing jobs (all roles)
-router.get('/top-jobs', authenticateToken, getTopJobs);
+router.get('/top-jobs', authenticateToken, enforceOrganizationIsolation, getTopJobs);
 
 module.exports = router;

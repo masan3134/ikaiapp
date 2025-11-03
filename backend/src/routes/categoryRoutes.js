@@ -2,9 +2,10 @@ const express = require('express');
 const router = express.Router();
 const categoryController = require('../controllers/categoryController');
 const { authenticateToken } = require('../middleware/auth');
+const { enforceOrganizationIsolation } = require('../middleware/organizationIsolation');
 
-// All routes require authentication
 router.use(authenticateToken);
+router.use(enforceOrganizationIsolation);
 
 // Reorder (must be before /:id routes)
 router.patch('/reorder', categoryController.reorderCategories);

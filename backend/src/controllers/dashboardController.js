@@ -12,11 +12,10 @@ async function getDashboardStats(req, res) {
   try {
     const userId = req.user.id;
     const userRole = req.user.role;
+    const organizationId = req.organizationId;
 
-    // Admins see all data, others see only their own
-    const userFilter = userRole === 'ADMIN' ? {} : { userId };
+    const userFilter = userRole === 'ADMIN' ? { organizationId } : { userId, organizationId };
 
-    // Run all queries in parallel for better performance
     const [
       totalUsers,
       totalCandidates,
@@ -28,28 +27,20 @@ async function getDashboardStats(req, res) {
       analysesByStatus,
       recentAnalyses
     ] = await Promise.all([
-      // Total users (admin only)
-      userRole === 'ADMIN' ? prisma.user.count() : Promise.resolve(null),
+      userRole === 'ADMIN' ? prisma.user.count({ where: { organizationId } }) : Promise.resolve(null),
 
-      // Total candidates (all users for admin, user's own for others)
       prisma.candidate.count({ where: userFilter }),
 
-      // User's own candidates count
-      prisma.candidate.count({ where: { userId } }),
+      prisma.candidate.count({ where: { userId, organizationId } }),
 
-      // Total job postings
       prisma.jobPosting.count({ where: userFilter }),
 
-      // User's own job postings count
-      prisma.jobPosting.count({ where: { userId } }),
+      prisma.jobPosting.count({ where: { userId, organizationId } }),
 
-      // Total analyses
       prisma.analysis.count({ where: userFilter }),
 
-      // User's own analyses count
-      prisma.analysis.count({ where: { userId } }),
+      prisma.analysis.count({ where: { userId, organizationId } }),
 
-      // Analyses grouped by status
       prisma.analysis.groupBy({
         by: ['status'],
         where: userFilter,
@@ -58,7 +49,6 @@ async function getDashboardStats(req, res) {
         }
       }),
 
-      // Recent analyses (last 5)
       prisma.analysis.findMany({
         where: userFilter,
         take: 5,
@@ -117,7 +107,6 @@ async function getDashboardStats(req, res) {
 
     res.json(stats);
   } catch (error) {
-    console.error('Dashboard stats error:', error);
     res.status(500).json({
       error: 'Internal Server Error',
       message: 'İstatistikler yüklenirken hata oluştu'

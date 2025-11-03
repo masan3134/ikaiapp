@@ -17,11 +17,84 @@ enum Role {
   HR_SPECIALIST
 }
 
+enum SubscriptionPlan {
+  FREE
+  PRO
+  ENTERPRISE
+}
+
+model Organization {
+  id     String  @id @default(uuid())
+  name   String
+  slug   String  @unique
+  domain String?
+
+  // Branding
+  logo         String?
+  primaryColor String? @default("#4F46E5")
+
+  // Settings
+  industry String?
+  size     String?
+  country  String? @default("TR")
+  timezone String? @default("Europe/Istanbul")
+
+  // Subscription
+  plan          SubscriptionPlan @default(FREE)
+  planStartedAt DateTime         @default(now())
+  planExpiresAt DateTime?
+
+  // Usage Tracking
+  monthlyAnalysisCount Int @default(0)
+  monthlyCvCount       Int @default(0)
+  totalUsers           Int @default(1)
+
+  // Limits (based on plan)
+  maxAnalysisPerMonth Int @default(10)
+  maxCvPerMonth       Int @default(50)
+  maxUsers            Int @default(2)
+
+  // Onboarding
+  onboardingCompleted Boolean @default(false)
+  onboardingStep      Int     @default(0)
+
+  // Status
+  isActive    Boolean   @default(true)
+  isTrial     Boolean   @default(true)
+  trialEndsAt DateTime?
+
+  // Relations
+  users User[]
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([slug])
+  @@index([isActive])
+  @@index([plan])
+  @@map("organizations")
+}
+
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  password  String
-  role      Role     @default(USER)
+  id       String @id @default(uuid())
+  email    String @unique
+  password String
+  role     Role   @default(USER)
+
+  // Multi-tenant
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  // User profile
+  firstName String?
+  lastName  String?
+  avatar    String?
+  position  String?
+
+  // Onboarding
+  isOnboarded Boolean @default(false)
+
   createdAt DateTime @default(now())
 
   // Relations
@@ -32,28 +105,30 @@ model User {
   bulkUploadSessions    BulkUploadSession[]
   interviewsAsConductor Interview[]         @relation("InterviewConductor")
   interviewsAsCreator   Interview[]         @relation("InterviewCreator")
-  
-  // NEW Relations for Job Offer System
-  offersCreated     JobOffer[]         @relation("OfferCreator")
-  offersApproved    JobOffer[]         @relation("OfferApprover")
-  negotiations      OfferNegotiation[]
-  attachments       OfferAttachment[]
-  revisions         OfferRevision[]
 
+  // NEW Relations for Job Offer System
+  offersCreated  JobOffer[]         @relation("OfferCreator")
+  offersApproved JobOffer[]         @relation("OfferApprover")
+  negotiations   OfferNegotiation[]
+  attachments    OfferAttachment[]
+  revisions      OfferRevision[]
+
+  @@index([organizationId])
   @@map("users")
 }
 
 model JobPosting {
-  id         String    @id @default(uuid())
-  title      String
-  department String
-  details    String    @db.Text
-  notes      String?   @db.Text
-  userId     String
-  isDeleted  Boolean   @default(false)
-  deletedAt  DateTime?
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  id             String    @id @default(uuid())
+  title          String
+  department     String
+  details        String    @db.Text
+  notes          String?   @db.Text
+  userId         String
+  organizationId String
+  isDeleted      Boolean   @default(false)
+  deletedAt      DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
   // Relations
   user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -62,8 +137,10 @@ model JobPosting {
   jobOffers       JobOffer[]
 
   @@index([userId])
+  @@index([organizationId])
   @@index([isDeleted])
   @@index([userId, isDeleted]) // Composite: most common query pattern
+  @@index([organizationId, isDeleted]) // Multi-tenant filter
   @@index([createdAt(sort: Desc)]) // For recent postings
   @@map("job_postings")
 }
@@ -81,6 +158,7 @@ model Candidate {
   sourceFileName String
   fileUrl        String? // MinIO presigned URL for file access
   userId         String
+  organizationId String
   isDeleted      Boolean   @default(false)
   deletedAt      DateTime?
   createdAt      DateTime  @default(now())
@@ -94,23 +172,26 @@ model Candidate {
   jobOffers       JobOffer[]
 
   @@index([userId])
+  @@index([organizationId])
   @@index([email])
   @@index([isDeleted])
   @@index([userId, isDeleted]) // Composite: most common query pattern
+  @@index([organizationId, isDeleted]) // Multi-tenant filter
   @@index([createdAt(sort: Desc)]) // For recent candidates
   @@map("candidates")
 }
 
 model Analysis {
-  id           String    @id @default(uuid())
-  jobPostingId String
-  userId       String
-  status       String    @default("PENDING") // PENDING, PROCESSING, COMPLETED, FAILED
-  errorMessage String?   @db.Text
-  completedAt  DateTime?
-  createdAt    DateTime  @default(now())
-  version      Int       @default(1) // Version tracking for AI chat freshness
-  updatedAt    DateTime  @default(now()) @updatedAt // Auto-update timestamp
+  id             String    @id @default(uuid())
+  jobPostingId   String
+  userId         String
+  organizationId String
+  status         String    @default("PENDING") // PENDING, PROCESSING, COMPLETED, FAILED
+  errorMessage   String?   @db.Text
+  completedAt    DateTime?
+  createdAt      DateTime  @default(now())
+  version        Int       @default(1) // Version tracking for AI chat freshness
+  updatedAt      DateTime  @default(now()) @updatedAt // Auto-update timestamp
 
   // Relations
   jobPosting      JobPosting       @relation(fields: [jobPostingId], references: [id], onDelete: Cascade)
@@ -118,18 +199,21 @@ model Analysis {
   analysisResults AnalysisResult[]
 
   @@index([userId])
+  @@index([organizationId])
   @@index([jobPostingId])
   @@index([status])
   @@index([version]) // Index for version queries
   @@index([userId, status]) // Composite: dashboard filtering
+  @@index([organizationId, status]) // Multi-tenant filter
   @@index([createdAt(sort: Desc)]) // For recent analyses
   @@map("analyses")
 }
 
 model AnalysisResult {
-  id          String @id @default(uuid())
-  analysisId  String
-  candidateId String
+  id             String @id @default(uuid())
+  analysisId     String
+  candidateId    String
+  organizationId String
 
   // V7.1: Scores (all 0-100, weighted final)
   experienceScore    Int? // Sub-score for experience (0-100)
@@ -166,18 +250,21 @@ model AnalysisResult {
 
   @@index([analysisId])
   @@index([candidateId])
+  @@index([organizationId])
   @@index([compatibilityScore])
   @@index([analysisId, compatibilityScore]) // Composite: score filtering within analysis
+  @@index([organizationId, compatibilityScore]) // Multi-tenant filter
   @@index([createdAt(sort: Desc)]) // For recent results
   @@map("analysis_results")
 }
 
 model AssessmentTest {
-  id           String  @id @default(uuid())
-  jobPostingId String
-  createdBy    String
-  token        String  @unique
-  analysisId   String? // NEW: Analysis-based MASTER test strategy
+  id             String  @id @default(uuid())
+  jobPostingId   String
+  createdBy      String
+  organizationId String
+  token          String  @unique
+  analysisId     String? // NEW: Analysis-based MASTER test strategy
 
   questions Json // [{ id, category, question, options: [], correctAnswer, explanation }]
 
@@ -195,9 +282,11 @@ model AssessmentTest {
   @@index([token])
   @@index([jobPostingId])
   @@index([createdBy])
+  @@index([organizationId])
   @@index([expiresAt])
   @@index([analysisId]) // NEW: Index for analysis-based lookups
   @@index([analysisId, maxAttempts]) // NEW: Composite for MASTER test lookups
+  @@index([organizationId, expiresAt]) // Multi-tenant filter
   @@map("assessment_tests")
 }
 
@@ -237,6 +326,7 @@ model TestSubmission {
 model BulkUploadSession {
   id              String   @id @default(uuid())
   userId          String
+  organizationId  String
   totalFiles      Int
   processedFiles  Int      @default(0)
   successfulFiles Int      @default(0)
@@ -251,7 +341,9 @@ model BulkUploadSession {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+  @@index([organizationId])
   @@index([status])
+  @@index([organizationId, status]) // Multi-tenant filter
   @@index([createdAt(sort: Desc)])
   @@map("bulk_upload_sessions")
 }
@@ -265,7 +357,8 @@ model BulkUploadSession {
 
 // Main Interview Table
 model Interview {
-  id String @id @default(uuid())
+  id             String @id @default(uuid())
+  organizationId String
 
   // Interview Type & Details
   type     String // 'phone', 'online', 'in-person'
@@ -305,6 +398,8 @@ model Interview {
   @@index([date, time])
   @@index([status])
   @@index([interviewerId])
+  @@index([organizationId])
+  @@index([organizationId, status]) // Multi-tenant filter
   @@index([createdAt(sort: Desc)])
   @@map("interviews")
 }
@@ -367,19 +462,22 @@ enum NegotiationStatus {
 // OFFER TEMPLATE CATEGORY (Feature #30)
 // ============================================
 model OfferTemplateCategory {
-  id          String   @id @default(uuid())
-  name        String   // "Yazılım", "Satış", "Yönetim"
-  description String?  @db.Text
-  color       String?  // Hex color for UI
-  icon        String?  // Icon name
-  order       Int      @default(0) // Display order
+  id             String  @id @default(uuid())
+  organizationId String
+  name           String // "Yazılım", "Satış", "Yönetim"
+  description    String? @db.Text
+  color          String? // Hex color for UI
+  icon           String? // Icon name
+  order          Int     @default(0) // Display order
 
-  templates   OfferTemplate[]
+  templates OfferTemplate[]
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([order])
+  @@index([organizationId])
+  @@index([organizationId, order]) // Multi-tenant filter
   @@map("offer_template_categories")
 }
 
@@ -387,46 +485,49 @@ model OfferTemplateCategory {
 // OFFER TEMPLATE (Features #7, #8, #13, #14)
 // ============================================
 model OfferTemplate {
-  id          String  @id @default(uuid())
-  name        String  // "Senior Software Engineer Offer"
-  description String? @db.Text
-  categoryId  String?
+  id             String  @id @default(uuid())
+  organizationId String
+  name           String // "Senior Software Engineer Offer"
+  description    String? @db.Text
+  categoryId     String?
 
   // Position defaults
-  position    String
-  department  String
+  position   String
+  department String
 
   // Salary range
-  salaryMin   Int
-  salaryMax   Int
-  currency    String  @default("TRY")
+  salaryMin Int
+  salaryMax Int
+  currency  String @default("TRY")
 
   // Benefits (JSON array)
-  benefits    Json    // [{type: "insurance", amount: 0}, {type: "meal", amount: 1000}]
+  benefits Json // [{type: "insurance", amount: 0}, {type: "meal", amount: 1000}]
 
   // Work details
-  workType    String  @default("office") // office, hybrid, remote
+  workType String @default("office") // office, hybrid, remote
 
   // Terms and conditions
-  terms       String  @db.Text
+  terms String @db.Text
 
   // Email template
   emailSubject String
-  emailBody    String  @db.Text
+  emailBody    String @db.Text
 
   // Relations
-  category    OfferTemplateCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
-  offers      JobOffer[]
+  category OfferTemplateCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  offers   JobOffer[]
 
   // Metadata
-  isActive    Boolean  @default(true)
-  usageCount  Int      @default(0) // Track how many times used
+  isActive   Boolean @default(true)
+  usageCount Int     @default(0) // Track how many times used
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([categoryId])
+  @@index([organizationId])
   @@index([isActive])
+  @@index([organizationId, isActive]) // Multi-tenant filter
   @@index([usageCount(sort: Desc)])
   @@map("offer_templates")
 }
@@ -435,85 +536,88 @@ model OfferTemplate {
 // JOB OFFER (Features #1-6, #9-12, #15)
 // ============================================
 model JobOffer {
-  id              String   @id @default(uuid())
+  id             String @id @default(uuid())
+  organizationId String
 
   // Relations
-  candidateId     String
-  jobPostingId    String?
-  templateId      String?
-  createdBy       String
+  candidateId  String
+  jobPostingId String?
+  templateId   String?
+  createdBy    String
 
   // Offer Details (Feature #1)
-  position        String
-  department      String
-  salary          Int
-  currency        String   @default("TRY")
-  startDate       DateTime
-  workType        String   // office, hybrid, remote
+  position   String
+  department String
+  salary     Int
+  currency   String   @default("TRY")
+  startDate  DateTime
+  workType   String // office, hybrid, remote
 
   // Benefits (JSON object)
-  benefits        Json     // {insurance: true, meal: 1000, transportation: true, gym: false}
+  benefits Json // {insurance: true, meal: 1000, transportation: true, gym: false}
 
   // Terms
-  terms           String   @db.Text
+  terms String @db.Text
 
   // Custom fields
-  customFields    Json?    // Flexible additional fields
-  rejectionReason String?  @db.Text // Why the candidate rejected the offer
+  customFields    Json? // Flexible additional fields
+  rejectionReason String? @db.Text // Why the candidate rejected the offer
 
   // Status & Tracking (Feature #4)
-  status          OfferStatus @default(draft)
+  status OfferStatus @default(draft)
 
   // Timestamps
-  sentAt          DateTime?
-  respondedAt     DateTime?
-  acceptedAt      DateTime?  // When candidate accepted
-  rejectedAt      DateTime?  // When candidate rejected
-  expiresAt       DateTime  // Feature #12: 7 days validity
+  sentAt      DateTime?
+  respondedAt DateTime?
+  acceptedAt  DateTime? // When candidate accepted
+  rejectedAt  DateTime? // When candidate rejected
+  expiresAt   DateTime // Feature #12: 7 days validity
 
   // Acceptance System (Feature #9)
-  acceptanceToken String   @unique @default(uuid())
-  acceptanceUrl   String?  // Full URL to acceptance page
+  acceptanceToken String  @unique @default(uuid())
+  acceptanceUrl   String? // Full URL to acceptance page
 
   // Approval Flow (Feature #11)
-  approvalStatus  ApprovalStatus @default(pending)
-  approvalNotes   String?  @db.Text
-  approvedBy      String?
-  approvedAt      DateTime?
+  approvalStatus ApprovalStatus @default(pending)
+  approvalNotes  String?        @db.Text
+  approvedBy     String?
+  approvedAt     DateTime?
 
   // Notifications (Feature #10)
-  emailSent       Boolean  @default(false)
-  emailSentAt     DateTime?
+  emailSent   Boolean   @default(false)
+  emailSentAt DateTime?
 
   // Analytics tracking
-  viewCount       Int      @default(0)
-  lastViewedAt    DateTime?
+  viewCount    Int       @default(0)
+  lastViewedAt DateTime?
 
   // Relations
-  candidate       Candidate      @relation(fields: [candidateId], references: [id], onDelete: Cascade)
-  jobPosting      JobPosting?    @relation(fields: [jobPostingId], references: [id], onDelete: Cascade)
-  template        OfferTemplate? @relation(fields: [templateId], references: [id], onDelete: SetNull)
-  creator         User           @relation("OfferCreator", fields: [createdBy], references: [id], onDelete: Cascade)
-  approver        User?          @relation("OfferApprover", fields: [approvedBy], references: [id], onDelete: SetNull)
+  candidate  Candidate      @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  jobPosting JobPosting?    @relation(fields: [jobPostingId], references: [id], onDelete: Cascade)
+  template   OfferTemplate? @relation(fields: [templateId], references: [id], onDelete: SetNull)
+  creator    User           @relation("OfferCreator", fields: [createdBy], references: [id], onDelete: Cascade)
+  approver   User?          @relation("OfferApprover", fields: [approvedBy], references: [id], onDelete: SetNull)
 
   // Sub-relations (Features #21, #23, #29)
-  negotiations    OfferNegotiation[]
-  attachments     OfferAttachment[]
-  revisions       OfferRevision[]
+  negotiations OfferNegotiation[]
+  attachments  OfferAttachment[]
+  revisions    OfferRevision[]
 
   // Metadata
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([candidateId])
   @@index([jobPostingId])
   @@index([templateId])
   @@index([createdBy])
+  @@index([organizationId])
   @@index([status])
   @@index([approvalStatus])
   @@index([acceptanceToken])
   @@index([expiresAt])
   @@index([sentAt])
+  @@index([organizationId, status]) // Multi-tenant filter
   @@index([createdAt(sort: Desc)])
   @@map("job_offers")
 }
@@ -522,28 +626,28 @@ model JobOffer {
 // OFFER NEGOTIATION (Feature #21)
 // ============================================
 model OfferNegotiation {
-  id              String   @id @default(uuid())
-  offerId         String
+  id      String @id @default(uuid())
+  offerId String
 
   // Who is negotiating
-  initiatedBy     String   // "candidate" or "company"
+  initiatedBy String // "candidate" or "company"
 
   // Counter offer details
   counterSalary   Int?
-  counterBenefits Json?    // Modified benefits
-  message         String   @db.Text
+  counterBenefits Json? // Modified benefits
+  message         String @db.Text
 
   // Response
-  response        String?  @db.Text
-  status          NegotiationStatus @default(pending)
-  respondedAt     DateTime?
-  respondedBy     String?
+  response    String?           @db.Text
+  status      NegotiationStatus @default(pending)
+  respondedAt DateTime?
+  respondedBy String?
 
   // Relations
-  offer           JobOffer @relation(fields: [offerId], references: [id], onDelete: Cascade)
-  responder       User?    @relation(fields: [respondedBy], references: [id], onDelete: SetNull)
+  offer     JobOffer @relation(fields: [offerId], references: [id], onDelete: Cascade)
+  responder User?    @relation(fields: [respondedBy], references: [id], onDelete: SetNull)
 
-  createdAt       DateTime @default(now())
+  createdAt DateTime @default(now())
 
   @@index([offerId])
   @@index([status])
@@ -555,27 +659,27 @@ model OfferNegotiation {
 // OFFER ATTACHMENT (Feature #23)
 // ============================================
 model OfferAttachment {
-  id          String   @id @default(uuid())
-  offerId     String
+  id      String @id @default(uuid())
+  offerId String
 
   // File details
-  filename    String
+  filename     String
   originalName String
-  mimeType    String
-  size        Int      // bytes
+  mimeType     String
+  size         Int // bytes
 
   // Storage
-  fileUrl     String   // MinIO URL
+  fileUrl String // MinIO URL
 
   // Metadata
-  description String?  @db.Text
+  description String? @db.Text
   uploadedBy  String
 
   // Relations
-  offer       JobOffer @relation(fields: [offerId], references: [id], onDelete: Cascade)
-  uploader    User     @relation(fields: [uploadedBy], references: [id], onDelete: Cascade)
+  offer    JobOffer @relation(fields: [offerId], references: [id], onDelete: Cascade)
+  uploader User     @relation(fields: [uploadedBy], references: [id], onDelete: Cascade)
 
-  createdAt   DateTime @default(now())
+  createdAt DateTime @default(now())
 
   @@index([offerId])
   @@map("offer_attachments")
@@ -585,28 +689,28 @@ model OfferAttachment {
 // OFFER REVISION (Feature #29)
 // ============================================
 model OfferRevision {
-  id          String   @id @default(uuid())
-  offerId     String
+  id      String @id @default(uuid())
+  offerId String
 
   // Version info
-  version     Int      // 1, 2, 3...
-  changeType  String   // created, updated, approved, sent
+  version    Int // 1, 2, 3...
+  changeType String // created, updated, approved, sent
 
   // Snapshot of offer data at this version
-  snapshot    Json     // Full offer object
+  snapshot Json // Full offer object
 
   // What changed
-  changes     Json?    // Diff of changes {field: {old, new}}
-  changeNotes String?  @db.Text
+  changes     Json? // Diff of changes {field: {old, new}}
+  changeNotes String? @db.Text
 
   // Who made the change (nullable for public candidate actions)
-  changedBy   String?
+  changedBy String?
 
   // Relations
-  offer       JobOffer @relation(fields: [offerId], references: [id], onDelete: Cascade)
-  changer     User?    @relation(fields: [changedBy], references: [id], onDelete: Cascade)
+  offer   JobOffer @relation(fields: [offerId], references: [id], onDelete: Cascade)
+  changer User?    @relation(fields: [changedBy], references: [id], onDelete: Cascade)
 
-  createdAt   DateTime @default(now())
+  createdAt DateTime @default(now())
 
   @@unique([offerId, version])
   @@index([offerId])

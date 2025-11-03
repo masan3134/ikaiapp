@@ -31,7 +31,6 @@ async function register(req, res) {
 
     const { email, password } = req.body;
 
-    // Check if user already exists
     const existingUser = await prisma.user.findUnique({
       where: { email }
     });
@@ -43,20 +42,34 @@ async function register(req, res) {
       });
     }
 
-    // Hash password
     const hashedPassword = await hashPassword(password);
 
-    // Create user
+    const organization = await prisma.organization.create({
+      data: {
+        name: `${email.split('@')[0]}'s Organization`,
+        slug: `org-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        plan: 'FREE',
+        maxAnalysisPerMonth: 10,
+        maxCvPerMonth: 50,
+        maxUsers: 2,
+        onboardingCompleted: false,
+        isTrial: true,
+        trialEndsAt: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000)
+      }
+    });
+
     const user = await prisma.user.create({
       data: {
         email,
         password: hashedPassword,
-        role: 'USER'
+        role: 'USER',
+        organizationId: organization.id
       },
       select: {
         id: true,
         email: true,
         role: true,
+        organizationId: true,
         createdAt: true
       }
     });

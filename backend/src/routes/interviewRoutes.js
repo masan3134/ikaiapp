@@ -2,14 +2,10 @@ const express = require('express');
 const router = express.Router();
 const interviewController = require('../controllers/interviewController');
 const { authenticateToken } = require('../middleware/auth');
+const { enforceOrganizationIsolation } = require('../middleware/organizationIsolation');
 
-/**
- * Interview Routes
- * All routes require authentication
- */
-
-// Apply authentication to all routes
 router.use(authenticateToken);
+router.use(enforceOrganizationIsolation);
 
 // ============================================
 // WIZARD ENDPOINTS

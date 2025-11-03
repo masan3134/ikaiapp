@@ -4,7 +4,7 @@ class NegotiationController {
   async createNegotiation(req, res) {
     try {
       const { offerId } = req.params;
-      const negotiation = await negotiationService.createNegotiation(offerId, req.body, 'company', req.user.id);
+      const negotiation = await negotiationService.createNegotiation(offerId, req.body, 'company', req.user.id, req.organizationId);
       res.status(201).json({ success: true, data: negotiation });
     } catch (error) {
       res.status(500).json({ success: false, error: error.message });
@@ -14,7 +14,7 @@ class NegotiationController {
   async getNegotiations(req, res) {
     try {
       const { offerId } = req.params;
-      const negotiations = await negotiationService.getNegotiations(offerId);
+      const negotiations = await negotiationService.getNegotiations(offerId, req.organizationId);
       res.json({ success: true, data: negotiations });
     } catch (error) {
       res.status(500).json({ success: false, error: error.message });
@@ -24,7 +24,7 @@ class NegotiationController {
   async respondToNegotiation(req, res) {
     try {
       const { id } = req.params;
-      const negotiation = await negotiationService.respondToNegotiation(id, req.body, req.user.id);
+      const negotiation = await negotiationService.respondToNegotiation(id, req.body, req.user.id, req.organizationId);
       res.json({ success: true, data: negotiation });
     } catch (error) {
       res.status(500).json({ success: false, error: error.message });

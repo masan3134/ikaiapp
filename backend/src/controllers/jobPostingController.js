@@ -12,6 +12,7 @@ async function getAllJobPostings(req, res) {
   try {
     const userId = req.user.id;
     const isAdmin = req.user.role === 'ADMIN';
+    const organizationId = req.organizationId;
     const { page = 1, limit = 20 } = req.query;
 
     // Pagination
@@ -20,7 +21,7 @@ async function getAllJobPostings(req, res) {
     const skip = (pageNum - 1) * limitNum;
 
     // Build query based on user role (exclude deleted)
-    const where = isAdmin ? { isDeleted: false } : { userId, isDeleted: false };
+    const where = isAdmin ? { isDeleted: false } : { userId, organizationId, isDeleted: false };
 
     // Get total count for pagination
     const totalCount = await prisma.jobPosting.count({ where });
@@ -85,6 +86,7 @@ async function createJobPosting(req, res) {
 
     const { title, department, details, notes } = req.body;
     const userId = req.user.id;
+    const organizationId = req.organizationId;
 
     // Create job posting
     const jobPosting = await prisma.jobPosting.create({
@@ -93,7 +95,8 @@ async function createJobPosting(req, res) {
         department: department.trim(),
         details: details.trim(),
         notes: notes ? notes.trim() : null,
-        userId
+        userId,
+        organizationId
       },
       include: {
         user: {
@@ -128,6 +131,7 @@ async function getJobPostingById(req, res) {
     const { id } = req.params;
     const userId = req.user.id;
     const isAdmin = req.user.role === 'ADMIN';
+    const organizationId = req.organizationId;
 
     const jobPosting = await prisma.jobPosting.findUnique({
       where: { id },
@@ -159,7 +163,7 @@ async function getJobPostingById(req, res) {
     }
 
     // Check ownership
-    if (jobPosting.userId !== userId && !isAdmin) {
+    if ((jobPosting.userId !== userId || jobPosting.organizationId !== organizationId) && !isAdmin) {
       return res.status(403).json({
         error: 'Forbidden',
         message: 'Bu ilana erişim yetkiniz yok'
@@ -185,6 +189,7 @@ async function updateJobPosting(req, res) {
     const { id } = req.params;
     const userId = req.user.id;
     const isAdmin = req.user.role === 'ADMIN';
+    const organizationId = req.organizationId;
     const { title, department, details, notes } = req.body;
 
     // Check if job posting exists
@@ -200,7 +205,7 @@ async function updateJobPosting(req, res) {
     }
 
     // Check ownership
-    if (existingJobPosting.userId !== userId && !isAdmin) {
+    if ((existingJobPosting.userId !== userId || existingJobPosting.organizationId !== organizationId) && !isAdmin) {
       return res.status(403).json({
         error: 'Forbidden',
         message: 'Bu ilanı düzenleme yetkiniz yok'
@@ -249,6 +254,7 @@ async function deleteJobPosting(req, res) {
     const { id } = req.params;
     const userId = req.user.id;
     const isAdmin = req.user.role === 'ADMIN';
+    const organizationId = req.organizationId;
 
     // Check if job posting exists
     const jobPosting = await prisma.jobPosting.findUnique({
@@ -270,7 +276,7 @@ async function deleteJobPosting(req, res) {
     }
 
     // Check ownership
-    if (jobPosting.userId !== userId && !isAdmin) {
+    if ((jobPosting.userId !== userId || jobPosting.organizationId !== organizationId) && !isAdmin) {
       return res.status(403).json({
         error: 'Forbidden',
         message: 'Bu ilanı silme yetkiniz yok'

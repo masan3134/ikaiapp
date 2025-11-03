@@ -18,10 +18,11 @@ async function getSummary(req, res) {
   try {
     const userId = req.user.id;
     const userRole = req.user.role;
+    const organizationId = req.organizationId;
 
     logger.logRequest(req, 'Analytics summary requested');
 
-    const summary = await analyticsService.calculateSummary(userId, userRole);
+    const summary = await analyticsService.calculateSummary(userId, userRole, organizationId);
 
     res.json(summary);
   } catch (error) {
@@ -42,13 +43,15 @@ async function getTimeToHire(req, res) {
     const { startDate, endDate, department } = req.query;
     const userId = req.user.id;
     const userRole = req.user.role;
+    const organizationId = req.organizationId;
 
     logger.logRequest(req, 'Time-to-hire analytics requested', { department });
 
     const filters = {
       startDate: startDate ? new Date(startDate) : undefined,
       endDate: endDate ? new Date(endDate) : undefined,
-      department
+      department,
+      organizationId
     };
 
     const data = await analyticsService.calculateTimeToHire(userId, userRole, filters);
@@ -72,12 +75,14 @@ async function getFunnel(req, res) {
     const { startDate, endDate } = req.query;
     const userId = req.user.id;
     const userRole = req.user.role;
+    const organizationId = req.organizationId;
 
     logger.logRequest(req, 'Funnel analytics requested');
 
     const filters = {
       startDate: startDate ? new Date(startDate) : undefined,
-      endDate: endDate ? new Date(endDate) : undefined
+      endDate: endDate ? new Date(endDate) : undefined,
+      organizationId
     };
 
     const funnel = await analyticsService.generateFunnelData(userId, userRole, filters);
@@ -101,10 +106,11 @@ async function getScoreDistribution(req, res) {
     const { jobPostingId } = req.query;
     const userId = req.user.id;
     const userRole = req.user.role;
+    const organizationId = req.organizationId;
 
     logger.logRequest(req, 'Score distribution requested', { jobPostingId });
 
-    const distribution = await analyticsService.getScoreStats(userId, userRole, jobPostingId);
+    const distribution = await analyticsService.getScoreStats(userId, userRole, jobPostingId, organizationId);
 
     res.json(distribution);
   } catch (error) {
@@ -125,10 +131,11 @@ async function getTopJobs(req, res) {
     const limit = parseInt(req.query.limit) || 10;
     const userId = req.user.id;
     const userRole = req.user.role;
+    const organizationId = req.organizationId;
 
     logger.logRequest(req, 'Top jobs requested', { limit });
 
-    const topJobs = await analyticsService.getTopPerformingJobs(userId, userRole, limit);
+    const topJobs = await analyticsService.getTopPerformingJobs(userId, userRole, limit, organizationId);
 
     res.json(topJobs);
   } catch (error) {

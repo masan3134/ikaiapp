@@ -11,33 +11,30 @@ const {
   exportCandidatesCSV
 } = require('../controllers/bulkExportController');
 const { authenticateToken } = require('../middleware/auth');
+const { enforceOrganizationIsolation } = require('../middleware/organizationIsolation');
 const { upload, handleMulterError } = require('../middleware/upload');
 
 const router = express.Router();
 
 // Get all candidates for current user
-router.get('/', authenticateToken, getAllCandidates);
+router.get('/', authenticateToken, enforceOrganizationIsolation, getAllCandidates);
 
-// Check if file is duplicate
-router.post('/check-duplicate', authenticateToken, checkDuplicateFile);
+router.post('/check-duplicate', authenticateToken, enforceOrganizationIsolation, checkDuplicateFile);
 
-// Upload CV file
 router.post(
   '/upload',
   authenticateToken,
+  enforceOrganizationIsolation,
   upload.single('cv'),
   handleMulterError,
   uploadCV
 );
 
-// Get candidate by ID
-router.get('/:id', authenticateToken, getCandidateById);
+router.get('/:id', authenticateToken, enforceOrganizationIsolation, getCandidateById);
 
-// Delete candidate
-router.delete('/:id', authenticateToken, deleteCandidate);
+router.delete('/:id', authenticateToken, enforceOrganizationIsolation, deleteCandidate);
 
-// Export routes
-router.get('/export/xlsx', authenticateToken, exportCandidatesXLSX);
-router.get('/export/csv', authenticateToken, exportCandidatesCSV);
+router.get('/export/xlsx', authenticateToken, enforceOrganizationIsolation, exportCandidatesXLSX);
+router.get('/export/csv', authenticateToken, enforceOrganizationIsolation, exportCandidatesCSV);
 
 module.exports = router;

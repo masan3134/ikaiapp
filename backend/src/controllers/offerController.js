@@ -18,7 +18,8 @@ class OfferController {
   async createOffer(req, res) {
     try {
       const userId = req.user.id;
-      const offer = await offerService.createOffer(req.body, userId);
+      const organizationId = req.organizationId;
+      const offer = await offerService.createOffer(req.body, userId, organizationId);
 
       res.status(201).json({
         success: true,
@@ -42,7 +43,8 @@ class OfferController {
   async createOfferFromWizard(req, res) {
     try {
       const userId = req.user.id;
-      const { emailSent, emailError, ...offer } = await offerService.createOfferFromWizard(req.body, userId);
+      const organizationId = req.organizationId;
+      const { emailSent, emailError, ...offer } = await offerService.createOfferFromWizard(req.body, userId, organizationId);
 
       const { sendMode } = req.body;
       let successMessage = 'Teklif taslak olarak kaydedildi ve onaya gönderildi';
@@ -79,12 +81,14 @@ class OfferController {
     try {
       const { status, candidateId, createdBy, page, limit } = req.query;
       const userId = req.user.id;
+      const organizationId = req.organizationId;
 
       const result = await offerService.getOffers(
         {
           status,
           candidateId,
-          createdBy: createdBy || userId
+          createdBy: createdBy || userId,
+          organizationId
         },
         {
           page: parseInt(page) || 1,
@@ -114,7 +118,8 @@ class OfferController {
   async getOfferById(req, res) {
     try {
       const { id } = req.params;
-      const offer = await offerService.getOfferById(id);
+      const organizationId = req.organizationId;
+      const offer = await offerService.getOfferById(id, organizationId);
 
       res.json({
         success: true,
@@ -137,7 +142,8 @@ class OfferController {
     try {
       const { id } = req.params;
       const userId = req.user.id;
-      const offer = await offerService.updateOffer(id, req.body, userId);
+      const organizationId = req.organizationId;
+      const offer = await offerService.updateOffer(id, req.body, userId, organizationId);
 
       res.json({
         success: true,
@@ -161,7 +167,8 @@ class OfferController {
     try {
       const { id } = req.params;
       const userId = req.user.id;
-      await offerService.deleteOffer(id, userId);
+      const organizationId = req.organizationId;
+      await offerService.deleteOffer(id, userId, organizationId);
 
       res.json({
         success: true,

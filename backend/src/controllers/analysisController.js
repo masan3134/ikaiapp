@@ -29,6 +29,8 @@ async function createAnalysis(req, res) {
       });
     }
 
+    const organizationId = req.organizationId;
+
     // Verify job posting exists and user owns it
     const jobPosting = await prisma.jobPosting.findUnique({
       where: { id: jobPostingId }
@@ -52,7 +54,8 @@ async function createAnalysis(req, res) {
     const candidates = await prisma.candidate.findMany({
       where: {
         id: { in: candidateIds },
-        userId
+        userId,
+        organizationId
       }
     });
 
@@ -68,6 +71,7 @@ async function createAnalysis(req, res) {
       data: {
         jobPostingId,
         userId,
+        organizationId,
         status: 'PENDING'
       },
       include: {
@@ -129,6 +133,7 @@ async function getAllAnalyses(req, res) {
   try {
     const userId = req.user.id;
     const isAdmin = req.user.role === 'ADMIN';
+    const organizationId = req.organizationId;
     const { candidateId, page = 1, limit = 20 } = req.query;
 
     // Pagination
@@ -137,7 +142,7 @@ async function getAllAnalyses(req, res) {
     const skip = (pageNum - 1) * limitNum;
 
     // Build query based on user role
-    const where = isAdmin ? {} : { userId };
+    const where = isAdmin ? {} : { userId, organizationId };
 
     // If candidateId filter is provided, add it to where clause
     if (candidateId) {
@@ -242,6 +247,7 @@ async function getAnalysisById(req, res) {
     const { id } = req.params;
     const userId = req.user.id;
     const isAdmin = req.user.role === 'ADMIN';
+    const organizationId = req.organizationId;
 
     const analysis = await prisma.analysis.findUnique({
       where: { id },
@@ -301,7 +307,7 @@ async function getAnalysisById(req, res) {
     }
 
     // Check ownership
-    if (analysis.userId !== userId && !isAdmin) {
+    if ((analysis.userId !== userId || analysis.organizationId !== organizationId) && !isAdmin) {
       return res.status(403).json({
         error: 'Forbidden',
         message: 'Bu analize erişim yetkiniz yok'
@@ -328,6 +334,7 @@ async function deleteAnalysis(req, res) {
     const { id } = req.params;
     const userId = req.user.id;
     const isAdmin = req.user.role === 'ADMIN';
+    const organizationId = req.organizationId;
 
     // Check if analysis exists
     const analysis = await prisma.analysis.findUnique({
@@ -349,7 +356,7 @@ async function deleteAnalysis(req, res) {
     }
 
     // Check ownership
-    if (analysis.userId !== userId && !isAdmin) {
+    if ((analysis.userId !== userId || analysis.organizationId !== organizationId) && !isAdmin) {
       return res.status(403).json({
         error: 'Forbidden',
         message: 'Bu analizi silme yetkiniz yok'
@@ -384,6 +391,7 @@ async function addCandidatesToAnalysis(req, res) {
     const { id: analysisId } = req.params;
     const { candidateIds } = req.body;
     const userId = req.user.id;
+    const organizationId = req.organizationId;
 
     // 1. Validation
     if (!candidateIds || !Array.isArray(candidateIds) || candidateIds.length === 0) {
@@ -402,7 +410,7 @@ async function addCandidatesToAnalysis(req, res) {
     if (!analysis) {
       return res.status(404).json({ message: 'Analiz bulunamadı.' });
     }
-    if (analysis.userId !== userId) {
+    if (analysis.userId !== userId || analysis.organizationId !== organizationId) {
       return res.status(403).json({ message: 'Bu analizi güncelleme yetkiniz yok.' });
     }
     if (analysis.status !== 'COMPLETED') {
@@ -419,7 +427,7 @@ async function addCandidatesToAnalysis(req, res) {
 
     // 4. Verify new candidates exist and are owned by the user
     const candidates = await prisma.candidate.findMany({
-      where: { id: { in: newCandidateIds }, userId }
+      where: { id: { in: newCandidateIds }, userId, organizationId }
     });
 
     if (candidates.length !== newCandidateIds.length) {
@@ -478,6 +486,7 @@ async function sendCandidateFeedback(req, res) {
     const { id: analysisId } = req.params;
     const { scoreThreshold = 60, candidateIds } = req.body;
     const userId = req.user.id;
+    const organizationId = req.organizationId;
 
     // Verify analysis exists and user owns it
     const analysis = await prisma.analysis.findUnique({
@@ -513,7 +522,7 @@ async function sendCandidateFeedback(req, res) {
       });
     }
 
-    if (analysis.userId !== userId) {
+    if (analysis.userId !== userId || analysis.organizationId !== organizationId) {
       return res.status(403).json({
         error: 'Forbidden',
         message: 'Bu analize erişim yetkiniz yok'

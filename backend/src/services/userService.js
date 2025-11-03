@@ -12,10 +12,10 @@ class UserService {
   /**
    * Get all users with pagination and filters
    */
-  async getAllUsers({ page = 1, limit = 20, role }) {
+  async getAllUsers({ page = 1, limit = 20, role, organizationId }) {
     const skip = (page - 1) * limit;
 
-    const where = {};
+    const where = { organizationId };
     if (role) {
       where.role = role;
     }
@@ -61,9 +61,9 @@ class UserService {
   /**
    * Get user by ID with full details
    */
-  async getUserById(id) {
-    const user = await prisma.user.findUnique({
-      where: { id },
+  async getUserById(id, organizationId) {
+    const user = await prisma.user.findFirst({
+      where: { id, organizationId },
       select: {
         id: true,
         email: true,
@@ -138,9 +138,9 @@ class UserService {
   /**
    * Update user
    */
-  async updateUser(id, { email, role }) {
-    const user = await prisma.user.findUnique({
-      where: { id }
+  async updateUser(id, { email, role }, organizationId) {
+    const user = await prisma.user.findFirst({
+      where: { id, organizationId }
     });
 
     if (!user) {
@@ -189,9 +189,9 @@ class UserService {
   /**
    * Delete user (for now, hard delete - could be soft delete if needed)
    */
-  async deleteUser(id) {
-    const user = await prisma.user.findUnique({
-      where: { id },
+  async deleteUser(id, organizationId) {
+    const user = await prisma.user.findFirst({
+      where: { id, organizationId },
       include: {
         _count: {
           select: {
@@ -226,9 +226,9 @@ class UserService {
   /**
    * Change user password (admin only)
    */
-  async changePassword(id, newPassword) {
-    const user = await prisma.user.findUnique({
-      where: { id }
+  async changePassword(id, newPassword, organizationId) {
+    const user = await prisma.user.findFirst({
+      where: { id, organizationId }
     });
 
     if (!user) {

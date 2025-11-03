@@ -199,6 +199,9 @@ apiV1Router.use('/analytics', analyticsRoutes);
 
 // NEW FEATURE #8: Bulk CV Upload
 
+// NEW FEATURE: Multi-Tenant Organizations
+  const organizationRoutes = require('./routes/organizationRoutes');
+
 // NEW FEATURE: Job Offer System (Phase 1 + 2 + 3)
   const offerRoutes = require('./routes/offerRoutes');
   const templateRoutes = require('./routes/templateRoutes');
@@ -208,6 +211,9 @@ apiV1Router.use('/analytics', analyticsRoutes);
   const revisionRoutes = require('./routes/revisionRoutes'); // Phase 5
   const negotiationRoutes = require('./routes/negotiationRoutes'); // Phase 5
   const attachmentRoutes = require('./routes/attachmentRoutes'); // Phase 5
+
+  // Multi-tenant organization routes
+  apiV1Router.use('/organizations', organizationRoutes);
 
   // CRITICAL: Register public routes BEFORE authenticated routes to avoid conflict
   apiV1Router.use('/offers/public', publicOfferRoutes); // Public routes (NO AUTH)

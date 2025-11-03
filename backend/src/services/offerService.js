@@ -7,7 +7,7 @@ const { NotFoundError, AuthorizationError, ValidationError } = require('../error
 
 const DEFAULT_OFFER_EXPIRATION_DAYS = 7; // Default 7 days for offer expiration
 
-async function createOffer(data, userId) {
+async function createOffer(data, userId, organizationId) {
   // Validate salary
   if (data.salary !== undefined && (typeof data.salary !== 'number' || data.salary <= 0)) {
     throw new ValidationError('Geçerli bir maaş giriniz');
@@ -28,6 +28,7 @@ async function createOffer(data, userId) {
     ...data,
     startDate: data.startDate, // Use the validated/converted startDate
     createdBy: userId,
+    organizationId,
     status: OfferStatus.draft,
     approvalStatus: ApprovalStatus.pending,
     acceptanceToken: uuidv4(),
@@ -44,10 +45,10 @@ async function createOffer(data, userId) {
   });
 }
 
-async function updateOffer(id, data, userId) {
+async function updateOffer(id, data, userId, organizationId) {
   const existing = await prisma.jobOffer.findUnique({ where: { id } });
   if (!existing) throw new NotFoundError('Teklif bulunamadı');
-  if (existing.createdBy !== userId) throw new AuthorizationError('Bu teklifi güncelleme yetkiniz yok');
+  if (existing.createdBy !== userId || existing.organizationId !== organizationId) throw new AuthorizationError('Bu teklifi güncelleme yetkiniz yok');
 
   // Validate salary if present
   if (data.salary !== undefined) {
@@ -82,22 +83,23 @@ async function updateOffer(id, data, userId) {
   });
 }
 
-async function deleteOffer(id, userId) {
+async function deleteOffer(id, userId, organizationId) {
     const offer = await prisma.jobOffer.findUnique({ where: { id } });
     if (!offer) throw new NotFoundError('Teklif bulunamadı');
-    if (offer.createdBy !== userId) throw new AuthorizationError('Bu teklifi silme yetkiniz yok');
+    if (offer.createdBy !== userId || offer.organizationId !== organizationId) throw new AuthorizationError('Bu teklifi silme yetkiniz yok');
 
     await prisma.jobOffer.delete({ where: { id } });
 }
 
 async function getOffers(filters = {}, pagination = {}) {
-    const { status, candidateId, createdBy } = filters;
+    const { status, candidateId, createdBy, organizationId } = filters;
     const { page = 1, limit = 20 } = pagination;
 
     const where = {};
     if (status) where.status = status;
     if (candidateId) where.candidateId = candidateId;
     if (createdBy) where.createdBy = createdBy;
+    if (organizationId) where.organizationId = organizationId;
 
     const [offers, total] = await Promise.all([
         prisma.jobOffer.findMany({
@@ -121,15 +123,19 @@ async function getOffers(filters = {}, pagination = {}) {
     };
 }
 
-async function getOfferById(id) {
+async function getOfferById(id, organizationId) {
     // First check if offer exists and has jobPostingId
     const basicOffer = await prisma.jobOffer.findUnique({
         where: { id },
-        select: { id: true, jobPostingId: true }
+        select: { id: true, jobPostingId: true, organizationId: true }
     });
 
     if (!basicOffer) {
         throw new NotFoundError('Teklif bulunamadı');
+    }
+
+    if (basicOffer.organizationId !== organizationId) {
+        throw new AuthorizationError('Bu teklife erişim yetkiniz yok');
     }
 
     // Then fetch with includes, conditionally including jobPosting
@@ -286,7 +292,7 @@ async function _sendOfferNotification(offer, sendMode) {
   }
 }
 
-async function createOfferFromWizard(data, userId) {
+async function createOfferFromWizard(data, userId, organizationId) {
   const { candidateId, jobPostingId, templateId, sendMode, ...formData } = data;
 
   _validateWizardData({ candidateId, ...formData });
@@ -304,6 +310,7 @@ async function createOfferFromWizard(data, userId) {
     approvedBy,
     approvedAt,
     createdBy: userId,
+    organizationId,
     acceptanceToken: uuidv4(),
     expiresAt: new Date(Date.now() + DEFAULT_OFFER_EXPIRATION_DAYS * 24 * 60 * 60 * 1000),
   };

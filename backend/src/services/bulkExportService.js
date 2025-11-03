@@ -3,27 +3,17 @@ const { PrismaClient } = require('@prisma/client');
 
 const prisma = new PrismaClient();
 
-/**
- * Export candidates to Excel
- * @param {string} userId - User ID (for filtering)
- * @param {string} role - User role (ADMIN can see all)
- * @param {string[]} candidateIds - Optional: specific IDs to export
- */
-async function exportCandidatesToExcel(userId, role, candidateIds = null) {
-  // Build where clause based on role and selection
-  const where = {};
+async function exportCandidatesToExcel(userId, role, candidateIds = null, organizationId) {
+  const where = { organizationId };
 
-  // Role-based filtering
   if (role !== 'ADMIN') {
     where.userId = userId;
   }
 
-  // Selection filtering
   if (candidateIds && candidateIds.length > 0) {
     where.id = { in: candidateIds };
   }
 
-  // Add isDeleted filter
   where.isDeleted = false;
 
   const candidates = await prisma.candidate.findMany({
@@ -34,7 +24,6 @@ async function exportCandidatesToExcel(userId, role, candidateIds = null) {
   const workbook = new ExcelJS.Workbook();
   const sheet = workbook.addWorksheet('Adaylar');
 
-  // Headers
   sheet.columns = [
     { header: 'Ad', key: 'firstName', width: 15 },
     { header: 'Soyad', key: 'lastName', width: 15 },
@@ -47,7 +36,6 @@ async function exportCandidatesToExcel(userId, role, candidateIds = null) {
     { header: 'Oluşturulma', key: 'createdAt', width: 20 }
   ];
 
-  // Style header
   sheet.getRow(1).font = { bold: true, size: 12 };
   sheet.getRow(1).fill = {
     type: 'pattern',
@@ -56,7 +44,6 @@ async function exportCandidatesToExcel(userId, role, candidateIds = null) {
   };
   sheet.getRow(1).font.color = { argb: 'FFFFFFFF' };
 
-  // Add data
   candidates.forEach(c => {
     sheet.addRow({
       firstName: c.firstName || '-',
@@ -71,7 +58,6 @@ async function exportCandidatesToExcel(userId, role, candidateIds = null) {
     });
   });
 
-  // Auto-fit
   sheet.eachRow((row, rowNumber) => {
     if (rowNumber > 1) {
       row.eachCell(cell => {
@@ -83,11 +69,8 @@ async function exportCandidatesToExcel(userId, role, candidateIds = null) {
   return workbook;
 }
 
-/**
- * Export candidates to CSV
- */
-async function exportCandidatesToCSV(userId, role, candidateIds = null) {
-  const where = {};
+async function exportCandidatesToCSV(userId, role, candidateIds = null, organizationId) {
+  const where = { organizationId };
 
   if (role !== 'ADMIN') {
     where.userId = userId;
@@ -136,11 +119,8 @@ async function exportCandidatesToCSV(userId, role, candidateIds = null) {
   return csv;
 }
 
-/**
- * Export job postings to Excel
- */
-async function exportJobPostingsToExcel(userId, role, jobPostingIds = null) {
-  const where = {};
+async function exportJobPostingsToExcel(userId, role, jobPostingIds = null, organizationId) {
+  const where = { organizationId };
 
   if (role !== 'ADMIN') {
     where.userId = userId;
@@ -204,11 +184,8 @@ async function exportJobPostingsToExcel(userId, role, jobPostingIds = null) {
   return workbook;
 }
 
-/**
- * Export job postings to CSV
- */
-async function exportJobPostingsToCSV(userId, role, jobPostingIds = null) {
-  const where = {};
+async function exportJobPostingsToCSV(userId, role, jobPostingIds = null, organizationId) {
+  const where = { organizationId };
 
   if (role !== 'ADMIN') {
     where.userId = userId;
@@ -256,9 +233,6 @@ async function exportJobPostingsToCSV(userId, role, jobPostingIds = null) {
   return csv;
 }
 
-/**
- * Helper: Escape CSV values
- */
 function escapeCsv(value) {
   if (!value) return '';
   const str = String(value);

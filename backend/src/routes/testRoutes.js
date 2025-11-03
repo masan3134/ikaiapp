@@ -10,6 +10,7 @@ const {
   checkAttempts
 } = require('../controllers/testController');
 const { authenticateToken } = require('../middleware/auth');
+const { enforceOrganizationIsolation } = require('../middleware/organizationIsolation');
 const { validateRequest } = require('../middleware/validationMiddleware');
 
 const router = express.Router();
@@ -17,11 +18,13 @@ const router = express.Router();
 // Auth required endpoints
 router.get('/',
   authenticateToken,
+  enforceOrganizationIsolation,
   getAllTests
 );
 
 router.post('/generate',
   authenticateToken,
+  enforceOrganizationIsolation,
   [
     body('jobPostingId').isUUID().withMessage('Geçerli job posting ID gereklidir'),
     body('analysisId').optional().isUUID().withMessage('Geçerli analysis ID gereklidir')
@@ -32,6 +35,7 @@ router.post('/generate',
 
 router.post('/:testId/send-email',
   authenticateToken,
+  enforceOrganizationIsolation,
   [
     body('recipientEmail').isEmail().withMessage('Geçerli email gereklidir')
   ],
@@ -39,14 +43,15 @@ router.post('/:testId/send-email',
   sendTestEmail
 );
 
-// Get submissions by candidate email (query param) - MUST BE BEFORE /:testId/submissions
 router.get('/submissions',
   authenticateToken,
+  enforceOrganizationIsolation,
   getTestSubmissions
 );
 
 router.get('/:testId/submissions',
   authenticateToken,
+  enforceOrganizationIsolation,
   getTestSubmissions
 );
 

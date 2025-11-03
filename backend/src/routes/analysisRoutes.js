@@ -17,6 +17,7 @@ const {
   sendAnalysisEmail
 } = require('../controllers/emailController');
 const { authenticateToken } = require('../middleware/auth');
+const { enforceOrganizationIsolation } = require('../middleware/organizationIsolation');
 const { validateRequest } = require('../middleware/validationMiddleware');
 
 const router = express.Router();
@@ -24,6 +25,7 @@ const router = express.Router();
 // Create new analysis
 router.post('/',
   authenticateToken,
+  enforceOrganizationIsolation,
   [
     body('jobPostingId').isUUID().withMessage('Gecerli bir is ilani IDsi gereklidir.'),
     body('candidateIds').isArray({ min: 1 }).withMessage('En az bir aday secilmelidir.'),
@@ -34,17 +36,16 @@ router.post('/',
 );
 
 // Get all analyses for current user
-router.get('/', authenticateToken, getAllAnalyses);
+router.get('/', authenticateToken, enforceOrganizationIsolation, getAllAnalyses);
 
 // Get analysis by ID with results
-router.get('/:id', authenticateToken, getAnalysisById);
+router.get('/:id', authenticateToken, enforceOrganizationIsolation, getAnalysisById);
 
-// Delete analysis
-router.delete('/:id', authenticateToken, deleteAnalysis);
+router.delete('/:id', authenticateToken, enforceOrganizationIsolation, deleteAnalysis);
 
-// Add candidates to an existing analysis
 router.post('/:id/add-candidates',
   authenticateToken,
+  enforceOrganizationIsolation,
   [
     body('candidateIds').isArray({ min: 1 }).withMessage('En az bir aday secilmelidir.'),
     body('candidateIds.*').isUUID().withMessage('Aday IDleri gecerli bir formatta olmalidir.')
@@ -53,14 +54,13 @@ router.post('/:id/add-candidates',
   addCandidatesToAnalysis
 );
 
-// Export routes
-router.get('/:id/export/xlsx', authenticateToken, exportAnalysisToExcel);
-router.get('/:id/export/csv', authenticateToken, exportAnalysisToCSV);
-router.get('/:id/export/html', authenticateToken, exportAnalysisToHTML);
+router.get('/:id/export/xlsx', authenticateToken, enforceOrganizationIsolation, exportAnalysisToExcel);
+router.get('/:id/export/csv', authenticateToken, enforceOrganizationIsolation, exportAnalysisToCSV);
+router.get('/:id/export/html', authenticateToken, enforceOrganizationIsolation, exportAnalysisToHTML);
 
-// Email export route
 router.post('/:id/send-email',
   authenticateToken,
+  enforceOrganizationIsolation,
   [
     body('recipientEmail').isEmail().withMessage('Geçerli bir email adresi giriniz'),
     body('formats').isArray({ min: 1 }).withMessage('En az bir format seçilmelidir')
@@ -69,10 +69,9 @@ router.post('/:id/send-email',
   sendAnalysisEmail
 );
 
-// 🆕 TASK #6: AI Candidate Feedback
-// Send personalized feedback to low-scoring candidates
 router.post('/:id/send-feedback',
   authenticateToken,
+  enforceOrganizationIsolation,
   [
     body('scoreThreshold').optional().isInt({ min: 0, max: 100 }).withMessage('Puan eşiği 0-100 arasında olmalıdır'),
     body('candidateIds').optional().isArray().withMessage('Aday IDleri dizi formatında olmalıdır'),

@@ -37,6 +37,7 @@ async function logFrontendError(req, res) {
       componentStack,
       userAgent: userAgent || req.headers['user-agent'],
       userId: req.user?.id || null,
+      organizationId: req.organizationId || null,
       requestId: req.id,
       metadata
     });

@@ -17,7 +17,8 @@ class UserController {
       const result = await userService.getAllUsers({
         page: parseInt(page),
         limit: parseInt(limit),
-        role
+        role,
+        organizationId: req.organizationId
       });
 
       res.json({
@@ -41,7 +42,7 @@ class UserController {
   async getUserById(req, res) {
     try {
       const { id } = req.params;
-      const user = await userService.getUserById(id);
+      const user = await userService.getUserById(id, req.organizationId);
 
       res.json({
         success: true,
@@ -85,7 +86,7 @@ class UserController {
   async updateUser(req, res) {
     try {
       const { id } = req.params;
-      const user = await userService.updateUser(id, req.body);
+      const user = await userService.updateUser(id, req.body, req.organizationId);
 
       res.json({
         success: true,
@@ -108,7 +109,7 @@ class UserController {
   async deleteUser(req, res) {
     try {
       const { id } = req.params;
-      await userService.deleteUser(id);
+      await userService.deleteUser(id, req.organizationId);
 
       res.json({
         success: true,
@@ -139,7 +140,7 @@ class UserController {
         });
       }
 
-      await userService.changePassword(id, newPassword);
+      await userService.changePassword(id, newPassword, req.organizationId);
 
       res.json({
         success: true,

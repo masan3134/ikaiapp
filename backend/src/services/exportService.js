@@ -6,8 +6,8 @@ const prisma = new PrismaClient();
 /**
  * Export analysis to Excel
  */
-async function exportToExcel(analysisId) {
-  const data = await getAnalysisData(analysisId);
+async function exportToExcel(analysisId, organizationId) {
+  const data = await getAnalysisData(analysisId, organizationId);
 
   const workbook = new ExcelJS.Workbook();
   const sheet = workbook.addWorksheet('Analysis Results');
@@ -80,8 +80,8 @@ async function exportToExcel(analysisId) {
 /**
  * Export analysis to CSV
  */
-async function exportToCSV(analysisId) {
-  const data = await getAnalysisData(analysisId);
+async function exportToCSV(analysisId, organizationId) {
+  const data = await getAnalysisData(analysisId, organizationId);
 
   const headers = [
     'Aday Adı',
@@ -132,8 +132,8 @@ async function exportToCSV(analysisId) {
 /**
  * Export analysis to HTML (Print-Ready)
  */
-async function exportToHTML(analysisId) {
-  const data = await getAnalysisData(analysisId);
+async function exportToHTML(analysisId, organizationId) {
+  const data = await getAnalysisData(analysisId, organizationId);
 
   // Calculate stats for overview
   const stats = {
@@ -985,7 +985,16 @@ async function exportToHTML(analysisId) {
 /**
  * Get analysis data with all relations
  */
-async function getAnalysisData(analysisId) {
+async function getAnalysisData(analysisId, organizationId) {
+  const analysis = await prisma.analysis.findFirst({
+    where: { id: analysisId, organizationId },
+    select: { id: true }
+  });
+
+  if (!analysis) {
+    throw new Error('Analysis not found');
+  }
+
   const data = await prisma.$queryRaw`
     SELECT
       a.id,

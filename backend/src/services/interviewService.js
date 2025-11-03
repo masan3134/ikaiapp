@@ -9,9 +9,10 @@ class InterviewService {
   /**
    * Get recent candidates for selection (Step 1)
    */
-  async getRecentCandidates(userId, { search, limit = 10 }) {
+  async getRecentCandidates(userId, organizationId, { search, limit = 10 }) {
     const where = {
       userId,
+      organizationId,
       isDeleted: false,
     };
 
@@ -40,11 +41,12 @@ class InterviewService {
   /**
    * Check for scheduling conflicts (Step 2)
    */
-  async checkConflicts(date, time, interviewerId) {
+  async checkConflicts(date, time, interviewerId, organizationId) {
     const conflicts = await prisma.interview.findMany({
       where: {
         date: new Date(date),
         time,
+        organizationId,
         status: { notIn: ['cancelled', 'completed'] },
         OR: [
           { interviewerId },
@@ -78,18 +80,18 @@ class InterviewService {
   /**
    * Create interview with Google Meet (Step 5)
    */
-  async createInterview(data, userId) {
-    const { 
-      candidateIds, 
-      type, 
-      date, 
-      time, 
+  async createInterview(data, userId, organizationId) {
+    const {
+      candidateIds,
+      type,
+      date,
+      time,
       duration = 60,
-      location, 
+      location,
       interviewerId,
       notes,
       emailTemplate,
-      meetingTitle 
+      meetingTitle
     } = data;
 
     let meetLink = null;
@@ -137,6 +139,7 @@ class InterviewService {
         notes,
         emailTemplate,
         createdBy: userId,
+        organizationId,
         candidates: {
           create: candidateIds.map(id => ({ candidateId: id }))
         }
@@ -272,14 +275,15 @@ class InterviewService {
   /**
    * Get all interviews with filters
    */
-  async getInterviews(userId, filters = {}) {
+  async getInterviews(userId, organizationId, filters = {}) {
     const { status, type, candidateId, page = 1, limit = 20 } = filters; // Parse to int
     const pageInt = parseInt(page, 10);
     const limitInt = parseInt(limit, 10);
     const skip = (pageInt - 1) * limitInt;
 
     const where = {
-      createdBy: userId
+      createdBy: userId,
+      organizationId
     };
 
     if (status) where.status = status;
@@ -333,12 +337,12 @@ class InterviewService {
   /**
    * Get interview statistics
    */
-  async getStats(userId) {
+  async getStats(userId, organizationId) {
     const [total, scheduled, completed, cancelled] = await Promise.all([
-      prisma.interview.count({ where: { createdBy: userId } }),
-      prisma.interview.count({ where: { createdBy: userId, status: 'scheduled' } }),
-      prisma.interview.count({ where: { createdBy: userId, status: 'completed' } }),
-      prisma.interview.count({ where: { createdBy: userId, status: 'cancelled' } })
+      prisma.interview.count({ where: { createdBy: userId, organizationId } }),
+      prisma.interview.count({ where: { createdBy: userId, organizationId, status: 'scheduled' } }),
+      prisma.interview.count({ where: { createdBy: userId, organizationId, status: 'completed' } }),
+      prisma.interview.count({ where: { createdBy: userId, organizationId, status: 'cancelled' } })
     ]);
 
     return { total, scheduled, completed, cancelled };

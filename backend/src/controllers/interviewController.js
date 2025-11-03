@@ -18,8 +18,9 @@ class InterviewController {
     try {
       const { search, limit } = req.query;
       const userId = req.user.id;
+      const organizationId = req.organizationId;
 
-      const candidates = await interviewService.getRecentCandidates(userId, {
+      const candidates = await interviewService.getRecentCandidates(userId, organizationId, {
         search,
         limit
       });
@@ -45,8 +46,9 @@ class InterviewController {
     try {
       const { date, time } = req.body;
       const interviewerId = req.user.id;
+      const organizationId = req.organizationId;
 
-      const result = await interviewService.checkConflicts(date, time, interviewerId);
+      const result = await interviewService.checkConflicts(date, time, interviewerId, organizationId);
 
       res.json({
         success: true,
@@ -68,6 +70,7 @@ class InterviewController {
   async createInterview(req, res) {
     try {
       const userId = req.user.id;
+      const organizationId = req.organizationId;
       const interviewData = req.body;
 
       // Set interviewerId to current user if not specified
@@ -75,7 +78,7 @@ class InterviewController {
         interviewData.interviewerId = userId;
       }
 
-      const interview = await interviewService.createInterview(interviewData, userId);
+      const interview = await interviewService.createInterview(interviewData, userId, organizationId);
 
       res.status(201).json({
         success: true,
@@ -98,9 +101,10 @@ class InterviewController {
   async getInterviews(req, res) {
     try {
       const userId = req.user.id;
+      const organizationId = req.organizationId;
       const filters = req.query;
 
-      const result = await interviewService.getInterviews(userId, filters);
+      const result = await interviewService.getInterviews(userId, organizationId, filters);
 
       res.json({
         success: true,
@@ -123,7 +127,8 @@ class InterviewController {
   async getStats(req, res) {
     try {
       const userId = req.user.id;
-      const stats = await interviewService.getStats(userId);
+      const organizationId = req.organizationId;
+      const stats = await interviewService.getStats(userId, organizationId);
 
       res.json({
         success: true,
@@ -146,11 +151,13 @@ class InterviewController {
     try {
       const { id } = req.params;
       const userId = req.user.id;
+      const organizationId = req.organizationId;
 
       const interview = await prisma.interview.findFirst({
         where: {
           id,
-          createdBy: userId
+          createdBy: userId,
+          organizationId
         },
         include: {
           candidates: {
@@ -193,11 +200,13 @@ class InterviewController {
       const { id } = req.params;
       const { status } = req.body;
       const userId = req.user.id;
+      const organizationId = req.organizationId;
 
       const interview = await prisma.interview.updateMany({
         where: {
           id,
-          createdBy: userId
+          createdBy: userId,
+          organizationId
         },
         data: { status }
       });
@@ -230,10 +239,11 @@ class InterviewController {
     try {
       const { id } = req.params;
       const userId = req.user.id;
+      const organizationId = req.organizationId;
 
       // Cancel Google Meet event if exists
       const interview = await prisma.interview.findFirst({
-        where: { id, createdBy: userId }
+        where: { id, createdBy: userId, organizationId }
       });
 
       if (!interview) {

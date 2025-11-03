@@ -52,6 +52,19 @@ async function invalidateJobPostingCache(req, res) {
   try {
     const { jobPostingId } = req.params;
 
+    const { PrismaClient } = require('@prisma/client');
+    const prisma = new PrismaClient();
+    const jobPosting = await prisma.jobPosting.findFirst({
+      where: { id: jobPostingId, organizationId: req.organizationId }
+    });
+
+    if (!jobPosting) {
+      return res.status(404).json({
+        error: 'Not Found',
+        message: 'İş ilanı bulunamadı'
+      });
+    }
+
     const deleted = await invalidateJobCache(jobPostingId);
 
     res.json({

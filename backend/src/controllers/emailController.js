@@ -10,6 +10,14 @@ async function sendAnalysisEmail(req, res) {
     const { id } = req.params;
     const { recipientEmail, formats } = req.body;
 
+    const analysis = await require('../services/exportService').getAnalysisData(id, req.organizationId);
+    if (!analysis) {
+      return res.status(404).json({
+        error: 'Not Found',
+        message: 'Analiz bulunamadı'
+      });
+    }
+
     // Validation
     if (!recipientEmail) {
       return res.status(400).json({

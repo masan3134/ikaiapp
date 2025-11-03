@@ -2,9 +2,10 @@ const express = require('express');
 const router = express.Router();
 const templateController = require('../controllers/templateController');
 const { authenticateToken } = require('../middleware/auth');
+const { enforceOrganizationIsolation } = require('../middleware/organizationIsolation');
 
-// All routes require authentication
 router.use(authenticateToken);
+router.use(enforceOrganizationIsolation);
 
 // CRUD operations
 router.post('/', templateController.createTemplate);

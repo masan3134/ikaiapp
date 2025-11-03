@@ -15,7 +15,7 @@ async function exportCandidatesXLSX(req, res) {
     const role = req.user.role;
     const ids = req.query.ids ? req.query.ids.split(',').filter(Boolean) : null;
 
-    const workbook = await exportCandidatesToExcel(userId, role, ids);
+    const workbook = await exportCandidatesToExcel(userId, role, ids, req.organizationId);
 
     res.setHeader(
       'Content-Type',
@@ -49,7 +49,7 @@ async function exportCandidatesCSV(req, res) {
     const role = req.user.role;
     const ids = req.query.ids ? req.query.ids.split(',').filter(Boolean) : null;
 
-    const csv = await exportCandidatesToCSV(userId, role, ids);
+    const csv = await exportCandidatesToCSV(userId, role, ids, req.organizationId);
 
     res.setHeader('Content-Type', 'text/csv; charset=utf-8');
     res.setHeader(
@@ -81,7 +81,7 @@ async function exportJobPostingsXLSX(req, res) {
     const role = req.user.role;
     const ids = req.query.ids ? req.query.ids.split(',').filter(Boolean) : null;
 
-    const workbook = await exportJobPostingsToExcel(userId, role, ids);
+    const workbook = await exportJobPostingsToExcel(userId, role, ids, req.organizationId);
 
     res.setHeader(
       'Content-Type',
@@ -115,7 +115,7 @@ async function exportJobPostingsCSV(req, res) {
     const role = req.user.role;
     const ids = req.query.ids ? req.query.ids.split(',').filter(Boolean) : null;
 
-    const csv = await exportJobPostingsToCSV(userId, role, ids);
+    const csv = await exportJobPostingsToCSV(userId, role, ids, req.organizationId);
 
     res.setHeader('Content-Type', 'text/csv; charset=utf-8');
     res.setHeader(

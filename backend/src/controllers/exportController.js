@@ -8,7 +8,7 @@ async function exportAnalysisToExcel(req, res) {
   try {
     const { id } = req.params;
 
-    const workbook = await exportToExcel(id);
+    const workbook = await exportToExcel(id, req.organizationId);
 
     res.setHeader(
       'Content-Type',
@@ -46,7 +46,7 @@ async function exportAnalysisToCSV(req, res) {
   try {
     const { id } = req.params;
 
-    const csv = await exportToCSV(id);
+    const csv = await exportToCSV(id, req.organizationId);
 
     res.setHeader('Content-Type', 'text/csv; charset=utf-8');
     res.setHeader(
@@ -83,7 +83,7 @@ async function exportAnalysisToHTML(req, res) {
   try {
     const { id } = req.params;
 
-    const html = await exportToHTML(id);
+    const html = await exportToHTML(id, req.organizationId);
 
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.send(html);

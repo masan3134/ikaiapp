@@ -12,6 +12,7 @@ const {
   exportJobPostingsCSV
 } = require('../controllers/bulkExportController');
 const { authenticateToken } = require('../middleware/auth');
+const { enforceOrganizationIsolation } = require('../middleware/organizationIsolation');
 
 const router = express.Router();
 
@@ -41,22 +42,17 @@ const jobPostingValidation = [
 ];
 
 // Get all job postings (user's own or all if admin)
-router.get('/', authenticateToken, getAllJobPostings);
+router.get('/', authenticateToken, enforceOrganizationIsolation, getAllJobPostings);
 
-// Create new job posting
-router.post('/', authenticateToken, jobPostingValidation, createJobPosting);
+router.post('/', authenticateToken, enforceOrganizationIsolation, jobPostingValidation, createJobPosting);
 
-// Get job posting by ID
-router.get('/:id', authenticateToken, getJobPostingById);
+router.get('/:id', authenticateToken, enforceOrganizationIsolation, getJobPostingById);
 
-// Update job posting (with validation)
-router.put('/:id', authenticateToken, jobPostingValidation, updateJobPosting);
+router.put('/:id', authenticateToken, enforceOrganizationIsolation, jobPostingValidation, updateJobPosting);
 
-// Delete job posting
-router.delete('/:id', authenticateToken, deleteJobPosting);
+router.delete('/:id', authenticateToken, enforceOrganizationIsolation, deleteJobPosting);
 
-// Export routes
-router.get('/export/xlsx', authenticateToken, exportJobPostingsXLSX);
-router.get('/export/csv', authenticateToken, exportJobPostingsCSV);
+router.get('/export/xlsx', authenticateToken, enforceOrganizationIsolation, exportJobPostingsXLSX);
+router.get('/export/csv', authenticateToken, enforceOrganizationIsolation, exportJobPostingsCSV);
 
 module.exports = router;
