@@ -34,7 +34,7 @@ export default function LoginPage() {
       await login(email, password);
 
       // Check onboarding status
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('auth_token');
       if (token) {
         const res = await fetch('http://localhost:8102/api/v1/organizations/me', {
           headers: { 'Authorization': `Bearer ${token}` }
