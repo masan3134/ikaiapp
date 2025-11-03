@@ -19,7 +19,8 @@ exports.getTeamMembers = async (req, res) => {
       ...(search && {
         OR: [
           { email: { contains: search, mode: 'insensitive' } },
-          { name: { contains: search, mode: 'insensitive' } }
+          { firstName: { contains: search, mode: 'insensitive' } },
+          { lastName: { contains: search, mode: 'insensitive' } }
         ]
       }),
       ...(role && { role })
@@ -33,7 +34,8 @@ exports.getTeamMembers = async (req, res) => {
         select: {
           id: true,
           email: true,
-          name: true,
+          firstName: true,
+          lastName: true,
           role: true,
           isActive: true,
           isOnboarded: true,

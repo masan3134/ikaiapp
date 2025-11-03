@@ -7,6 +7,8 @@ import { getAnalysisById, type Analysis, type AnalysisResult } from '@/lib/servi
 import { downloadCV } from '@/lib/services/candidateService';
 import { useAsync } from '@/lib/hooks/useAsync';
 import { useToast } from '@/lib/hooks/useToast';
+import { withRoleProtection } from '@/lib/hoc/withRoleProtection';
+import { RoleGroups } from '@/lib/constants/roles';
 import LoadingSkeleton from '@/components/ui/LoadingSkeleton';
 import EmptyState from '@/components/ui/EmptyState';
 import AnalysisStatusBadge from '@/components/analyses/AnalysisStatusBadge';
@@ -22,7 +24,7 @@ import EmailExportModal from '@/components/analyses/EmailExportModal';
 import BulkTestSendModal from '@/components/analyses/BulkTestSendModal';
 import AIChatButton from '@/components/analyses/AIChatButton';
 
-export default function AnalysisDetailPage() {
+function AnalysisDetailPage() {
   const params = useParams();
   const router = useRouter();
   const toast = useToast();
@@ -509,3 +511,7 @@ export default function AnalysisDetailPage() {
     </>
   );
 }
+
+export default withRoleProtection(AnalysisDetailPage, {
+  allowedRoles: RoleGroups.HR_MANAGERS
+});

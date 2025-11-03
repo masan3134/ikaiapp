@@ -4,8 +4,10 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import * as offerService from '@/services/offerService';
 import RevisionHistory from '@/components/offers/RevisionHistory';
+import { withRoleProtection } from '@/lib/hoc/withRoleProtection';
+import { RoleGroups } from '@/lib/constants/roles';
 
-export default function RevisionsPage() {
+function RevisionsPage() {
   const params = useParams();
   const router = useRouter();
   const offerId = params.id as string;
@@ -99,3 +101,7 @@ export default function RevisionsPage() {
     </div>
   );
 }
+
+export default withRoleProtection(RevisionsPage, {
+  allowedRoles: RoleGroups.HR_MANAGERS
+});

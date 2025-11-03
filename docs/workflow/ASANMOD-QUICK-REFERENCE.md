@@ -119,10 +119,18 @@ $ grep -r 'withRoleProtection' frontend/app/ | wc -l
 ✅ ALWAYS verify file exists (Read/Glob)
 ✅ ALWAYS run real npm build/docker logs
 ✅ ALWAYS let reviewer decide completion
+✅ ALWAYS test endpoints with curl (real HTTP responses)
+✅ ALWAYS show live progress updates [N/M] 🔍
 ```
 
 **VERIFICATION PRINCIPLE:**
 > "Ham veri konuşur" - AI cannot lie with real grep/wc outputs!
+
+**ENDPOINT TESTING PRINCIPLE:**
+> Worker MUST test ALL endpoints with curl - Mod re-runs same curl to verify!
+
+**LIVE PROGRESS PRINCIPLE:**
+> [N/M] Icon Task - User sees what's happening NOW
 
 ---
 
@@ -187,10 +195,13 @@ $ grep -r 'withRoleProtection' frontend/app/ | wc -l
 - [ ] Read verification MD file
 - [ ] Check raw terminal outputs (grep, wc -l, build logs)
 - [ ] Count matches expected numbers
+- [ ] **Check endpoint test sections (curl outputs, status codes)**
+- [ ] **Re-run Worker's curl commands - compare HTTP responses**
 - [ ] Report findings to user
 - [ ] DON'T trust "completed successfully" - verify with data!
 - [ ] **NEVER accept simulated/mocked/placeholder outputs**
 - [ ] **ALWAYS demand real Bash executions and Read confirmations**
+- [ ] **Show live progress during verification [N/M] Icon**
 
 ---
 

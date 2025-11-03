@@ -6,6 +6,8 @@ import { useAsync } from '@/lib/hooks/useAsync';
 import { getOrganizationUsage, UsageData } from '@/lib/services/organizationService';
 import { Card } from '@/components/ui/Card';
 import LoadingSkeleton from '@/components/ui/LoadingSkeleton';
+import { withRoleProtection } from '@/lib/hoc/withRoleProtection';
+import { RoleGroups } from '@/lib/constants/roles';
 
 interface PlanFeature {
   name: string;
@@ -77,7 +79,7 @@ const planFeatures: PlanFeature[] = [
   }
 ];
 
-export default function BillingPage() {
+function BillingPage() {
   const { data: usage, loading, error, execute } = useAsync<UsageData>(getOrganizationUsage);
 
   useEffect(() => {
@@ -399,3 +401,8 @@ export default function BillingPage() {
     </div>
   );
 }
+
+export default withRoleProtection(BillingPage, {
+  allowedRoles: RoleGroups.ADMINS,
+  redirectTo: '/dashboard'
+});

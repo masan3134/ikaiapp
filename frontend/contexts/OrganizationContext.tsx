@@ -36,7 +36,7 @@ export function OrganizationProvider({ children }: { children: ReactNode }) {
 
   const fetchOrganization = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('auth_token');
       if (!token) return;
 
       const res = await fetch('http://localhost:8102/api/v1/organizations/me', {
@@ -54,7 +54,7 @@ export function OrganizationProvider({ children }: { children: ReactNode }) {
 
   const fetchUsage = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('auth_token');
       if (!token) return;
 
       const res = await fetch('http://localhost:8102/api/v1/organizations/me/usage', {

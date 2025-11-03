@@ -14,6 +14,15 @@ const { ROLES } = require('../constants/roles');
 // ADMIN+ middleware chain
 const adminOnly = [authenticateToken, enforceOrganizationIsolation, authorize([ROLES.ADMIN, ROLES.SUPER_ADMIN])];
 
+// All authenticated users middleware
+const allAuthenticated = [authenticateToken, enforceOrganizationIsolation];
+
+// Current user endpoints (any authenticated user)
+router.get('/me', allAuthenticated, userController.getCurrentUser);
+router.patch('/me', allAuthenticated, userController.updateCurrentUser);
+router.get('/me/notifications', allAuthenticated, userController.getNotificationPreferences);
+router.patch('/me/notifications', allAuthenticated, userController.updateNotificationPreferences);
+
 // Get all users with pagination
 router.get('/', adminOnly, userController.getAllUsers);
 

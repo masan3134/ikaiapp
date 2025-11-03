@@ -5,6 +5,8 @@ import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft, User, FileText, ClipboardList, Video, Briefcase, Loader2 } from 'lucide-react';
 import { getCandidateById } from '@/lib/services/candidateService';
 import { useToast } from '@/lib/hooks/useToast';
+import { withRoleProtection } from '@/lib/hoc/withRoleProtection';
+import { RoleGroups } from '@/lib/constants/roles';
 import CandidateHeader from './components/CandidateHeader';
 import GeneralInfoTab from './components/tabs/GeneralInfoTab';
 import AnalysesTab from './components/tabs/AnalysesTab';
@@ -15,7 +17,7 @@ import type { Candidate } from './types';
 
 type TabType = 'general' | 'analyses' | 'tests' | 'interviews' | 'offers';
 
-export default function CandidateDetailPage() {
+function CandidateDetailPage() {
   const params = useParams();
   const router = useRouter();
   const toast = useToast();
@@ -159,3 +161,7 @@ export default function CandidateDetailPage() {
     </div>
   );
 }
+
+export default withRoleProtection(CandidateDetailPage, {
+  allowedRoles: RoleGroups.HR_MANAGERS
+});

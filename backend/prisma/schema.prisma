@@ -105,6 +105,12 @@ model User {
   isActive Boolean @default(true)
   name     String?
 
+  // Notification preferences
+  emailNotifications    Boolean @default(true)
+  analysisNotifications Boolean @default(true)
+  teamNotifications     Boolean @default(true)
+  offerNotifications    Boolean @default(true)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

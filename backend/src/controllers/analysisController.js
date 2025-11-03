@@ -246,7 +246,7 @@ async function getAnalysisById(req, res) {
   try {
     const { id } = req.params;
     const userId = req.user.id;
-    const isAdmin = req.user.role === 'ADMIN';
+    const isAdmin = req.user.role === 'ADMIN' || req.user.role === 'SUPER_ADMIN';
     const organizationId = req.organizationId;
 
     const analysis = await prisma.analysis.findUnique({
@@ -333,7 +333,7 @@ async function deleteAnalysis(req, res) {
   try {
     const { id } = req.params;
     const userId = req.user.id;
-    const isAdmin = req.user.role === 'ADMIN';
+    const isAdmin = req.user.role === 'ADMIN' || req.user.role === 'SUPER_ADMIN';
     const organizationId = req.organizationId;
 
     // Check if analysis exists

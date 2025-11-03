@@ -48,8 +48,10 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     { name: 'Geçmiş Analizlerim', path: '/analyses', icon: Clock },
     // Team Management (only for ADMIN and SUPER_ADMIN)
     ...(user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN' ? [{ name: 'Takım Yönetimi', path: '/team', icon: UserCog }] : []),
+    // Settings (only for ADMIN and SUPER_ADMIN)
+    ...(user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN' ? [{ name: 'Ayarlar', path: '/settings/organization', icon: Settings }] : []),
     // Super Admin link (only for SUPER_ADMIN role)
-    ...(user?.role === 'SUPER_ADMIN' ? [{ name: 'Süper Yönetici', path: '/super-admin', icon: Settings }] : []),
+    ...(user?.role === 'SUPER_ADMIN' ? [{ name: 'Süper Yönetici', path: '/super-admin', icon: Shield }] : []),
   ];
 
   // Offer submenu items

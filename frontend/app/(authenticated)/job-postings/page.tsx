@@ -23,8 +23,10 @@ import { parseApiError } from '@/lib/utils/errorHandler';
 import { useAsync } from '@/lib/hooks/useAsync';
 import { useModal } from '@/lib/hooks/useModal';
 import { useToast } from '@/lib/hooks/useToast';
+import { withRoleProtection } from '@/lib/hoc/withRoleProtection';
+import { RoleGroups } from '@/lib/constants/roles';
 
-export default function JobPostingsPage() {
+function JobPostingsPage() {
   const toast = useToast();
   const [jobPostings, setJobPostings] = useState<JobPosting[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -461,3 +463,8 @@ export default function JobPostingsPage() {
     </>
   );
 }
+
+export default withRoleProtection(JobPostingsPage, {
+  allowedRoles: RoleGroups.HR_MANAGERS,
+  redirectTo: '/dashboard'
+});

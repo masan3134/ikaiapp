@@ -2,6 +2,8 @@
 
 import { useRouter } from 'next/navigation';
 import { useWizardStore } from '@/lib/store/wizardStore';
+import { withRoleProtection } from '@/lib/hoc/withRoleProtection';
+import { RoleGroups } from '@/lib/constants/roles';
 import JobPostingStep from '@/components/wizard/JobPostingStep';
 import CVUploadStep from '@/components/wizard/CVUploadStep';
 import ConfirmationStep from '@/components/wizard/ConfirmationStep';
@@ -10,7 +12,7 @@ import { saveLastJobPosting } from '@/lib/utils/wizardPreferences';
 import { getTurkishErrorMessage } from '@/lib/utils/errorMessages';
 import { ChevronLeft, ChevronRight, Wand2 } from 'lucide-react';
 
-export default function WizardPage() {
+function WizardPage() {
   const router = useRouter();
   const {
     currentStep,
@@ -376,3 +378,7 @@ export default function WizardPage() {
     </WizardErrorBoundary>
   );
 }
+
+export default withRoleProtection(WizardPage, {
+  allowedRoles: RoleGroups.HR_MANAGERS
+});

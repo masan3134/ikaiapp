@@ -6,8 +6,10 @@ import Step1_TemplateOrScratch from '@/components/offers/wizard/Step1_TemplateOr
 import Step2_OfferDetails from '@/components/offers/wizard/Step2_OfferDetails';
 import Step3_Summary from '@/components/offers/wizard/Step3_Summary';
 import { ChevronLeft, ChevronRight, FileText } from 'lucide-react';
+import { withRoleProtection } from '@/lib/hoc/withRoleProtection';
+import { RoleGroups } from '@/lib/constants/roles';
 
-export default function OfferWizardPage() {
+function OfferWizardPage() {
   const router = useRouter();
   const {
     currentStep,
@@ -179,3 +181,7 @@ export default function OfferWizardPage() {
     </div>
   );
 }
+
+export default withRoleProtection(OfferWizardPage, {
+  allowedRoles: RoleGroups.HR_MANAGERS
+});

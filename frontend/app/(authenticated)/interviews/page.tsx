@@ -2,12 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import { Plus, Search, Filter, AlertCircle } from 'lucide-react';
+import { withRoleProtection } from '@/lib/hoc/withRoleProtection';
+import { RoleGroups } from '@/lib/constants/roles';
 import InterviewWizard from '@/components/interviews/InterviewWizard';
 import InterviewStats from '@/components/interviews/InterviewStats';
 import InterviewList from '@/components/interviews/InterviewList';
 import interviewService from '@/lib/services/interviewService';
 
-export default function InterviewsPage() {
+function InterviewsPage() {
   const [wizardOpen, setWizardOpen] = useState(false);
   const [stats, setStats] = useState({ total: 0, scheduled: 0, completed: 0, cancelled: 0 });
   const [interviews, setInterviews] = useState([]);
@@ -153,3 +155,7 @@ export default function InterviewsPage() {
     </div>
   );
 }
+
+export default withRoleProtection(InterviewsPage, {
+  allowedRoles: RoleGroups.HR_MANAGERS
+});

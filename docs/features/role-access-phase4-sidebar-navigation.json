@@ -202,7 +202,13 @@
         "❌ FORBIDDEN: simulation, mocking, placeholders, 'completed successfully'",
         "✅ REQUIRED: Real Bash executions, real Read operations, real terminal outputs"
       ],
-      "reportTemplate": "# Phase 4 - Sidebar Navigation Verification\n\nDate: [CURRENT_DATE]\nExecutor: [YOUR_NAME]\n\n## 1. useHasRole Hook Import Check\n\n```bash\n$ grep -n \"useHasRole\" frontend/components/AppLayout.tsx\n```\n\n**Output:**\n```\n[PASTE_EXACT_OUTPUT_HERE]\n```\n\n**Expected:** Import line + hook calls (canManageHR, canViewAnalytics, isAdmin, isSuperAdmin)\n\n---\n\n## 2. RoleGroups Import Check\n\n```bash\n$ grep -n \"RoleGroups\" frontend/components/AppLayout.tsx\n```\n\n**Output:**\n```\n[PASTE_EXACT_OUTPUT_HERE]\n```\n\n**Expected:** Import statement with RoleGroups\n\n---\n\n## 3. Conditional Rendering Check (canManageHR)\n\n```bash\n$ grep -n \"canManageHR &&\" frontend/components/AppLayout.tsx\n```\n\n**Output:**\n```\n[PASTE_EXACT_OUTPUT_HERE]\n```\n\n**Expected:** Multiple lines with canManageHR && conditions\n\n---\n\n## 4. Admin-Only Menu Items\n\n```bash\n$ grep -n \"isAdmin &&\" frontend/components/AppLayout.tsx\n```\n\n**Output:**\n```\n[PASTE_EXACT_OUTPUT_HERE]\n```\n\n**Expected:** Conditional rendering for Team and Settings\n\n---\n\n## 5. Super Admin Menu Item\n\n```bash\n$ grep -n \"isSuperAdmin &&\" frontend/components/AppLayout.tsx\n```\n\n**Output:**\n```\n[PASTE_EXACT_OUTPUT_HERE]\n```\n\n**Expected:** Conditional rendering for Super Admin menu\n\n---\n\n## 6. Team Menu Item\n\n```bash\n$ grep -n \"/team\" frontend/components/AppLayout.tsx\n```\n\n**Output:**\n```\n[PASTE_EXACT_OUTPUT_HERE]\n```\n\n**Expected:** Link to /team page\n\n---\n\n## 7. Settings Menu Item\n\n```bash\n$ grep -n \"/settings\" frontend/components/AppLayout.tsx\n```\n\n**Output:**\n```\n[PASTE_EXACT_OUTPUT_HERE]\n```\n\n**Expected:** Link to /settings/organization page\n\n---\n\n## 8. TypeScript Compilation Check\n\n```bash\n$ cd frontend && npm run build 2>&1 | head -50\n```\n\n**Output:**\n```\n[PASTE_EXACT_OUTPUT_HERE]\n```\n\n**Expected:** Successful build or specific errors listed\n\n---\n\n## Summary\n\n**useHasRole imported:** [YES/NO from section 1]\n**RoleGroups imported:** [YES/NO from section 2]\n**canManageHR checks:** [COUNT from section 3]\n**isAdmin checks:** [COUNT from section 4]\n**isSuperAdmin checks:** [COUNT from section 5]\n**Team menu added:** [YES/NO from section 6]\n**Settings menu added:** [YES/NO from section 7]\n**TypeScript errors:** [YES/NO from section 8]\n\n**Status:** [COMPLETE/INCOMPLETE] - Review raw data above to verify\n\n---\n\n**Note to Reviewer:** This report contains RAW terminal output. Review each section to verify:\n- Section 1: Should show import + 4 hook calls\n- Section 2: Should show RoleGroups import\n- Section 3: Should show multiple canManageHR && lines\n- Section 4: Should show isAdmin && lines (Team, Settings)\n- Section 5: Should show isSuperAdmin && line (Super Admin menu)\n- Section 6: Should show /team path in Link\n- Section 7: Should show /settings path in Link\n- Section 8: Should show successful build\n",
+      "VERIFICATION_PROOF_REQUIRED": {
+        "method": "Mod cross-check",
+        "description": "Mod MUST re-run same commands to verify Worker's outputs are real",
+        "workflow": "1. Worker runs commands → pastes outputs to MD | 2. Worker reports 'done' | 3. Mod reads MD | 4. Mod RE-RUNS same commands | 5. Mod compares: Worker's output == Mod's output? | 6. If match → VERIFIED | If mismatch → Worker LIED",
+        "enforcement": "Mod never trusts MD alone - ALWAYS re-execute verification commands"
+      },
+      "reportTemplate": "# Phase 4 - Sidebar Navigation Verification\n\n**⚠️ MOD VERIFICATION REQUIRED:**\nAfter Worker creates this report, Mod MUST re-run ALL commands below and compare outputs.\nIf Worker's output != Mod's output → Worker used fake data!\n\n---\n\nDate: [CURRENT_DATE]\nExecutor: [WORKER_NAME]\n\n## 1. useHasRole Hook Import Check\n\n```bash\n$ grep -n \"useHasRole\" frontend/components/AppLayout.tsx\n```\n\n**Worker Output:**\n```\n[PASTE_EXACT_OUTPUT_HERE]\n```\n\n**Expected:** Import line + hook calls (canManageHR, canViewAnalytics, isAdmin, isSuperAdmin)\n\n**Mod Re-Run (for verification):**\n```\n[MOD_FILLS_THIS_AFTER_RE-RUNNING_COMMAND]\n```\n\n**Match?** [MOD: YES/NO]\n\n---\n\n## 2. RoleGroups Import Check\n\n```bash\n$ grep -n \"RoleGroups\" frontend/components/AppLayout.tsx\n```\n\n**Output:**\n```\n[PASTE_EXACT_OUTPUT_HERE]\n```\n\n**Expected:** Import statement with RoleGroups\n\n---\n\n## 3. Conditional Rendering Check (canManageHR)\n\n```bash\n$ grep -n \"canManageHR &&\" frontend/components/AppLayout.tsx\n```\n\n**Output:**\n```\n[PASTE_EXACT_OUTPUT_HERE]\n```\n\n**Expected:** Multiple lines with canManageHR && conditions\n\n---\n\n## 4. Admin-Only Menu Items\n\n```bash\n$ grep -n \"isAdmin &&\" frontend/components/AppLayout.tsx\n```\n\n**Output:**\n```\n[PASTE_EXACT_OUTPUT_HERE]\n```\n\n**Expected:** Conditional rendering for Team and Settings\n\n---\n\n## 5. Super Admin Menu Item\n\n```bash\n$ grep -n \"isSuperAdmin &&\" frontend/components/AppLayout.tsx\n```\n\n**Output:**\n```\n[PASTE_EXACT_OUTPUT_HERE]\n```\n\n**Expected:** Conditional rendering for Super Admin menu\n\n---\n\n## 6. Team Menu Item\n\n```bash\n$ grep -n \"/team\" frontend/components/AppLayout.tsx\n```\n\n**Output:**\n```\n[PASTE_EXACT_OUTPUT_HERE]\n```\n\n**Expected:** Link to /team page\n\n---\n\n## 7. Settings Menu Item\n\n```bash\n$ grep -n \"/settings\" frontend/components/AppLayout.tsx\n```\n\n**Output:**\n```\n[PASTE_EXACT_OUTPUT_HERE]\n```\n\n**Expected:** Link to /settings/organization page\n\n---\n\n## 8. TypeScript Compilation Check\n\n```bash\n$ cd frontend && npm run build 2>&1 | head -50\n```\n\n**Output:**\n```\n[PASTE_EXACT_OUTPUT_HERE]\n```\n\n**Expected:** Successful build or specific errors listed\n\n---\n\n## Summary\n\n**useHasRole imported:** [YES/NO from section 1]\n**RoleGroups imported:** [YES/NO from section 2]\n**canManageHR checks:** [COUNT from section 3]\n**isAdmin checks:** [COUNT from section 4]\n**isSuperAdmin checks:** [COUNT from section 5]\n**Team menu added:** [YES/NO from section 6]\n**Settings menu added:** [YES/NO from section 7]\n**TypeScript errors:** [YES/NO from section 8]\n\n**Status:** [COMPLETE/INCOMPLETE] - Review raw data above to verify\n\n---\n\n**Note to Reviewer:** This report contains RAW terminal output. Review each section to verify:\n- Section 1: Should show import + 4 hook calls\n- Section 2: Should show RoleGroups import\n- Section 3: Should show multiple canManageHR && lines\n- Section 4: Should show isAdmin && lines (Team, Settings)\n- Section 5: Should show isSuperAdmin && line (Super Admin menu)\n- Section 6: Should show /team path in Link\n- Section 7: Should show /settings path in Link\n- Section 8: Should show successful build\n",
       "verificationCommands": {
         "step1_useHasRole": "grep -n \"useHasRole\" frontend/components/AppLayout.tsx",
         "step2_roleGroups": "grep -n \"RoleGroups\" frontend/components/AppLayout.tsx",
@@ -266,6 +272,54 @@
           "shouldSee": ["ALL menu items including Super Admin"],
           "shouldNotSee": []
         }
+      ]
+    },
+    {
+      "id": "4.4",
+      "title": "Console & Log Verification",
+      "priority": "CRITICAL",
+      "estimatedTime": "10 minutes",
+      "description": "Verify frontend/backend logs are clean and services are healthy",
+      "dependencies": ["4.3"],
+      "outputFile": "docs/reports/phase4-sidebar-verification.md",
+      "instructions": [
+        "⚠️ ASANMOD STRICT MODE - LOG VERIFICATION REQUIRED ⚠️",
+        "1. Check frontend logs - docker logs ikai-frontend --tail 50 | grep -i 'error\\|warning\\|failed'",
+        "2. Check backend logs - docker logs ikai-backend --tail 100 | grep -i 'error\\|exception\\|failed'",
+        "3. Check services health - docker ps --filter 'name=ikai'",
+        "4. Test backend health endpoint - curl -s http://localhost:8102/health | jq",
+        "5. Paste ALL outputs to verification MD (append to existing report)",
+        "6. If ANY errors found - FIX FIRST before reporting done",
+        "❌ FORBIDDEN: Reporting 'done' with console errors",
+        "❌ FORBIDDEN: Ignoring 500 errors, exceptions, failed builds",
+        "❌ FORBIDDEN: Simulating clean logs",
+        "✅ REQUIRED: Clean logs (only warnings about NODE_ENV are OK)",
+        "✅ REQUIRED: All services running and healthy",
+        "✅ REQUIRED: Backend health returns 200 OK"
+      ],
+      "logVerificationTemplate": "\n\n---\n\n## 9. Console & Log Verification\n\n### Frontend Logs Check\n\n```bash\n$ docker logs ikai-frontend --tail 50 | grep -i \"error\\|warning\\|failed\"\n```\n\n**Worker Output:**\n```\n[PASTE_EXACT_OUTPUT_HERE]\n(if no output, write: \"(no errors found - clean logs)\")\n```\n\n**Mod Re-Run (for verification):**\n```\n[MOD_FILLS_THIS_AFTER_RE-RUNNING_COMMAND]\n```\n\n**Match?** [MOD: YES/NO]\n\n---\n\n### Backend Logs Check\n\n```bash\n$ docker logs ikai-backend --tail 100 | grep -i \"error\\|exception\\|failed\"\n```\n\n**Worker Output:**\n```\n[PASTE_EXACT_OUTPUT_HERE]\n(if no output, write: \"(no errors found - clean logs)\")\n```\n\n**Mod Re-Run (for verification):**\n```\n[MOD_FILLS_THIS_AFTER_RE-RUNNING_COMMAND]\n```\n\n**Match?** [MOD: YES/NO]\n\n---\n\n### Services Health Check\n\n```bash\n$ docker ps --filter \"name=ikai\" --format \"{{.Names}}: {{.Status}}\"\n```\n\n**Worker Output:**\n```\n[PASTE_EXACT_OUTPUT_HERE]\n```\n\n**Expected:**\n- ikai-frontend: Up (running)\n- ikai-backend: Up (healthy)\n- ikai-postgres: Up (healthy)\n- ikai-redis: Up (healthy)\n- ikai-minio: Up (healthy)\n- ikai-milvus: Up (healthy)\n\n**Mod Re-Run (for verification):**\n```\n[MOD_FILLS_THIS_AFTER_RE-RUNNING_COMMAND]\n```\n\n**Match?** [MOD: YES/NO]\n\n---\n\n### Backend Health Endpoint\n\n```bash\n$ curl -s http://localhost:8102/health | jq\n```\n\n**Worker Output:**\n```\n[PASTE_EXACT_OUTPUT_HERE]\n```\n\n**Expected:**\n```json\n{\n  \"status\": \"ok\",\n  \"services\": {\n    \"database\": \"connected\",\n    \"redis\": \"connected\",\n    \"minio\": \"connected\"\n  }\n}\n```\n\n**Mod Re-Run (for verification):**\n```\n[MOD_FILLS_THIS_AFTER_RE-RUNNING_COMMAND]\n```\n\n**Match?** [MOD: YES/NO]\n\n---\n\n### Browser Console Check (User Verification)\n\n**User must check:**\n1. Open http://localhost:8103 in browser\n2. Open DevTools Console (F12)\n3. Navigate to /job-postings, /team, /settings\n4. Report console state\n\n**User Report:**\n- Console errors: [COUNT]\n- Console warnings: [COUNT]\n- Pages loaded successfully: [YES/NO]\n\n**Acceptable warnings:**\n- \"non-standard NODE_ENV\" (OK)\n- \"npm notice\" (OK)\n\n**NOT acceptable (must fix):**\n- GET /api/* 500 errors\n- TypeError, ReferenceError\n- Failed to compile\n- Unhandled promise rejection\n\n---\n\n### Log Verification Summary\n\n**Frontend Logs:** [CLEAN / ERRORS_FOUND]\n**Backend Logs:** [CLEAN / ERRORS_FOUND]\n**Services Health:** [ALL_RUNNING / SOME_DOWN]\n**Backend API:** [HEALTHY / UNHEALTHY]\n**Browser Console:** [CLEAN / ERRORS_FOUND]\n\n**Overall Status:** [✅ ALL_CLEAN / ❌ ERRORS_MUST_FIX]\n\n**If errors found, list them:**\n1. [Error description]\n2. [Error description]\n\n**Or write:** No errors found - Phase 4 logs are clean ✅\n\n---\n\n**Note to Mod:** Re-run all log verification commands to confirm Worker used real tools. If Worker said \"clean\" but Mod finds errors → Worker LIED.\n",
+      "verificationCommands": {
+        "frontend_logs": "docker logs ikai-frontend --tail 50 | grep -i 'error\\|warning\\|failed'",
+        "backend_logs": "docker logs ikai-backend --tail 100 | grep -i 'error\\|exception\\|failed'",
+        "services_health": "docker ps --filter 'name=ikai' --format '{{.Names}}: {{.Status}}'",
+        "backend_health": "curl -s http://localhost:8102/health | jq"
+      },
+      "acceptableWarnings": [
+        "⚠ You are using a non-standard \"NODE_ENV\" value",
+        "⚠ npm notice New major version available",
+        "[info]: ✅ Backend running",
+        "[info]: Redis connected"
+      ],
+      "notAcceptableErrors": [
+        "Error: Cannot find module",
+        "TypeError: undefined is not a function",
+        "GET /api/* 500 (Internal Server Error)",
+        "UnhandledPromiseRejectionWarning",
+        "PrismaClientKnownRequestError",
+        "✗ Failed to compile",
+        "✗ Build failed because of webpack errors",
+        "ERROR: relation does not exist",
+        "ERROR: column does not exist"
       ]
     }
   ],

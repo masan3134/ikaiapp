@@ -302,7 +302,7 @@ export default function OnboardingWizard() {
               disabled={loading}
               className="bg-blue-600 text-white px-8 py-3 rounded-lg font-medium text-lg hover:bg-blue-700 disabled:opacity-50"
             >
-              {loading ? 'Tamamlanıyor...' : 'Dashboard'a Git →'}
+              {loading ? 'Tamamlanıyor...' : "Dashboard'a Git →"}
             </button>
           </div>
         )}

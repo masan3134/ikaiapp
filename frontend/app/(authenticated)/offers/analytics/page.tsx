@@ -3,8 +3,10 @@
 import { useState, useEffect } from 'react';
 import * as analyticsService from '@/services/analyticsService';
 import { OverviewChart, AcceptanceRatePieChart } from '@/components/offers/OfferAnalyticsCharts';
+import { withRoleProtection } from '@/lib/hoc/withRoleProtection';
+import { RoleGroups } from '@/lib/constants/roles';
 
-export default function OfferAnalyticsPage() {
+function OfferAnalyticsPage() {
   const [overview, setOverview] = useState<any>(null);
   const [acceptanceRate, setAcceptanceRate] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -61,3 +63,7 @@ export default function OfferAnalyticsPage() {
     </div>
   );
 }
+
+export default withRoleProtection(OfferAnalyticsPage, {
+  allowedRoles: RoleGroups.ANALYTICS_VIEWERS
+});

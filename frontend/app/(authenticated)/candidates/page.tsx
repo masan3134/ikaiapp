@@ -19,8 +19,10 @@ import SearchBar from '@/components/ui/SearchBar';
 import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import { parseApiError } from '@/lib/utils/errorHandler';
 import { downloadBlob } from '@/lib/utils/fileUtils';
+import { withRoleProtection } from '@/lib/hoc/withRoleProtection';
+import { RoleGroups } from '@/lib/constants/roles';
 
-export default function CandidatesPage() {
+function CandidatesPage() {
   const router = useRouter();
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [loading, setLoading] = useState(true);
@@ -434,3 +436,7 @@ export default function CandidatesPage() {
     </>
   );
 }
+
+export default withRoleProtection(CandidatesPage, {
+  allowedRoles: RoleGroups.HR_MANAGERS
+});

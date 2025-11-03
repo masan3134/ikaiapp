@@ -1,4 +1,6 @@
 const userService = require('../services/userService');
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 
 /**
  * User Management Controller
@@ -151,6 +153,156 @@ class UserController {
       res.status(400).json({
         success: false,
         error: error.message || 'Şifre değiştirilemedi'
+      });
+    }
+  }
+
+  /**
+   * Get current user profile
+   */
+  async getCurrentUser(req, res) {
+    try {
+      const user = await prisma.user.findUnique({
+        where: { id: req.user.id },
+        select: {
+          id: true,
+          email: true,
+          firstName: true,
+          lastName: true,
+          avatar: true,
+          position: true,
+          role: true,
+          isActive: true,
+          createdAt: true
+        }
+      });
+
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: 'Kullanıcı bulunamadı'
+        });
+      }
+
+      res.json({
+        success: true,
+        data: user
+      });
+    } catch (error) {
+      console.error('❌ Get current user error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Kullanıcı bilgileri alınamadı'
+      });
+    }
+  }
+
+  /**
+   * Update current user profile
+   */
+  async updateCurrentUser(req, res) {
+    try {
+      const { firstName, lastName, avatar, position } = req.body;
+
+      const updated = await prisma.user.update({
+        where: { id: req.user.id },
+        data: {
+          ...(firstName !== undefined && { firstName }),
+          ...(lastName !== undefined && { lastName }),
+          ...(avatar !== undefined && { avatar }),
+          ...(position !== undefined && { position })
+        },
+        select: {
+          id: true,
+          email: true,
+          firstName: true,
+          lastName: true,
+          avatar: true,
+          position: true,
+          role: true
+        }
+      });
+
+      res.json({
+        success: true,
+        data: updated,
+        message: 'Profil başarıyla güncellendi'
+      });
+    } catch (error) {
+      console.error('❌ Update current user error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Profil güncellenemedi'
+      });
+    }
+  }
+
+  /**
+   * Get user notification preferences
+   */
+  async getNotificationPreferences(req, res) {
+    try {
+      const user = await prisma.user.findUnique({
+        where: { id: req.user.id },
+        select: {
+          emailNotifications: true,
+          analysisNotifications: true,
+          teamNotifications: true,
+          offerNotifications: true
+        }
+      });
+
+      res.json({
+        success: true,
+        data: user || {
+          emailNotifications: true,
+          analysisNotifications: true,
+          teamNotifications: true,
+          offerNotifications: true
+        }
+      });
+    } catch (error) {
+      console.error('❌ Get notifications error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Bildirim ayarları alınamadı'
+      });
+    }
+  }
+
+  /**
+   * Update user notification preferences
+   */
+  async updateNotificationPreferences(req, res) {
+    try {
+      const { emailNotifications, analysisNotifications, teamNotifications, offerNotifications } = req.body;
+
+      const updated = await prisma.user.update({
+        where: { id: req.user.id },
+        data: {
+          ...(emailNotifications !== undefined && { emailNotifications }),
+          ...(analysisNotifications !== undefined && { analysisNotifications }),
+          ...(teamNotifications !== undefined && { teamNotifications }),
+          ...(offerNotifications !== undefined && { offerNotifications })
+        },
+        select: {
+          emailNotifications: true,
+          analysisNotifications: true,
+          teamNotifications: true,
+          offerNotifications: true
+        }
+      });
+
+      res.json({
+        success: true,
+        data: updated,
+        message: 'Bildirim ayarları güncellendi'
+      });
+    } catch (error) {
+      console.error('❌ Update notifications error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Bildirim ayarları güncellenemedi'
       });
     }
   }

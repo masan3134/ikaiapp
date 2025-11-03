@@ -6,8 +6,10 @@ import * as offerService from '@/services/offerService';
 import * as templateService from '@/services/templateService';
 import { fetchCandidates } from '@/services/candidates';
 import { fetchJobPostings } from '@/services/jobPostings';
+import { withRoleProtection } from '@/lib/hoc/withRoleProtection';
+import { RoleGroups } from '@/lib/constants/roles';
 
-export default function NewOfferPage() {
+function NewOfferPage() {
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
   const [candidates, setCandidates] = useState<any[]>([]);
@@ -461,3 +463,7 @@ export default function NewOfferPage() {
     </div>
   );
 }
+
+export default withRoleProtection(NewOfferPage, {
+  allowedRoles: RoleGroups.HR_MANAGERS
+});

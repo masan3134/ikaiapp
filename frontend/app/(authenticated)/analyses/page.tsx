@@ -15,8 +15,10 @@ import LoadingSkeleton from '@/components/ui/LoadingSkeleton';
 import SearchBar from '@/components/ui/SearchBar';
 import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import { parseApiError } from '@/lib/utils/errorHandler';
+import { withRoleProtection } from '@/lib/hoc/withRoleProtection';
+import { RoleGroups } from '@/lib/constants/roles';
 
-export default function AnalysesPage() {
+function AnalysesPage() {
   const router = useRouter();
   const [analyses, setAnalyses] = useState<Analysis[]>([]);
   const [loading, setLoading] = useState(true);
@@ -286,3 +288,7 @@ export default function AnalysesPage() {
     </>
   );
 }
+
+export default withRoleProtection(AnalysesPage, {
+  allowedRoles: RoleGroups.HR_MANAGERS
+});

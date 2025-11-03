@@ -18,10 +18,13 @@ import {
   ChevronRight,
   Plus,
   BarChart3,
-  Layers
+  Layers,
+  Settings
 } from 'lucide-react';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { useAuthStore } from '@/lib/store/authStore';
+import { useHasRole } from '@/lib/hooks/useHasRole';
+import { RoleGroups, UserRole } from '@/lib/constants/roles';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -34,19 +37,24 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isOffersExpanded, setIsOffersExpanded] = useState(true); // Always expanded by default
 
-  // Sidebar menü itemları
+  // Role-based access control
+  const canManageHR = useHasRole(RoleGroups.HR_MANAGERS);
+  const canViewAnalytics = useHasRole(RoleGroups.ANALYTICS_VIEWERS);
+  const isAdmin = useHasRole(RoleGroups.ADMINS);
+  const isSuperAdmin = useHasRole([UserRole.SUPER_ADMIN]);
+
+  // Sidebar menü itemları - Dashboard visible to all
   const allMenuItems = [
     { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
-    { name: 'Analiz Sihirbazı', path: '/wizard', icon: Wand2 },
-    { name: 'İş İlanları', path: '/job-postings', icon: Briefcase },
-    { name: 'Adaylar', path: '/candidates', icon: Users },
-    { name: 'Geçmiş Analizlerim', path: '/analyses', icon: Clock },
   ];
 
-  // Offer submenu items
-  const offerSubMenuItems = [
+  // Offer submenu items - split by role
+  const hrManagerOfferItems = [
     { name: 'Yeni Teklif', path: '/offers/wizard', icon: Plus },
     { name: 'Tüm Teklifler', path: '/offers', icon: FileText },
+  ];
+
+  const analyticsOfferItems = [
     { name: 'Şablonlar', path: '/offer-templates', icon: Layers },
     { name: 'Analytics', path: '/offers/analytics', icon: BarChart3 },
   ];
@@ -87,6 +95,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
             {/* Navigation */}
             <nav className="p-4 space-y-1">
+              {/* Dashboard - visible to all */}
               {allMenuItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = pathname === item.path;
@@ -112,57 +121,218 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 );
               })}
 
-              {/* Offers collapsible menu */}
-              <div>
-                <button
-                  onClick={() => setIsOffersExpanded(!isOffersExpanded)}
+              {/* HR Manager menu items */}
+              {canManageHR && (
+                <>
+                  <Link
+                    href="/wizard"
+                    onClick={() => setIsSidebarOpen(false)}
+                    className={`
+                      flex items-center gap-3 px-4 py-3 rounded-lg
+                      transition-colors duration-150
+                      ${
+                        pathname === '/wizard'
+                          ? 'bg-blue-50 text-blue-600 font-medium'
+                          : 'text-gray-700 hover:bg-gray-50'
+                      }
+                    `}
+                  >
+                    <Wand2 size={20} />
+                    <span>Analiz Sihirbazı</span>
+                  </Link>
+
+                  <Link
+                    href="/job-postings"
+                    onClick={() => setIsSidebarOpen(false)}
+                    className={`
+                      flex items-center gap-3 px-4 py-3 rounded-lg
+                      transition-colors duration-150
+                      ${
+                        pathname === '/job-postings'
+                          ? 'bg-blue-50 text-blue-600 font-medium'
+                          : 'text-gray-700 hover:bg-gray-50'
+                      }
+                    `}
+                  >
+                    <Briefcase size={20} />
+                    <span>İş İlanları</span>
+                  </Link>
+
+                  <Link
+                    href="/candidates"
+                    onClick={() => setIsSidebarOpen(false)}
+                    className={`
+                      flex items-center gap-3 px-4 py-3 rounded-lg
+                      transition-colors duration-150
+                      ${
+                        pathname === '/candidates'
+                          ? 'bg-blue-50 text-blue-600 font-medium'
+                          : 'text-gray-700 hover:bg-gray-50'
+                      }
+                    `}
+                  >
+                    <Users size={20} />
+                    <span>Adaylar</span>
+                  </Link>
+
+                  <Link
+                    href="/analyses"
+                    onClick={() => setIsSidebarOpen(false)}
+                    className={`
+                      flex items-center gap-3 px-4 py-3 rounded-lg
+                      transition-colors duration-150
+                      ${
+                        pathname === '/analyses'
+                          ? 'bg-blue-50 text-blue-600 font-medium'
+                          : 'text-gray-700 hover:bg-gray-50'
+                      }
+                    `}
+                  >
+                    <Clock size={20} />
+                    <span>Geçmiş Analizlerim</span>
+                  </Link>
+                </>
+              )}
+
+              {/* Offers collapsible menu - HR_MANAGERS */}
+              {canManageHR && (
+                <div>
+                  <button
+                    onClick={() => setIsOffersExpanded(!isOffersExpanded)}
+                    className={`
+                      w-full flex items-center justify-between gap-3 px-4 py-3 rounded-lg
+                      transition-colors duration-150
+                      ${
+                        pathname.startsWith('/offers') || pathname.startsWith('/offer-templates')
+                          ? 'bg-blue-50 text-blue-600 font-medium'
+                          : 'text-gray-700 hover:bg-gray-50'
+                      }
+                    `}
+                  >
+                    <div className="flex items-center gap-3">
+                      <FileText size={20} />
+                      <span>Teklifler</span>
+                    </div>
+                    {isOffersExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+                  </button>
+
+                  {/* Submenu */}
+                  {isOffersExpanded && (
+                    <div className="mt-1 ml-4 space-y-1">
+                      {/* HR_MANAGERS: Yeni Teklif, Tüm Teklifler */}
+                      {hrManagerOfferItems.map((item) => {
+                        const Icon = item.icon;
+                        const isActive = pathname === item.path;
+
+                        return (
+                          <Link
+                            key={item.path}
+                            href={item.path}
+                            onClick={() => setIsSidebarOpen(false)}
+                            className={`
+                              flex items-center gap-3 px-4 py-2 rounded-lg text-sm
+                              transition-colors duration-150
+                              ${
+                                isActive
+                                  ? 'bg-blue-50 text-blue-600 font-medium'
+                                  : 'text-gray-600 hover:bg-gray-50'
+                              }
+                            `}
+                          >
+                            <Icon size={18} />
+                            <span>{item.name}</span>
+                          </Link>
+                        );
+                      })}
+
+                      {/* ANALYTICS_VIEWERS: Şablonlar, Analytics */}
+                      {canViewAnalytics && analyticsOfferItems.map((item) => {
+                        const Icon = item.icon;
+                        const isActive = pathname === item.path;
+
+                        return (
+                          <Link
+                            key={item.path}
+                            href={item.path}
+                            onClick={() => setIsSidebarOpen(false)}
+                            className={`
+                              flex items-center gap-3 px-4 py-2 rounded-lg text-sm
+                              transition-colors duration-150
+                              ${
+                                isActive
+                                  ? 'bg-blue-50 text-blue-600 font-medium'
+                                  : 'text-gray-600 hover:bg-gray-50'
+                              }
+                            `}
+                          >
+                            <Icon size={18} />
+                            <span>{item.name}</span>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Admin-only menu items */}
+              {isAdmin && (
+                <>
+                  <Link
+                    href="/team"
+                    onClick={() => setIsSidebarOpen(false)}
+                    className={`
+                      flex items-center gap-3 px-4 py-3 rounded-lg
+                      transition-colors duration-150
+                      ${
+                        pathname === '/team'
+                          ? 'bg-blue-50 text-blue-600 font-medium'
+                          : 'text-gray-700 hover:bg-gray-50'
+                      }
+                    `}
+                  >
+                    <Users size={20} />
+                    <span>Team</span>
+                  </Link>
+
+                  <Link
+                    href="/settings/organization"
+                    onClick={() => setIsSidebarOpen(false)}
+                    className={`
+                      flex items-center gap-3 px-4 py-3 rounded-lg
+                      transition-colors duration-150
+                      ${
+                        pathname === '/settings/organization'
+                          ? 'bg-blue-50 text-blue-600 font-medium'
+                          : 'text-gray-700 hover:bg-gray-50'
+                      }
+                    `}
+                  >
+                    <Settings size={20} />
+                    <span>Settings</span>
+                  </Link>
+                </>
+              )}
+
+              {/* Super Admin only */}
+              {isSuperAdmin && (
+                <Link
+                  href="/super-admin"
+                  onClick={() => setIsSidebarOpen(false)}
                   className={`
-                    w-full flex items-center justify-between gap-3 px-4 py-3 rounded-lg
+                    flex items-center gap-3 px-4 py-3 rounded-lg
                     transition-colors duration-150
                     ${
-                      pathname.startsWith('/offers') || pathname.startsWith('/offer-templates')
+                      pathname === '/super-admin'
                         ? 'bg-blue-50 text-blue-600 font-medium'
                         : 'text-gray-700 hover:bg-gray-50'
                     }
                   `}
                 >
-                  <div className="flex items-center gap-3">
-                    <FileText size={20} />
-                    <span>Teklifler</span>
-                  </div>
-                  {isOffersExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
-                </button>
-
-                {/* Submenu */}
-                {isOffersExpanded && (
-                  <div className="mt-1 ml-4 space-y-1">
-                    {offerSubMenuItems.map((item) => {
-                      const Icon = item.icon;
-                      const isActive = pathname === item.path;
-
-                      return (
-                        <Link
-                          key={item.path}
-                          href={item.path}
-                          onClick={() => setIsSidebarOpen(false)}
-                          className={`
-                            flex items-center gap-3 px-4 py-2 rounded-lg text-sm
-                            transition-colors duration-150
-                            ${
-                              isActive
-                                ? 'bg-blue-50 text-blue-600 font-medium'
-                                : 'text-gray-600 hover:bg-gray-50'
-                            }
-                          `}
-                        >
-                          <Icon size={18} />
-                          <span>{item.name}</span>
-                        </Link>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
+                  <Shield size={20} />
+                  <span>Super Admin</span>
+                </Link>
+              )}
             </nav>
 
             {/* User Section */}

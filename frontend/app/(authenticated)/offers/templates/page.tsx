@@ -3,8 +3,10 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import * as templateService from '@/services/templateService';
+import { withRoleProtection } from '@/lib/hoc/withRoleProtection';
+import { UserRole } from '@/lib/constants/roles';
 
-export default function TemplatesPage() {
+function TemplatesPage() {
   const router = useRouter();
   const [templates, setTemplates] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
@@ -159,3 +161,7 @@ export default function TemplatesPage() {
     </div>
   );
 }
+
+export default withRoleProtection(TemplatesPage, {
+  allowedRoles: [UserRole.MANAGER, UserRole.ADMIN, UserRole.SUPER_ADMIN]
+});

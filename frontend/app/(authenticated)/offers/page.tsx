@@ -15,8 +15,10 @@ import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
 import { Eye, Plus, Send, Trash2, CheckSquare, Square } from 'lucide-react';
 import Link from 'next/link';
+import { withRoleProtection } from '@/lib/hoc/withRoleProtection';
+import { RoleGroups } from '@/lib/constants/roles';
 
-export default function OffersPage() {
+function OffersPage() {
   const [offers, setOffers] = useState<Offer[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -260,3 +262,7 @@ export default function OffersPage() {
     </div>
   );
 }
+
+export default withRoleProtection(OffersPage, {
+  allowedRoles: RoleGroups.HR_MANAGERS
+});

@@ -3,11 +3,14 @@
 import { useState, useEffect } from 'react';
 import { useOrganization } from '@/contexts/OrganizationContext';
 import { useToast } from '@/lib/hooks/useToast';
+import { updateOrganization } from '@/lib/services/organizationService';
 import Button from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Building2, Upload, Crown } from 'lucide-react';
+import { withRoleProtection } from '@/lib/hoc/withRoleProtection';
+import { RoleGroups } from '@/lib/constants/roles';
 
-export default function OrganizationSettingsPage() {
+function OrganizationSettingsPage() {
   const { organization, usage, loading, refreshOrganization, refreshUsage } = useOrganization();
   const toast = useToast();
   const [saving, setSaving] = useState(false);
@@ -35,26 +38,17 @@ export default function OrganizationSettingsPage() {
     e.preventDefault();
     setSaving(true);
 
-    try {
-      const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:8102/api/v1/organizations/me', {
-        method: 'PATCH',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)
-      });
+    console.log('[SETTINGS] Saving organization:', formData);
 
-      if (res.ok) {
-        toast.success('Organizasyon bilgileri güncellendi');
-        await refreshOrganization();
-      } else {
-        const error = await res.json();
-        toast.error(error.message || 'Güncelleme başarısız');
-      }
-    } catch (error) {
-      toast.error('Bir hata oluştu');
+    try {
+      const result = await updateOrganization(formData);
+      console.log('[SETTINGS] Update successful:', result);
+      toast.success('Organizasyon bilgileri güncellendi');
+      await refreshOrganization();
+      console.log('[SETTINGS] Organization refreshed');
+    } catch (error: any) {
+      console.error('[SETTINGS] Update failed:', error);
+      toast.error(error?.response?.data?.message || 'Güncelleme başarısız');
     } finally {
       setSaving(false);
     }
@@ -286,3 +280,8 @@ export default function OrganizationSettingsPage() {
     </div>
   );
 }
+
+export default withRoleProtection(OrganizationSettingsPage, {
+  allowedRoles: RoleGroups.ADMINS,
+  redirectTo: '/dashboard'
+});

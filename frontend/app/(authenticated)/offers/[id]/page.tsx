@@ -8,8 +8,10 @@ import * as negotiationService from '@/services/negotiationService';
 import AttachmentUploader from '@/components/offers/AttachmentUploader';
 import NegotiationTimeline from '@/components/offers/NegotiationTimeline';
 import ApprovalActionButtons from '@/components/offers/ApprovalActionButtons';
+import { withRoleProtection } from '@/lib/hoc/withRoleProtection';
+import { RoleGroups } from '@/lib/constants/roles';
 
-export default function OfferDetailPage() {
+function OfferDetailPage() {
   const params = useParams();
   const router = useRouter();
   const offerId = params.id as string;
@@ -499,3 +501,7 @@ export default function OfferDetailPage() {
     </div>
   );
 }
+
+export default withRoleProtection(OfferDetailPage, {
+  allowedRoles: RoleGroups.HR_MANAGERS
+});
