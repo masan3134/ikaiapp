@@ -132,7 +132,7 @@ async function createAnalysis(req, res) {
 async function getAllAnalyses(req, res) {
   try {
     const userId = req.user.id;
-    const isAdmin = req.user.role === 'ADMIN';
+    const isAdmin = req.user.role === 'ADMIN' || req.user.role === 'SUPER_ADMIN';
     const organizationId = req.organizationId;
     const { candidateId, page = 1, limit = 20 } = req.query;
 
@@ -142,7 +142,7 @@ async function getAllAnalyses(req, res) {
     const skip = (pageNum - 1) * limitNum;
 
     // Build query based on user role
-    const where = isAdmin ? {} : { userId, organizationId };
+    const where = isAdmin ? { organizationId } : { userId, organizationId };
 
     // If candidateId filter is provided, add it to where clause
     if (candidateId) {
