@@ -3,36 +3,38 @@ const router = express.Router();
 const offerController = require('../controllers/offerController');
 const { authenticateToken } = require('../middleware/auth');
 const { enforceOrganizationIsolation } = require('../middleware/organizationIsolation');
+const { authorize } = require('../middleware/authorize');
+const { ROLE_GROUPS } = require('../constants/roles');
 
-router.use(authenticateToken);
-router.use(enforceOrganizationIsolation);
+// HR Managers middleware (HR operations)
+const hrManagers = [authenticateToken, enforceOrganizationIsolation, authorize(ROLE_GROUPS.HR_MANAGERS)];
 
 // Wizard endpoint (must be before '/' to avoid conflict)
-router.post('/wizard', offerController.createOfferFromWizard);
+router.post('/wizard', hrManagers, offerController.createOfferFromWizard);
 
 // CRUD operations
-router.post('/', offerController.createOffer);
-router.get('/', offerController.getOffers);
+router.post('/', hrManagers, offerController.createOffer);
+router.get('/', hrManagers, offerController.getOffers);
 
 // Bulk actions (must be before routes with /:id)
-router.post('/bulk-send', offerController.bulkSend); // Feature #19
+router.post('/bulk-send', hrManagers, offerController.bulkSend); // Feature #19
 
-router.get('/:id', offerController.getOfferById);
-router.put('/:id', offerController.updateOffer);
-router.delete('/:id', offerController.deleteOffer);
+router.get('/:id', hrManagers, offerController.getOfferById);
+router.put('/:id', hrManagers, offerController.updateOffer);
+router.delete('/:id', hrManagers, offerController.deleteOffer);
 
 // Single-offer actions
-router.patch('/:id/send', offerController.sendOffer);
-router.get('/:id/preview-pdf', offerController.previewPdf);
-router.get('/:id/download-pdf', offerController.downloadPdf);
+router.patch('/:id/send', hrManagers, offerController.sendOffer);
+router.get('/:id/preview-pdf', hrManagers, offerController.previewPdf);
+router.get('/:id/download-pdf', hrManagers, offerController.downloadPdf);
 
 // Approval workflow (Feature #11)
-router.patch('/:id/request-approval', offerController.requestApproval);
-router.patch('/:id/approve', offerController.approveOffer);
-router.patch('/:id/reject-approval', offerController.rejectApproval);
+router.patch('/:id/request-approval', hrManagers, offerController.requestApproval);
+router.patch('/:id/approve', hrManagers, offerController.approveOffer);
+router.patch('/:id/reject-approval', hrManagers, offerController.rejectApproval);
 
 // Expiration management (Feature #12)
-router.patch('/:id/expire', offerController.expireOffer);
-router.patch('/:id/extend', offerController.extendExpiration);
+router.patch('/:id/expire', hrManagers, offerController.expireOffer);
+router.patch('/:id/extend', hrManagers, offerController.extendExpiration);
 
 module.exports = router;

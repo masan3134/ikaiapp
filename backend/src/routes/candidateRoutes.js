@@ -12,31 +12,37 @@ const {
 } = require('../controllers/bulkExportController');
 const { authenticateToken } = require('../middleware/auth');
 const { enforceOrganizationIsolation } = require('../middleware/organizationIsolation');
+const { authorize } = require('../middleware/authorize');
+const { ROLE_GROUPS } = require('../constants/roles');
 const { upload, handleMulterError } = require('../middleware/upload');
 const { trackCvUpload } = require('../middleware/usageTracking');
 
 const router = express.Router();
 
-// Get all candidates for current user
-router.get('/', authenticateToken, enforceOrganizationIsolation, getAllCandidates);
+// HR Managers middleware (HR operations)
+const hrManagers = [authenticateToken, enforceOrganizationIsolation, authorize(ROLE_GROUPS.HR_MANAGERS)];
 
-router.post('/check-duplicate', authenticateToken, enforceOrganizationIsolation, checkDuplicateFile);
+// Get all candidates for current user
+router.get('/', hrManagers, getAllCandidates);
+
+router.post('/check-duplicate', hrManagers, checkDuplicateFile);
 
 router.post(
   '/upload',
   authenticateToken,
   enforceOrganizationIsolation,
+  authorize(ROLE_GROUPS.HR_MANAGERS),
   trackCvUpload,
   upload.single('cv'),
   handleMulterError,
   uploadCV
 );
 
-router.get('/:id', authenticateToken, enforceOrganizationIsolation, getCandidateById);
+router.get('/:id', hrManagers, getCandidateById);
 
-router.delete('/:id', authenticateToken, enforceOrganizationIsolation, deleteCandidate);
+router.delete('/:id', hrManagers, deleteCandidate);
 
-router.get('/export/xlsx', authenticateToken, enforceOrganizationIsolation, exportCandidatesXLSX);
-router.get('/export/csv', authenticateToken, enforceOrganizationIsolation, exportCandidatesCSV);
+router.get('/export/xlsx', hrManagers, exportCandidatesXLSX);
+router.get('/export/csv', hrManagers, exportCandidatesCSV);
 
 module.exports = router;

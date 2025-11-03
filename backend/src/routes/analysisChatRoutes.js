@@ -6,6 +6,9 @@
 const express = require('express');
 const router = express.Router();
 const { authenticateToken } = require('../middleware/auth');
+const { enforceOrganizationIsolation } = require('../middleware/organizationIsolation');
+const { authorize } = require('../middleware/authorize');
+const { ROLE_GROUPS } = require('../constants/roles');
 const { chatRateLimiter } = require('../middleware/chatRateLimiter');
 const { trackRequest, trackIntentBypass } = require('./metricsRoutes');
 // IMPROVED: Simple AI Chat (Gemini'nin önerisi - vector search yok, full context)
@@ -14,11 +17,14 @@ const { PrismaClient } = require('@prisma/client');
 
 const prisma = new PrismaClient();
 
+// HR Managers middleware (chat operations require HR access)
+const hrManagers = [authenticateToken, enforceOrganizationIsolation, authorize(ROLE_GROUPS.HR_MANAGERS)];
+
 /**
  * POST /api/v1/analyses/:id/chat
  * Analize özel chat mesajı gönder
  */
-router.post('/:id/chat', trackRequest, chatRateLimiter, authenticateToken, async (req, res) => {
+router.post('/:id/chat', trackRequest, chatRateLimiter, hrManagers, async (req, res) => {
   try {
     const { id: analysisId } = req.params;
     const { message, conversationHistory = [], clientVersion } = req.body;  // clientVersion eklendi
@@ -71,7 +77,7 @@ router.post('/:id/chat', trackRequest, chatRateLimiter, authenticateToken, async
  * GET /api/v1/analyses/:id/chat-stats
  * Chat context istatistikleri
  */
-router.get('/:id/chat-stats', authenticateToken, async (req, res) => {
+router.get('/:id/chat-stats', hrManagers, async (req, res) => {
   try {
     const { id: analysisId } = req.params;
 

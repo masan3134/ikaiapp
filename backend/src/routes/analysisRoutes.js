@@ -18,15 +18,21 @@ const {
 } = require('../controllers/emailController');
 const { authenticateToken } = require('../middleware/auth');
 const { enforceOrganizationIsolation } = require('../middleware/organizationIsolation');
+const { authorize } = require('../middleware/authorize');
+const { ROLE_GROUPS } = require('../constants/roles');
 const { validateRequest } = require('../middleware/validationMiddleware');
 const { trackAnalysisUsage } = require('../middleware/usageTracking');
 
 const router = express.Router();
 
+// HR Managers middleware (HR operations)
+const hrManagers = [authenticateToken, enforceOrganizationIsolation, authorize(ROLE_GROUPS.HR_MANAGERS)];
+
 // Create new analysis
 router.post('/',
   authenticateToken,
   enforceOrganizationIsolation,
+  authorize(ROLE_GROUPS.HR_MANAGERS),
   trackAnalysisUsage,
   [
     body('jobPostingId').isUUID().withMessage('Gecerli bir is ilani IDsi gereklidir.'),
@@ -38,16 +44,15 @@ router.post('/',
 );
 
 // Get all analyses for current user
-router.get('/', authenticateToken, enforceOrganizationIsolation, getAllAnalyses);
+router.get('/', hrManagers, getAllAnalyses);
 
 // Get analysis by ID with results
-router.get('/:id', authenticateToken, enforceOrganizationIsolation, getAnalysisById);
+router.get('/:id', hrManagers, getAnalysisById);
 
-router.delete('/:id', authenticateToken, enforceOrganizationIsolation, deleteAnalysis);
+router.delete('/:id', hrManagers, deleteAnalysis);
 
 router.post('/:id/add-candidates',
-  authenticateToken,
-  enforceOrganizationIsolation,
+  hrManagers,
   [
     body('candidateIds').isArray({ min: 1 }).withMessage('En az bir aday secilmelidir.'),
     body('candidateIds.*').isUUID().withMessage('Aday IDleri gecerli bir formatta olmalidir.')
@@ -56,13 +61,12 @@ router.post('/:id/add-candidates',
   addCandidatesToAnalysis
 );
 
-router.get('/:id/export/xlsx', authenticateToken, enforceOrganizationIsolation, exportAnalysisToExcel);
-router.get('/:id/export/csv', authenticateToken, enforceOrganizationIsolation, exportAnalysisToCSV);
-router.get('/:id/export/html', authenticateToken, enforceOrganizationIsolation, exportAnalysisToHTML);
+router.get('/:id/export/xlsx', hrManagers, exportAnalysisToExcel);
+router.get('/:id/export/csv', hrManagers, exportAnalysisToCSV);
+router.get('/:id/export/html', hrManagers, exportAnalysisToHTML);
 
 router.post('/:id/send-email',
-  authenticateToken,
-  enforceOrganizationIsolation,
+  hrManagers,
   [
     body('recipientEmail').isEmail().withMessage('Geçerli bir email adresi giriniz'),
     body('formats').isArray({ min: 1 }).withMessage('En az bir format seçilmelidir')
@@ -72,8 +76,7 @@ router.post('/:id/send-email',
 );
 
 router.post('/:id/send-feedback',
-  authenticateToken,
-  enforceOrganizationIsolation,
+  hrManagers,
   [
     body('scoreThreshold').optional().isInt({ min: 0, max: 100 }).withMessage('Puan eşiği 0-100 arasında olmalıdır'),
     body('candidateIds').optional().isArray().withMessage('Aday IDleri dizi formatında olmalıdır'),

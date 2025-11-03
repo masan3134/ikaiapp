@@ -3,13 +3,16 @@ const router = express.Router();
 const { PrismaClient } = require('@prisma/client');
 const { authenticateToken } = require('../middleware/auth');
 const { enforceOrganizationIsolation } = require('../middleware/organizationIsolation');
+const { authorize } = require('../middleware/authorize');
+const { ROLES } = require('../constants/roles');
 
 const prisma = new PrismaClient();
 
-router.use(authenticateToken);
-router.use(enforceOrganizationIsolation);
+// Middleware arrays for different permission levels
+const allAuthenticated = [authenticateToken, enforceOrganizationIsolation];
+const adminOnly = [authenticateToken, enforceOrganizationIsolation, authorize([ROLES.ADMIN, ROLES.SUPER_ADMIN])];
 
-router.get('/me', async (req, res) => {
+router.get('/me', allAuthenticated, async (req, res) => {
   try {
     return res.json({
       success: true,
@@ -24,14 +27,8 @@ router.get('/me', async (req, res) => {
   }
 });
 
-router.patch('/me', async (req, res) => {
+router.patch('/me', adminOnly, async (req, res) => {
   try {
-    if (req.user.role !== 'ADMIN') {
-      return res.status(403).json({
-        success: false,
-        message: 'Bu işlem için admin yetkisi gereklidir'
-      });
-    }
 
     const { name, logo, primaryColor, industry, size, country, timezone } = req.body;
 
@@ -62,7 +59,7 @@ router.patch('/me', async (req, res) => {
   }
 });
 
-router.get('/me/usage', async (req, res) => {
+router.get('/me/usage', allAuthenticated, async (req, res) => {
   try {
     const org = req.organization;
 

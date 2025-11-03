@@ -1,8 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const { PrismaClient } = require('@prisma/client');
+const { authenticateToken } = require('../middleware/auth');
+const { authorize } = require('../middleware/authorize');
+const { ROLES } = require('../constants/roles');
 
 const prisma = new PrismaClient();
+
+// Super Admin Only Middleware
+const superAdminOnly = [authenticateToken, authorize([ROLES.SUPER_ADMIN])];
 
 /**
  * GET /organizations
@@ -16,7 +22,7 @@ const prisma = new PrismaClient();
  *   - sortBy: createdAt|name|plan (default: createdAt)
  *   - sortOrder: asc|desc (default: desc)
  */
-router.get('/organizations', async (req, res) => {
+router.get('/organizations', superAdminOnly, async (req, res) => {
   try {
     const {
       page = 1,
@@ -118,7 +124,7 @@ router.get('/organizations', async (req, res) => {
  * GET /stats
  * Get system-wide statistics
  */
-router.get('/stats', async (req, res) => {
+router.get('/stats', superAdminOnly, async (req, res) => {
   try {
     // Get organization counts
     const [
@@ -197,7 +203,7 @@ router.get('/stats', async (req, res) => {
  * PATCH /:id/toggle
  * Toggle organization active status
  */
-router.patch('/:id/toggle', async (req, res) => {
+router.patch('/:id/toggle', superAdminOnly, async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -238,7 +244,7 @@ router.patch('/:id/toggle', async (req, res) => {
  * PATCH /:id/plan
  * Change organization subscription plan
  */
-router.patch('/:id/plan', async (req, res) => {
+router.patch('/:id/plan', superAdminOnly, async (req, res) => {
   try {
     const { id } = req.params;
     const { plan } = req.body;
@@ -298,7 +304,7 @@ router.patch('/:id/plan', async (req, res) => {
  * DELETE /:id
  * Soft delete organization (set isActive to false)
  */
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', superAdminOnly, async (req, res) => {
   try {
     const { id } = req.params;
 

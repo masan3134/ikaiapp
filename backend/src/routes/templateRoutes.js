@@ -3,20 +3,22 @@ const router = express.Router();
 const templateController = require('../controllers/templateController');
 const { authenticateToken } = require('../middleware/auth');
 const { enforceOrganizationIsolation } = require('../middleware/organizationIsolation');
+const { authorize } = require('../middleware/authorize');
+const { ROLES } = require('../constants/roles');
 
-router.use(authenticateToken);
-router.use(enforceOrganizationIsolation);
+// Manager+ middleware (template management requires manager level or higher)
+const managersPlus = [authenticateToken, enforceOrganizationIsolation, authorize([ROLES.MANAGER, ROLES.ADMIN, ROLES.SUPER_ADMIN])];
 
 // CRUD operations
-router.post('/', templateController.createTemplate);
-router.get('/', templateController.getTemplates);
-router.get('/:id', templateController.getTemplateById);
-router.put('/:id', templateController.updateTemplate);
-router.delete('/:id', templateController.deleteTemplate);
+router.post('/', managersPlus, templateController.createTemplate);
+router.get('/', managersPlus, templateController.getTemplates);
+router.get('/:id', managersPlus, templateController.getTemplateById);
+router.put('/:id', managersPlus, templateController.updateTemplate);
+router.delete('/:id', managersPlus, templateController.deleteTemplate);
 
 // Actions
-router.patch('/:id/activate', templateController.activateTemplate);
-router.patch('/:id/deactivate', templateController.deactivateTemplate);
-router.post('/:id/create-offer', templateController.createOfferFromTemplate);
+router.patch('/:id/activate', managersPlus, templateController.activateTemplate);
+router.patch('/:id/deactivate', managersPlus, templateController.deactivateTemplate);
+router.post('/:id/create-offer', managersPlus, templateController.createOfferFromTemplate);
 
 module.exports = router;

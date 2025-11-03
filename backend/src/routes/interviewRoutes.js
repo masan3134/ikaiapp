@@ -3,40 +3,42 @@ const router = express.Router();
 const interviewController = require('../controllers/interviewController');
 const { authenticateToken } = require('../middleware/auth');
 const { enforceOrganizationIsolation } = require('../middleware/organizationIsolation');
+const { authorize } = require('../middleware/authorize');
+const { ROLE_GROUPS } = require('../constants/roles');
 
-router.use(authenticateToken);
-router.use(enforceOrganizationIsolation);
+// HR Managers middleware (HR operations)
+const hrManagers = [authenticateToken, enforceOrganizationIsolation, authorize(ROLE_GROUPS.HR_MANAGERS)];
 
 // ============================================
 // WIZARD ENDPOINTS
 // ============================================
 
 // Step 1: Get recent candidates for selection
-router.get('/candidates/recent', interviewController.getRecentCandidates);
+router.get('/candidates/recent', hrManagers, interviewController.getRecentCandidates);
 
 // Step 2: Check scheduling conflicts
-router.post('/check-conflicts', interviewController.checkConflicts);
+router.post('/check-conflicts', hrManagers, interviewController.checkConflicts);
 
 // ============================================
 // CRUD ENDPOINTS
 // ============================================
 
 // Get interview statistics
-router.get('/stats', interviewController.getStats);
+router.get('/stats', hrManagers, interviewController.getStats);
 
 // Get all interviews (with filters)
-router.get('/', interviewController.getInterviews);
+router.get('/', hrManagers, interviewController.getInterviews);
 
 // Get single interview
-router.get('/:id', interviewController.getInterviewById);
+router.get('/:id', hrManagers, interviewController.getInterviewById);
 
 // Create new interview
-router.post('/', interviewController.createInterview);
+router.post('/', hrManagers, interviewController.createInterview);
 
 // Update interview status
-router.patch('/:id/status', interviewController.updateStatus);
+router.patch('/:id/status', hrManagers, interviewController.updateStatus);
 
 // Delete interview
-router.delete('/:id', interviewController.deleteInterview);
+router.delete('/:id', hrManagers, interviewController.deleteInterview);
 
 module.exports = router;

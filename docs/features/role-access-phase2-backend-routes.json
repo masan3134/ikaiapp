@@ -5,6 +5,36 @@
   "dependencies": ["Phase 1 - Infrastructure must be complete"],
   "description": "Add authorize middleware to 130+ backend routes with appropriate role restrictions",
 
+  "mcpRequirements": {
+    "required": ["filesystem"],
+    "optional": ["git", "sequentialthinking"],
+    "usage": {
+      "filesystem": "Read route files from backend/src/routes/, edit to add authorize middleware",
+      "git": "Commit after each major milestone (optional)",
+      "sequentialthinking": "Plan route protection strategy"
+    },
+    "verification": "Run 'ls ~/.config/Code/User/settings.json' to check MCP config"
+  },
+
+  "toolUsageGuide": {
+    "forAllTasks": {
+      "step1": "Use Read tool to read route file (e.g., backend/src/routes/jobPostingRoutes.js)",
+      "step2": "Use Edit tool to add authorize middleware imports",
+      "step3": "Use Edit tool to add authorize() to route definitions",
+      "step4": "Verify no syntax errors with Read tool"
+    },
+    "forTask_2.14": {
+      "step1": "Run bash grep commands to verify route protection",
+      "step2": "Copy RAW outputs (no interpretation)",
+      "step3": "List unprotected routes if any found"
+    },
+    "forTask_2.15": {
+      "step1": "Use Bash tool: docker compose restart backend",
+      "step2": "Use Bash tool: docker logs ikai-backend --tail 50",
+      "step3": "Report RAW log output (errors or 'Server started')"
+    }
+  },
+
   "tasks": [
     {
       "id": "2.1",

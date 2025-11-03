@@ -13,8 +13,13 @@ const {
 } = require('../controllers/bulkExportController');
 const { authenticateToken } = require('../middleware/auth');
 const { enforceOrganizationIsolation } = require('../middleware/organizationIsolation');
+const { authorize } = require('../middleware/authorize');
+const { ROLE_GROUPS } = require('../constants/roles');
 
 const router = express.Router();
+
+// HR Managers middleware (HR operations)
+const hrManagers = [authenticateToken, enforceOrganizationIsolation, authorize(ROLE_GROUPS.HR_MANAGERS)];
 
 // Validation rules for creating/updating job postings
 const jobPostingValidation = [
@@ -42,17 +47,17 @@ const jobPostingValidation = [
 ];
 
 // Get all job postings (user's own or all if admin)
-router.get('/', authenticateToken, enforceOrganizationIsolation, getAllJobPostings);
+router.get('/', hrManagers, getAllJobPostings);
 
-router.post('/', authenticateToken, enforceOrganizationIsolation, jobPostingValidation, createJobPosting);
+router.post('/', hrManagers, jobPostingValidation, createJobPosting);
 
-router.get('/:id', authenticateToken, enforceOrganizationIsolation, getJobPostingById);
+router.get('/:id', hrManagers, getJobPostingById);
 
-router.put('/:id', authenticateToken, enforceOrganizationIsolation, jobPostingValidation, updateJobPosting);
+router.put('/:id', hrManagers, jobPostingValidation, updateJobPosting);
 
-router.delete('/:id', authenticateToken, enforceOrganizationIsolation, deleteJobPosting);
+router.delete('/:id', hrManagers, deleteJobPosting);
 
-router.get('/export/xlsx', authenticateToken, enforceOrganizationIsolation, exportJobPostingsXLSX);
-router.get('/export/csv', authenticateToken, enforceOrganizationIsolation, exportJobPostingsCSV);
+router.get('/export/xlsx', hrManagers, exportJobPostingsXLSX);
+router.get('/export/csv', hrManagers, exportJobPostingsCSV);
 
 module.exports = router;

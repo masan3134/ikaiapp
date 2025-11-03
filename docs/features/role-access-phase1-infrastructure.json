@@ -5,6 +5,30 @@
   "dependencies": [],
   "description": "Create reusable components, hooks, constants and helpers for role-based access control system",
 
+  "mcpRequirements": {
+    "required": ["filesystem"],
+    "optional": ["git", "sequentialthinking"],
+    "usage": {
+      "filesystem": "Write new files for roles constants, helpers, hooks, and components",
+      "git": "Commit infrastructure files when complete",
+      "sequentialthinking": "Plan component architecture"
+    },
+    "verification": "Run 'ls ~/.config/Code/User/settings.json' to check MCP config"
+  },
+
+  "toolUsageGuide": {
+    "forAllTasks": {
+      "step1": "Use Write tool to create new file",
+      "step2": "Use Read tool to verify file was created correctly",
+      "step3": "Check for TypeScript/syntax errors"
+    },
+    "forTask_1.7_verification": {
+      "step1": "Use Bash/Glob tools to verify all 6 files exist",
+      "step2": "Run grep to check imports are correct",
+      "step3": "Report RAW file list and outputs"
+    }
+  },
+
   "tasks": [
     {
       "id": "1.1",

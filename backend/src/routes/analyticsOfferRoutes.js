@@ -2,13 +2,16 @@ const express = require('express');
 const router = express.Router();
 const analyticsController = require('../controllers/analyticsOfferController');
 const { authenticateToken } = require('../middleware/auth');
+const { enforceOrganizationIsolation } = require('../middleware/organizationIsolation');
+const { authorize } = require('../middleware/authorize');
+const { ROLE_GROUPS } = require('../constants/roles');
 
-// All analytics routes require authentication
-router.use(authenticateToken);
+// Analytics viewers middleware (analytics require manager level or higher)
+const analyticsViewers = [authenticateToken, enforceOrganizationIsolation, authorize(ROLE_GROUPS.ANALYTICS_VIEWERS)];
 
-router.get('/overview', analyticsController.getOverview);
-router.get('/acceptance-rate', analyticsController.getAcceptanceRate);
-router.get('/response-time', analyticsController.getAverageResponseTime);
-router.get('/by-department', analyticsController.getByDepartment);
+router.get('/overview', analyticsViewers, analyticsController.getOverview);
+router.get('/acceptance-rate', analyticsViewers, analyticsController.getAcceptanceRate);
+router.get('/response-time', analyticsViewers, analyticsController.getAverageResponseTime);
+router.get('/by-department', analyticsViewers, analyticsController.getByDepartment);
 
 module.exports = router;

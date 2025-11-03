@@ -11,20 +11,23 @@ const {
 } = require('../controllers/testController');
 const { authenticateToken } = require('../middleware/auth');
 const { enforceOrganizationIsolation } = require('../middleware/organizationIsolation');
+const { authorize } = require('../middleware/authorize');
+const { ROLE_GROUPS } = require('../constants/roles');
 const { validateRequest } = require('../middleware/validationMiddleware');
 
 const router = express.Router();
 
+// HR Managers middleware (test operations)
+const hrManagers = [authenticateToken, enforceOrganizationIsolation, authorize(ROLE_GROUPS.HR_MANAGERS)];
+
 // Auth required endpoints
 router.get('/',
-  authenticateToken,
-  enforceOrganizationIsolation,
+  hrManagers,
   getAllTests
 );
 
 router.post('/generate',
-  authenticateToken,
-  enforceOrganizationIsolation,
+  hrManagers,
   [
     body('jobPostingId').isUUID().withMessage('Geçerli job posting ID gereklidir'),
     body('analysisId').optional().isUUID().withMessage('Geçerli analysis ID gereklidir')
@@ -34,8 +37,7 @@ router.post('/generate',
 );
 
 router.post('/:testId/send-email',
-  authenticateToken,
-  enforceOrganizationIsolation,
+  hrManagers,
   [
     body('recipientEmail').isEmail().withMessage('Geçerli email gereklidir')
   ],
@@ -44,14 +46,12 @@ router.post('/:testId/send-email',
 );
 
 router.get('/submissions',
-  authenticateToken,
-  enforceOrganizationIsolation,
+  hrManagers,
   getTestSubmissions
 );
 
 router.get('/:testId/submissions',
-  authenticateToken,
-  enforceOrganizationIsolation,
+  hrManagers,
   getTestSubmissions
 );
 
