@@ -1,8 +1,8 @@
 # 🤖 IKAI HR Platform - Development Guide
 
-**Version:** 11.0 - Queue System Optimized + Production Ready
-**Updated:** 2025-11-02 (Evening)
-**Environment:** Local Development + VPS Production
+**Version:** 12.0 - Complete Local Dev Setup + Auto-Commit
+**Updated:** 2025-11-03
+**Environment:** Docker Isolated Development (Hot Reload Enabled)
 
 > **📚 FULL DOCUMENTATION:** [`docs/INDEX.md`](docs/INDEX.md) - 44 detailed documents
 > **📝 LATEST CHANGES:** [`docs/reports/2025-11-02-session-summary.md`](docs/reports/2025-11-02-session-summary.md)
@@ -39,36 +39,51 @@ curl -s -X POST "https://generativelanguage.googleapis.com/v1beta/models/gemini-
 ## 🚀 QUICK START
 
 ```bash
+# Location: /home/asan/Desktop/ikai
+
+# Start ALL services (Docker isolated)
 docker compose up -d
-cd backend && npm install && npx prisma migrate deploy
-cd ../frontend && npm install
 
-# Run (2 terminals)
-cd backend && npm run dev    # Port 5000
-cd frontend && npm run dev   # Port 3000
+# Access
+Frontend: http://localhost:8103
+Backend:  http://localhost:8102
+Login:    info@gaiai.ai / 23235656
 
-# Login: http://localhost:3000
-# Email: info@gaiai.ai | Pass: 23235656
+# Hot reload is AUTOMATIC (no manual npm run dev needed!)
+# Edit files → Auto reload in Docker containers
 ```
+
+**Services Running in Docker:**
+- Backend (Port 8102) - Express API with nodemon
+- Frontend (Port 8103) - Next.js with hot reload
+- PostgreSQL (8132) | Redis (8179) | MinIO (8100, 8101)
+- Milvus (8130, 8191) | Ollama (8134) | Etcd
 
 ---
 
 ## 🏗️ ARCHITECTURE
 
 ```
-vps_ikai_workspace/
-├── backend/         # Node.js + Express + Prisma
-├── frontend/        # Next.js 14 + React + TS
-├── docs/            # 📚 44 documentation files
-│   ├── INDEX.md     # ← START HERE for details
-│   ├── api/         # API docs
-│   ├── features/    # Feature specs
-│   ├── reports/     # Status reports (32 files)
-│   └── architecture/# System design
-└── CLAUDE.md        # This file (compact guide)
+/home/asan/Desktop/ikai/
+├── backend/              # Node.js + Express + Prisma
+├── frontend/             # Next.js 14 + TypeScript
+├── docker/               # Docker configs
+├── docs/                 # 📚 44 documentation files
+│   ├── INDEX.md          # ← START HERE
+│   ├── api/              # API docs
+│   ├── features/         # Feature specs
+│   ├── reports/          # Status reports
+│   └── architecture/     # System design
+├── scripts/              # Utility scripts
+│   └── auto-commit.sh    # Auto git commit & push
+├── .vscode/              # VS Code + MCP configs
+├── _archive/             # Backup files (gitignored)
+├── CLAUDE.md             # This file (compact guide)
+├── AUTO_COMMIT_GUIDE.md  # Git automation guide
+└── docker-compose.yml    # Main Docker config
 ```
 
-**API:** 110+ endpoints | **Details:** [`docs/api/`](docs/api/)
+**API:** 110+ endpoints | **Docker:** All services isolated
 
 ---
 
@@ -116,24 +131,85 @@ vps_ikai_workspace/
 
 ## 🐳 DOCKER SERVICES
 
-**Running:**
-- PostgreSQL (`8132`) | Redis (`8179`) | MinIO (`8100`)
-- **Milvus (`8130`)** - AI Chat ready
-- **Ollama (`8134`)** - Embeddings
+**All Services Isolated in Docker (Hot Reload Enabled):**
+- **Backend** (`8102`) - Express + Prisma + BullMQ workers
+- **Frontend** (`8103`) - Next.js 14 with hot reload
+- **PostgreSQL** (`8132`) - Main database
+- **Redis** (`8179`) - Queue + cache
+- **MinIO** (`8100`, `8101`) - File storage
+- **Milvus** (`8130`, `8191`) - Vector DB for AI chat
+- **Ollama** (`8134`) - Embedding generation
+- **Etcd** - Milvus coordinator
 
-**Check:** `docker ps --filter "name=ikai"`
+**Commands:**
+```bash
+docker compose up -d                    # Start all
+docker compose down                     # Stop all
+docker ps --filter "name=ikai"          # Check status
+docker compose logs -f backend          # Backend logs
+docker compose logs -f frontend         # Frontend logs
+```
 
 ---
 
 ## 🔐 CREDENTIALS
 
+**See:** `.env.local` for all credentials (gitignored but checked in as example)
+
 ```
 Admin: info@gaiai.ai / 23235656
-Gmail: info@gaiai.ai / igqt cvao lmea uonj
-Gemini: AIzaSyC3G-0JS_iS0SjX5MPS3CA2HxLosYu8Q_0
-VPS: root@62.169.25.186 / @78mu2zaqAaVpTpt
 DB: postgresql://ikaiuser:ikaipass2025@localhost:8132/ikaidb
+GitHub: https://github.com/masan3134/ikaiapp (private)
 ```
+
+**Other credentials:** Gemini API, Gmail SMTP, VPS SSH, Google OAuth → `.env.local`
+
+---
+
+## 🔌 MCP INTEGRATION (VS Code Claude Extension)
+
+**6 Active MCP Servers:**
+- **filesystem** - File operations
+- **git** - Git management
+- **fetch** - Web content fetching
+- **memory** - Persistent memory
+- **time** - Time operations
+- **sequentialthinking** - Step-by-step reasoning
+
+**Config:** `~/.config/Code/User/settings.json`
+**Servers:** `~/mcp-servers/mcp-official/`
+
+**Usage:** MCPs work automatically when Claude Code extension needs them.
+
+---
+
+## 🔄 GIT AUTO-COMMIT SYSTEM
+
+**3 Ways to Auto-Commit & Push:**
+
+### 1. Post-Commit Hook (Automatic)
+```bash
+git add .
+git commit -m "feat: New feature"
+# 🚀 Auto-pushes to GitHub!
+```
+
+### 2. Script
+```bash
+./scripts/auto-commit.sh "Your message"
+```
+
+### 3. VS Code Shortcuts
+- **Ctrl+Shift+S** - Quick save (auto message)
+- **Ctrl+Shift+G** - Custom message
+
+**Features:**
+- Auto-push after every commit
+- Colored terminal output
+- Error handling
+- No push if no changes
+
+**Guide:** [`AUTO_COMMIT_GUIDE.md`](AUTO_COMMIT_GUIDE.md)
 
 ---
 
@@ -158,16 +234,26 @@ curl -H "Authorization: Bearer $JWT" http://localhost:5000/api/v1/queue/health
 ## 🔄 WORKFLOW
 
 ```bash
-# 1. Code (hot reload active)
-nano backend/src/... | nano frontend/app/...
+# 1. Code (hot reload active in Docker)
+# Edit: backend/src/... or frontend/app/...
+# → Changes auto-reload in containers!
 
-# 2. Git
-git add -A && git commit -m "message"
+# 2. Git Auto-Commit (3 ways)
+./scripts/auto-commit.sh "feat: New feature"  # Script
+git commit -m "message"                        # Hook auto-pushes
+# OR in VS Code: Ctrl+Shift+S                 # Keyboard shortcut
 
 # 3. Test
-curl http://localhost:5000/health
-docker logs ikai-backend -f
+curl http://localhost:8102/health              # Backend health
+docker logs ikai-backend -f                    # Backend logs
+docker logs ikai-frontend -f                   # Frontend logs
 ```
+
+**🎯 Git Auto-Commit System:**
+- **Post-Commit Hook:** Auto-push after every commit
+- **Script:** `./scripts/auto-commit.sh`
+- **VS Code Tasks:** Ctrl+Shift+S (quick) | Ctrl+Shift+G (custom message)
+- **Guide:** [`AUTO_COMMIT_GUIDE.md`](AUTO_COMMIT_GUIDE.md)
 
 ---
 
@@ -249,25 +335,37 @@ semanticSearch.limit = 8  // Specific queries
 
 ---
 
-## ✅ CURRENT STATUS (2025-11-02 Evening)
+## ✅ CURRENT STATUS (2025-11-03)
 
 | Component | Status | Note |
 |-----------|--------|------|
-| **Backend** | ✅ | 5 queues + 5 workers + rate limiters |
-| **Frontend** | ✅ | Wizard optimized, 50 CV limit |
-| **Database** | ✅ | PostgreSQL, Milvus collection ready |
-| **Gemini** | ✅ | Global rate limiter (15 RPM safe) |
-| **Queue System** | ✅ | **NEW: Production-ready queues** |
-| **Monitoring** | ✅ | **NEW: Admin queue dashboard** |
-| **Email** | ✅ | **FIXED: All emails queued** |
-| **Offer Worker** | ✅ | **FIXED: Was missing, now active** |
+| **Docker Setup** | ✅ | All services isolated, hot reload active |
+| **Backend** | ✅ | Running on port 8102 (Docker) |
+| **Frontend** | ✅ | Running on port 8103 (Docker) |
+| **Database** | ✅ | PostgreSQL + Milvus + Redis ready |
+| **Queue System** | ✅ | 5 queues + 5 workers operational |
+| **Git Auto-Commit** | ✅ | **NEW: Post-commit hook + scripts** |
+| **GitHub Repo** | ✅ | **NEW: Clean repo with full project** |
+| **MCP Integration** | ✅ | **NEW: 6 MCPs in VS Code extension** |
+| **Project Structure** | ✅ | **NEW: Clean directory (no nesting)** |
 
-**Last Test:** 2025-11-02 19:07 - 25 CV analysis → All passed ✅
-**Queue Test:** 2025-11-02 21:30 - All workers started ✅
+**Setup Date:** 2025-11-03
+**Location:** /home/asan/Desktop/ikai
+**GitHub:** https://github.com/masan3134/ikaiapp (private)
 
 ---
 
 ## 📋 VERSION HISTORY
+
+**v12.0 (2025-11-03):** 🎉 **COMPLETE LOCAL DEV SETUP**
+- **NEW:** Docker isolated development (all services in containers)
+- **NEW:** Git auto-commit system (post-commit hook + scripts)
+- **NEW:** VS Code MCP integration (6 servers active)
+- **NEW:** Clean GitHub repo (full project uploaded)
+- **FIXED:** Project structure (removed vps_ikai_workspace nesting)
+- **FIXED:** Port configurations for Docker isolation
+- Hot reload active for both backend and frontend
+- All 388 files committed (112,571 lines of code)
 
 **v11.0 (2025-11-02 Evening):** 🚀 **QUEUE SYSTEM COMPLETE**
 - **FIXED:** Offer worker (was missing!)

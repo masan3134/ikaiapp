@@ -269,3 +269,6 @@ docker-compose*.backup-*
 # Archive directory (old files, backups)
 _archive/
 .archive/
+
+# Sensitive analysis documents (contains credentials)
+docs/analyses/
