@@ -1,0 +1,38 @@
+{
+  "claude-code.useTerminal": true,
+  "claude-code.dangerouslyDisableSandbox": true,
+  "claude-code.autoApprove": true,
+  "claude-code.skipPermissions": true,
+  "claude-code.allowedCommands": ["*"],
+  "claude-code.alwaysApproveRead": true,
+  "claude-code.alwaysApproveWrite": true,
+  "claude-code.alwaysApproveBash": true,
+  "editor.formatOnSave": true,
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+
+  "window.title": "🖥️ LOCAL DEV - IKAI ${rootName}",
+  "workbench.colorTheme": "Default Dark+",
+  "workbench.colorCustomizations": {
+    "titleBar.activeBackground": "#2d5016",
+    "titleBar.activeForeground": "#e0f2d0",
+    "titleBar.inactiveBackground": "#2d501699",
+    "titleBar.inactiveForeground": "#e0f2d099",
+    "statusBar.background": "#2d5016",
+    "statusBar.foreground": "#e0f2d0",
+    "statusBar.noFolderBackground": "#2d5016",
+    "activityBar.background": "#1e3a0f"
+  },
+
+  "sqltools.connections": [
+    {
+      "name": "🖥️ LOCAL - IKAI Dev DB",
+      "driver": "PostgreSQL",
+      "server": "localhost",
+      "port": 5432,
+      "database": "ikaidb",
+      "username": "ikaiuser",
+      "password": "ikaipass2025"
+    }
+  ]
+}

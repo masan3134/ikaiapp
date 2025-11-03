@@ -1,0 +1,271 @@
+# IKAI - VPS Development Environment
+# Hot reload enabled for BOTH frontend and backend
+# Updated: 
+
+
+
+networks:
+  ikai-dev-network:
+    name: ikai-dev-network
+    driver: bridge
+
+volumes:
+  ikai-postgres-data:
+    name: ikai-postgres-data
+  ikai-redis-data:
+    name: ikai-redis-data
+  ikai-minio-data:
+    name: ikai-minio-data
+  ikai-milvus-data:
+    name: ikai-milvus-data
+  ikai-etcd-data:
+    name: ikai-etcd-data
+
+services:
+  # ============================================
+  # DATABASE SERVICES
+  # ============================================
+  
+  # PostgreSQL Database (Port: 5434)
+  postgres:
+    image: postgres:16-alpine
+
+    restart: always
+    environment:
+      POSTGRES_USER: ikaiuser
+      POSTGRES_PASSWORD: ikaipass2025
+      POSTGRES_DB: ikaidb
+    volumes:
+      - ikai-postgres-data:/var/lib/postgresql/data
+    networks:
+      - ikai-dev-network
+    ports:
+      - "5434:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ikaiuser"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache (Port: 6380)
+  redis:
+    image: redis:7-alpine
+
+    restart: always
+    command: redis-server --appendonly yes
+    volumes:
+      - ikai-redis-data:/data
+    networks:
+      - ikai-dev-network
+    ports:
+      - "6380:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ============================================
+  # STORAGE SERVICES
+  # ============================================
+  
+  # MinIO Object Storage (Ports: 9010-9011)
+  minio:
+    image: minio/minio:latest
+    restart: always
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin2025
+    volumes:
+      - ikai-minio-data:/data
+    networks:
+      - ikai-dev-network
+    ports:
+      - "9010:9000"
+      - "9011:9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  # MinIO Initialization
+  minio-init:
+    image: minio/mc:latest
+
+    depends_on:
+      - minio
+    networks:
+      - ikai-dev-network
+    entrypoint: >
+      /bin/sh -c "
+      sleep 10;
+      /usr/bin/mc alias set myminio http://minio:9000 minioadmin minioadmin2025;
+      /usr/bin/mc mb myminio/ikai-cv-files --ignore-existing;
+      /usr/bin/mc anonymous set public myminio/ikai-cv-files;
+      exit 0;
+      "
+
+  # ============================================
+  # VECTOR DATABASE
+  # ============================================
+  
+  # etcd (for Milvus)
+  etcd:
+    image: quay.io/coreos/etcd:v3.5.5
+
+    restart: always
+    environment:
+      - ETCD_AUTO_COMPACTION_MODE=revision
+      - ETCD_AUTO_COMPACTION_RETENTION=1000
+      - ETCD_QUOTA_BACKEND_BYTES=4294967296
+      - ETCD_SNAPSHOT_COUNT=50000
+    volumes:
+      - ikai-etcd-data:/etcd
+    command: etcd -advertise-client-urls=http://127.0.0.1:2379 -listen-client-urls http://0.0.0.0:2379 --data-dir /etcd
+    networks:
+      - ikai-dev-network
+
+  # Milvus Vector Database (Port: 19531)
+  milvus:
+    image: milvusdb/milvus:v2.3.3
+
+    restart: always
+    depends_on:
+      - etcd
+      - minio
+    environment:
+      ETCD_ENDPOINTS: etcd:2379
+      MINIO_ADDRESS: minio:9000
+      MINIO_ACCESS_KEY_ID: minioadmin
+      MINIO_SECRET_ACCESS_KEY: minioadmin2025
+    volumes:
+      - ikai-milvus-data:/var/lib/milvus
+    command: milvus run standalone
+    networks:
+      - ikai-dev-network
+    ports:
+      - "19531:19530"
+      - "9092:9091"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9091/healthz"]
+      interval: 30s
+      start_period: 90s
+      timeout: 20s
+      retries: 3
+
+  # ============================================
+  # AI & AUTOMATION SERVICES
+  # ============================================
+  
+  # Ollama LLM (Port: 11435)
+  ollama:
+    image: ollama/ollama:latest
+
+    restart: always
+    networks:
+      - ikai-dev-network
+    ports:
+      - "11435:11434"
+
+  # ============================================
+  # APPLICATION SERVICES (DEVELOPMENT MODE)
+  # ============================================
+  
+  # Backend API (Port: 3011) - HOT RELOAD ENABLED
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+
+    restart: on-failure
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      milvus:
+        condition: service_started
+      ollama:
+        condition: service_started
+    environment:
+      # Database
+      - DATABASE_URL=postgresql://ikaiuser:ikaipass2025@postgres:5432/ikaidb
+
+      # Redis
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_URL=redis://redis:6379
+
+      # MinIO
+      - MINIO_ENDPOINT=minio
+      - MINIO_PORT=9000
+      - MINIO_ACCESS_KEY=minioadmin
+      - MINIO_SECRET_KEY=minioadmin2025
+      - MINIO_BUCKET=ikai-cv-files
+      - MINIO_USE_SSL=false
+
+      # Ollama
+      - OLLAMA_BASE_URL=http://ollama:11434
+
+      # Milvus
+      - MILVUS_HOST=milvus
+      - MILVUS_PORT=19530
+      - MILVUS_SYNC_ENABLED=false
+
+      # AI Chat (disabled - Milvus sync off)
+      - AI_CHAT_ENABLED=false
+
+      # Backend
+      - BACKEND_PORT=3001
+      - NODE_ENV=development
+      - FRONTEND_URL=https://gaiai.ai/ik
+
+      # JWT
+      - JWT_SECRET=${JWT_SECRET:-ikai-dev-jwt-secret-2025}
+      - JWT_EXPIRATION=7d
+
+      # Email
+      - GMAIL_USER=${GMAIL_USER}
+      - GMAIL_APP_PASSWORD=${GMAIL_APP_PASSWORD}
+
+      # Gemini API
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - BATCH_THRESHOLD=3
+
+    volumes:
+      # HOT RELOAD: Bind mount source code
+      - ../backend:/usr/src/app
+      - /usr/src/app/node_modules
+    networks:
+      - ikai-dev-network
+    ports:
+      - "3011:3001"
+    command: node src/index.js
+
+  # Frontend (Port: 3010) - HOT RELOAD ENABLED
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+
+    restart: always
+    depends_on:
+      - backend
+    environment:
+      - NEXT_PUBLIC_API_URL=https://gaiai.ai/ik
+      - NODE_ENV=development
+      - NEXT_PUBLIC_USE_BASEPATH=true  # Maintain /ik basePath
+    volumes:
+      # HOT RELOAD: Bind mount source code
+      - ../frontend:/app
+      - /app/node_modules  # Preserve node_modules
+      # NO .next volume - allow hot reload to work
+    networks:
+      - ikai-dev-network
+    ports:
+      - "3010:3000"
+    command: npm run dev  # Development mode with hot reload

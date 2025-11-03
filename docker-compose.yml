@@ -1,0 +1,230 @@
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: ikai-postgres
+    restart: unless-stopped
+    env_file:
+      - postgres.env
+    ports:
+      - "8132:5432"  # IKAI unique: 8132
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres-init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ikaiuser"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ikai-network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: ikai-redis
+    restart: unless-stopped
+    ports:
+      - "8179:6379"  # IKAI unique: 8179
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ikai-network
+
+  # MinIO Object Storage
+  minio:
+    image: minio/minio:latest
+    container_name: ikai-minio
+    restart: unless-stopped
+    ports:
+      - "8100:9000"  # IKAI unique: 8100
+      - "8101:9001"  # IKAI unique: 8101
+    volumes:
+      - minio_data:/data
+    env_file:
+      - minio.env
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    networks:
+      - ikai-network
+
+  # MinIO Bucket Initialization
+  minio-init:
+    image: minio/mc:latest
+    container_name: ikai-minio-init
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      sleep 10;
+      /usr/bin/mc alias set myminio http://minio:9000 minioadmin minioadmin;
+      /usr/bin/mc mb myminio/ikai-cv-files --ignore-existing;
+      /usr/bin/mc anonymous set download myminio/ikai-cv-files;
+      exit 0;
+      "
+    networks:
+      - ikai-network
+
+
+  # Ollama AI
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ikai-ollama
+    restart: unless-stopped
+    ports:
+      - "8134:11434"  # IKAI unique: 8134
+    volumes:
+      - ollama_data:/root/.ollama
+    environment:
+      - OLLAMA_HOST=0.0.0.0:11434
+    networks:
+      - ikai-network
+
+  # Etcd for Milvus
+  etcd:
+    image: quay.io/coreos/etcd:v3.5.5
+    container_name: ikai-etcd
+    restart: unless-stopped
+    environment:
+      - ETCD_AUTO_COMPACTION_MODE=revision
+      - ETCD_AUTO_COMPACTION_RETENTION=1000
+      - ETCD_QUOTA_BACKEND_BYTES=4294967296
+      - ETCD_SNAPSHOT_COUNT=50000
+    volumes:
+      - etcd_data:/etcd
+    command: etcd -advertise-client-urls=http://127.0.0.1:2379 -listen-client-urls http://0.0.0.0:2379 --data-dir /etcd
+    networks:
+      - ikai-network
+
+  # Milvus Vector Database
+  milvus:
+    image: milvusdb/milvus:v2.3.3
+    container_name: ikai-milvus
+    restart: unless-stopped
+    ports:
+      - "8130:19530"  # IKAI unique: 8130
+      - "8191:9091"   # IKAI unique: 8191
+    volumes:
+      - milvus_data:/var/lib/milvus
+    environment:
+      ETCD_ENDPOINTS: etcd:2379
+      MINIO_ADDRESS: minio:9000
+    command: milvus run standalone
+    depends_on:
+      - etcd
+      - minio
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9091/healthz"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    networks:
+      - ikai-network
+
+  # Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ikai-backend
+    restart: unless-stopped
+    ports:
+      - "8102:3001"  # IKAI unique: 8102 → 3001 inside
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://ikaiuser:ikaipass2025@postgres:5432/ikaidb
+      - REDIS_URL=redis://redis:6379
+      - MINIO_ENDPOINT=minio
+      - MINIO_PORT=9000
+      - MINIO_ACCESS_KEY=minioadmin
+      - MINIO_SECRET_KEY=minioadmin
+      - MINIO_BUCKET=ikai-cv-files
+      - MINIO_USE_SSL=false
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - MILVUS_HOST=milvus
+      - MILVUS_PORT=19530
+      - GMAIL_USER=info@gaiai.ai
+      - GMAIL_APP_PASSWORD=igqt cvao lmea uonj
+      - GEMINI_API_KEY=AIzaSyC3G-0JS_iS0SjX5MPS3CA2HxLosYu8Q_0
+      - JWT_SECRET=ikai-dev-jwt-secret-2025
+      - GOOGLE_CLIENT_ID=224218611738-julcqf90c52f97gu8kfgsi9mt5nnu4pm.apps.googleusercontent.com
+      - GOOGLE_CLIENT_SECRET=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
+      - GOOGLE_REFRESH_TOKEN=1//04j_epOL0FCi7CgYIARAAGAQSNwF-L9IrLMYSszAY0WckcJD_-5Ix4oI9V1aSRAw9-I9YW3yLmNF-KKBiJSC49LgPDRXgiqg9vZw
+      - GOOGLE_CALENDAR_ENABLED=true
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3001/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    mem_limit: 1024m
+    volumes:
+      - ./backend:/usr/src/app:rw
+      - /usr/src/app/node_modules
+    command: npm run dev
+    networks:
+      - ikai-network
+
+  # Frontend Next.js Application
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: ikai-frontend
+    restart: unless-stopped
+    ports:
+      - "8103:3000"  # IKAI unique: 8103 → 3000 inside
+    environment:
+      - NODE_ENV=development
+      - NEXT_PUBLIC_API_URL=http://localhost:8102
+      - WATCHPACK_POLLING=true
+      - CHOKIDAR_USEPOLLING=true
+    volumes:
+      - ./frontend:/app:rw
+      - frontend_node_modules:/app/node_modules
+      - frontend_next:/app/.next
+    depends_on:
+      - backend
+    networks:
+      - ikai-network
+
+networks:
+  ikai-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    external: true
+    name: vps_ikai_workspace_postgres_data
+  ollama_data:
+    external: true
+    name: vps_ikai_workspace_ollama_data
+  redis_data:
+    external: true
+    name: vps_ikai_workspace_redis_data
+  minio_data:
+    external: true
+    name: vps_ikai_workspace_minio_data
+  etcd_data:
+  milvus_data:
+    external: true
+    name: vps_ikai_workspace_milvus_data
+  frontend_node_modules:
+  frontend_next:

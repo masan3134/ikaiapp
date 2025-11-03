@@ -1,0 +1,271 @@
+# ================================
+# IKAI HR CV Analysis Platform
+# Git Ignore Configuration
+# ================================
+
+# ================================
+# Environment Variables
+# ================================
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+*.env
+
+# ================================
+# Node.js & NPM
+# ================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json.backup
+.npm/
+.yarn/
+.pnp.*
+
+# ================================
+# Backend Specific
+# ================================
+backend/node_modules/
+backend/.env
+backend/dist/
+backend/build/
+backend/coverage/
+backend/*.log
+
+# ================================
+# Frontend Specific
+# ================================
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/build/
+frontend/.env
+frontend/.env.local
+frontend/.env.production
+frontend/.env.development
+frontend/*.log
+
+# ================================
+# Prisma
+# ================================
+*.db
+*.db-journal
+prisma/*.db
+prisma/*.db-journal
+
+# ================================
+# Docker
+# ================================
+docker/data/
+docker/volumes/
+*.dockerfile.backup
+
+# Docker Compose override
+docker-compose.override.yml
+
+# ================================
+# IDEs & Editors
+# ================================
+
+# VS Code (allow settings.json for Claude Code)
+# .vscode/ excluded but settings.json is kept
+!.vscode/
+!.vscode/settings.json
+!.vscode/settings.json.example
+!.vscode/extensions.json.example
+*.code-workspace
+
+# JetBrains (WebStorm, IntelliJ, etc.)
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+*~
+\#*\#
+.\#*
+
+# ================================
+# Operating System Files
+# ================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.directory
+.Trash-*
+
+# ================================
+# Logs & Temporary Files
+# ================================
+logs/
+*.log
+npm-debug.log*
+pids/
+*.pid
+*.seed
+*.pid.lock
+lib-cov/
+coverage/
+.nyc_output/
+.grunt/
+.lock-wscript/
+*.tsbuildinfo
+.eslintcache
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+*.bak
+*.backup
+*.old
+
+# ================================
+# Testing
+# ================================
+coverage/
+.nyc_output/
+*.lcov
+test-results/
+playwright-report/
+e2e/results/
+
+# ================================
+# Build Outputs
+# ================================
+dist/
+build/
+out/
+.next/
+*.tgz
+
+# ================================
+# TypeScript
+# ================================
+*.tsbuildinfo
+
+# ================================
+# Misc
+# ================================
+.cache/
+.parcel-cache/
+.turbo/
+
+# Local database files (development)
+*.sqlite
+*.sqlite3
+
+# Uploaded files (development)
+uploads/
+public/uploads/
+
+# AI Model files (if downloaded locally)
+models/
+*.gguf
+*.bin
+
+# Certificates & Keys
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+
+# ================================
+# Project Specific
+# ================================
+
+# CV files uploaded during development
+backend/uploads/
+frontend/public/uploads/
+
+# Prisma Studio cache
+.prisma/
+
+# MinIO local data (if running locally)
+minio-data/
+
+# Milvus local data
+milvus-data/
+
+# Redis dump
+dump.rdb
+
+# PostgreSQL data
+postgres-data/
+
+# n8n data
+n8n-data/
+
+# Ollama models (large files)
+ollama-data/
+
+# ================================
+# Claude Code Tracking (Local Only)
+# ================================
+.claude/operations/
+.claude/.monitor.pid
+.claude/monitor.log
+
+# ================================
+# Deployment & SSH
+# ================================
+.ssh-config
+server_info.txt
+.credentials
+
+# ================================
+# Keep These Files
+# ================================
+!.gitkeep
+!.env.example
+!.env.local
+!.vscode/
+!.vscode/settings.json
+!.vscode/settings.json.example
+n8nworkflows/UNIVERSAL_SCORING_FRAMEWORK.txt
+n8nworkflows/PREPARE_GEMINI_V3_STRICT.js
+!.claude/
+!.claude/*.py
+!.claude/*.sh
+!.claude/*.md
+deploy-to-vps.sh
+# VPS Development Mode Backups
+*.backup
+*.backup-*
+.env.server.backup-*
+docker-compose*.backup-*
+
+# Google OAuth Credentials
+.google/
+.google/*.json
+
+# Archive directory (old files, backups)
+_archive/
+.archive/

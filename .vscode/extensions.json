@@ -1,0 +1,40 @@
+{
+  "recommendations": [
+    // Claude Code (Official)
+    "anthropic.claude-code",
+
+    // Git & Version Control
+    "eamodio.gitlens",
+
+    // Error Display
+    "usernamehw.errorlens",
+
+    // Remote Development
+    "ms-vscode-remote.remote-ssh",
+    "ms-vscode-remote.remote-ssh-edit",
+
+    // Task Management
+    "gruntfuggly.todo-tree",
+
+    // Code Quality
+    "aaron-bond.better-comments",
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+
+    // API Testing
+    "humao.rest-client",
+    "rangav.vscode-thunder-client",
+
+    // Docker
+    "ms-azuretools.vscode-docker",
+
+    // Database
+    "mtxr.sqltools",
+    "mtxr.sqltools-driver-pg",
+
+    // Utilities
+    "wix.vscode-import-cost",
+    "wayou.vscode-todo-highlight",
+    "streetsidesoftware.code-spell-checker"
+  ]
+}

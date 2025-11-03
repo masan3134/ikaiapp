@@ -1,0 +1,12 @@
+[
+  {
+    "key": "ctrl+shift+s",
+    "command": "workbench.action.tasks.runTask",
+    "args": "⚡ Git: Quick Save (Auto Message)"
+  },
+  {
+    "key": "ctrl+shift+g",
+    "command": "workbench.action.tasks.runTask",
+    "args": "🚀 Git: Auto Commit & Push"
+  }
+]
