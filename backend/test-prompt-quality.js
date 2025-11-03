@@ -6,7 +6,7 @@
 
 const axios = require('axios');
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY || 'AIzaSyC3G-0JS_iS0SjX5MPS3CA2HxLosYu8Q_0';
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY || 'AIzaSyBGWvYrIjfpRSwUFbNUzUrAJto_1qHVmYQ';
 const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent';
 
 // Test job posting (same as before)

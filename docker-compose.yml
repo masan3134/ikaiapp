@@ -155,7 +155,7 @@ services:
       - MILVUS_PORT=19530
       - GMAIL_USER=info@gaiai.ai
       - GMAIL_APP_PASSWORD=igqt cvao lmea uonj
-      - GEMINI_API_KEY=AIzaSyC3G-0JS_iS0SjX5MPS3CA2HxLosYu8Q_0
+      - GEMINI_API_KEY=AIzaSyBGWvYrIjfpRSwUFbNUzUrAJto_1qHVmYQ
       - JWT_SECRET=ikai-dev-jwt-secret-2025
       - GOOGLE_CLIENT_ID=224218611738-julcqf90c52f97gu8kfgsi9mt5nnu4pm.apps.googleusercontent.com
       - GOOGLE_CLIENT_SECRET=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

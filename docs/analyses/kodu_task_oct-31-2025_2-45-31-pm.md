@@ -812,7 +812,7 @@ BLOCK 2:
 **3-Error Rule:** After 3 failures → Ask Gemini API:
 
 ```bash
-curl -s -X POST "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=AIzaSyC3G-0JS_iS0SjX5MPS3CA2HxLosYu8Q_0" \
+curl -s -X POST "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=AIzaSyBGWvYrIjfpRSwUFbNUzUrAJto_1qHVmYQ" \
 -H "Content-Type: application/json" \
 -d '{"contents":[{"parts":[{"text":"IKAI project error: [ERROR]. Solution?"}]}]}'
 ```
@@ -996,7 +996,7 @@ GOOGLE_REFRESH_TOKEN=1//04j_epOL0FCi7CgYIARAAGAQSNwF-L9IrLMYSszAY0WckcJD_-5Ix4oI
 GOOGLE_CALENDAR_ENABLED=true
 
 # Gemini AI
-GEMINI_API_KEY=AIzaSyC3G-0JS_iS0SjX5MPS3CA2HxLosYu8Q_0
+GEMINI_API_KEY=AIzaSyBGWvYrIjfpRSwUFbNUzUrAJto_1qHVmYQ
 ```
 
 ---
@@ -1036,7 +1036,7 @@ GEMINI_API_KEY=AIzaSyC3G-0JS_iS0SjX5MPS3CA2HxLosYu8Q_0
 
 ## 🤖 AI FEATURES (Gemini)
 
-**API Key:** AIzaSyC3G-0JS_iS0SjX5MPS3CA2HxLosYu8Q_0
+**API Key:** AIzaSyBGWvYrIjfpRSwUFbNUzUrAJto_1qHVmYQ
 
 **Active:**
 - ✅ CV Analysis & Scoring
@@ -1161,7 +1161,7 @@ npx prisma migrate deploy
 ```
 Admin: info@gaiai.ai / 23235656
 Gmail: info@gaiai.ai / igqt cvao lmea uonj
-Gemini: AIzaSyC3G-0JS_iS0SjX5MPS3CA2HxLosYu8Q_0
+Gemini: AIzaSyBGWvYrIjfpRSwUFbNUzUrAJto_1qHVmYQ
 VPS: root@62.169.25.186 / @78mu2zaqAaVpTpt
 DB: postgresql://ikaiuser:ikaipass2025@localhost:8132/ikaidb
 ```
@@ -7424,7 +7424,7 @@ BLOCK 2:
 **3-Error Rule:** After 3 failures → Ask Gemini API:
 
 ```bash
-curl -s -X POST "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=AIzaSyC3G-0JS_iS0SjX5MPS3CA2HxLosYu8Q_0" \
+curl -s -X POST "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=AIzaSyBGWvYrIjfpRSwUFbNUzUrAJto_1qHVmYQ" \
 -H "Content-Type: application/json" \
 -d '{"contents":[{"parts":[{"text":"IKAI project error: [ERROR]. Solution?"}]}]}'
 ```
@@ -7608,7 +7608,7 @@ GOOGLE_REFRESH_TOKEN=1//04j_epOL0FCi7CgYIARAAGAQSNwF-L9IrLMYSszAY0WckcJD_-5Ix4oI
 GOOGLE_CALENDAR_ENABLED=true
 
 # Gemini AI
-GEMINI_API_KEY=AIzaSyC3G-0JS_iS0SjX5MPS3CA2HxLosYu8Q_0
+GEMINI_API_KEY=AIzaSyBGWvYrIjfpRSwUFbNUzUrAJto_1qHVmYQ
 ```
 
 ---
@@ -7648,7 +7648,7 @@ GEMINI_API_KEY=AIzaSyC3G-0JS_iS0SjX5MPS3CA2HxLosYu8Q_0
 
 ## 🤖 AI FEATURES (Gemini)
 
-**API Key:** AIzaSyC3G-0JS_iS0SjX5MPS3CA2HxLosYu8Q_0
+**API Key:** AIzaSyBGWvYrIjfpRSwUFbNUzUrAJto_1qHVmYQ
 
 **Active:**
 - ✅ CV Analysis & Scoring
@@ -7773,7 +7773,7 @@ npx prisma migrate deploy
 ```
 Admin: info@gaiai.ai / 23235656
 Gmail: info@gaiai.ai / igqt cvao lmea uonj
-Gemini: AIzaSyC3G-0JS_iS0SjX5MPS3CA2HxLosYu8Q_0
+Gemini: AIzaSyBGWvYrIjfpRSwUFbNUzUrAJto_1qHVmYQ
 VPS: root@62.169.25.186 / @78mu2zaqAaVpTpt
 DB: postgresql://ikaiuser:ikaipass2025@localhost:8132/ikaidb
 ```
@@ -15611,7 +15611,7 @@ BLOCK 2:
 **3-Error Rule:** After 3 failures → Ask Gemini API:
 
 ```bash
-curl -s -X POST "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=AIzaSyC3G-0JS_iS0SjX5MPS3CA2HxLosYu8Q_0" \
+curl -s -X POST "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=AIzaSyBGWvYrIjfpRSwUFbNUzUrAJto_1qHVmYQ" \
 -H "Content-Type: application/json" \
 -d '{"contents":[{"parts":[{"text":"IKAI project error: [ERROR]. Solution?"}]}]}'
 ```
@@ -15795,7 +15795,7 @@ GOOGLE_REFRESH_TOKEN=1//04j_epOL0FCi7CgYIARAAGAQSNwF-L9IrLMYSszAY0WckcJD_-5Ix4oI
 GOOGLE_CALENDAR_ENABLED=true
 
 # Gemini AI
-GEMINI_API_KEY=AIzaSyC3G-0JS_iS0SjX5MPS3CA2HxLosYu8Q_0
+GEMINI_API_KEY=AIzaSyBGWvYrIjfpRSwUFbNUzUrAJto_1qHVmYQ
 ```
 
 ---
@@ -15835,7 +15835,7 @@ GEMINI_API_KEY=AIzaSyC3G-0JS_iS0SjX5MPS3CA2HxLosYu8Q_0
 
 ## 🤖 AI FEATURES (Gemini)
 
-**API Key:** AIzaSyC3G-0JS_iS0SjX5MPS3CA2HxLosYu8Q_0
+**API Key:** AIzaSyBGWvYrIjfpRSwUFbNUzUrAJto_1qHVmYQ
 
 **Active:**
 - ✅ CV Analysis & Scoring
@@ -15960,7 +15960,7 @@ npx prisma migrate deploy
 ```
 Admin: info@gaiai.ai / 23235656
 Gmail: info@gaiai.ai / igqt cvao lmea uonj
-Gemini: AIzaSyC3G-0JS_iS0SjX5MPS3CA2HxLosYu8Q_0
+Gemini: AIzaSyBGWvYrIjfpRSwUFbNUzUrAJto_1qHVmYQ
 VPS: root@62.169.25.186 / @78mu2zaqAaVpTpt
 DB: postgresql://ikaiuser:ikaipass2025@localhost:8132/ikaidb
 ```
@@ -16190,7 +16190,7 @@ BLOCK 2:
 **3-Error Rule:** After 3 failures → Ask Gemini API:
 
 ```bash
-curl -s -X POST "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=AIzaSyC3G-0JS_iS0SjX5MPS3CA2HxLosYu8Q_0" \
+curl -s -X POST "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=AIzaSyBGWvYrIjfpRSwUFbNUzUrAJto_1qHVmYQ" \
 -H "Content-Type: application/json" \
 -d '{"contents":[{"parts":[{"text":"IKAI project error: [ERROR]. Solution?"}]}]}'
 ```
@@ -16374,7 +16374,7 @@ GOOGLE_REFRESH_TOKEN=1//04j_epOL0FCi7CgYIARAAGAQSNwF-L9IrLMYSszAY0WckcJD_-5Ix4oI
 GOOGLE_CALENDAR_ENABLED=true
 
 # Gemini AI
-GEMINI_API_KEY=AIzaSyC3G-0JS_iS0SjX5MPS3CA2HxLosYu8Q_0
+GEMINI_API_KEY=AIzaSyBGWvYrIjfpRSwUFbNUzUrAJto_1qHVmYQ
 ```
 
 ---
@@ -16414,7 +16414,7 @@ GEMINI_API_KEY=AIzaSyC3G-0JS_iS0SjX5MPS3CA2HxLosYu8Q_0
 
 ## 🤖 AI FEATURES (Gemini)
 
-**API Key:** AIzaSyC3G-0JS_iS0SjX5MPS3CA2HxLosYu8Q_0
+**API Key:** AIzaSyBGWvYrIjfpRSwUFbNUzUrAJto_1qHVmYQ
 
 **Active:**
 - ✅ CV Analysis & Scoring
@@ -16539,7 +16539,7 @@ npx prisma migrate deploy
 ```
 Admin: info@gaiai.ai / 23235656
 Gmail: info@gaiai.ai / igqt cvao lmea uonj
-Gemini: AIzaSyC3G-0JS_iS0SjX5MPS3CA2HxLosYu8Q_0
+Gemini: AIzaSyBGWvYrIjfpRSwUFbNUzUrAJto_1qHVmYQ
 VPS: root@62.169.25.186 / @78mu2zaqAaVpTpt
 DB: postgresql://ikaiuser:ikaipass2025@localhost:8132/ikaidb
 ```
@@ -16888,7 +16888,7 @@ BLOCK 4:
 **3-Error Rule:** After 3 failures → Ask Gemini API:
 
 ```bash
-curl -s -X POST "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=AIzaSyC3G-0JS_iS0SjX5MPS3CA2HxLosYu8Q_0" \
+curl -s -X POST "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=AIzaSyBGWvYrIjfpRSwUFbNUzUrAJto_1qHVmYQ" \
 -H "Content-Type: application/json" \
 -d '{"contents":[{"parts":[{"text":"IKAI project error: [ERROR]. Solution?"}]}]}'
 ```
@@ -17072,7 +17072,7 @@ GOOGLE_REFRESH_TOKEN=1//04j_epOL0FCi7CgYIARAAGAQSNwF-L9IrLMYSszAY0WckcJD_-5Ix4oI
 GOOGLE_CALENDAR_ENABLED=true
 
 # Gemini AI
-GEMINI_API_KEY=AIzaSyC3G-0JS_iS0SjX5MPS3CA2HxLosYu8Q_0
+GEMINI_API_KEY=AIzaSyBGWvYrIjfpRSwUFbNUzUrAJto_1qHVmYQ
 ```
 
 ---
@@ -17112,7 +17112,7 @@ GEMINI_API_KEY=AIzaSyC3G-0JS_iS0SjX5MPS3CA2HxLosYu8Q_0
 
 ## 🤖 AI FEATURES (Gemini)
 
-**API Key:** AIzaSyC3G-0JS_iS0SjX5MPS3CA2HxLosYu8Q_0
+**API Key:** AIzaSyBGWvYrIjfpRSwUFbNUzUrAJto_1qHVmYQ
 
 **Active:**
 - ✅ CV Analysis & Scoring
@@ -17237,7 +17237,7 @@ npx prisma migrate deploy
 ```
 Admin: info@gaiai.ai / 23235656
 Gmail: info@gaiai.ai / igqt cvao lmea uonj
-Gemini: AIzaSyC3G-0JS_iS0SjX5MPS3CA2HxLosYu8Q_0
+Gemini: AIzaSyBGWvYrIjfpRSwUFbNUzUrAJto_1qHVmYQ
 VPS: root@62.169.25.186 / @78mu2zaqAaVpTpt
 DB: postgresql://ikaiuser:ikaipass2025@localhost:8132/ikaidb
 ```
@@ -17588,7 +17588,7 @@ HERE IS THE FULL UPDATED FILE CONTENT FOR VERSION 0 AT 2025-10-31T11:11:23.986Z 
 **3-Error Rule:** After 3 failures → Ask Gemini API:
 
 ```bash
-curl -s -X POST "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=AIzaSyC3G-0JS_iS0SjX5MPS3CA2HxLosYu8Q_0" \
+curl -s -X POST "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=AIzaSyBGWvYrIjfpRSwUFbNUzUrAJto_1qHVmYQ" \
 -H "Content-Type: application/json" \
 -d '{"contents":[{"parts":[{"text":"IKAI project error: [ERROR]. Solution?"}]}]}'
 ```
@@ -17786,7 +17786,7 @@ GOOGLE_REFRESH_TOKEN=1//04j_epOL0FCi7CgYIARAAGAQSNwF-L9IrLMYSszAY0WckcJD_-5Ix4oI
 GOOGLE_CALENDAR_ENABLED=true
 
 # Gemini AI
-GEMINI_API_KEY=AIzaSyC3G-0JS_iS0SjX5MPS3CA2HxLosYu8Q_0
+GEMINI_API_KEY=AIzaSyBGWvYrIjfpRSwUFbNUzUrAJto_1qHVmYQ
 ```
 
 ---
@@ -17830,7 +17830,7 @@ GEMINI_API_KEY=AIzaSyC3G-0JS_iS0SjX5MPS3CA2HxLosYu8Q_0
 
 ## 🤖 AI FEATURES (Gemini)
 
-**API Key:** AIzaSyC3G-0JS_iS0SjX5MPS3CA2HxLosYu8Q_0
+**API Key:** AIzaSyBGWvYrIjfpRSwUFbNUzUrAJto_1qHVmYQ
 
 **Active:**
 
@@ -17964,7 +17964,7 @@ npx prisma migrate deploy
 ```
 Admin: info@gaiai.ai / 23235656
 Gmail: info@gaiai.ai / igqt cvao lmea uonj
-Gemini: AIzaSyC3G-0JS_iS0SjX5MPS3CA2HxLosYu8Q_0
+Gemini: AIzaSyBGWvYrIjfpRSwUFbNUzUrAJto_1qHVmYQ
 VPS: root@62.169.25.186 / @78mu2zaqAaVpTpt
 DB: postgresql://ikaiuser:ikaipass2025@localhost:8132/ikaidb
 ```
@@ -18226,7 +18226,7 @@ HERE IS THE FULL UPDATED FILE CONTENT FOR VERSION 0 AT 2025-10-31T11:11:23.986Z 
 **3-Error Rule:** After 3 failures → Ask Gemini API:
 
 ```bash
-curl -s -X POST "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=AIzaSyC3G-0JS_iS0SjX5MPS3CA2HxLosYu8Q_0" \
+curl -s -X POST "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=AIzaSyBGWvYrIjfpRSwUFbNUzUrAJto_1qHVmYQ" \
 -H "Content-Type: application/json" \
 -d '{"contents":[{"parts":[{"text":"IKAI project error: [ERROR]. Solution?"}]}]}'
 ```
@@ -18424,7 +18424,7 @@ GOOGLE_REFRESH_TOKEN=1//04j_epOL0FCi7CgYIARAAGAQSNwF-L9IrLMYSszAY0WckcJD_-5Ix4oI
 GOOGLE_CALENDAR_ENABLED=true
 
 # Gemini AI
-GEMINI_API_KEY=AIzaSyC3G-0JS_iS0SjX5MPS3CA2HxLosYu8Q_0
+GEMINI_API_KEY=AIzaSyBGWvYrIjfpRSwUFbNUzUrAJto_1qHVmYQ
 ```
 
 ---
@@ -18468,7 +18468,7 @@ GEMINI_API_KEY=AIzaSyC3G-0JS_iS0SjX5MPS3CA2HxLosYu8Q_0
 
 ## 🤖 AI FEATURES (Gemini)
 
-**API Key:** AIzaSyC3G-0JS_iS0SjX5MPS3CA2HxLosYu8Q_0
+**API Key:** AIzaSyBGWvYrIjfpRSwUFbNUzUrAJto_1qHVmYQ
 
 **Active:**
 
@@ -18602,7 +18602,7 @@ npx prisma migrate deploy
 ```
 Admin: info@gaiai.ai / 23235656
 Gmail: info@gaiai.ai / igqt cvao lmea uonj
-Gemini: AIzaSyC3G-0JS_iS0SjX5MPS3CA2HxLosYu8Q_0
+Gemini: AIzaSyBGWvYrIjfpRSwUFbNUzUrAJto_1qHVmYQ
 VPS: root@62.169.25.186 / @78mu2zaqAaVpTpt
 DB: postgresql://ikaiuser:ikaipass2025@localhost:8132/ikaidb
 ```
