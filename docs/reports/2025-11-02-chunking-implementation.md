@@ -298,7 +298,7 @@ if (allResults.length === 0) {
 
 ### **Environment Variables (No Changes):**
 ```bash
-GEMINI_API_KEY=AIzaSyBGWvYrIjfpRSwUFbNUzUrAJto_1qHVmYQ
+GEMINI_API_KEY=AIzaSyAT-KFuJ_GWaotsep3xtETJex8-gMEAc4g
 ```
 
 ### **Code Constants:**

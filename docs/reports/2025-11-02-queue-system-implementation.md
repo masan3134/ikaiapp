@@ -458,7 +458,7 @@ REDIS_HOST=redis
 REDIS_PORT=6379
 
 # Gemini API (required)
-GEMINI_API_KEY=AIzaSyBGWvYrIjfpRSwUFbNUzUrAJto_1qHVmYQ
+GEMINI_API_KEY=AIzaSyAT-KFuJ_GWaotsep3xtETJex8-gMEAc4g
 GEMINI_MAX_RPM=15  # Free tier (default)
 # GEMINI_MAX_RPM=1000  # Paid tier
 

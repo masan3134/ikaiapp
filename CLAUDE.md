@@ -30,7 +30,7 @@
 
 **Gemini Helper:**
 ```bash
-curl -s -X POST "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=AIzaSyBGWvYrIjfpRSwUFbNUzUrAJto_1qHVmYQ" \
+curl -s -X POST "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=AIzaSyAT-KFuJ_GWaotsep3xtETJex8-gMEAc4g" \
   -H "Content-Type: application/json" \
   -d '{"contents":[{"parts":[{"text":"IKAI error: [ERROR]. Solution?"}]}]}'
 ```
@@ -120,7 +120,7 @@ Login:    info@gaiai.ai / 23235656
 
 ## 🤖 AI FEATURES (Gemini)
 
-**Key:** AIzaSyBGWvYrIjfpRSwUFbNUzUrAJto_1qHVmYQ | **Model:** gemini-2.0-flash
+**Key:** AIzaSyAT-KFuJ_GWaotsep3xtETJex8-gMEAc4g | **Model:** gemini-2.0-flash
 
 ### **CV Analysis with Chunking** 🔥
 - **BATCH_SIZE:** 6 (formula: `8192 * 0.8 / 1000`)
