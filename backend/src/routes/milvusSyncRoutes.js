@@ -1,9 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const { authenticateToken } = require('../middleware/auth');
+const { authorize } = require('../middleware/authorize');
+const { ROLES } = require('../constants/roles');
 const { getMilvusSyncService } = require('../services/milvusSyncService');
 
-router.get('/health', authenticateToken, async (req, res) => {
+// ADMIN+ only middleware chain (no org isolation for system services)
+const adminOnly = [authenticateToken, authorize([ROLES.ADMIN, ROLES.SUPER_ADMIN])];
+
+router.get('/health', adminOnly, async (req, res) => {
   try {
     const milvus = await getMilvusSyncService();
     const stats = await milvus.getSyncStats();
@@ -13,7 +18,7 @@ router.get('/health', authenticateToken, async (req, res) => {
   }
 });
 
-router.get('/stats', authenticateToken, async (req, res) => {
+router.get('/stats', adminOnly, async (req, res) => {
   try {
     const milvus = await getMilvusSyncService();
     const stats = await milvus.getSyncStats();

@@ -10,9 +10,36 @@
 
 ---
 
-## 🎯 5N METHODOLOGY (MANDATORY)
+## 🎯 ASANMOD WORKFLOW (MANDATORY)
 
-**BEFORE every task:**
+**📖 Full Methodology:** [`docs/workflow/ASANMOD-METHODOLOGY.md`](docs/workflow/ASANMOD-METHODOLOGY.md) (20KB)
+**⚡ Quick Reference:** [`docs/workflow/ASANMOD-QUICK-REFERENCE.md`](docs/workflow/ASANMOD-QUICK-REFERENCE.md) (5KB)
+
+**When User Says "AsanMod":**
+1. Switch to **AsanMod parallel task management mode**
+2. Create **ultra-detailed JSON task files** with:
+   - mcpRequirements (which MCPs/tools to use)
+   - toolUsageGuide (step-by-step tool usage)
+   - reportTemplate (raw data verification reports)
+   - verificationCommands (bash commands with NO interpretation)
+3. User will **execute tasks in parallel tabs**
+4. You **verify completion by reading MD reports** (raw terminal outputs)
+5. Never trust "done" - always read verification MD files
+
+**AsanMod Principles:**
+- **Paralel:** Different phases run in different browser tabs simultaneously
+- **Doğrulanabilir:** AI writes RAW terminal outputs to MD (no interpretation)
+- **Ham Veri:** You read MD reports to verify (AI cannot lie with raw grep/build outputs)
+- **Ultra-Detaylı JSON:** Each task has exact commands, code patterns, file paths
+
+**Quick AsanMod Commands:**
+```
+User: "p1 hazırla" → Create Phase 1 JSON with full task details
+User: "p1 başladı p2 hazırla" → P1 running in other tab, prepare P2 JSON
+User: "p1 bitti doğrula" → Read docs/reports/phase1-verification.md and verify
+```
+
+**5N Methodology (Standard Tasks):**
 1. **NE:** What? | 2. **NEREDE:** Where? | 3. **NE LAZIM:** What's needed?
 4. **NEDEN:** Why? | 5. **NASIL:** How?
 

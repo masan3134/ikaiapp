@@ -1,5 +1,8 @@
 const express = require('express');
 const router = express.Router();
+const { authenticateToken } = require('../middleware/auth');
+const { authorize } = require('../middleware/authorize');
+const { ROLES } = require('../constants/roles');
 
 // Metrics storage
 let requestCount = 0;
@@ -40,7 +43,10 @@ function percentile(arr, p) {
   return sorted[Math.max(0, index)];
 }
 
-router.get('/system', (req, res) => {
+// ADMIN+ only middleware chain (no org isolation for system metrics)
+const adminOnly = [authenticateToken, authorize([ROLES.ADMIN, ROLES.SUPER_ADMIN])];
+
+router.get('/system', adminOnly, (req, res) => {
   if (process.env.METRICS_ENABLED !== 'true') {
     return res.status(404).json({ error: 'Metrics disabled' });
   }

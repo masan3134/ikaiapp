@@ -1,0 +1,313 @@
+{
+  "phase": "Phase 4 - Sidebar Navigation Role-Based Visibility",
+  "duration": "1 hour",
+  "priority": "HIGH",
+  "dependencies": ["Phase 1 - Infrastructure complete", "Phase 2 - Backend routes protected", "Phase 3 - Frontend pages protected"],
+  "description": "Update AppLayout sidebar to show/hide menu items based on user role using useHasRole hook",
+
+  "ASANMOD_STRICT_MODE": {
+    "FORBIDDEN": [
+      "❌ NO simulation or mocking - use REAL tools only",
+      "❌ NO placeholder outputs - paste REAL terminal data",
+      "❌ NO 'completed successfully' without proof",
+      "❌ NO assumptions - verify everything with grep/Read",
+      "❌ NO fake browser test results - human must test",
+      "❌ NO skipping verification commands"
+    ],
+    "REQUIRED": [
+      "✅ ALWAYS use Bash tool for verification commands",
+      "✅ ALWAYS use Read tool before Edit tool",
+      "✅ ALWAYS paste exact terminal outputs to reports",
+      "✅ ALWAYS run real npm run build (not simulated)",
+      "✅ ALWAYS verify file exists before claiming done",
+      "✅ ALWAYS let reviewer decide if task completed"
+    ],
+    "VERIFICATION_PRINCIPLE": "Ham veri konuşur - AI cannot lie with real grep/wc outputs!"
+  },
+
+  "mcpRequirements": {
+    "required": ["filesystem"],
+    "optional": ["sequentialthinking"],
+    "usage": {
+      "filesystem": "Read AppLayout.tsx, edit to add role-based menu filtering, write verification reports",
+      "sequentialthinking": "Plan menu item visibility logic"
+    },
+    "verification": "Run 'ls ~/.config/Code/User/settings.json' to check MCP config exists"
+  },
+
+  "toolUsageGuide": {
+    "forTask_4.1": {
+      "step1": "Use Read tool to read frontend/components/AppLayout.tsx",
+      "step2": "Use Edit tool to import useHasRole hook",
+      "step3": "Use Edit tool to add role checks to menu items",
+      "step4": "Use Read tool to verify changes"
+    },
+    "forTask_4.2": {
+      "step1": "Run bash commands from verificationCommands object",
+      "step2": "Use Write tool to create docs/reports/phase4-sidebar-verification.md",
+      "step3": "Copy RAW terminal outputs into MD file"
+    },
+    "forTask_4.3": {
+      "instructions": "This is MANUAL browser testing - AI cannot automate",
+      "humanRequired": true,
+      "step1": "Human opens browser and tests with different roles",
+      "step2": "Human verifies menu items appear/disappear correctly",
+      "step3": "AI uses Write tool to save human's observations"
+    }
+  },
+
+  "currentState": {
+    "file": "frontend/components/AppLayout.tsx",
+    "menuItems": [
+      "Dashboard - visible to all authenticated users",
+      "Analiz Sihirbazı - visible to all",
+      "İş İlanları - visible to all",
+      "Adaylar - visible to all",
+      "Geçmiş Analizlerim - visible to all",
+      "Teklifler submenu - visible to all",
+      "  - Yeni Teklif",
+      "  - Tüm Teklifler",
+      "  - Şablonlar",
+      "  - Analytics"
+    ],
+    "missingItems": [
+      "Team menu (ADMIN+)",
+      "Settings menu (ADMIN+)",
+      "Super Admin menu (SUPER_ADMIN only)"
+    ],
+    "issue": "All menu items visible to all roles, no role-based filtering"
+  },
+
+  "targetState": {
+    "menuItems": [
+      {
+        "item": "Dashboard",
+        "visibleTo": "ALL_AUTHENTICATED",
+        "note": "Everyone sees dashboard"
+      },
+      {
+        "item": "Analiz Sihirbazı",
+        "visibleTo": "HR_MANAGERS",
+        "note": "HR_SPECIALIST+"
+      },
+      {
+        "item": "İş İlanları",
+        "visibleTo": "HR_MANAGERS",
+        "note": "HR_SPECIALIST+"
+      },
+      {
+        "item": "Adaylar",
+        "visibleTo": "HR_MANAGERS",
+        "note": "HR_SPECIALIST+"
+      },
+      {
+        "item": "Geçmiş Analizlerim",
+        "visibleTo": "HR_MANAGERS",
+        "note": "HR_SPECIALIST+"
+      },
+      {
+        "item": "Teklifler (parent)",
+        "visibleTo": "HR_MANAGERS",
+        "note": "HR_SPECIALIST+"
+      },
+      {
+        "item": "  - Yeni Teklif",
+        "visibleTo": "HR_MANAGERS",
+        "note": "HR_SPECIALIST+"
+      },
+      {
+        "item": "  - Tüm Teklifler",
+        "visibleTo": "HR_MANAGERS",
+        "note": "HR_SPECIALIST+"
+      },
+      {
+        "item": "  - Şablonlar",
+        "visibleTo": "ANALYTICS_VIEWERS",
+        "note": "MANAGER+"
+      },
+      {
+        "item": "  - Analytics",
+        "visibleTo": "ANALYTICS_VIEWERS",
+        "note": "MANAGER+"
+      },
+      {
+        "item": "Team (NEW)",
+        "visibleTo": "ADMINS",
+        "note": "ADMIN+ only"
+      },
+      {
+        "item": "Settings (NEW)",
+        "visibleTo": "ADMINS",
+        "note": "ADMIN+ only"
+      },
+      {
+        "item": "Super Admin (NEW)",
+        "visibleTo": "SUPER_ADMIN",
+        "note": "SUPER_ADMIN only"
+      }
+    ]
+  },
+
+  "tasks": [
+    {
+      "id": "4.1",
+      "title": "Add Role-Based Filtering to AppLayout",
+      "file": "frontend/components/AppLayout.tsx",
+      "priority": "CRITICAL",
+      "estimatedTime": "30 minutes",
+      "description": "Import useHasRole hook and add conditional rendering to menu items based on user role",
+      "dependencies": [],
+      "instructions": [
+        "1. Read current AppLayout.tsx file",
+        "2. Import useHasRole and RoleGroups at top",
+        "3. Add role checks using useHasRole hook for each menu item",
+        "4. Add Team, Settings, Super Admin menu items (ADMIN+)",
+        "5. Wrap menu items with role checks - use && operator",
+        "6. Verify imports and syntax with Read tool"
+      ],
+      "codeChanges": {
+        "imports": "import { useHasRole } from '@/lib/hooks/useHasRole';\nimport { RoleGroups, UserRole } from '@/lib/constants/roles';",
+        "hooks": "// Inside component, after existing hooks\nconst canManageHR = useHasRole(RoleGroups.HR_MANAGERS);\nconst canViewAnalytics = useHasRole(RoleGroups.ANALYTICS_VIEWERS);\nconst isAdmin = useHasRole(RoleGroups.ADMINS);\nconst isSuperAdmin = useHasRole([UserRole.SUPER_ADMIN]);",
+        "menuItemsUpdate": "// Change allMenuItems to only include items visible to ALL\nconst allMenuItems = [\n  { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },\n  // Conditional items added below with &&\n];",
+        "conditionalRendering": "// In JSX, wrap menu items:\n{allMenuItems.map((item) => ...)}\n\n{/* HR Manager items */}\n{canManageHR && (\n  <>\n    <Link href=\"/wizard\">...</Link>\n    <Link href=\"/job-postings\">...</Link>\n    <Link href=\"/candidates\">...</Link>\n    <Link href=\"/analyses\">...</Link>\n  </>\n)}\n\n{/* Offers submenu */}\n{canManageHR && (\n  <div>\n    {/* Offers parent button */}\n    ...\n    {/* Submenu */}\n    {isOffersExpanded && (\n      <div>\n        {/* Yeni Teklif, Tüm Teklifler - HR_MANAGERS */}\n        <Link href=\"/offers/wizard\">...</Link>\n        <Link href=\"/offers\">...</Link>\n        \n        {/* Şablonlar, Analytics - ANALYTICS_VIEWERS (MANAGER+) */}\n        {canViewAnalytics && (\n          <>\n            <Link href=\"/offer-templates\">...</Link>\n            <Link href=\"/offers/analytics\">...</Link>\n          </>\n        )}\n      </div>\n    )}\n  </div>\n)}\n\n{/* Admin-only items */}\n{isAdmin && (\n  <>\n    <Link href=\"/team\">\n      <Users size={20} />\n      <span>Team</span>\n    </Link>\n    <Link href=\"/settings/organization\">\n      <Settings size={20} />\n      <span>Settings</span>\n    </Link>\n  </>\n)}\n\n{/* Super Admin only */}\n{isSuperAdmin && (\n  <Link href=\"/super-admin\">\n    <Shield size={20} />\n    <span>Super Admin</span>\n  </Link>\n)}",
+        "newImports": "import { Settings } from 'lucide-react'; // Add Settings icon if not imported"
+      },
+      "verificationSteps": [
+        "1. Read updated AppLayout.tsx",
+        "2. Verify useHasRole imported",
+        "3. Verify RoleGroups imported",
+        "4. Verify hook calls: canManageHR, canViewAnalytics, isAdmin, isSuperAdmin",
+        "5. Verify conditional rendering with && operators",
+        "6. Count menu items wrapped in role checks"
+      ]
+    },
+    {
+      "id": "4.2",
+      "title": "Generate Code Verification Report",
+      "priority": "CRITICAL",
+      "estimatedTime": "15 minutes",
+      "description": "Create MD report with RAW grep outputs to verify role-based filtering implementation",
+      "dependencies": ["4.1"],
+      "outputFile": "docs/reports/phase4-sidebar-verification.md",
+      "instructions": [
+        "⚠️ ASANMOD STRICT MODE - REAL VERIFICATION ONLY ⚠️",
+        "1. Run all verification commands below - USE BASH TOOL (no simulation!)",
+        "2. Copy EXACT terminal output - character-by-character paste",
+        "3. DO NOT interpret results - raw data only",
+        "4. DO NOT add checkmarks or success messages - forbidden!",
+        "5. DO NOT mock/simulate/placeholder - REAL commands ONLY",
+        "6. If command fails, paste the REAL error message",
+        "7. Use Write tool to create MD file with REAL outputs",
+        "8. Let reviewer read raw data and decide if successful",
+        "❌ FORBIDDEN: simulation, mocking, placeholders, 'completed successfully'",
+        "✅ REQUIRED: Real Bash executions, real Read operations, real terminal outputs"
+      ],
+      "reportTemplate": "# Phase 4 - Sidebar Navigation Verification\n\nDate: [CURRENT_DATE]\nExecutor: [YOUR_NAME]\n\n## 1. useHasRole Hook Import Check\n\n```bash\n$ grep -n \"useHasRole\" frontend/components/AppLayout.tsx\n```\n\n**Output:**\n```\n[PASTE_EXACT_OUTPUT_HERE]\n```\n\n**Expected:** Import line + hook calls (canManageHR, canViewAnalytics, isAdmin, isSuperAdmin)\n\n---\n\n## 2. RoleGroups Import Check\n\n```bash\n$ grep -n \"RoleGroups\" frontend/components/AppLayout.tsx\n```\n\n**Output:**\n```\n[PASTE_EXACT_OUTPUT_HERE]\n```\n\n**Expected:** Import statement with RoleGroups\n\n---\n\n## 3. Conditional Rendering Check (canManageHR)\n\n```bash\n$ grep -n \"canManageHR &&\" frontend/components/AppLayout.tsx\n```\n\n**Output:**\n```\n[PASTE_EXACT_OUTPUT_HERE]\n```\n\n**Expected:** Multiple lines with canManageHR && conditions\n\n---\n\n## 4. Admin-Only Menu Items\n\n```bash\n$ grep -n \"isAdmin &&\" frontend/components/AppLayout.tsx\n```\n\n**Output:**\n```\n[PASTE_EXACT_OUTPUT_HERE]\n```\n\n**Expected:** Conditional rendering for Team and Settings\n\n---\n\n## 5. Super Admin Menu Item\n\n```bash\n$ grep -n \"isSuperAdmin &&\" frontend/components/AppLayout.tsx\n```\n\n**Output:**\n```\n[PASTE_EXACT_OUTPUT_HERE]\n```\n\n**Expected:** Conditional rendering for Super Admin menu\n\n---\n\n## 6. Team Menu Item\n\n```bash\n$ grep -n \"/team\" frontend/components/AppLayout.tsx\n```\n\n**Output:**\n```\n[PASTE_EXACT_OUTPUT_HERE]\n```\n\n**Expected:** Link to /team page\n\n---\n\n## 7. Settings Menu Item\n\n```bash\n$ grep -n \"/settings\" frontend/components/AppLayout.tsx\n```\n\n**Output:**\n```\n[PASTE_EXACT_OUTPUT_HERE]\n```\n\n**Expected:** Link to /settings/organization page\n\n---\n\n## 8. TypeScript Compilation Check\n\n```bash\n$ cd frontend && npm run build 2>&1 | head -50\n```\n\n**Output:**\n```\n[PASTE_EXACT_OUTPUT_HERE]\n```\n\n**Expected:** Successful build or specific errors listed\n\n---\n\n## Summary\n\n**useHasRole imported:** [YES/NO from section 1]\n**RoleGroups imported:** [YES/NO from section 2]\n**canManageHR checks:** [COUNT from section 3]\n**isAdmin checks:** [COUNT from section 4]\n**isSuperAdmin checks:** [COUNT from section 5]\n**Team menu added:** [YES/NO from section 6]\n**Settings menu added:** [YES/NO from section 7]\n**TypeScript errors:** [YES/NO from section 8]\n\n**Status:** [COMPLETE/INCOMPLETE] - Review raw data above to verify\n\n---\n\n**Note to Reviewer:** This report contains RAW terminal output. Review each section to verify:\n- Section 1: Should show import + 4 hook calls\n- Section 2: Should show RoleGroups import\n- Section 3: Should show multiple canManageHR && lines\n- Section 4: Should show isAdmin && lines (Team, Settings)\n- Section 5: Should show isSuperAdmin && line (Super Admin menu)\n- Section 6: Should show /team path in Link\n- Section 7: Should show /settings path in Link\n- Section 8: Should show successful build\n",
+      "verificationCommands": {
+        "step1_useHasRole": "grep -n \"useHasRole\" frontend/components/AppLayout.tsx",
+        "step2_roleGroups": "grep -n \"RoleGroups\" frontend/components/AppLayout.tsx",
+        "step3_canManageHR": "grep -n \"canManageHR &&\" frontend/components/AppLayout.tsx",
+        "step4_isAdmin": "grep -n \"isAdmin &&\" frontend/components/AppLayout.tsx",
+        "step5_isSuperAdmin": "grep -n \"isSuperAdmin &&\" frontend/components/AppLayout.tsx",
+        "step6_team": "grep -n \"/team\" frontend/components/AppLayout.tsx",
+        "step7_settings": "grep -n \"/settings\" frontend/components/AppLayout.tsx",
+        "step8_build": "cd frontend && npm run build 2>&1 | head -50"
+      }
+    },
+    {
+      "id": "4.3",
+      "title": "Manual Browser Testing Report",
+      "priority": "CRITICAL",
+      "estimatedTime": "20 minutes",
+      "description": "Test sidebar menu visibility with different roles in real browser",
+      "dependencies": ["4.2"],
+      "outputFile": "docs/reports/phase4-sidebar-testing-results.md",
+      "instructions": [
+        "⚠️ ASANMOD STRICT MODE - HUMAN TESTING REQUIRED ⚠️",
+        "❌ AI CANNOT simulate browser testing - HUMAN MUST DO THIS",
+        "❌ DO NOT create fake test results - FORBIDDEN",
+        "❌ DO NOT assume menu items appear/hide - MUST VERIFY IN REAL BROWSER",
+        "✅ HUMAN opens http://localhost:8103 in REAL browser",
+        "✅ HUMAN logs in with different role accounts",
+        "✅ HUMAN checks which menu items are visible in sidebar",
+        "1. HUMAN opens browser at localhost:8103",
+        "2. HUMAN logs in as USER role",
+        "3. HUMAN counts visible menu items and lists them",
+        "4. HUMAN logs out and logs in as HR_SPECIALIST",
+        "5. HUMAN counts visible menu items and lists them",
+        "6. HUMAN repeats for MANAGER, ADMIN, SUPER_ADMIN roles",
+        "7. AI uses Write tool to save HUMAN's observations to MD file",
+        "⚠️ This task REQUIRES human interaction - AI creates report template only"
+      ],
+      "reportTemplate": "# Phase 4 - Sidebar Menu Visibility Testing\n\nDate: [CURRENT_DATE]\nTester: [YOUR_NAME]\nBrowser: [Chrome/Firefox/etc]\n\n---\n\n## Test 1: USER Role\n\n**Test User:**\n- Email: [USER_EMAIL]\n- Role: USER\n\n**Visible Menu Items:**\n```\n[List EXACT menu items visible in sidebar:\n1. Dashboard\n2. ...\n]\n```\n\n**Expected Menu Items:**\n- Dashboard\n\n**Hidden Menu Items (confirmed not visible):**\n```\n[List items that should be hidden:\n- Analiz Sihirbazı\n- İş İlanları\n- ...\n]\n```\n\n**Result:** [PASS/FAIL]\n\n---\n\n## Test 2: HR_SPECIALIST Role\n\n**Test User:**\n- Email: [HR_SPECIALIST_EMAIL]\n- Role: HR_SPECIALIST\n\n**Visible Menu Items:**\n```\n[List EXACT menu items visible:\n1. Dashboard\n2. Analiz Sihirbazı\n3. İş İlanları\n...\n]\n```\n\n**Expected Menu Items:**\n- Dashboard\n- Analiz Sihirbazı\n- İş İlanları\n- Adaylar\n- Geçmiş Analizlerim\n- Teklifler (parent)\n  - Yeni Teklif\n  - Tüm Teklifler\n\n**Hidden Menu Items (should NOT see):**\n```\n[List:\n- Şablonlar (under Teklifler)\n- Analytics (under Teklifler)\n- Team\n- Settings\n- Super Admin\n]\n```\n\n**Result:** [PASS/FAIL]\n\n---\n\n## Test 3: MANAGER Role\n\n**Test User:**\n- Email: [MANAGER_EMAIL]\n- Role: MANAGER\n\n**Visible Menu Items:**\n```\n[List EXACT menu items visible including Şablonlar and Analytics]\n```\n\n**Expected Menu Items:**\n- Dashboard\n- Analiz Sihirbazı\n- İş İlanları\n- Adaylar\n- Geçmiş Analizlerim\n- Teklifler (parent)\n  - Yeni Teklif\n  - Tüm Teklifler\n  - Şablonlar\n  - Analytics\n\n**Hidden Menu Items (should NOT see):**\n```\n- Team\n- Settings\n- Super Admin\n```\n\n**Result:** [PASS/FAIL]\n\n---\n\n## Test 4: ADMIN Role\n\n**Test User:**\n- Email: [ADMIN_EMAIL]\n- Role: ADMIN\n\n**Visible Menu Items:**\n```\n[List EXACT menu items including Team and Settings]\n```\n\n**Expected Menu Items:**\n- Dashboard\n- Analiz Sihirbazı\n- İş İlanları\n- Adaylar\n- Geçmiş Analizlerim\n- Teklifler (all subitems)\n- Team (NEW)\n- Settings (NEW)\n\n**Hidden Menu Items (should NOT see):**\n```\n- Super Admin\n```\n\n**Result:** [PASS/FAIL]\n\n---\n\n## Test 5: SUPER_ADMIN Role\n\n**Test User:**\n- Email: [SUPER_ADMIN_EMAIL]\n- Role: SUPER_ADMIN\n\n**Visible Menu Items:**\n```\n[List EXACT menu items - should see ALL]\n```\n\n**Expected Menu Items:**\n- Dashboard\n- Analiz Sihirbazı\n- İş İlanları\n- Adaylar\n- Geçmiş Analizlerim\n- Teklifler (all subitems)\n- Team\n- Settings\n- Super Admin (NEW)\n\n**Hidden Menu Items:**\n```\nNONE - Super admin sees everything\n```\n\n**Result:** [PASS/FAIL]\n\n---\n\n## Summary Table\n\n| Role | Dashboard | Wizard | Jobs | Candidates | Analyses | Offers | Templates | Analytics | Team | Settings | SuperAdmin | Result |\n|------|-----------|--------|------|------------|----------|--------|-----------|-----------|------|----------|------------|--------|\n| USER | ✓ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | [PASS/FAIL] |\n| HR_SPECIALIST | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ | ✗ | ✗ | ✗ | ✗ | [PASS/FAIL] |\n| MANAGER | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ | ✗ | ✗ | [PASS/FAIL] |\n| ADMIN | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ | [PASS/FAIL] |\n| SUPER_ADMIN | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | [PASS/FAIL] |\n\n**Legend:**\n- ✓ = Menu item visible\n- ✗ = Menu item hidden\n- [Fill in PASS if matches expected, FAIL if doesn't match]\n\n---\n\n## Issues Found\n\n[List any problems discovered during testing]\n\n1. [Issue description]\n2. [Issue description]\n\nOr write: **No issues found - all menu items show/hide correctly based on role**\n\n---\n\n**Note to Reviewer:** This report contains RAW manual testing observations. Review to confirm sidebar menu visibility is working as designed.\n",
+      "testScenarios": [
+        {
+          "role": "USER",
+          "shouldSee": ["Dashboard"],
+          "shouldNotSee": ["Analiz Sihirbazı", "İş İlanları", "Adaylar", "Teklifler", "Team", "Settings", "Super Admin"]
+        },
+        {
+          "role": "HR_SPECIALIST",
+          "shouldSee": ["Dashboard", "Analiz Sihirbazı", "İş İlanları", "Adaylar", "Geçmiş Analizlerim", "Teklifler (Yeni, Tüm)"],
+          "shouldNotSee": ["Şablonlar", "Analytics", "Team", "Settings", "Super Admin"]
+        },
+        {
+          "role": "MANAGER",
+          "shouldSee": ["Dashboard", "Analiz Sihirbazı", "İş İlanları", "Adaylar", "Geçmiş Analizlerim", "Teklifler (all)", "Şablonlar", "Analytics"],
+          "shouldNotSee": ["Team", "Settings", "Super Admin"]
+        },
+        {
+          "role": "ADMIN",
+          "shouldSee": ["Dashboard", "Analiz Sihirbazı", "İş İlanları", "Adaylar", "Geçmiş Analizlerim", "Teklifler (all)", "Team", "Settings"],
+          "shouldNotSee": ["Super Admin"]
+        },
+        {
+          "role": "SUPER_ADMIN",
+          "shouldSee": ["ALL menu items including Super Admin"],
+          "shouldNotSee": []
+        }
+      ]
+    }
+  ],
+
+  "verification": {
+    "codeChecks": [
+      "✅ useHasRole hook imported and used",
+      "✅ RoleGroups imported from constants",
+      "✅ canManageHR, canViewAnalytics, isAdmin, isSuperAdmin hooks called",
+      "✅ Menu items wrapped with role check conditions (&&)",
+      "✅ Team menu added (ADMIN+)",
+      "✅ Settings menu added (ADMIN+)",
+      "✅ Super Admin menu added (SUPER_ADMIN only)",
+      "✅ TypeScript compilation successful"
+    ],
+    "browserChecks": [
+      "✅ USER sees only Dashboard",
+      "✅ HR_SPECIALIST sees HR operations (no analytics/templates)",
+      "✅ MANAGER sees analytics and templates",
+      "✅ ADMIN sees Team and Settings",
+      "✅ SUPER_ADMIN sees all menu items including Super Admin",
+      "✅ Menu items dynamically appear/disappear based on logged-in user role"
+    ]
+  },
+
+  "menuVisibilityMatrix": {
+    "Dashboard": "ALL_AUTHENTICATED",
+    "Analiz Sihirbazı": "HR_MANAGERS (HR_SPECIALIST+)",
+    "İş İlanları": "HR_MANAGERS (HR_SPECIALIST+)",
+    "Adaylar": "HR_MANAGERS (HR_SPECIALIST+)",
+    "Geçmiş Analizlerim": "HR_MANAGERS (HR_SPECIALIST+)",
+    "Teklifler_Parent": "HR_MANAGERS (HR_SPECIALIST+)",
+    "  Yeni Teklif": "HR_MANAGERS (HR_SPECIALIST+)",
+    "  Tüm Teklifler": "HR_MANAGERS (HR_SPECIALIST+)",
+    "  Şablonlar": "ANALYTICS_VIEWERS (MANAGER+)",
+    "  Analytics": "ANALYTICS_VIEWERS (MANAGER+)",
+    "Team": "ADMINS (ADMIN+)",
+    "Settings": "ADMINS (ADMIN+)",
+    "Super Admin": "SUPER_ADMIN only"
+  },
+
+  "completionMessage": "🎉 Phase 4 Sidebar Navigation Complete!\n\n✅ Menu items show/hide based on role\n✅ useHasRole hook integrated\n✅ 3 new menu items added (Team, Settings, Super Admin)\n✅ Role-based visibility working correctly\n\nNext: Phase 5 - Final testing & documentation",
+
+  "nextPhase": "Phase 5 will perform comprehensive end-to-end testing and create final documentation"
+}

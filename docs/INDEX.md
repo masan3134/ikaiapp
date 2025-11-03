@@ -12,6 +12,7 @@
 - [CLAUDE.md](../CLAUDE.md) - Main development guide (v13.0, start here!)
 - [README.md](../README.md) - GitHub landing page (updated!)
 - [AUTO_COMMIT_GUIDE.md](../AUTO_COMMIT_GUIDE.md) - Git automation
+- **[AsanMod Methodology](workflow/ASANMOD-METHODOLOGY.md)** - 🔥 Parallel task management system
 - [Backend README](../backend/README.md) - Backend setup
 - [Frontend README](../frontend/README.md) - Frontend setup
 
@@ -34,6 +35,17 @@
 ---
 
 ## 🗂️ By Category
+
+### **WORKFLOW & METHODOLOGY** 🔥
+- **[AsanMod Methodology](workflow/ASANMOD-METHODOLOGY.md)** - Parallel task management system (20KB)
+  - Ultra-detailed JSON task files
+  - Raw data verification reports
+  - Multi-tab orchestration
+  - MCP requirements & tool usage guides
+- **Related Task Files:**
+  - [Phase 1: Infrastructure](features/role-access-phase1-infrastructure.json) (18KB)
+  - [Phase 2: Backend Routes](features/role-access-phase2-backend-routes.json) (16KB)
+  - [Phase 3: Frontend Pages](features/role-access-phase3-frontend-pages.json) (23KB)
 
 ### **ARCHITECTURE**
 - [Modular Candidate Page](architecture/2025-10-31-modular-candidate-page-architecture.md) - Tab-based architecture

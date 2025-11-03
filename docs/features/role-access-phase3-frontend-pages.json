@@ -5,6 +5,26 @@
   "dependencies": ["Phase 1 - Infrastructure complete", "Phase 2 - Backend routes protected"],
   "description": "Add role-based protection to 19 frontend pages using RoleGuard and withRoleProtection",
 
+  "ASANMOD_STRICT_MODE": {
+    "FORBIDDEN": [
+      "❌ NO simulation or mocking - use REAL tools only",
+      "❌ NO placeholder outputs - paste REAL terminal data",
+      "❌ NO 'completed successfully' without proof",
+      "❌ NO assumptions - verify everything with grep/Read",
+      "❌ NO fake browser test results - human must test",
+      "❌ NO skipping verification commands"
+    ],
+    "REQUIRED": [
+      "✅ ALWAYS use Bash tool for verification commands",
+      "✅ ALWAYS use Read tool before Edit tool",
+      "✅ ALWAYS paste exact terminal outputs to reports",
+      "✅ ALWAYS run real npm run build (not simulated)",
+      "✅ ALWAYS verify file exists before claiming done",
+      "✅ ALWAYS let reviewer decide if task completed"
+    ],
+    "VERIFICATION_PRINCIPLE": "Ham veri konuşur - AI cannot lie with real grep/wc outputs!"
+  },
+
   "mcpRequirements": {
     "required": ["filesystem", "git"],
     "optional": ["sequentialthinking"],
@@ -229,11 +249,17 @@
       "dependencies": ["3.12"],
       "outputFile": "docs/reports/phase3-frontend-protection-verification.md",
       "instructions": [
-        "1. Run all verification commands below",
-        "2. Copy RAW OUTPUT (exactly as terminal shows) to MD file",
-        "3. DO NOT interpret results - just paste raw data",
-        "4. DO NOT add checkmarks or success messages",
-        "5. Let the reviewer read raw data and decide if successful"
+        "⚠️ ASANMOD STRICT MODE - REAL VERIFICATION ONLY ⚠️",
+        "1. Run all verification commands below - USE BASH TOOL (no simulation!)",
+        "2. Copy EXACT terminal output - character-by-character paste",
+        "3. DO NOT interpret results - raw data only",
+        "4. DO NOT add checkmarks or success messages - forbidden!",
+        "5. DO NOT mock/simulate/placeholder - REAL commands ONLY",
+        "6. If command fails, paste the REAL error message",
+        "7. Use Write tool to create MD file with REAL outputs",
+        "8. Let reviewer read raw data and decide if successful",
+        "❌ FORBIDDEN: simulation, mocking, placeholders, 'completed successfully'",
+        "✅ REQUIRED: Real Bash executions, real Read operations, real terminal outputs"
       ],
       "reportTemplate": "# Phase 3 - Frontend Page Protection Verification\n\nDate: [CURRENT_DATE]\nExecutor: [YOUR_NAME]\n\n## 1. Protected Pages Count\n\n```bash\n$ grep -r 'withRoleProtection' frontend/app/\\(authenticated\\) --include='page.tsx' | wc -l\n```\n\n**Output:**\n```\n[PASTE_EXACT_OUTPUT_HERE]\n```\n\n**Expected:** 19\n\n---\n\n## 2. List of All Protected Pages\n\n```bash\n$ grep -r 'withRoleProtection' frontend/app/\\(authenticated\\) --include='page.tsx'\n```\n\n**Output:**\n```\n[PASTE_EXACT_OUTPUT_HERE]\n```\n\n---\n\n## 3. HR_SPECIALIST Pages (Expected: 12)\n\n```bash\n$ grep -r 'RoleGroups.HR_MANAGERS' frontend/app/\\(authenticated\\)/{job-postings,candidates,analyses,wizard,interviews,offers} --include='page.tsx'\n```\n\n**Output:**\n```\n[PASTE_EXACT_OUTPUT_HERE]\n```\n\n---\n\n## 4. MANAGER Pages (Expected: 6)\n\n```bash\n$ grep -r 'ANALYTICS_VIEWERS\\|UserRole.MANAGER' frontend/app/\\(authenticated\\)/offers/{analytics,templates} --include='page.tsx'\n```\n\n**Output:**\n```\n[PASTE_EXACT_OUTPUT_HERE]\n```\n\n---\n\n## 5. ADMIN Pages (Expected: 2)\n\n```bash\n$ grep -r 'RoleGroups.ADMINS' frontend/app/\\(authenticated\\)/settings --include='page.tsx'\n```\n\n**Output:**\n```\n[PASTE_EXACT_OUTPUT_HERE]\n```\n\n---\n\n## 6. TypeScript Compilation Check\n\n```bash\n$ cd frontend && npm run build 2>&1 | head -50\n```\n\n**Output:**\n```\n[PASTE_EXACT_OUTPUT_HERE]\n```\n\n---\n\n## 7. Import Statements Check\n\n```bash\n$ grep -r \"import.*withRoleProtection\" frontend/app/\\(authenticated\\) --include='page.tsx' | head -20\n```\n\n**Output:**\n```\n[PASTE_EXACT_OUTPUT_HERE]\n```\n\n---\n\n## Summary\n\n**Total Protected Pages:** [NUMBER_FROM_SECTION_1]\n**HR_SPECIALIST+ Pages:** [COUNT_FROM_SECTION_3]\n**MANAGER+ Pages:** [COUNT_FROM_SECTION_4]\n**ADMIN+ Pages:** [COUNT_FROM_SECTION_5]\n**TypeScript Errors:** [YES/NO from section 6]\n\n**Status:** [COMPLETE/INCOMPLETE] - Review raw data above to verify\n\n---\n\n**Note to Reviewer:** This report contains RAW terminal output. Review each section to verify:\n- Section 1: Should show \"19\"\n- Section 2: Should list 19 page.tsx files\n- Section 3: Should show 12 files with HR_MANAGERS\n- Section 4: Should show 6 files with MANAGER roles\n- Section 5: Should show 2 files with ADMINS\n- Section 6: Should show successful build or list specific errors\n- Section 7: Should show correct import paths\n",
       "verificationCommands": {
@@ -255,12 +281,20 @@
       "dependencies": ["3.13"],
       "outputFile": "docs/reports/phase3-role-testing-results.md",
       "instructions": [
-        "1. Open browser and test each role scenario below",
-        "2. Take screenshots if page shows access denied",
-        "3. Record EXACT page title, URL, and any error messages",
-        "4. DO NOT say 'works' or 'failed' - describe what you SEE",
-        "5. Copy browser console errors (F12) if any",
-        "6. Fill the report template with RAW observations"
+        "⚠️ ASANMOD STRICT MODE - HUMAN TESTING REQUIRED ⚠️",
+        "❌ AI CANNOT simulate browser testing - HUMAN MUST DO THIS",
+        "❌ DO NOT create fake test results - FORBIDDEN",
+        "❌ DO NOT assume pages work - MUST VERIFY IN REAL BROWSER",
+        "✅ HUMAN opens http://localhost:8103 in REAL browser",
+        "✅ HUMAN logs in with different role accounts",
+        "✅ HUMAN tries to access each URL and reports what they SEE",
+        "1. HUMAN opens browser and tests each role scenario below",
+        "2. HUMAN takes screenshots if page shows access denied",
+        "3. HUMAN records EXACT page title, URL, error messages",
+        "4. HUMAN does NOT say 'works' or 'failed' - describe what they SEE",
+        "5. HUMAN copies browser console errors (F12) if any",
+        "6. AI uses Write tool to save HUMAN's observations to MD file",
+        "⚠️ This task REQUIRES human interaction - AI creates report template only"
       ],
       "reportTemplate": "# Phase 3 - Role-Based Access Testing Results\n\nDate: [CURRENT_DATE]\nTester: [YOUR_NAME]\nBrowser: [Chrome/Firefox/etc]\n\n---\n\n## Test 1: USER Role\n\n**Test User:**\n- Email: [USER_EMAIL]\n- Role: USER\n\n### 1.1 Try to access /job-postings\n\n**URL:** http://localhost:8103/job-postings\n\n**What I saw:**\n```\n[Describe exactly what appeared on screen:\n- Page title: ___\n- Main heading: ___\n- Access denied message: ___\n- Or list of job postings: ___]\n```\n\n**Browser Console (F12):**\n```\n[Paste any errors or 'No errors']\n```\n\n### 1.2 Try to access /settings/organization\n\n**URL:** http://localhost:8103/settings/organization\n\n**What I saw:**\n```\n[Same format as above]\n```\n\n---\n\n## Test 2: HR_SPECIALIST Role\n\n**Test User:**\n- Email: [HR_SPECIALIST_EMAIL]\n- Role: HR_SPECIALIST\n\n### 2.1 Access /job-postings (SHOULD WORK)\n\n**URL:** http://localhost:8103/job-postings\n\n**What I saw:**\n```\n[Describe: Page loaded with job postings list? Or access denied?]\n```\n\n### 2.2 Access /candidates (SHOULD WORK)\n\n**URL:** http://localhost:8103/candidates\n\n**What I saw:**\n```\n[Describe]\n```\n\n### 2.3 Try /offers/analytics (SHOULD DENY)\n\n**URL:** http://localhost:8103/offers/analytics\n\n**What I saw:**\n```\n[Describe: Access denied message? Or analytics dashboard?]\n```\n\n### 2.4 Try /settings/organization (SHOULD DENY)\n\n**URL:** http://localhost:8103/settings/organization\n\n**What I saw:**\n```\n[Describe]\n```\n\n---\n\n## Test 3: MANAGER Role\n\n**Test User:**\n- Email: [MANAGER_EMAIL]\n- Role: MANAGER\n\n### 3.1 Access /offers/analytics (SHOULD WORK)\n\n**URL:** http://localhost:8103/offers/analytics\n\n**What I saw:**\n```\n[Describe]\n```\n\n### 3.2 Access /offers/templates (SHOULD WORK)\n\n**URL:** http://localhost:8103/offers/templates\n\n**What I saw:**\n```\n[Describe]\n```\n\n### 3.3 Try /settings/billing (SHOULD DENY)\n\n**URL:** http://localhost:8103/settings/billing\n\n**What I saw:**\n```\n[Describe]\n```\n\n---\n\n## Test 4: ADMIN Role\n\n**Test User:**\n- Email: [ADMIN_EMAIL]\n- Role: ADMIN\n\n### 4.1 Access /settings/organization (SHOULD WORK)\n\n**URL:** http://localhost:8103/settings/organization\n\n**What I saw:**\n```\n[Describe]\n```\n\n### 4.2 Access /settings/billing (SHOULD WORK)\n\n**URL:** http://localhost:8103/settings/billing\n\n**What I saw:**\n```\n[Describe]\n```\n\n### 4.3 Access /team (SHOULD WORK)\n\n**URL:** http://localhost:8103/team\n\n**What I saw:**\n```\n[Describe]\n```\n\n---\n\n## Test 5: SUPER_ADMIN Role\n\n**Test User:**\n- Email: [SUPER_ADMIN_EMAIL]\n- Role: SUPER_ADMIN\n\n### 5.1 Access /super-admin (SHOULD WORK)\n\n**URL:** http://localhost:8103/super-admin\n\n**What I saw:**\n```\n[Describe]\n```\n\n### 5.2 Access all other pages (sample 3 random pages)\n\n**Page 1:** /job-postings\n```\n[Describe]\n```\n\n**Page 2:** /offers/analytics\n```\n[Describe]\n```\n\n**Page 3:** /settings/organization\n```\n[Describe]\n```\n\n---\n\n## Backend API Test (Optional but Recommended)\n\n### Test USER role trying to access HR route\n\n```bash\n$ curl -H \"Authorization: Bearer [USER_TOKEN]\" http://localhost:8102/api/v1/job-postings\n```\n\n**Response:**\n```json\n[Paste exact response]\n```\n\n**Expected:** {\"error\": \"Erişim reddedildi\", \"status\": 403}\n\n---\n\n## Summary Table\n\n| Role | Page | Expected | Result |\n|------|------|----------|--------|\n| USER | /job-postings | DENY | [PASS/FAIL - describe] |\n| USER | /settings/organization | DENY | [PASS/FAIL - describe] |\n| HR_SPECIALIST | /job-postings | ALLOW | [PASS/FAIL - describe] |\n| HR_SPECIALIST | /offers/analytics | DENY | [PASS/FAIL - describe] |\n| MANAGER | /offers/analytics | ALLOW | [PASS/FAIL - describe] |\n| MANAGER | /settings/billing | DENY | [PASS/FAIL - describe] |\n| ADMIN | /settings/organization | ALLOW | [PASS/FAIL - describe] |\n| ADMIN | /settings/billing | ALLOW | [PASS/FAIL - describe] |\n| SUPER_ADMIN | /super-admin | ALLOW | [PASS/FAIL - describe] |\n\n---\n\n## Issues Found\n\n[List any problems discovered during testing]\n\n1. [Issue description]\n2. [Issue description]\n\nOr write: **No issues found - all role checks working correctly**\n\n---\n\n**Note to Reviewer:** This report contains RAW test observations. Review to confirm role-based access is working as designed.\n",
       "testScenarios": [

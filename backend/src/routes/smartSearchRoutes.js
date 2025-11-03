@@ -1,8 +1,15 @@
 const express = require('express');
 const router = express.Router();
+const { authenticateToken } = require('../middleware/auth');
+const { authorize } = require('../middleware/authorize');
+const { enforceOrganizationIsolation } = require('../middleware/organizationIsolation');
+const { ROLE_GROUPS } = require('../constants/roles');
 const { getMilvusSyncService } = require('../services/milvusSyncService');
 
-router.post('/candidates', async (req, res) => {
+// HR_MANAGERS middleware chain
+const hrManagers = [authenticateToken, enforceOrganizationIsolation, authorize(ROLE_GROUPS.HR_MANAGERS)];
+
+router.post('/candidates', hrManagers, async (req, res) => {
   try {
     const { query, limit = 10, threshold = 0.5 } = req.body;
 
@@ -44,7 +51,7 @@ router.post('/candidates', async (req, res) => {
   }
 });
 
-router.get('/test', async (req, res) => {
+router.get('/test', hrManagers, async (req, res) => {
   res.json({ success: true, message: 'Smart search API is ready!' });
 });
 
