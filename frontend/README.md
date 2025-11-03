@@ -1,31 +1,59 @@
 # Frontend - IKAI HR Platform
 
-This directory contains the frontend for the IKAI HR Platform, a Next.js 14 application built with React, TypeScript, and Tailwind CSS.
+**Version:** 12.0
+**Updated:** 2025-11-03
+**Runtime:** Docker Container (Port 8103)
 
-## 🚀 Getting Started
+Next.js 14 frontend with TypeScript, Tailwind CSS, and comprehensive HR recruitment UI.
 
-### Prerequisites
+---
 
-- Node.js (v18 or later)
-- `pnpm` (or `npm`/`yarn`)
+## 🚀 Quick Start (Docker)
 
-### 1. Install Dependencies
+**Recommended:** Use Docker Compose from root directory
 
+```bash
+# From root: /home/asan/Desktop/ikai
+docker compose up -d
+
+# Frontend runs automatically on:
+http://localhost:8103
+
+# Hot reload is ACTIVE
+# Edit files in frontend/ → Auto-reload in container!
+```
+
+**Manual Start (Not Recommended):**
 ```bash
 npm install
+npm run dev  # Port 3000
 ```
 
-### 2. Setup Environment Variables
+**Login:**
+- Email: `info@gaiai.ai`
+- Password: `23235656`
 
-Create a `.env.local` file from the example in the root directory and provide the necessary configuration, primarily the backend API URL.
+---
 
-### 3. Start the Development Server
+## 🏗️ Architecture
 
-```bash
-npm run dev
-```
+### Technology Stack
+- **Framework:** Next.js 14 (App Router)
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS
+- **State:** Zustand
+- **API Client:** Axios
+- **Forms:** React Hook Form
+- **UI Components:** Custom + Shadcn-inspired
 
-The frontend application will be accessible at `http://localhost:3000`.
+### Key Features
+- Server-side rendering (SSR)
+- Client-side navigation
+- Protected routes with JWT
+- Real-time updates
+- Responsive design
+- Error boundaries
+- Toast notifications
 
 ## 📂 Project Structure
 

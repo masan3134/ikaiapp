@@ -1,59 +1,74 @@
 # Backend - IKAI HR Platform
 
-This directory contains the backend for the IKAI HR Platform, a Node.js application built with Express, Prisma, and PostgreSQL.
+**Version:** 12.0
+**Updated:** 2025-11-03
+**Runtime:** Docker Container (Port 8102)
 
-## 🚀 Getting Started
+Node.js backend for IKAI HR Platform with Express, Prisma, BullMQ queues, and AI integration.
 
-### Prerequisites
+---
 
-- Node.js (v18 or later)
-- PostgreSQL
-- Redis
-- MinIO
+## 🚀 Quick Start (Docker)
 
-It is recommended to run the required services (PostgreSQL, Redis, MinIO) using the Docker Compose setup in the root directory.
+**Recommended:** Use Docker Compose from root directory
 
-### 1. Install Dependencies
+```bash
+# From root: /home/asan/Desktop/ikai
+docker compose up -d
 
+# Backend runs automatically on:
+http://localhost:8102
+
+# Hot reload is ACTIVE
+# Edit files in backend/src/ → Auto-reload in container!
+```
+
+**Manual Start (Not Recommended):**
 ```bash
 npm install
-```
-
-### 2. Setup Environment Variables
-
-Create a `.env` file from `.env.example` and provide the necessary configuration for the database, Redis, MinIO, and other services.
-
-### 3. Run Database Migrations
-
-Apply the latest database schema using Prisma Migrate:
-
-```bash
 npx prisma migrate deploy
+npm run dev  # Port 3001
 ```
 
-### 4. Start the Development Server
+---
 
-```bash
-npm run dev
-```
+## 🏗️ Architecture
 
-The backend server will start on `http://localhost:5000` by default.
+### Technology Stack
+- **Runtime:** Node.js 20
+- **Framework:** Express.js
+- **ORM:** Prisma
+- **Database:** PostgreSQL 16
+- **Cache:** Redis 7
+- **Queue:** BullMQ
+- **Storage:** MinIO (S3-compatible)
+- **AI:** Google Gemini 2.0 Flash
+- **Vector DB:** Milvus 2.3.3
+- **Embeddings:** Ollama
 
 ## 📂 Project Structure
 
 ```
-src/
-├── controllers/    # Express route handlers
-├── errors/         # Custom error classes
-├── middleware/     # Express middleware
-├── models/         # Data models (if any)
-├── routes/         # Express routes
-├── services/       # Business logic
-├── utils/          # Utility functions
-└── index.js        # Application entry point
-prisma/
-├── schema.prisma   # Prisma schema
-└── migrations/     # Database migrations
+backend/
+├── src/
+│   ├── controllers/    # 20+ API controllers
+│   ├── services/       # 25+ business logic services
+│   ├── queues/         # 5 BullMQ queue definitions
+│   ├── workers/        # 5 background workers
+│   ├── routes/         # 20+ API route modules
+│   ├── middleware/     # Auth, validation, rate limiting
+│   ├── utils/          # Helpers, loggers, rate limiters
+│   ├── templates/      # Email templates
+│   ├── errors/         # Custom error classes
+│   └── index.js        # Main entry point
+├── prisma/
+│   ├── schema.prisma   # Database schema (20+ models)
+│   └── migrations/     # 20+ migration files
+├── scripts/            # Utility scripts
+├── error-logs/         # Error log files (JSONL)
+├── package.json        # Dependencies
+├── Dockerfile          # Docker build config
+└── .env                # Environment variables
 ```
 
 ## 🌐 API Endpoints

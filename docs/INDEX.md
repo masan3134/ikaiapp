@@ -1,15 +1,17 @@
 # IKAI HR Platform - Documentation Index
 
-**Last Updated:** 2025-11-02
-**Total Documents:** 44
+**Last Updated:** 2025-11-03
+**Total Documents:** 45
+**Version:** 12.0 - Docker Isolated Dev + Auto-Commit
 
 ---
 
 ## 📚 Quick Navigation
 
 ### **🚀 Getting Started**
-- [CLAUDE.md](../CLAUDE.md) - Main development guide (start here!)
-- [Root README](../README.md) - Project overview
+- [CLAUDE.md](../CLAUDE.md) - Main development guide (v12.0, start here!)
+- [README.md](../README.md) - GitHub landing page (updated!)
+- [AUTO_COMMIT_GUIDE.md](../AUTO_COMMIT_GUIDE.md) - Git automation (NEW!)
 - [Backend README](../backend/README.md) - Backend setup
 - [Frontend README](../frontend/README.md) - Frontend setup
 
