@@ -20,7 +20,8 @@ import {
   Plus,
   BarChart3,
   Layers,
-  Settings
+  Settings,
+  UserCog
 } from 'lucide-react';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { useAuthStore } from '@/lib/store/authStore';
@@ -45,6 +46,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     { name: 'İş İlanları', path: '/job-postings', icon: Briefcase },
     { name: 'Adaylar', path: '/candidates', icon: Users },
     { name: 'Geçmiş Analizlerim', path: '/analyses', icon: Clock },
+    // Team Management (only for ADMIN and SUPER_ADMIN)
+    ...(user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN' ? [{ name: 'Takım Yönetimi', path: '/team', icon: UserCog }] : []),
     // Super Admin link (only for SUPER_ADMIN role)
     ...(user?.role === 'SUPER_ADMIN' ? [{ name: 'Süper Yönetici', path: '/super-admin', icon: Settings }] : []),
   ];
