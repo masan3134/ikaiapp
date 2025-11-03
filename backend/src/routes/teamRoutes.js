@@ -9,11 +9,15 @@ const {
   inviteTeamMember,
   updateTeamMember,
   toggleTeamMember,
-  deleteTeamMember
+  deleteTeamMember,
+  acceptInvitation
 } = require('../controllers/teamController');
 
 // All routes require authentication, organization isolation, and ADMIN/SUPER_ADMIN role
 const adminOnly = [authenticateToken, enforceOrganizationIsolation, authorize(['ADMIN', 'SUPER_ADMIN'])];
+
+// POST /api/v1/team/accept-invitation - Accept invitation (PUBLIC - no auth)
+router.post('/accept-invitation', acceptInvitation);
 
 // GET /api/v1/team - List all team members
 router.get('/', ...adminOnly, getTeamMembers);

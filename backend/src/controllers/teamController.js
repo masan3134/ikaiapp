@@ -404,3 +404,98 @@ exports.deleteTeamMember = async (req, res) => {
     });
   }
 };
+
+/**
+ * POST /api/v1/team/accept-invitation
+ * Accept team invitation and set password
+ * Public endpoint (no auth required)
+ */
+exports.acceptInvitation = async (req, res) => {
+  try {
+    const { token, password, name } = req.body;
+
+    // Validation
+    if (!token || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Token ve şifre gereklidir'
+      });
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: 'Şifre en az 6 karakter olmalıdır'
+      });
+    }
+
+    // Find user with token
+    const user = await prisma.user.findFirst({
+      where: {
+        invitationToken: token,
+        invitationExpiry: {
+          gt: new Date() // Token not expired
+        }
+      },
+      include: {
+        organization: true
+      }
+    });
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: 'Geçersiz veya süresi dolmuş davet linki'
+      });
+    }
+
+    // Check if already onboarded
+    if (user.isOnboarded) {
+      return res.status(400).json({
+        success: false,
+        message: 'Bu davet linki zaten kullanılmış'
+      });
+    }
+
+    // Hash password
+    const bcrypt = require('bcryptjs');
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Update user
+    const updatedUser = await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        password: hashedPassword,
+        name: name || user.name,
+        isOnboarded: true,
+        invitationToken: null,
+        invitationExpiry: null
+      },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        role: true,
+        organizationId: true,
+        organization: {
+          select: {
+            id: true,
+            name: true
+          }
+        }
+      }
+    });
+
+    res.json({
+      success: true,
+      message: 'Hesabınız başarıyla oluşturuldu',
+      data: updatedUser
+    });
+  } catch (error) {
+    console.error('Accept invitation error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Davet kabul edilirken hata oluştu'
+    });
+  }
+};
