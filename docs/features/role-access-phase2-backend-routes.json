@@ -1,0 +1,362 @@
+{
+  "phase": "Phase 2 - Backend Route Protection",
+  "duration": "3 hours",
+  "priority": "CRITICAL",
+  "dependencies": ["Phase 1 - Infrastructure must be complete"],
+  "description": "Add authorize middleware to 130+ backend routes with appropriate role restrictions",
+
+  "tasks": [
+    {
+      "id": "2.1",
+      "title": "Protect Super Admin Routes",
+      "file": "backend/src/routes/superAdminRoutes.js",
+      "priority": "CRITICAL",
+      "estimatedTime": "10 minutes",
+      "description": "Restrict super admin routes to SUPER_ADMIN only",
+      "dependencies": ["Phase 1 complete"],
+      "currentState": "No authorization on routes",
+      "targetState": "All routes protected with SUPER_ADMIN only",
+      "routeCount": 5,
+      "instructions": [
+        "1. Read current superAdminRoutes.js",
+        "2. Import authorize middleware and ROLES",
+        "3. Add authorize(['SUPER_ADMIN']) to all routes",
+        "4. Keep authenticateToken middleware"
+      ],
+      "codeChanges": {
+        "imports": "const { authorize } = require('../middleware/authorize');\nconst { ROLES } = require('../constants/roles');",
+        "middleware": "const superAdminOnly = [authenticateToken, authorize([ROLES.SUPER_ADMIN])];",
+        "applyTo": "All 5 routes (GET /organizations, PATCH /organizations/:id/plan, etc.)"
+      }
+    },
+    {
+      "id": "2.2",
+      "title": "Protect Organization Routes",
+      "file": "backend/src/routes/organizationRoutes.js",
+      "priority": "HIGH",
+      "estimatedTime": "10 minutes",
+      "description": "Restrict organization management to ADMIN and SUPER_ADMIN",
+      "dependencies": ["2.1"],
+      "routeCount": 3,
+      "instructions": [
+        "1. Read organizationRoutes.js",
+        "2. Import ROLES constants",
+        "3. Add authorize middleware",
+        "4. Protect: GET /me (all authenticated), PUT /me (ADMIN+), POST /complete-onboarding (all)"
+      ],
+      "codeChanges": {
+        "imports": "const { ROLES } = require('../constants/roles');",
+        "routes": {
+          "GET /me": "authenticateToken only (all users can see their org)",
+          "PUT /me": "authorize([ROLES.ADMIN, ROLES.SUPER_ADMIN])",
+          "POST /complete-onboarding": "authenticateToken only"
+        }
+      }
+    },
+    {
+      "id": "2.3",
+      "title": "Protect Queue Routes",
+      "file": "backend/src/routes/queueRoutes.js",
+      "priority": "HIGH",
+      "estimatedTime": "10 minutes",
+      "description": "Restrict queue monitoring to admins",
+      "dependencies": ["2.2"],
+      "routeCount": 3,
+      "instructions": [
+        "1. Read queueRoutes.js",
+        "2. Add ADMIN and SUPER_ADMIN restriction",
+        "3. Protect all 3 routes (GET /health, GET /stats, POST /clear)"
+      ],
+      "codeChanges": {
+        "middleware": "const adminOnly = [authenticateToken, enforceOrganizationIsolation, authorize([ROLES.ADMIN, ROLES.SUPER_ADMIN])];",
+        "applyTo": "All 3 routes"
+      }
+    },
+    {
+      "id": "2.4",
+      "title": "Protect Job Posting Routes",
+      "file": "backend/src/routes/jobPostingRoutes.js",
+      "priority": "HIGH",
+      "estimatedTime": "15 minutes",
+      "description": "Allow HR_SPECIALIST and above to manage job postings",
+      "dependencies": ["2.3"],
+      "routeCount": 7,
+      "instructions": [
+        "1. Read jobPostingRoutes.js",
+        "2. Import ROLE_GROUPS",
+        "3. Add authorize(ROLE_GROUPS.HR_MANAGERS) to all routes",
+        "4. Keep organizationIsolation middleware"
+      ],
+      "codeChanges": {
+        "imports": "const { ROLE_GROUPS } = require('../constants/roles');",
+        "middleware": "const hrManagers = [authenticateToken, enforceOrganizationIsolation, authorize(ROLE_GROUPS.HR_MANAGERS)];",
+        "routes": "Apply hrManagers to all 7 routes: POST /, GET /, GET /:id, PUT /:id, DELETE /:id, PATCH /:id/status, GET /search"
+      }
+    },
+    {
+      "id": "2.5",
+      "title": "Protect Candidate Routes",
+      "file": "backend/src/routes/candidateRoutes.js",
+      "priority": "HIGH",
+      "estimatedTime": "15 minutes",
+      "description": "Allow HR_SPECIALIST and above to manage candidates",
+      "dependencies": ["2.4"],
+      "routeCount": 7,
+      "instructions": [
+        "1. Read candidateRoutes.js",
+        "2. Import ROLE_GROUPS",
+        "3. Add authorize(ROLE_GROUPS.HR_MANAGERS) to all routes"
+      ],
+      "codeChanges": {
+        "middleware": "const hrManagers = [authenticateToken, enforceOrganizationIsolation, authorize(ROLE_GROUPS.HR_MANAGERS)];",
+        "routes": "Apply to: POST /, GET /, GET /:id, PUT /:id, DELETE /:id, POST /bulk-upload, GET /job-posting/:jobPostingId"
+      }
+    },
+    {
+      "id": "2.6",
+      "title": "Protect Analysis Routes",
+      "file": "backend/src/routes/analysisRoutes.js",
+      "priority": "HIGH",
+      "estimatedTime": "20 minutes",
+      "description": "Allow HR_SPECIALIST and above to create/view analyses",
+      "dependencies": ["2.5"],
+      "routeCount": 10,
+      "instructions": [
+        "1. Read analysisRoutes.js",
+        "2. Import ROLE_GROUPS",
+        "3. Add authorize to all 10 routes",
+        "4. Keep trackAnalysisUsage middleware on POST route"
+      ],
+      "codeChanges": {
+        "middleware": "const hrManagers = [authenticateToken, enforceOrganizationIsolation, authorize(ROLE_GROUPS.HR_MANAGERS)];",
+        "routes": [
+          "POST / - hrManagers + trackAnalysisUsage",
+          "GET / - hrManagers",
+          "GET /:id - hrManagers",
+          "DELETE /:id - hrManagers",
+          "POST /:id/add-candidates - hrManagers",
+          "GET /:id/export/xlsx - hrManagers",
+          "GET /:id/export/csv - hrManagers",
+          "GET /:id/export/html - hrManagers",
+          "POST /:id/send-email - hrManagers",
+          "POST /:id/feedback - hrManagers"
+        ]
+      }
+    },
+    {
+      "id": "2.7",
+      "title": "Protect Interview Routes",
+      "file": "backend/src/routes/interviewRoutes.js",
+      "priority": "HIGH",
+      "estimatedTime": "15 minutes",
+      "description": "Allow HR_SPECIALIST and above to manage interviews",
+      "dependencies": ["2.6"],
+      "routeCount": 8,
+      "instructions": [
+        "1. Read interviewRoutes.js",
+        "2. Add HR_MANAGERS authorization",
+        "3. Protect all 8 routes"
+      ],
+      "codeChanges": {
+        "middleware": "const hrManagers = [authenticateToken, enforceOrganizationIsolation, authorize(ROLE_GROUPS.HR_MANAGERS)];",
+        "routes": "POST /, GET /, GET /:id, PUT /:id, DELETE /:id, PATCH /:id/status, POST /:id/notes, GET /candidate/:candidateId"
+      }
+    },
+    {
+      "id": "2.8",
+      "title": "Protect Offer Routes",
+      "file": "backend/src/routes/offerRoutes.js",
+      "priority": "HIGH",
+      "estimatedTime": "25 minutes",
+      "description": "Allow HR_SPECIALIST and above to manage offers",
+      "dependencies": ["2.7"],
+      "routeCount": 15,
+      "instructions": [
+        "1. Read offerRoutes.js",
+        "2. Add HR_MANAGERS to most routes",
+        "3. Keep public routes as is (GET /public/:token)",
+        "4. Protect all 15 routes accordingly"
+      ],
+      "codeChanges": {
+        "middleware": "const hrManagers = [authenticateToken, enforceOrganizationIsolation, authorize(ROLE_GROUPS.HR_MANAGERS)];",
+        "publicRoutes": "Keep these without auth: GET /public/:token, POST /public/:token/respond",
+        "protectedRoutes": "All other 13 routes get hrManagers"
+      }
+    },
+    {
+      "id": "2.9",
+      "title": "Protect Template Routes",
+      "file": "backend/src/routes/templateRoutes.js",
+      "priority": "MEDIUM",
+      "estimatedTime": "15 minutes",
+      "description": "Allow MANAGER and above to manage templates",
+      "dependencies": ["2.8"],
+      "routeCount": 8,
+      "instructions": [
+        "1. Read templateRoutes.js",
+        "2. Add MANAGER+ authorization (MANAGER, ADMIN, SUPER_ADMIN)",
+        "3. Protect all 8 routes"
+      ],
+      "codeChanges": {
+        "middleware": "const managers = [authenticateToken, enforceOrganizationIsolation, authorize([ROLES.MANAGER, ROLES.ADMIN, ROLES.SUPER_ADMIN])];",
+        "routes": "POST /, GET /, GET /:id, PUT /:id, DELETE /:id, POST /:id/duplicate, PATCH /:id/activate, GET /category/:categoryId"
+      }
+    },
+    {
+      "id": "2.10",
+      "title": "Protect Test Routes",
+      "file": "backend/src/routes/testRoutes.js",
+      "priority": "MEDIUM",
+      "estimatedTime": "15 minutes",
+      "description": "Allow HR_SPECIALIST and above to manage tests",
+      "dependencies": ["2.9"],
+      "routeCount": 8,
+      "instructions": [
+        "1. Read testRoutes.js",
+        "2. Add HR_MANAGERS authorization"
+      ],
+      "codeChanges": {
+        "middleware": "const hrManagers = [authenticateToken, enforceOrganizationIsolation, authorize(ROLE_GROUPS.HR_MANAGERS)];"
+      }
+    },
+    {
+      "id": "2.11",
+      "title": "Protect Category Routes",
+      "file": "backend/src/routes/categoryRoutes.js",
+      "priority": "MEDIUM",
+      "estimatedTime": "10 minutes",
+      "description": "Allow MANAGER and above to manage categories",
+      "dependencies": ["2.10"],
+      "routeCount": 6,
+      "instructions": [
+        "1. Read categoryRoutes.js",
+        "2. Add MANAGER+ authorization"
+      ],
+      "codeChanges": {
+        "middleware": "const managers = [authenticateToken, enforceOrganizationIsolation, authorize([ROLES.MANAGER, ROLES.ADMIN, ROLES.SUPER_ADMIN])];"
+      }
+    },
+    {
+      "id": "2.12",
+      "title": "Protect Analytics Routes",
+      "file": "backend/src/routes/analyticsOfferRoutes.js",
+      "priority": "MEDIUM",
+      "estimatedTime": "10 minutes",
+      "description": "Allow MANAGER and above to view analytics",
+      "dependencies": ["2.11"],
+      "routeCount": 4,
+      "instructions": [
+        "1. Read analyticsOfferRoutes.js",
+        "2. Add ANALYTICS_VIEWERS authorization"
+      ],
+      "codeChanges": {
+        "middleware": "const analyticsViewers = [authenticateToken, enforceOrganizationIsolation, authorize(ROLE_GROUPS.ANALYTICS_VIEWERS)];"
+      }
+    },
+    {
+      "id": "2.13",
+      "title": "Protect Remaining Routes",
+      "priority": "MEDIUM",
+      "estimatedTime": "30 minutes",
+      "description": "Protect all other routes with appropriate roles",
+      "dependencies": ["2.12"],
+      "files": [
+        "analysisChatRoutes.js - HR_MANAGERS",
+        "attachmentRoutes.js - HR_MANAGERS",
+        "negotiationRoutes.js - HR_MANAGERS",
+        "revisionRoutes.js - HR_MANAGERS",
+        "smartSearchRoutes.js - HR_MANAGERS",
+        "metricsRoutes.js - ADMINS only",
+        "cacheRoutes.js - ADMINS only",
+        "milvusSyncRoutes.js - ADMINS only",
+        "userRoutes.js - Mixed (some all authenticated, some ADMIN only)",
+        "onboardingRoutes.js - All authenticated",
+        "comprehensiveDashboardRoutes.js - HR_MANAGERS"
+      ],
+      "instructions": [
+        "1. Go through each file",
+        "2. Add appropriate middleware based on route purpose",
+        "3. Follow the pattern from previous tasks"
+      ]
+    },
+    {
+      "id": "2.14",
+      "title": "Verify All Route Protection",
+      "priority": "HIGH",
+      "estimatedTime": "20 minutes",
+      "description": "Check that all routes are protected",
+      "dependencies": ["2.13"],
+      "instructions": [
+        "1. Run grep to find unprotected routes",
+        "2. Verify each route file has authorize",
+        "3. Test critical routes manually",
+        "4. Document any intentionally public routes"
+      ],
+      "testCommands": [
+        "# Count routes with authorize",
+        "grep -r 'authorize' backend/src/routes/*.js | wc -l",
+        "",
+        "# Find routes without authorize (should only be public/auth routes)",
+        "grep -r 'router\\.' backend/src/routes/*.js | grep -v authorize | grep -v require | grep -v '//'",
+        "",
+        "# List protected route files",
+        "grep -l 'authorize' backend/src/routes/*.js"
+      ]
+    },
+    {
+      "id": "2.15",
+      "title": "Restart Backend and Test",
+      "priority": "CRITICAL",
+      "estimatedTime": "10 minutes",
+      "description": "Restart backend and verify authorization works",
+      "dependencies": ["2.14"],
+      "instructions": [
+        "1. Restart backend: docker compose restart backend",
+        "2. Check logs for errors",
+        "3. Test a protected route with wrong role (should get 403)",
+        "4. Test with correct role (should work)"
+      ],
+      "testCommands": [
+        "docker compose restart backend",
+        "sleep 3",
+        "docker logs ikai-backend --tail 20",
+        "",
+        "# Test unauthorized access (should fail with 403)",
+        "# This test assumes you have a USER role token",
+        "# curl -H 'Authorization: Bearer <USER_TOKEN>' http://localhost:8102/api/v1/super-admin/organizations",
+        "",
+        "# Test authorized access (should work)",
+        "# curl -H 'Authorization: Bearer <ADMIN_TOKEN>' http://localhost:8102/api/v1/job-postings"
+      ]
+    }
+  ],
+
+  "verification": {
+    "checks": [
+      "✅ All 26 route files reviewed",
+      "✅ 130+ routes have authorize middleware",
+      "✅ SUPER_ADMIN routes only accessible by SUPER_ADMIN",
+      "✅ ADMIN routes only accessible by ADMIN+",
+      "✅ HR routes accessible by HR_SPECIALIST+",
+      "✅ Public routes (auth, public-offer) remain public",
+      "✅ Backend restarts without errors",
+      "✅ 403 returned for unauthorized access",
+      "✅ Authorized requests work correctly"
+    ]
+  },
+
+  "routeBreakdown": {
+    "byRole": {
+      "SUPER_ADMIN_ONLY": "5 routes (superAdminRoutes)",
+      "ADMIN_ONLY": "11 routes (queue, cache, metrics, milvus, org management)",
+      "MANAGER_PLUS": "18 routes (templates, categories, analytics)",
+      "HR_SPECIALIST_PLUS": "90+ routes (jobs, candidates, analyses, offers, interviews, tests)",
+      "ALL_AUTHENTICATED": "6 routes (onboarding, user profile)",
+      "PUBLIC": "8 routes (auth, public offers)"
+    }
+  },
+
+  "completionMessage": "🎉 Phase 2 Backend Routes Complete!\\n\\n✅ 130+ routes protected\\n✅ 5 role levels enforced\\n✅ Organization isolation maintained\\n\\nNext: Phase 3 - Protect frontend pages",
+
+  "nextPhase": "Phase 3 will add RoleGuard and withRoleProtection to 19 frontend pages"
+}

@@ -1,0 +1,163 @@
+{
+  "phase": "Phase 1 - Role-Based Access Infrastructure",
+  "duration": "1.5 hours",
+  "priority": "CRITICAL",
+  "dependencies": [],
+  "description": "Create reusable components, hooks, constants and helpers for role-based access control system",
+
+  "tasks": [
+    {
+      "id": "1.1",
+      "title": "Create Backend Role Constants",
+      "file": "backend/src/constants/roles.js",
+      "priority": "HIGH",
+      "estimatedTime": "10 minutes",
+      "description": "Define all user roles and role groups as constants",
+      "dependencies": [],
+      "instructions": [
+        "1. Create new file: backend/src/constants/roles.js",
+        "2. Define role constants",
+        "3. Define role hierarchy",
+        "4. Export all constants"
+      ],
+      "codeToWrite": "/**\n * User Role Constants\n * Used for authorization and access control\n */\n\nconst ROLES = {\n  SUPER_ADMIN: 'SUPER_ADMIN',\n  ADMIN: 'ADMIN',\n  MANAGER: 'MANAGER',\n  HR_SPECIALIST: 'HR_SPECIALIST',\n  USER: 'USER'\n};\n\n/**\n * Role Groups\n * Used for checking if user belongs to a group of roles\n */\nconst ROLE_GROUPS = {\n  // All roles that have admin privileges\n  ADMINS: [ROLES.SUPER_ADMIN, ROLES.ADMIN],\n  \n  // All roles that can manage HR operations\n  HR_MANAGERS: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER, ROLES.HR_SPECIALIST],\n  \n  // All roles that can view analytics\n  ANALYTICS_VIEWERS: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER],\n  \n  // All authenticated users\n  ALL_AUTHENTICATED: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER, ROLES.HR_SPECIALIST, ROLES.USER]\n};\n\n/**\n * Role Hierarchy (higher number = more privileges)\n */\nconst ROLE_HIERARCHY = {\n  [ROLES.SUPER_ADMIN]: 5,\n  [ROLES.ADMIN]: 4,\n  [ROLES.MANAGER]: 3,\n  [ROLES.HR_SPECIALIST]: 2,\n  [ROLES.USER]: 1\n};\n\nmodule.exports = {\n  ROLES,\n  ROLE_GROUPS,\n  ROLE_HIERARCHY\n};",
+      "testCommand": "node -e \"const { ROLES, ROLE_GROUPS } = require('./backend/src/constants/roles.js'); console.log('Roles:', Object.keys(ROLES)); console.log('Groups:', Object.keys(ROLE_GROUPS));\""
+    },
+    {
+      "id": "1.2",
+      "title": "Create Backend Role Helper Functions",
+      "file": "backend/src/utils/roleHelpers.js",
+      "priority": "HIGH",
+      "estimatedTime": "15 minutes",
+      "description": "Create helper functions to check role permissions",
+      "dependencies": ["1.1"],
+      "instructions": [
+        "1. Create new file: backend/src/utils/roleHelpers.js",
+        "2. Import role constants",
+        "3. Create helper functions",
+        "4. Export all functions"
+      ],
+      "codeToWrite": "const { ROLES, ROLE_GROUPS, ROLE_HIERARCHY } = require('../constants/roles');\n\n/**\n * Check if user has admin role (ADMIN or SUPER_ADMIN)\n * @param {string} userRole - User's role\n * @returns {boolean}\n */\nfunction isAdmin(userRole) {\n  return ROLE_GROUPS.ADMINS.includes(userRole);\n}\n\n/**\n * Check if user can manage HR operations\n * @param {string} userRole - User's role\n * @returns {boolean}\n */\nfunction canManageHR(userRole) {\n  return ROLE_GROUPS.HR_MANAGERS.includes(userRole);\n}\n\n/**\n * Check if user can view analytics\n * @param {string} userRole - User's role\n * @returns {boolean}\n */\nfunction canViewAnalytics(userRole) {\n  return ROLE_GROUPS.ANALYTICS_VIEWERS.includes(userRole);\n}\n\n/**\n * Check if user has one of the required roles\n * @param {string} userRole - User's role\n * @param {string[]} requiredRoles - Array of required roles\n * @returns {boolean}\n */\nfunction hasRequiredRole(userRole, requiredRoles) {\n  return requiredRoles.includes(userRole);\n}\n\n/**\n * Check if user's role is higher than or equal to required role\n * @param {string} userRole - User's role\n * @param {string} requiredRole - Required role\n * @returns {boolean}\n */\nfunction hasRoleOrHigher(userRole, requiredRole) {\n  const userLevel = ROLE_HIERARCHY[userRole] || 0;\n  const requiredLevel = ROLE_HIERARCHY[requiredRole] || 0;\n  return userLevel >= requiredLevel;\n}\n\n/**\n * Get all roles equal to or higher than given role\n * @param {string} role - Base role\n * @returns {string[]}\n */\nfunction getRolesEqualOrHigher(role) {\n  const baseLevel = ROLE_HIERARCHY[role] || 0;\n  return Object.keys(ROLE_HIERARCHY).filter(\n    r => ROLE_HIERARCHY[r] >= baseLevel\n  );\n}\n\nmodule.exports = {\n  isAdmin,\n  canManageHR,\n  canViewAnalytics,\n  hasRequiredRole,\n  hasRoleOrHigher,\n  getRolesEqualOrHigher\n};",
+      "testCommand": "node -e \"const helpers = require('./backend/src/utils/roleHelpers.js'); console.log('isAdmin(ADMIN):', helpers.isAdmin('ADMIN')); console.log('canManageHR(HR_SPECIALIST):', helpers.canManageHR('HR_SPECIALIST'));\""
+    },
+    {
+      "id": "1.3",
+      "title": "Create Frontend Role Constants",
+      "file": "frontend/lib/constants/roles.ts",
+      "priority": "HIGH",
+      "estimatedTime": "10 minutes",
+      "description": "Define TypeScript role constants for frontend",
+      "dependencies": [],
+      "instructions": [
+        "1. Create directory if not exists: frontend/lib/constants/",
+        "2. Create file: frontend/lib/constants/roles.ts",
+        "3. Define role enum and types",
+        "4. Export constants"
+      ],
+      "codeToWrite": "/**\n * User Role Constants (Frontend)\n * Must match backend roles exactly\n */\n\nexport enum UserRole {\n  SUPER_ADMIN = 'SUPER_ADMIN',\n  ADMIN = 'ADMIN',\n  MANAGER = 'MANAGER',\n  HR_SPECIALIST = 'HR_SPECIALIST',\n  USER = 'USER'\n}\n\n/**\n * Role Groups for easier permission checks\n */\nexport const RoleGroups = {\n  ADMINS: [UserRole.SUPER_ADMIN, UserRole.ADMIN],\n  HR_MANAGERS: [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.MANAGER, UserRole.HR_SPECIALIST],\n  ANALYTICS_VIEWERS: [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.MANAGER],\n  ALL_AUTHENTICATED: [\n    UserRole.SUPER_ADMIN,\n    UserRole.ADMIN,\n    UserRole.MANAGER,\n    UserRole.HR_SPECIALIST,\n    UserRole.USER\n  ]\n} as const;\n\n/**\n * Role hierarchy for comparison\n */\nexport const RoleHierarchy: Record<UserRole, number> = {\n  [UserRole.SUPER_ADMIN]: 5,\n  [UserRole.ADMIN]: 4,\n  [UserRole.MANAGER]: 3,\n  [UserRole.HR_SPECIALIST]: 2,\n  [UserRole.USER]: 1\n};\n\n/**\n * Type for role arrays\n */\nexport type AllowedRoles = UserRole[];\n\n/**\n * Helper to check if role is in allowed list\n */\nexport function isRoleAllowed(userRole: UserRole | string, allowedRoles: AllowedRoles): boolean {\n  return allowedRoles.includes(userRole as UserRole);\n}\n\n/**\n * Helper to check if user has admin privileges\n */\nexport function isAdmin(userRole: UserRole | string): boolean {\n  return RoleGroups.ADMINS.includes(userRole as UserRole);\n}\n\n/**\n * Helper to check if user can manage HR operations\n */\nexport function canManageHR(userRole: UserRole | string): boolean {\n  return RoleGroups.HR_MANAGERS.includes(userRole as UserRole);\n}"
+    },
+    {
+      "id": "1.4",
+      "title": "Create useHasRole Hook",
+      "file": "frontend/lib/hooks/useHasRole.ts",
+      "priority": "HIGH",
+      "estimatedTime": "15 minutes",
+      "description": "Create React hook to check user roles",
+      "dependencies": ["1.3"],
+      "instructions": [
+        "1. Create directory if not exists: frontend/lib/hooks/",
+        "2. Create file: frontend/lib/hooks/useHasRole.ts",
+        "3. Import authStore",
+        "4. Create hook logic"
+      ],
+      "codeToWrite": "'use client';\n\nimport { useAuthStore } from '@/lib/store/authStore';\nimport { UserRole, isRoleAllowed, AllowedRoles } from '@/lib/constants/roles';\n\n/**\n * Hook to check if current user has required role(s)\n * @param allowedRoles - Array of allowed roles\n * @returns boolean - true if user has one of the allowed roles\n */\nexport function useHasRole(allowedRoles: AllowedRoles): boolean {\n  const { user } = useAuthStore();\n  \n  if (!user || !user.role) {\n    return false;\n  }\n  \n  return isRoleAllowed(user.role, allowedRoles);\n}\n\n/**\n * Hook to check if current user is admin\n * @returns boolean\n */\nexport function useIsAdmin(): boolean {\n  const { user } = useAuthStore();\n  \n  if (!user || !user.role) {\n    return false;\n  }\n  \n  return user.role === UserRole.SUPER_ADMIN || user.role === UserRole.ADMIN;\n}\n\n/**\n * Hook to check if current user can manage HR operations\n * @returns boolean\n */\nexport function useCanManageHR(): boolean {\n  const { user } = useAuthStore();\n  \n  if (!user || !user.role) {\n    return false;\n  }\n  \n  return [\n    UserRole.SUPER_ADMIN,\n    UserRole.ADMIN,\n    UserRole.MANAGER,\n    UserRole.HR_SPECIALIST\n  ].includes(user.role as UserRole);\n}\n\n/**\n * Hook to get current user's role\n * @returns UserRole | null\n */\nexport function useUserRole(): UserRole | null {\n  const { user } = useAuthStore();\n  return (user?.role as UserRole) || null;\n}"
+    },
+    {
+      "id": "1.5",
+      "title": "Create RoleGuard Component",
+      "file": "frontend/components/guards/RoleGuard.tsx",
+      "priority": "CRITICAL",
+      "estimatedTime": "20 minutes",
+      "description": "Create client-side component to guard content based on roles",
+      "dependencies": ["1.3", "1.4"],
+      "instructions": [
+        "1. Create directory if not exists: frontend/components/guards/",
+        "2. Create file: frontend/components/guards/RoleGuard.tsx",
+        "3. Import dependencies",
+        "4. Create component logic with fallback UI"
+      ],
+      "codeToWrite": "'use client';\n\nimport React from 'react';\nimport { useRouter } from 'next/navigation';\nimport { useHasRole } from '@/lib/hooks/useHasRole';\nimport { AllowedRoles } from '@/lib/constants/roles';\n\ninterface RoleGuardProps {\n  allowedRoles: AllowedRoles;\n  children: React.ReactNode;\n  fallback?: React.ReactNode;\n  redirectTo?: string;\n}\n\n/**\n * RoleGuard Component\n * Conditionally renders children based on user's role\n * \n * @param allowedRoles - Array of roles that can see the content\n * @param children - Content to render if user has permission\n * @param fallback - Optional fallback UI if user doesn't have permission\n * @param redirectTo - Optional path to redirect if user doesn't have permission\n */\nexport function RoleGuard({\n  allowedRoles,\n  children,\n  fallback,\n  redirectTo\n}: RoleGuardProps) {\n  const hasRole = useHasRole(allowedRoles);\n  const router = useRouter();\n\n  React.useEffect(() => {\n    if (!hasRole && redirectTo) {\n      router.push(redirectTo);\n    }\n  }, [hasRole, redirectTo, router]);\n\n  if (!hasRole) {\n    if (fallback) {\n      return <>{fallback}</>;\n    }\n    \n    return (\n      <div className=\"flex items-center justify-center min-h-screen bg-gray-50\">\n        <div className=\"bg-white p-8 rounded-xl shadow-lg max-w-md w-full text-center\">\n          <div className=\"text-red-600 text-5xl mb-4\">🔒</div>\n          <h1 className=\"text-2xl font-bold text-gray-900 mb-2\">Erişim Engellendi</h1>\n          <p className=\"text-gray-600 mb-6\">\n            Bu sayfaya erişim yetkiniz bulunmamaktadır.\n          </p>\n          <button\n            onClick={() => router.push('/dashboard')}\n            className=\"bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition\"\n          >\n            Ana Sayfaya Dön\n          </button>\n        </div>\n      </div>\n    );\n  }\n\n  return <>{children}</>;\n}\n\n/**\n * Simple role check component (just hide/show, no fallback UI)\n */\nexport function RoleCheck({\n  allowedRoles,\n  children\n}: {\n  allowedRoles: AllowedRoles;\n  children: React.ReactNode;\n}) {\n  const hasRole = useHasRole(allowedRoles);\n  \n  if (!hasRole) {\n    return null;\n  }\n  \n  return <>{children}</>;\n}"
+    },
+    {
+      "id": "1.6",
+      "title": "Create withRoleProtection HOC",
+      "file": "frontend/lib/hoc/withRoleProtection.tsx",
+      "priority": "HIGH",
+      "estimatedTime": "20 minutes",
+      "description": "Create Higher-Order Component to wrap pages with role protection",
+      "dependencies": ["1.3", "1.5"],
+      "instructions": [
+        "1. Create directory if not exists: frontend/lib/hoc/",
+        "2. Create file: frontend/lib/hoc/withRoleProtection.tsx",
+        "3. Create HOC function",
+        "4. Add TypeScript types"
+      ],
+      "codeToWrite": "'use client';\n\nimport React from 'react';\nimport { RoleGuard } from '@/components/guards/RoleGuard';\nimport { AllowedRoles } from '@/lib/constants/roles';\n\ninterface WithRoleProtectionOptions {\n  allowedRoles: AllowedRoles;\n  redirectTo?: string;\n  fallback?: React.ReactNode;\n}\n\n/**\n * Higher-Order Component to add role-based protection to pages\n * \n * Usage:\n * ```tsx\n * const ProtectedPage = withRoleProtection(MyPage, {\n *   allowedRoles: [UserRole.ADMIN, UserRole.SUPER_ADMIN]\n * });\n * export default ProtectedPage;\n * ```\n * \n * @param Component - Page component to protect\n * @param options - Protection options\n */\nexport function withRoleProtection<P extends object>(\n  Component: React.ComponentType<P>,\n  options: WithRoleProtectionOptions\n) {\n  const ProtectedComponent = (props: P) => {\n    return (\n      <RoleGuard\n        allowedRoles={options.allowedRoles}\n        redirectTo={options.redirectTo}\n        fallback={options.fallback}\n      >\n        <Component {...props} />\n      </RoleGuard>\n    );\n  };\n\n  ProtectedComponent.displayName = `withRoleProtection(${Component.displayName || Component.name || 'Component'})`;\n\n  return ProtectedComponent;\n}"
+    },
+    {
+      "id": "1.7",
+      "title": "Test Infrastructure Components",
+      "priority": "MEDIUM",
+      "estimatedTime": "10 minutes",
+      "description": "Verify all created files work correctly",
+      "dependencies": ["1.1", "1.2", "1.3", "1.4", "1.5", "1.6"],
+      "instructions": [
+        "1. Check all files are created",
+        "2. Run TypeScript check on frontend files",
+        "3. Run Node check on backend files",
+        "4. Verify imports work"
+      ],
+      "testCommands": [
+        "# Check backend files exist",
+        "ls -la backend/src/constants/roles.js",
+        "ls -la backend/src/utils/roleHelpers.js",
+        "",
+        "# Check frontend files exist",
+        "ls -la frontend/lib/constants/roles.ts",
+        "ls -la frontend/lib/hooks/useHasRole.ts",
+        "ls -la frontend/components/guards/RoleGuard.tsx",
+        "ls -la frontend/lib/hoc/withRoleProtection.tsx",
+        "",
+        "# Test backend code",
+        "node -e \"const { ROLES } = require('./backend/src/constants/roles.js'); console.log('✅ Backend roles loaded:', Object.keys(ROLES));\"",
+        "node -e \"const helpers = require('./backend/src/utils/roleHelpers.js'); console.log('✅ Backend helpers loaded:', Object.keys(helpers));\"",
+        "",
+        "# TypeScript check (frontend will auto-check on build)",
+        "echo '✅ Frontend files created - TypeScript will validate on next dev/build'"
+      ]
+    }
+  ],
+
+  "verification": {
+    "checks": [
+      "✅ backend/src/constants/roles.js created with ROLES, ROLE_GROUPS, ROLE_HIERARCHY",
+      "✅ backend/src/utils/roleHelpers.js created with 6 helper functions",
+      "✅ frontend/lib/constants/roles.ts created with UserRole enum and helpers",
+      "✅ frontend/lib/hooks/useHasRole.ts created with 4 hooks",
+      "✅ frontend/components/guards/RoleGuard.tsx created with RoleGuard and RoleCheck",
+      "✅ frontend/lib/hoc/withRoleProtection.tsx created with HOC",
+      "✅ All imports work without errors",
+      "✅ TypeScript types are correct"
+    ]
+  },
+
+  "completionMessage": "🎉 Phase 1 Infrastructure Complete!\\n\\n✅ Backend: Role constants + helpers\\n✅ Frontend: Role constants + hooks + guards + HOC\\n\\nNext: Use these components in Phase 2 (Backend Routes) and Phase 3 (Frontend Pages)",
+
+  "usageExamples": {
+    "backend": "// In routes file\\nconst { authorize } = require('../middleware/authorize');\\nconst { ROLE_GROUPS } = require('../constants/roles');\\n\\nrouter.get('/analytics', authorize(ROLE_GROUPS.ANALYTICS_VIEWERS), getAnalytics);",
+    "frontendPage": "// In page.tsx\\nimport { withRoleProtection } from '@/lib/hoc/withRoleProtection';\\nimport { UserRole } from '@/lib/constants/roles';\\n\\nfunction MyPage() { return <div>Content</div>; }\\n\\nexport default withRoleProtection(MyPage, {\\n  allowedRoles: [UserRole.ADMIN]\\n});",
+    "frontendComponent": "// In component\\nimport { RoleCheck } from '@/components/guards/RoleGuard';\\nimport { UserRole } from '@/lib/constants/roles';\\n\\nfunction MyComponent() {\\n  return (\\n    <RoleCheck allowedRoles={[UserRole.ADMIN]}>\\n      <button>Admin Only Button</button>\\n    </RoleCheck>\\n  );\\n}"
+  },
+
+  "nextPhasePreview": "Phase 2 will add authorize() middleware to 130+ backend routes using the constants and helpers created in Phase 1"
+}
