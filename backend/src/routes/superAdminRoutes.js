@@ -340,4 +340,145 @@ router.delete('/:id', superAdminOnly, async (req, res) => {
   }
 });
 
+/**
+ * GET /queues
+ * Get BullMQ queue statistics (real-time)
+ */
+router.get('/queues', superAdminOnly, async (req, res) => {
+  try {
+    const Queue = require('bull');
+
+    // REDIS_URL from environment
+    const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:8179';
+
+    // Queue names (must match workers)
+    const queueNames = ['analysis', 'offer', 'email', 'test-generation', 'feedback'];
+
+    // Get real-time stats from each queue
+    const queueStats = await Promise.all(
+      queueNames.map(async (name) => {
+        try {
+          const queue = new Queue(name, REDIS_URL);
+          const counts = await queue.getJobCounts();
+
+          return {
+            name: name,
+            status: 'active',
+            waiting: counts.waiting || 0,
+            active: counts.active || 0,
+            completed: counts.completed || 0,
+            failed: counts.failed || 0,
+            delayed: counts.delayed || 0,
+            paused: counts.paused || 0
+          };
+        } catch (error) {
+          console.error(`[SuperAdmin] Error getting queue ${name} stats:`, error);
+          return {
+            name: name,
+            status: 'error',
+            waiting: 0,
+            active: 0,
+            completed: 0,
+            failed: 0,
+            error: error.message
+          };
+        }
+      })
+    );
+
+    return res.json({
+      success: true,
+      data: queueStats
+    });
+  } catch (error) {
+    console.error('[SuperAdmin] Error fetching queue stats:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Queue istatistikleri alınırken hata oluştu',
+      error: error.message
+    });
+  }
+});
+
+/**
+ * GET /system-health
+ * Get system-wide health status (database, redis, milvus, services)
+ */
+router.get('/system-health', superAdminOnly, async (req, res) => {
+  try {
+    const health = {
+      timestamp: new Date().toISOString(),
+      services: {}
+    };
+
+    // 1. Database health
+    try {
+      await prisma.$queryRaw`SELECT 1`;
+      const dbStats = await prisma.$queryRaw`
+        SELECT
+          (SELECT COUNT(*) FROM "User") as total_users,
+          (SELECT COUNT(*) FROM "Organization") as total_orgs,
+          (SELECT COUNT(*) FROM "Analysis") as total_analyses
+      `;
+      health.services.database = {
+        status: 'healthy',
+        type: 'PostgreSQL',
+        stats: dbStats[0]
+      };
+    } catch (error) {
+      health.services.database = {
+        status: 'unhealthy',
+        error: error.message
+      };
+    }
+
+    // 2. Redis health (via BullMQ connection)
+    try {
+      const Queue = require('bull');
+      const testQueue = new Queue('health-check', process.env.REDIS_URL || 'redis://localhost:8179');
+      await testQueue.isReady();
+      health.services.redis = {
+        status: 'healthy',
+        type: 'Redis',
+        url: process.env.REDIS_URL || 'redis://localhost:8179'
+      };
+      await testQueue.close();
+    } catch (error) {
+      health.services.redis = {
+        status: 'unhealthy',
+        error: error.message
+      };
+    }
+
+    // 3. Backend API (if we're here, it's healthy!)
+    health.services.backend = {
+      status: 'healthy',
+      type: 'Express API',
+      uptime: process.uptime()
+    };
+
+    // 4. Milvus (assume healthy if no errors - can add ping later)
+    health.services.milvus = {
+      status: 'healthy',
+      type: 'Vector DB',
+      note: 'Ping check not implemented'
+    };
+
+    // Overall status
+    const allHealthy = Object.values(health.services).every(s => s.status === 'healthy');
+    health.overall = allHealthy ? 'healthy' : 'degraded';
+
+    return res.json({
+      success: true,
+      data: health
+    });
+  } catch (error) {
+    console.error('[SuperAdmin] Error checking system health:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Sistem sağlığı kontrol edilirken hata oluştu'
+    });
+  }
+});
+
 module.exports = router;
