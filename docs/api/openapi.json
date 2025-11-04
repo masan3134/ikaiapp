@@ -2950,6 +2950,28 @@
             "description": "Users list"
           }
         }
+      },
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Create new user",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roles": [
+            "ADMIN",
+            "SUPER_ADMIN"
+          ]
+        },
+        "responses": {
+          "201": {
+            "description": "User created"
+          }
+        }
       }
     },
     "/api/v1/users/{id}": {
@@ -3016,6 +3038,72 @@
         "responses": {
           "200": {
             "description": "Updated"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Update user (full)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roles": [
+            "ADMIN",
+            "SUPER_ADMIN"
+          ]
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Delete user",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roles": [
+            "ADMIN",
+            "SUPER_ADMIN"
+          ]
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted"
           }
         }
       }
@@ -4676,6 +4764,574 @@
         "responses": {
           "200": {
             "description": "Conflict check"
+          }
+        }
+      }
+    },
+    "/api/v1/users/me/stats": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get current user statistics",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User stats"
+          }
+        }
+      }
+    },
+    "/api/v1/users/me/notifications": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get notification preferences",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Preferences"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Update notification preferences",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated"
+          }
+        }
+      }
+    },
+    "/api/v1/users/{id}/password": {
+      "patch": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Change user password",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roles": [
+            "ADMIN",
+            "SUPER_ADMIN"
+          ]
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Password changed"
+          }
+        }
+      }
+    },
+    "/api/v1/templates/{id}/activate": {
+      "patch": {
+        "tags": [
+          "Templates"
+        ],
+        "summary": "Activate template",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roles": [
+            "MANAGER",
+            "ADMIN",
+            "SUPER_ADMIN"
+          ]
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Activated"
+          }
+        }
+      }
+    },
+    "/api/v1/templates/{id}/deactivate": {
+      "patch": {
+        "tags": [
+          "Templates"
+        ],
+        "summary": "Deactivate template",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roles": [
+            "MANAGER",
+            "ADMIN",
+            "SUPER_ADMIN"
+          ]
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deactivated"
+          }
+        }
+      }
+    },
+    "/api/v1/templates/{id}/create-offer": {
+      "post": {
+        "tags": [
+          "Templates"
+        ],
+        "summary": "Create offer from template",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roles": [
+            "MANAGER",
+            "ADMIN",
+            "SUPER_ADMIN"
+          ]
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Offer created"
+          }
+        }
+      }
+    },
+    "/api/v1/team/accept-invitation": {
+      "post": {
+        "tags": [
+          "Team"
+        ],
+        "summary": "Accept team invitation (public)",
+        "description": "No auth required, uses invitation token",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "token": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 8
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Accepted"
+          }
+        }
+      }
+    },
+    "/api/v1/team/{id}/toggle": {
+      "patch": {
+        "tags": [
+          "Team"
+        ],
+        "summary": "Toggle member active status",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roles": [
+            "ADMIN",
+            "SUPER_ADMIN"
+          ]
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Toggled"
+          }
+        }
+      }
+    },
+    "/api/v1/categories/reorder": {
+      "patch": {
+        "tags": [
+          "Categories"
+        ],
+        "summary": "Reorder categories",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roles": [
+            "ADMIN",
+            "SUPER_ADMIN"
+          ]
+        },
+        "responses": {
+          "200": {
+            "description": "Reordered"
+          }
+        }
+      }
+    },
+    "/api/v1/dashboard/comprehensive": {
+      "get": {
+        "tags": [
+          "Dashboard"
+        ],
+        "summary": "Get comprehensive dashboard",
+        "description": "Detailed dashboard with charts data",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Comprehensive data"
+          }
+        }
+      }
+    },
+    "/api/v1/test/generate": {
+      "post": {
+        "tags": [
+          "Testing"
+        ],
+        "summary": "Generate assessment test",
+        "description": "AI-generated test questions for candidate",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "jobPostingId"
+                ],
+                "properties": {
+                  "jobPostingId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "analysisId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "nullable": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Test generated"
+          }
+        }
+      }
+    },
+    "/api/v1/test/{testId}/send-email": {
+      "post": {
+        "tags": [
+          "Testing"
+        ],
+        "summary": "Send test to candidate via email",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "testId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "recipientEmail"
+                ],
+                "properties": {
+                  "recipientEmail": {
+                    "type": "string",
+                    "format": "email"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Email sent"
+          }
+        }
+      }
+    },
+    "/api/v1/test/submissions": {
+      "get": {
+        "tags": [
+          "Testing"
+        ],
+        "summary": "Get all test submissions",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
+        "responses": {
+          "200": {
+            "description": "Submissions list"
+          }
+        }
+      }
+    },
+    "/api/v1/test/{testId}/submissions": {
+      "get": {
+        "tags": [
+          "Testing"
+        ],
+        "summary": "Get submissions for specific test",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "testId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Test submissions"
+          }
+        }
+      }
+    },
+    "/api/v1/test/public/{token}": {
+      "get": {
+        "tags": [
+          "Testing"
+        ],
+        "summary": "Get public test (no auth)",
+        "description": "Candidate accesses test via token link",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Test questions"
+          },
+          "404": {
+            "description": "Test not found or expired"
+          }
+        }
+      }
+    },
+    "/api/v1/analytics/summary": {
+      "get": {
+        "tags": [
+          "Analytics"
+        ],
+        "summary": "Get analytics summary",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
+        "responses": {
+          "200": {
+            "description": "Summary stats"
+          }
+        }
+      }
+    },
+    "/api/v1/analytics/time-to-hire": {
+      "get": {
+        "tags": [
+          "Analytics"
+        ],
+        "summary": "Get time-to-hire metrics",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
+        "responses": {
+          "200": {
+            "description": "Time-to-hire data"
+          }
+        }
+      }
+    },
+    "/api/v1/analytics/funnel": {
+      "get": {
+        "tags": [
+          "Analytics"
+        ],
+        "summary": "Get recruitment funnel data",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
+        "responses": {
+          "200": {
+            "description": "Funnel data"
+          }
+        }
+      }
+    },
+    "/api/v1/analytics/score-distribution": {
+      "get": {
+        "tags": [
+          "Analytics"
+        ],
+        "summary": "Get score distribution",
+        "description": "Distribution of candidate scores",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
+        "responses": {
+          "200": {
+            "description": "Score distribution"
           }
         }
       }
