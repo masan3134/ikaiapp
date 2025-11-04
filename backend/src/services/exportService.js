@@ -1083,5 +1083,6 @@ function escapeHtml(text) {
 module.exports = {
   exportToExcel,
   exportToCSV,
-  exportToHTML
+  exportToHTML,
+  getAnalysisData
 };
