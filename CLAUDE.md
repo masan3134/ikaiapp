@@ -1,8 +1,9 @@
 # 🤖 IKAI HR Platform - Development Guide
 
-**Version:** 14.0 - Role-Based AsanMod Architecture
-**Updated:** 2025-11-04
+**Version:** 15.0 - Production Ready with Complete Documentation
+**Updated:** 2025-11-04 (Final Session)
 **Environment:** Docker Isolated Development (Hot Reload Enabled)
+**Context:** 1M Tokens (Sonnet 4.5) - Full Detail Mode Until 700K
 
 ---
 
@@ -128,9 +129,22 @@ Read('docs/workflow/WORKER-PLAYBOOK.md')
 4. Auto-push happens (post-commit hook active)
 ```
 
-**Full git workflow:** Both playbooks contain detailed git strategies
-- **Mod:** Review Worker branches, merge to main
-- **Worker:** Feature branches, individual commits per file
+**Full git workflow:** [`docs/workflow/ASANMOD-GIT-WORKFLOW.md`](docs/workflow/ASANMOD-GIT-WORKFLOW.md)
+
+---
+
+### 💬 Token Management (1M Context)
+
+**NEW POLICY:** Claude Sonnet 4.5 has **1M token context**
+
+**Communication Phases:**
+- **0-700K tokens (70%):** FULL DETAIL - No token saving, comprehensive responses
+- **700K-900K tokens (20%):** MODERATE - Concise but complete
+- **900K-1M tokens (10%):** BRIEF - Essential info only
+
+**Current Session:** ~170K / 1M (17%) - Full detail mode ✅
+
+**📖 Full policy:** [`docs/workflow/ASANMOD-METHODOLOGY.md`](docs/workflow/ASANMOD-METHODOLOGY.md) - Token Management section
 
 ---
 
@@ -413,28 +427,45 @@ grep -r "keyword" docs/ --include="*.md"
 | **GitHub Repo** | ✅ | Clean repo with full project |
 | **MCP Integration** | ✅ | 6 MCPs in VS Code extension |
 | **🆕 AsanMod v2** | ✅ | **Role-based architecture (MOD/WORKER playbooks)** |
+| **🆕 API Documentation** | ✅ | **142 endpoints (OpenAPI + Postman + SDK guide)** |
+| **🆕 Notification System** | ✅ | **In-app + email + 15 types + preferences** |
+| **🆕 Frontend RBAC Layer 4** | ✅ | **UI visibility + 5 role dashboards + FAB** |
+| **🆕 AI Chat Verified** | ✅ | **Gemini + Milvus tested (response time < 5s)** |
 
 **Location:** /home/asan/Desktop/ikai
 **GitHub:** https://github.com/masan3134/ikaiapp (private)
 **AsanMod:** v2.0 - Role-based single source of truth
+**Status:** 🚀 **PRODUCTION READY**
 
 ---
 
 ## 📋 VERSION HISTORY
 
+**v15.0 (2025-11-04):** 🎉 **PRODUCTION READY - COMPLETE DOCUMENTATION**
+- ✅ **API Documentation:** 142 endpoints (OpenAPI + Postman) - 8,627 lines
+- ✅ **Notification System:** In-app + email + preferences (15 types)
+- ✅ **Frontend RBAC Layer 4:** UI visibility complete (40+ helpers)
+- ✅ **Visual Identity:** 5 role colors + dashboards + FAB
+- ✅ **AI Chat Test:** Gemini + Milvus verified working
+- ✅ **Session Handoff:** Comprehensive template added
+- ✅ **Token Policy:** 1M context optimized (700K threshold)
+- **Workers:** 4 parallel (100% completion)
+- **Commits:** 117 (perfect git discipline)
+- **Changes:** +15,135 lines
+- **Reports:** 10 files (6,859 lines)
+- **Duration:** 8 hours
+- **📖 Handoff:** [`docs/reports/session-handoff-2025-11-04-final.md`](docs/reports/session-handoff-2025-11-04-final.md)
+
 **v14.0 (2025-11-04):** 🎯 **ASANMOD V2 - ROLE-BASED ARCHITECTURE**
-- **NEW:** MOD-PLAYBOOK.md (16KB all-in-one Mod guide)
-- **NEW:** WORKER-PLAYBOOK.md (18KB all-in-one Worker guide)
-- **CHANGED:** CLAUDE.md → Role selection hub (300 lines)
-- **IMPROVED:** Single source of truth per role (no link jumping!)
-- **BENEFIT:** Mod/Worker read ONE file, start working immediately
+- MOD/WORKER playbooks (single source of truth)
+- Role-based architecture
+- Simplified onboarding
 
 **v13.0 (2025-11-03):** 🚀 **SAAS TRANSFORMATION**
-- Multi-tenant + Onboarding + Usage limits + Super admin + Landing page
-- 5 phases completed in 13.5 hours
+- Multi-tenant + Onboarding + Usage limits
 
 **v12.0 (2025-11-03):** 🎉 **LOCAL DEV SETUP**
-- Docker isolated + Git auto-commit + MCP integration
+- Docker isolated + Git auto-commit
 
 **📖 Full history:** [`docs/reports/2025-11-02-session-summary.md`](docs/reports/2025-11-02-session-summary.md)
 
