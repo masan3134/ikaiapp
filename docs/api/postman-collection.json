@@ -1,0 +1,681 @@
+{
+  "info": {
+    "name": "IKAI HR Platform API",
+    "description": "Complete API collection for IKAI recruitment platform with 141 endpoints. Auto-saves JWT token after login.",
+    "version": "1.0.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{jwt_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8102",
+      "type": "string"
+    },
+    {
+      "key": "jwt_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "job_posting_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "candidate_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "analysis_id",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "🔐 Authentication",
+      "item": [
+        {
+          "name": "Login (ADMIN)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Auto-save token to collection variable",
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('jwt_token', response.token);",
+                  "    console.log('✅ Token saved:', response.token.substring(0, 20) + '...');",
+                  "    console.log('✅ User:', response.user.email, '| Role:', response.user.role);",
+                  "} else {",
+                  "    console.error('❌ Login failed');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test-admin@test-org-1.com\",\n  \"password\": \"TestPass123!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "login"]
+            },
+            "description": "Login as ADMIN for Test Org 1 (FREE plan)"
+          }
+        },
+        {
+          "name": "Login (SUPER_ADMIN)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('jwt_token', response.token);",
+                  "    console.log('✅ Token saved (SUPER_ADMIN)');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"info@gaiai.ai\",\n  \"password\": \"23235656\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "login"]
+            },
+            "description": "Login as SUPER_ADMIN (cross-org access)"
+          }
+        },
+        {
+          "name": "Login (USER)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('jwt_token', response.token);",
+                  "    console.log('✅ Token saved (USER role - limited access)');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test-user@test-org-1.com\",\n  \"password\": \"TestPass123!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "login"]
+            },
+            "description": "Login as USER (limited to dashboard only - most endpoints return 403)"
+          }
+        },
+        {
+          "name": "Register New User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"newuser@example.com\",\n  \"password\": \"SecurePass123!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "register"]
+            },
+            "description": "Register new user (creates organization automatically)"
+          }
+        },
+        {
+          "name": "Get Current User",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/me",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "me"]
+            },
+            "description": "Get authenticated user's profile"
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/refresh",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "refresh"]
+            },
+            "description": "Refresh JWT token (extends session)"
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/logout",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "logout"]
+            },
+            "description": "Logout (invalidate session in Redis)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "💼 Job Postings",
+      "item": [
+        {
+          "name": "Get All Job Postings",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/job-postings?page=1&limit=20",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "job-postings"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": "Get all job postings for current organization (SUPER_ADMIN sees all orgs)"
+          }
+        },
+        {
+          "name": "Create Job Posting",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('job_posting_id', response.id);",
+                  "    console.log('✅ Job posting created, ID saved:', response.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Senior Backend Developer\",\n  \"department\": \"Engineering\",\n  \"details\": \"We are looking for an experienced backend developer with Node.js, PostgreSQL, and Docker expertise. Must have 5+ years of experience building scalable APIs.\",\n  \"notes\": \"Urgent hire - start ASAP\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/job-postings",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "job-postings"]
+            },
+            "description": "Create new job posting (requires HR_MANAGERS role)"
+          }
+        },
+        {
+          "name": "Get Job Posting by ID",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/job-postings/{{job_posting_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "job-postings", "{{job_posting_id}}"]
+            },
+            "description": "Get job posting by UUID"
+          }
+        },
+        {
+          "name": "Update Job Posting",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Senior Backend Developer (UPDATED)\",\n  \"details\": \"Updated job description...\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/job-postings/{{job_posting_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "job-postings", "{{job_posting_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete Job Posting",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "url": {
+              "raw": "{{base_url}}/api/v1/job-postings/{{job_posting_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "job-postings", "{{job_posting_id}}"]
+            },
+            "description": "Soft delete job posting (sets isDeleted flag)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "👥 Candidates",
+      "item": [
+        {
+          "name": "Get All Candidates",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/candidates",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "candidates"]
+            }
+          }
+        },
+        {
+          "name": "Create Candidate",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('candidate_id', response.id);",
+                  "    console.log('✅ Candidate created, ID saved:', response.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"phone\": \"+905551234567\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/candidates",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "candidates"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🔍 Analyses",
+      "item": [
+        {
+          "name": "Upload CV for Analysis",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('analysis_id', response.id);",
+                  "    console.log('✅ Analysis created, ID saved:', response.id);",
+                  "    console.log('⏳ Status:', response.status);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": [],
+                  "description": "CV file (PDF, DOCX, TXT)"
+                },
+                {
+                  "key": "jobPostingId",
+                  "value": "{{job_posting_id}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/analyses",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "analyses"]
+            },
+            "description": "Upload CV for AI analysis (multipart/form-data)"
+          }
+        },
+        {
+          "name": "Get All Analyses",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/analyses",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "analyses"]
+            }
+          }
+        },
+        {
+          "name": "Get Analysis by ID",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/analyses/{{analysis_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "analyses", "{{analysis_id}}"]
+            },
+            "description": "Check analysis status and results (PENDING → PROCESSING → COMPLETED)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "📊 Dashboard",
+      "item": [
+        {
+          "name": "Get Dashboard Stats",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/dashboard",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "dashboard"]
+            },
+            "description": "Get dashboard analytics (all roles have access)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "🏢 Organization",
+      "item": [
+        {
+          "name": "Get Organization Info",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/organization",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "organization"]
+            }
+          }
+        },
+        {
+          "name": "Get Usage Stats",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/organization/usage",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "organization", "usage"]
+            },
+            "description": "Get current month usage (analyses, CVs, users)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "⚡ Health Check",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": ["{{base_url}}"],
+              "path": ["health"]
+            },
+            "description": "Public health check endpoint (no auth required)"
+          }
+        }
+      ]
+    }
+  ]
+}
