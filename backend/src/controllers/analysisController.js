@@ -63,12 +63,17 @@ async function createAnalysis(req, res) {
     }
 
     // Verify candidates exist and belong to organization
+    // SUPER_ADMIN can use candidates from any org
     // ADMIN/MANAGER/HR_SPECIALIST can use any candidates in their org
     // USER can only use their own candidates
     const candidateWhere = {
-      id: { in: candidateIds },
-      organizationId
+      id: { in: candidateIds }
     };
+
+    // Add organization filter for non-SUPER_ADMIN roles
+    if (userRole !== 'SUPER_ADMIN') {
+      candidateWhere.organizationId = organizationId;
+    }
 
     // Add userId filter only for USER role
     if (!canAccessAnyJobPosting) {
