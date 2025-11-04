@@ -12,6 +12,8 @@
 
 🎯 **TASK ASSIGNMENT:** Worker'lara görev verirken `MOD-TASK-ASSIGNMENT-TEMPLATES.md` kullan! Her worker için hazır template (copy-paste!), 5 saniyede görev dağıt!
 
+🔄 **CACHE LOOP PREVENTION:** Frontend değişikliği sonrası `FRONTEND-CHANGE-VERIFICATION-PROTOCOL.md` kullan! Incognito test ZORUNLU, stale build loop'larını önle!
+
 ---
 
 ## 🎭 Your Identity
