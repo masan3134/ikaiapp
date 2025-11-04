@@ -6,10 +6,8 @@ import {
   type OfferTemplate,
   type Candidate,
 } from "@/lib/store/offerWizardStore";
-import { getAuthToken } from "@/services/auth";
 import { Sparkles, FileText, User, TrendingUp } from "lucide-react";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8102"; // W1 FIX: was 3001
+import apiClient from "@/lib/utils/apiClient";
 
 export default function Step1_TemplateOrScratch() {
   const {
@@ -34,19 +32,14 @@ export default function Step1_TemplateOrScratch() {
   async function loadInitialData() {
     try {
       setLoadingData(true);
-      const token = getAuthToken();
 
       const [candidatesRes, templatesRes] = await Promise.all([
-        fetch(`${API_URL}/api/v1/candidates?page=1&limit=100`, {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-        fetch(`${API_URL}/api/v1/offer-templates?isActive=true`, {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
+        apiClient.get('/api/v1/candidates?page=1&limit=100'),
+        apiClient.get('/api/v1/offer-templates?isActive=true'),
       ]);
 
-      const candidatesData = await candidatesRes.json();
-      const templatesData = await templatesRes.json();
+      const candidatesData = candidatesRes.data;
+      const templatesData = templatesRes.data;
 
       setCandidates(candidatesData.candidates || candidatesData.data || []);
       setTemplates(templatesData.data || []);

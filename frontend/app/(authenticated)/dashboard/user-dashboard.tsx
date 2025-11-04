@@ -13,6 +13,7 @@ import {
   ActivityTimelineChart,
   SystemStatusWidget,
 } from "@/components/dashboard/user";
+import apiClient from "@/lib/utils/apiClient";
 
 interface DashboardStats {
   profile: {
