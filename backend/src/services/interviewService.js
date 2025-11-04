@@ -38,8 +38,8 @@ class InterviewService {
         firstName: true,
         lastName: true,
         email: true,
+        phone: true,
         createdAt: true,
-        desiredPosition: true, // Add for frontend display
       }
     });
   }
