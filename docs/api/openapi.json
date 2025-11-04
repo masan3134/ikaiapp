@@ -1,0 +1,628 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "IKAI HR Platform API",
+    "version": "1.0.0",
+    "description": "Complete API documentation for IKAI HR recruitment platform with multi-tenant architecture and role-based access control. 141 endpoints across 29 categories.",
+    "contact": {
+      "name": "IKAI Support",
+      "email": "info@gaiai.ai",
+      "url": "https://gaiai.ai/ik"
+    },
+    "license": {
+      "name": "Proprietary",
+      "url": "https://gaiai.ai/ik/terms"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8102",
+      "description": "Development server (Docker)"
+    },
+    {
+      "url": "https://gaiai.ai/ik",
+      "description": "Production server (VPS)"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "JWT token obtained from /api/v1/auth/login endpoint"
+      }
+    },
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique user identifier"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "User email (unique)"
+          },
+          "role": {
+            "type": "string",
+            "enum": ["USER", "ADMIN", "MANAGER", "HR_SPECIALIST", "SUPER_ADMIN"],
+            "description": "User role for RBAC"
+          },
+          "organizationId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Organization the user belongs to"
+          },
+          "firstName": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastName": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "avatar": {
+            "type": "string",
+            "nullable": true,
+            "description": "Avatar URL"
+          },
+          "position": {
+            "type": "string",
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean",
+            "default": true
+          },
+          "isOnboarded": {
+            "type": "boolean",
+            "default": false
+          },
+          "emailNotifications": {
+            "type": "boolean",
+            "default": true
+          },
+          "analysisNotifications": {
+            "type": "boolean",
+            "default": true
+          },
+          "teamNotifications": {
+            "type": "boolean",
+            "default": true
+          },
+          "offerNotifications": {
+            "type": "boolean",
+            "default": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": ["id", "email", "role", "organizationId"]
+      },
+      "Organization": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string",
+            "description": "Unique slug for organization"
+          },
+          "domain": {
+            "type": "string",
+            "nullable": true
+          },
+          "logo": {
+            "type": "string",
+            "nullable": true
+          },
+          "primaryColor": {
+            "type": "string",
+            "default": "#4F46E5"
+          },
+          "industry": {
+            "type": "string",
+            "nullable": true
+          },
+          "size": {
+            "type": "string",
+            "nullable": true
+          },
+          "country": {
+            "type": "string",
+            "default": "TR"
+          },
+          "timezone": {
+            "type": "string",
+            "default": "Europe/Istanbul"
+          },
+          "plan": {
+            "type": "string",
+            "enum": ["FREE", "PRO", "ENTERPRISE"],
+            "default": "FREE"
+          },
+          "planStartedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "planExpiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "monthlyAnalysisCount": {
+            "type": "integer",
+            "default": 0
+          },
+          "monthlyCvCount": {
+            "type": "integer",
+            "default": 0
+          },
+          "totalUsers": {
+            "type": "integer",
+            "default": 1
+          },
+          "maxAnalysisPerMonth": {
+            "type": "integer",
+            "default": 10
+          },
+          "maxCvPerMonth": {
+            "type": "integer",
+            "default": 50
+          },
+          "maxUsers": {
+            "type": "integer",
+            "default": 2
+          },
+          "onboardingCompleted": {
+            "type": "boolean",
+            "default": false
+          },
+          "onboardingStep": {
+            "type": "integer",
+            "default": 0
+          },
+          "isActive": {
+            "type": "boolean",
+            "default": true
+          },
+          "isTrial": {
+            "type": "boolean",
+            "default": true
+          },
+          "trialEndsAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "JobPosting": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 200
+          },
+          "department": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 100
+          },
+          "details": {
+            "type": "string",
+            "description": "Job description and requirements"
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true,
+            "description": "Internal notes"
+          },
+          "userId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "User who created the posting"
+          },
+          "organizationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "isDeleted": {
+            "type": "boolean",
+            "default": false
+          },
+          "deletedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": ["title", "department", "details"]
+      },
+      "Candidate": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true
+          },
+          "cvUrl": {
+            "type": "string",
+            "nullable": true,
+            "description": "MinIO URL for CV file"
+          },
+          "organizationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Analysis": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "candidateId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "jobPostingId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["PENDING", "PROCESSING", "COMPLETED", "FAILED"],
+            "default": "PENDING"
+          },
+          "score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100,
+            "nullable": true
+          },
+          "aiResponse": {
+            "type": "object",
+            "nullable": true,
+            "description": "Gemini AI analysis result"
+          },
+          "organizationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "completedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        }
+      },
+      "JobOffer": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "candidateId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "jobPostingId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "analysisId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "position": {
+            "type": "string"
+          },
+          "department": {
+            "type": "string"
+          },
+          "salary": {
+            "type": "number"
+          },
+          "currency": {
+            "type": "string",
+            "default": "TRY"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "enum": ["DRAFT", "PENDING", "SENT", "ACCEPTED", "REJECTED", "NEGOTIATING", "EXPIRED"],
+            "default": "DRAFT"
+          },
+          "organizationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Interview": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "candidateId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "jobPostingId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "scheduledAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "duration": {
+            "type": "integer",
+            "description": "Duration in minutes"
+          },
+          "location": {
+            "type": "string",
+            "nullable": true
+          },
+          "meetingLink": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "enum": ["SCHEDULED", "COMPLETED", "CANCELLED", "NO_SHOW"]
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "organizationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Error type or code"
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable error message"
+          },
+          "statusCode": {
+            "type": "integer",
+            "description": "HTTP status code"
+          },
+          "details": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "description": "Validation errors (if applicable)"
+          }
+        },
+        "required": ["error", "message"]
+      },
+      "LoginRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "test-admin@test-org-1.com"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "example": "TestPass123!"
+          }
+        },
+        "required": ["email", "password"]
+      },
+      "LoginResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Login successful"
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          },
+          "token": {
+            "type": "string",
+            "description": "JWT token",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+          }
+        }
+      },
+      "RegisterRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 8
+          }
+        },
+        "required": ["email", "password"]
+      }
+    }
+  },
+  "paths": {},
+  "tags": [
+    {
+      "name": "Authentication",
+      "description": "User authentication and session management"
+    },
+    {
+      "name": "Job Postings",
+      "description": "Job posting CRUD operations (HR_MANAGERS role required)"
+    },
+    {
+      "name": "Candidates",
+      "description": "Candidate management and CV uploads"
+    },
+    {
+      "name": "Analyses",
+      "description": "CV analysis with Gemini AI"
+    },
+    {
+      "name": "Offers",
+      "description": "Job offer management and negotiations"
+    },
+    {
+      "name": "Interviews",
+      "description": "Interview scheduling and management"
+    },
+    {
+      "name": "Team",
+      "description": "Team member invitations and management"
+    },
+    {
+      "name": "Organizations",
+      "description": "Organization settings and usage stats"
+    },
+    {
+      "name": "Users",
+      "description": "User profile and preferences"
+    },
+    {
+      "name": "Dashboard",
+      "description": "Dashboard analytics and statistics"
+    },
+    {
+      "name": "Super Admin",
+      "description": "System-wide management (SUPER_ADMIN only)"
+    }
+  ],
+  "x-rbac-matrix": {
+    "description": "Role-Based Access Control Matrix",
+    "roles": {
+      "SUPER_ADMIN": {
+        "description": "System administrator with cross-organization access",
+        "permissions": "All 141 endpoints, can see data from all organizations"
+      },
+      "ADMIN": {
+        "description": "Organization administrator",
+        "permissions": "Full access within organization (~120 endpoints), cannot see other orgs"
+      },
+      "MANAGER": {
+        "description": "Department manager",
+        "permissions": "Can create/edit job postings, offers, interviews (~90 endpoints). Cannot delete most resources."
+      },
+      "HR_SPECIALIST": {
+        "description": "HR staff member",
+        "permissions": "Can manage candidates, schedule interviews (~80 endpoints). Cannot create job postings or delete."
+      },
+      "USER": {
+        "description": "Basic employee",
+        "permissions": "Dashboard and profile only (~20 endpoints). No HR operations."
+      }
+    },
+    "middleware": {
+      "authenticateToken": "Validates JWT token from Authorization header",
+      "enforceOrganizationIsolation": "Ensures users can only access their organization's data (SUPER_ADMIN exempt)",
+      "authorize": "Checks user role against allowed roles for endpoint"
+    },
+    "roleGroups": {
+      "HR_MANAGERS": ["SUPER_ADMIN", "ADMIN", "MANAGER", "HR_SPECIALIST"],
+      "ADMINS": ["SUPER_ADMIN", "ADMIN"],
+      "ALL_AUTHENTICATED": ["SUPER_ADMIN", "ADMIN", "MANAGER", "HR_SPECIALIST", "USER"]
+    }
+  }
+}
