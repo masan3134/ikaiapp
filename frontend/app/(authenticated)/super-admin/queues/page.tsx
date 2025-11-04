@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { withRoleProtection } from "@/lib/hoc/withRoleProtection";
 import { UserRole } from "@/lib/constants/roles";
+import apiClient from "@/lib/services/apiClient";
 
 interface QueueStats {
   name: string;
@@ -40,12 +41,8 @@ function QueuesPage() {
 
   const loadQueues = async () => {
     try {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
-      const token = localStorage.getItem("auth_token");
-      const res = await fetch(`${API_URL}/api/v1/super-admin/queues`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await res.json();
+      const res = await apiClient.get("/api/v1/super-admin/queues");
+      const data = res.data;
 
       if (data.success) {
         setQueues(data.data);
