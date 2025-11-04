@@ -200,6 +200,67 @@ router.get('/stats', superAdminOnly, async (req, res) => {
 });
 
 /**
+ * POST /organizations
+ * Create new organization
+ */
+router.post('/organizations', superAdminOnly, async (req, res) => {
+  try {
+    const { name, plan = 'FREE' } = req.body;
+
+    // Validate required fields
+    if (!name) {
+      return res.status(400).json({
+        success: false,
+        message: 'Organizasyon adı zorunludur'
+      });
+    }
+
+    // Validate plan
+    if (!['FREE', 'PRO', 'ENTERPRISE'].includes(plan)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Geçersiz plan. FREE, PRO veya ENTERPRISE olmalıdır'
+      });
+    }
+
+    // Generate slug from name
+    const slug = `${name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${Date.now()}`;
+
+    // Plan limits
+    const limits = {
+      FREE: { maxAnalysisPerMonth: 10, maxCvPerMonth: 50, maxUsers: 2 },
+      PRO: { maxAnalysisPerMonth: 100, maxCvPerMonth: 500, maxUsers: 10 },
+      ENTERPRISE: { maxAnalysisPerMonth: 9999, maxCvPerMonth: 9999, maxUsers: 100 }
+    };
+
+    // Create organization
+    const org = await prisma.organization.create({
+      data: {
+        name,
+        slug,
+        plan,
+        ...limits[plan],
+        isActive: true,
+        onboardingCompleted: false,
+        planStartedAt: new Date()
+      }
+    });
+
+    return res.status(201).json({
+      success: true,
+      data: org,
+      message: `${name} organizasyonu başarıyla oluşturuldu`
+    });
+  } catch (error) {
+    console.error('[SuperAdmin] Error creating organization:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Organizasyon oluşturulurken hata oluştu'
+    });
+  }
+});
+
+/**
  * PATCH /:id/toggle
  * Toggle organization active status
  */
