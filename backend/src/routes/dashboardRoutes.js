@@ -1,5 +1,5 @@
 const express = require('express');
-const { getDashboardStats } = require('../controllers/dashboardController');
+const { getDashboardStats, getManagerDashboard } = require('../controllers/dashboardController');
 const { authenticateToken } = require('../middleware/auth');
 const { enforceOrganizationIsolation } = require('../middleware/organizationIsolation');
 const { authorize } = require('../middleware/authorize');
@@ -265,5 +265,13 @@ router.get('/hr-specialist', [
     });
   }
 });
+
+// GET /api/v1/dashboard/manager
+// Get MANAGER dashboard data (team & department analytics focus)
+router.get('/manager', [
+  authenticateToken,
+  enforceOrganizationIsolation,
+  authorize(ROLE_GROUPS.MANAGERS_PLUS)
+], getManagerDashboard);
 
 module.exports = router;
