@@ -57,13 +57,20 @@ router.post('/:id/chat', trackRequest, chatRateLimiter, hrManagers, async (req, 
       });
     }
 
-    // IMPROVED: Simple AI Chat (Gemini full context)
-    const result = await simpleChat.chat(analysisId, message);
+    // IMPROVED: Simple AI Chat (Gemini full context) + History persistence
+    const result = await simpleChat.chat(
+      analysisId,
+      message,
+      req.user.userId,
+      req.user.organizationId
+    );
 
     res.json({
       success: true,
+      messageId: result.messageId, // Chat history ID
       reply: result.reply,
       candidateCount: result.candidateCount,
+      responseTime: result.responseTime,
       timestamp: new Date().toISOString()
     });
   } catch (error) {

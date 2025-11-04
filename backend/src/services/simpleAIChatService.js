@@ -86,9 +86,11 @@ async function prepareAnalysisContext(analysisId) {
 }
 
 /**
- * AI Chat - Basit ve Hızlı
+ * AI Chat - With History Persistence
  */
-async function chat(analysisId, userMessage) {
+async function chat(analysisId, userMessage, userId, organizationId) {
+  const startTime = Date.now();
+
   try {
     // 1. Analiz context'ini hazırla
     const context = await prepareAnalysisContext(analysisId);
@@ -120,11 +122,29 @@ Cevap:`;
 
     // 4. Yanıtı çıkar
     const reply = response.data.candidates[0].content.parts[0].text;
+    const responseTime = Date.now() - startTime;
+
+    // 5. SAVE TO DATABASE (Chat History)
+    const chatMessage = await prisma.analysisChatMessage.create({
+      data: {
+        analysisId,
+        userId,
+        organizationId,
+        message: userMessage,
+        response: reply,
+        candidateCount: context.aday_sayisi,
+        responseTime,
+        usedSemanticSearch: false, // Will be true when Milvus is integrated
+        contextTokens: Math.ceil((fullPrompt.length + reply.length) / 4) // Rough estimate
+      }
+    });
 
     return {
+      messageId: chatMessage.id,
       reply,
       contextUsed: true,
-      candidateCount: context.aday_sayisi
+      candidateCount: context.aday_sayisi,
+      responseTime
     };
 
   } catch (error) {
