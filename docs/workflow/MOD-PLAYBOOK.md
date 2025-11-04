@@ -221,7 +221,58 @@ Task verirken BELİRT:
 Teslim: %100 çalışır dashboard (tüm linkler, tüm butonlar, tüm API'ler)"
 ```
 
-### Rule 9: Independent Verification - Never Trust, Always Verify
+### Rule 9: Use Token Helper for Verification Tests
+```
+🎯 Mod verification için get-token.sh kullan!
+
+Worker raporu:
+"API test PASS, 200 OK"
+
+Senin Verification:
+```bash
+# Kolay token al
+TOKEN=$(./scripts/get-token.sh USER)
+
+# Test endpoint
+curl http://localhost:8102/api/v1/dashboard/user \
+  -H "Authorization: Bearer $TOKEN" | jq .
+```
+
+5 Role İçin:
+- USER: ./scripts/get-token.sh USER
+- HR_SPECIALIST: ./scripts/get-token.sh HR_SPECIALIST
+- MANAGER: ./scripts/get-token.sh MANAGER
+- ADMIN: ./scripts/get-token.sh ADMIN
+- SUPER_ADMIN: ./scripts/get-token.sh SUPER_ADMIN
+
+Verification Script (All Workers):
+```bash
+# W1 verification
+TOKEN=$(./scripts/get-token.sh USER)
+curl -s http://localhost:8102/api/v1/dashboard/user -H "Authorization: Bearer $TOKEN" | jq '.success'
+
+# W2 verification
+TOKEN=$(./scripts/get-token.sh HR_SPECIALIST)
+curl -s http://localhost:8102/api/v1/dashboard/hr-specialist -H "Authorization: Bearer $TOKEN" | jq '.success'
+
+# W3 verification
+TOKEN=$(./scripts/get-token.sh MANAGER)
+curl -s http://localhost:8102/api/v1/dashboard/manager -H "Authorization: Bearer $TOKEN" | jq '.success'
+
+# W4 verification
+TOKEN=$(./scripts/get-token.sh ADMIN)
+curl -s http://localhost:8102/api/v1/dashboard/admin -H "Authorization: Bearer $TOKEN" | jq '.success'
+
+# W5 verification (CRITICAL: cross-org!)
+TOKEN=$(./scripts/get-token.sh SUPER_ADMIN)
+curl -s http://localhost:8102/api/v1/dashboard/super-admin -H "Authorization: Bearer $TOKEN" | jq '.data.organizations.total'
+# Expected: 3 (all orgs!)
+```
+
+Standart: Hem Worker hem Mod AYNI script'i kullanır → consistency!
+```
+
+### Rule 10: Independent Verification - Never Trust, Always Verify
 ```
 🚨 CRITICAL: Worker raporuna GÜVENMEYİN! BAĞIMSIZ DOĞRULAYIN!
 
