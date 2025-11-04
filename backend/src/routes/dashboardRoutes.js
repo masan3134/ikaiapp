@@ -712,22 +712,92 @@ router.get('/super-admin', [
       offersGrowth
     };
 
-    // Growth data (90 days - mock data for now)
+    // Growth data (last 7 days - real data)
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+    // Get data from 7 days ago for growth calculation
+    const orgs7DaysAgo = await prisma.organization.count({
+      where: { createdAt: { lt: sevenDaysAgo } }
+    });
+    const users7DaysAgo = await prisma.user.count({
+      where: { createdAt: { lt: sevenDaysAgo } }
+    });
+    const proOrgs7DaysAgo = await prisma.organization.count({
+      where: { plan: 'PRO', createdAt: { lt: sevenDaysAgo } }
+    });
+    const revenue7DaysAgo = proOrgs7DaysAgo * PRO_PRICE;
+
+    const analyses7DaysAgo = await prisma.analysis.count({
+      where: { createdAt: { lt: sevenDaysAgo } }
+    });
+    const cvs7DaysAgo = await prisma.candidate.count({
+      where: { createdAt: { lt: sevenDaysAgo } }
+    });
+    const activity7DaysAgo = analyses7DaysAgo + cvs7DaysAgo;
+
+    // Generate chart data for last 7 days
+    const chartData = [];
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      const dateEnd = new Date(date);
+      dateEnd.setHours(23, 59, 59, 999);
+
+      const dateStr = date.toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' });
+
+      // Count everything created up to this date
+      const orgsAtDate = await prisma.organization.count({
+        where: { createdAt: { lte: dateEnd } }
+      });
+      const usersAtDate = await prisma.user.count({
+        where: { createdAt: { lte: dateEnd } }
+      });
+      const proOrgsAtDate = await prisma.organization.count({
+        where: { plan: 'PRO', createdAt: { lte: dateEnd } }
+      });
+      const revenueAtDate = proOrgsAtDate * PRO_PRICE;
+
+      const analysesAtDate = await prisma.analysis.count({
+        where: { createdAt: { lte: dateEnd } }
+      });
+      const cvsAtDate = await prisma.candidate.count({
+        where: { createdAt: { lte: dateEnd } }
+      });
+      const activityAtDate = analysesAtDate + cvsAtDate;
+
+      chartData.push({
+        date: dateStr,
+        organizations: orgsAtDate,
+        users: usersAtDate,
+        revenue: revenueAtDate,
+        activity: activityAtDate
+      });
+    }
+
+    // Calculate growth metrics (7 days ago vs now)
+    const currentActivity = totalAnalyses + totalCVs;
+
+    const orgGrowth = orgs7DaysAgo > 0
+      ? Math.round(((totalOrganizations - orgs7DaysAgo) / orgs7DaysAgo) * 100)
+      : 0;
+    const userGrowth = users7DaysAgo > 0
+      ? Math.round(((totalUsers - users7DaysAgo) / users7DaysAgo) * 100)
+      : 0;
+    const revenueGrowth = revenue7DaysAgo > 0
+      ? Math.round(((revenue.mrr - revenue7DaysAgo) / revenue7DaysAgo) * 100)
+      : 0;
+    const activityGrowth = activity7DaysAgo > 0
+      ? Math.round(((currentActivity - activity7DaysAgo) / activity7DaysAgo) * 100)
+      : 0;
+
     const growthData = {
-      chartData: [
-        { date: '01-08', organizations: 10, users: 50, revenue: 5000, activity: 100 },
-        { date: '15-08', organizations: 12, users: 65, revenue: 6500, activity: 150 },
-        { date: '01-09', organizations: 15, users: 80, revenue: 8000, activity: 200 },
-        { date: '15-09', organizations: 18, users: 95, revenue: 9500, activity: 250 },
-        { date: '01-10', organizations: 20, users: 110, revenue: 11000, activity: 300 },
-        { date: '15-10', organizations: 22, users: 125, revenue: 12500, activity: 350 },
-        { date: '01-11', organizations: totalOrganizations, users: totalUsers, revenue: revenue.mrr, activity: 400 }
-      ],
+      chartData,
       metrics: {
-        orgGrowth: 15,
-        userGrowth: 25,
-        revenueGrowth: 12,
-        activityGrowth: 30
+        orgGrowth,
+        userGrowth,
+        revenueGrowth,
+        activityGrowth
       }
     };
 
