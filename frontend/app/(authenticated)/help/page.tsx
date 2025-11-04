@@ -1,19 +1,22 @@
 'use client';
 
+import { useState } from 'react';
 import { HelpCircle, Book, MessageCircle, Mail, ExternalLink, Search } from 'lucide-react';
-import Link from 'next/link';
 
 export default function HelpPage() {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [chatOpen, setChatOpen] = useState(false);
+
   const helpCategories = [
     {
       title: 'Başlangıç Rehberi',
       description: 'Platforma ilk adımlarınızı atmak için',
       icon: <Book className="w-6 h-6 text-blue-600" />,
       articles: [
-        'Platform Nasıl Kullanılır?',
-        'İlk İlan Oluşturma',
-        'CV Analizi Başlatma',
-        'Adayları Değerlendirme'
+        { title: 'Platform Nasıl Kullanılır?', link: '/help/articles/platform-kullanimi' },
+        { title: 'İlk İlan Oluşturma', link: '/help/articles/ilan-olusturma' },
+        { title: 'CV Analizi Başlatma', link: '/help/articles/cv-analizi' },
+        { title: 'Adayları Değerlendirme', link: '/help/articles/aday-degerlendirme' }
       ]
     },
     {
@@ -21,10 +24,10 @@ export default function HelpPage() {
       description: 'En çok merak edilen konular',
       icon: <HelpCircle className="w-6 h-6 text-purple-600" />,
       articles: [
-        'Hangi dosya formatları destekleniyor?',
-        'AI analiz süresi ne kadar?',
-        'Ekip üyesi nasıl eklenir?',
-        'Plan nasıl yükseltilir?'
+        { title: 'Hangi dosya formatları destekleniyor?', link: '/help/articles/dosya-formatlari' },
+        { title: 'AI analiz süresi ne kadar?', link: '/help/articles/analiz-suresi' },
+        { title: 'Ekip üyesi nasıl eklenir?', link: '/help/articles/ekip-ekleme' },
+        { title: 'Plan nasıl yükseltilir?', link: '/help/articles/plan-yukseltme' }
       ]
     },
     {
@@ -32,13 +35,31 @@ export default function HelpPage() {
       description: 'Destek ekibimizle iletişime geçin',
       icon: <MessageCircle className="w-6 h-6 text-green-600" />,
       articles: [
-        'Destek talebi oluşturma',
-        'Canlı destek saatleri',
-        'Email desteği',
-        'Öneri ve geri bildirim'
+        { title: 'Destek talebi oluşturma', link: '/help/articles/destek-talebi' },
+        { title: 'Canlı destek saatleri', link: '/help/articles/destek-saatleri' },
+        { title: 'Email desteği', link: '/help/articles/email-destek' },
+        { title: 'Öneri ve geri bildirim', link: '/help/articles/geri-bildirim' }
       ]
     }
   ];
+
+  // Filter articles based on search
+  const filteredCategories = helpCategories.map(cat => ({
+    ...cat,
+    articles: cat.articles.filter(article =>
+      article.title.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  })).filter(cat => cat.articles.length > 0);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const handleChatStart = () => {
+    setChatOpen(true);
+    // In real implementation, this would open a chat widget
+    alert('Canlı destek başlatılıyor...\n\nGerçek uygulamada burada bir chat widget açılacak (örn: Intercom, Zendesk).');
+  };
 
   return (
     <div className="min-h-screen bg-slate-50 p-6">
@@ -54,21 +75,28 @@ export default function HelpPage() {
           </p>
         </div>
 
-        {/* Search */}
+        {/* Search - NOW FUNCTIONAL! */}
         <div className="mb-8">
           <div className="relative max-w-2xl mx-auto">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
             <input
               type="text"
               placeholder="Arama yapın..."
+              value={searchQuery}
+              onChange={handleSearchChange}
               className="w-full pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
+          {searchQuery && (
+            <p className="text-center mt-2 text-sm text-slate-600">
+              "{searchQuery}" için {filteredCategories.reduce((sum, cat) => sum + cat.articles.length, 0)} sonuç bulundu
+            </p>
+          )}
         </div>
 
-        {/* Categories */}
+        {/* Categories - REAL LINKS! */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          {helpCategories.map((category, idx) => (
+          {(searchQuery ? filteredCategories : helpCategories).map((category, idx) => (
             <div
               key={idx}
               className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow"
@@ -90,10 +118,10 @@ export default function HelpPage() {
                 {category.articles.map((article, articleIdx) => (
                   <li key={articleIdx}>
                     <a
-                      href="#"
+                      href={article.link}
                       className="text-sm text-blue-600 hover:text-blue-700 hover:underline"
                     >
-                      {article}
+                      {article.title}
                     </a>
                   </li>
                 ))}
@@ -101,6 +129,18 @@ export default function HelpPage() {
             </div>
           ))}
         </div>
+
+        {searchQuery && filteredCategories.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-slate-600 mb-4">Aradığınız konu bulunamadı.</p>
+            <button
+              onClick={() => setSearchQuery('')}
+              className="text-blue-600 hover:text-blue-700 font-medium"
+            >
+              Tüm konuları göster
+            </button>
+          </div>
+        )}
 
         {/* Contact Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -130,7 +170,10 @@ export default function HelpPage() {
               Pazartesi - Cuma, 09:00 - 18:00
               Anlık destek için canlı sohbet başlatın
             </p>
-            <button className="inline-flex items-center gap-2 text-sm text-green-600 hover:text-green-700 font-medium">
+            <button
+              onClick={handleChatStart}
+              className="inline-flex items-center gap-2 text-sm text-green-600 hover:text-green-700 font-medium transition-colors"
+            >
               Sohbet Başlat <MessageCircle className="w-4 h-4" />
             </button>
           </div>
