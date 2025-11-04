@@ -864,18 +864,26 @@ router.get('/super-admin', [
     };
 
     // System health
+    // Test database connection
+    let dbStatus = 'healthy';
+    try {
+      await prisma.$queryRaw`SELECT 1`;
+    } catch (error) {
+      dbStatus = 'unhealthy';
+    }
+
     const systemHealth = {
-      backend: 'healthy',
-      database: 'healthy',
-      redis: 'healthy',
-      milvus: 'healthy',
-      queues: 'healthy',
-      uptime: 99.9,
-      apiResponseTime: 180,
-      dbConnections: 15,
-      cacheHitRate: 85,
-      vectorCount: totalAnalyses,
-      queueJobs: 5
+      backend: 'healthy', // API is responding (we're here!)
+      database: dbStatus, // Real: Tested with SELECT 1
+      redis: 'healthy', // Mock - requires Redis client integration
+      milvus: 'healthy', // Mock - requires Milvus client integration
+      queues: 'healthy', // Mock - see queueStats below for real data
+      uptime: 99.9, // Mock - requires uptime tracking implementation
+      apiResponseTime: 180, // Mock - requires monitoring implementation
+      dbConnections: 15, // Mock - requires Prisma metrics API
+      cacheHitRate: 85, // Mock - requires Redis metrics
+      vectorCount: totalAnalyses, // Real: total analyses in vector DB
+      queueJobs: 5 // Mock - see queueStats below for real queue data
     };
 
     // Organization list
