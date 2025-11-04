@@ -1200,6 +1200,269 @@
           }
         }
       }
+    },
+    "/api/v1/analyses": {
+      "post": {
+        "tags": ["Analyses"],
+        "summary": "Create new CV analysis",
+        "description": "Create AI-powered CV analysis for multiple candidates against a job posting. Uses Gemini AI. Tracks usage limits (maxAnalysisPerMonth). Jobs are queued in BullMQ.",
+        "security": [{"bearerAuth": []}],
+        "x-rbac": {"roleGroup": "HR_MANAGERS"},
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["jobPostingId", "candidateIds"],
+                "properties": {
+                  "jobPostingId": {"type": "string", "format": "uuid", "description": "Job posting to analyze against"},
+                  "candidateIds": {"type": "array", "items": {"type": "string", "format": "uuid"}, "minItems": 1, "description": "Candidate IDs to analyze (min 1)"}
+                }
+              },
+              "example": {
+                "jobPostingId": "550e8400-e29b-41d4-a716-446655440000",
+                "candidateIds": ["candidate-uuid-1", "candidate-uuid-2"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Analysis created (queued for processing)",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Analysis"}
+              }
+            }
+          },
+          "400": {"description": "Validation error (invalid IDs)"},
+          "403": {"description": "Usage limit exceeded (FREE plan: 10 analyses/month)"}
+        }
+      },
+      "get": {
+        "tags": ["Analyses"],
+        "summary": "Get all analyses",
+        "description": "Returns all analyses for current organization with status and results",
+        "security": [{"bearerAuth": []}],
+        "x-rbac": {"roleGroup": "HR_MANAGERS"},
+        "parameters": [
+          {"in": "query", "name": "page", "schema": {"type": "integer", "default": 1}},
+          {"in": "query", "name": "limit", "schema": {"type": "integer", "default": 20}},
+          {"in": "query", "name": "status", "schema": {"type": "string", "enum": ["PENDING", "PROCESSING", "COMPLETED", "FAILED"]}, "description": "Filter by status"},
+          {"in": "query", "name": "jobPostingId", "schema": {"type": "string", "format": "uuid"}, "description": "Filter by job posting"}
+        ],
+        "responses": {
+          "200": {
+            "description": "List of analyses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {"$ref": "#/components/schemas/Analysis"}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/analyses/{id}": {
+      "get": {
+        "tags": ["Analyses"],
+        "summary": "Get analysis by ID with results",
+        "description": "Returns detailed analysis results including AI scores and recommendations",
+        "security": [{"bearerAuth": []}],
+        "x-rbac": {"roleGroup": "HR_MANAGERS"},
+        "parameters": [
+          {"in": "path", "name": "id", "required": true, "schema": {"type": "string", "format": "uuid"}}
+        ],
+        "responses": {
+          "200": {
+            "description": "Analysis details with AI results",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Analysis"},
+                "example": {
+                  "id": "analysis-uuid",
+                  "status": "COMPLETED",
+                  "score": 85,
+                  "aiResponse": {
+                    "matchScore": 85,
+                    "strengths": ["5+ years Node.js", "PostgreSQL expert"],
+                    "weaknesses": ["No Docker experience"],
+                    "recommendation": "HIRE"
+                  },
+                  "completedAt": "2025-11-04T12:00:00.000Z"
+                }
+              }
+            }
+          },
+          "404": {"description": "Analysis not found"},
+          "403": {"description": "Cannot access other organization's analysis"}
+        }
+      },
+      "delete": {
+        "tags": ["Analyses"],
+        "summary": "Delete analysis",
+        "security": [{"bearerAuth": []}],
+        "x-rbac": {"roleGroup": "HR_MANAGERS"},
+        "parameters": [
+          {"in": "path", "name": "id", "required": true, "schema": {"type": "string", "format": "uuid"}}
+        ],
+        "responses": {
+          "204": {"description": "Analysis deleted"},
+          "404": {"description": "Not found"}
+        }
+      }
+    },
+    "/api/v1/analyses/{id}/add-candidates": {
+      "post": {
+        "tags": ["Analyses"],
+        "summary": "Add more candidates to existing analysis",
+        "description": "Extend existing analysis with additional candidates",
+        "security": [{"bearerAuth": []}],
+        "x-rbac": {"roleGroup": "HR_MANAGERS"},
+        "parameters": [
+          {"in": "path", "name": "id", "required": true, "schema": {"type": "string", "format": "uuid"}}
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["candidateIds"],
+                "properties": {
+                  "candidateIds": {"type": "array", "items": {"type": "string", "format": "uuid"}, "minItems": 1}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "Candidates added to analysis"},
+          "400": {"description": "Validation error"},
+          "404": {"description": "Analysis not found"}
+        }
+      }
+    },
+    "/api/v1/analyses/{id}/export/xlsx": {
+      "get": {
+        "tags": ["Analyses"],
+        "summary": "Export analysis results to Excel",
+        "security": [{"bearerAuth": []}],
+        "x-rbac": {"roleGroup": "HR_MANAGERS"},
+        "parameters": [
+          {"in": "path", "name": "id", "required": true, "schema": {"type": "string", "format": "uuid"}}
+        ],
+        "responses": {
+          "200": {
+            "description": "XLSX file with analysis results",
+            "content": {
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {
+                "schema": {"type": "string", "format": "binary"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/analyses/{id}/export/csv": {
+      "get": {
+        "tags": ["Analyses"],
+        "summary": "Export analysis results to CSV",
+        "security": [{"bearerAuth": []}],
+        "x-rbac": {"roleGroup": "HR_MANAGERS"},
+        "parameters": [
+          {"in": "path", "name": "id", "required": true, "schema": {"type": "string", "format": "uuid"}}
+        ],
+        "responses": {
+          "200": {
+            "description": "CSV file with analysis results",
+            "content": {"text/csv": {"schema": {"type": "string"}}}
+          }
+        }
+      }
+    },
+    "/api/v1/analyses/{id}/export/html": {
+      "get": {
+        "tags": ["Analyses"],
+        "summary": "Export analysis results to HTML",
+        "description": "Download formatted HTML report with analysis results",
+        "security": [{"bearerAuth": []}],
+        "x-rbac": {"roleGroup": "HR_MANAGERS"},
+        "parameters": [
+          {"in": "path", "name": "id", "required": true, "schema": {"type": "string", "format": "uuid"}}
+        ],
+        "responses": {
+          "200": {
+            "description": "HTML report",
+            "content": {"text/html": {"schema": {"type": "string"}}}
+          }
+        }
+      }
+    },
+    "/api/v1/analyses/{id}/send-email": {
+      "post": {
+        "tags": ["Analyses"],
+        "summary": "Email analysis results",
+        "description": "Send analysis results via email in specified formats",
+        "security": [{"bearerAuth": []}],
+        "x-rbac": {"roleGroup": "HR_MANAGERS"},
+        "parameters": [
+          {"in": "path", "name": "id", "required": true, "schema": {"type": "string", "format": "uuid"}}
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["recipientEmail", "formats"],
+                "properties": {
+                  "recipientEmail": {"type": "string", "format": "email"},
+                  "formats": {"type": "array", "items": {"type": "string", "enum": ["xlsx", "csv", "html"]}, "minItems": 1}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "Email sent successfully"},
+          "400": {"description": "Invalid email or formats"}
+        }
+      }
+    },
+    "/api/v1/analyses/{id}/send-feedback": {
+      "post": {
+        "tags": ["Analyses"],
+        "summary": "Send feedback to candidates",
+        "description": "Send automated feedback emails to candidates based on analysis results. Can filter by score threshold.",
+        "security": [{"bearerAuth": []}],
+        "x-rbac": {"roleGroup": "HR_MANAGERS"},
+        "parameters": [
+          {"in": "path", "name": "id", "required": true, "schema": {"type": "string", "format": "uuid"}}
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "scoreThreshold": {"type": "integer", "minimum": 0, "maximum": 100, "description": "Send to candidates with score >= threshold"},
+                  "candidateIds": {"type": "array", "items": {"type": "string", "format": "uuid"}, "description": "Send to specific candidates only"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "Feedback emails sent"},
+          "400": {"description": "Invalid parameters"}
+        }
+      }
     }
   },
   "tags": [
