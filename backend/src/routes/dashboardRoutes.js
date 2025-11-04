@@ -35,9 +35,8 @@ router.get('/user', [
         firstName: true,
         lastName: true,
         email: true,
-        phone: true,
-        bio: true,
         avatar: true,
+        position: true,
       }
     });
 
@@ -48,7 +47,7 @@ router.get('/user', [
       });
     }
 
-    const fields = ['firstName', 'lastName', 'email', 'phone', 'bio', 'avatar'];
+    const fields = ['firstName', 'lastName', 'email', 'avatar', 'position'];
     const completedFields = fields.filter(f => user[f]).length;
     const profileCompletion = Math.round((completedFields / fields.length) * 100);
 
