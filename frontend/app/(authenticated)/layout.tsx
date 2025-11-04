@@ -64,18 +64,26 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
     // 2. Bildirimler (W1 ADDED - all users)
     { name: "Bildirimler", path: "/notifications", icon: Bell },
-    // 3. İş İlanları (start of hiring workflow)
-    { name: "İş İlanları", path: "/job-postings", icon: Briefcase },
-    // 4. Adaylar (candidates apply to job postings)
-    { name: "Adaylar", path: "/candidates", icon: Users },
-    // 5. Analiz Sihirbazı (analyze candidates)
-    { name: "Analiz Sihirbazı", path: "/wizard", icon: Wand2 },
-    // 6. Geçmiş Analizlerim (past analyses)
-    { name: "Geçmiş Analizlerim", path: "/analyses", icon: Clock },
-    // 7. Teklifler (W1 UPDATED - has submenu with 4 items)
-    { name: "Teklifler", path: "/offers", icon: FileText, hasSubmenu: true },
-    // 8. Mülakatlar (interview scheduled candidates)
-    { name: "Mülakatlar", path: "/interviews", icon: Calendar },
+    // 3-8. HR Features (HR_SPECIALIST+ only)
+    ...(user?.role === "HR_SPECIALIST" ||
+    user?.role === "MANAGER" ||
+    user?.role === "ADMIN" ||
+    user?.role === "SUPER_ADMIN"
+      ? [
+          // 3. İş İlanları (start of hiring workflow)
+          { name: "İş İlanları", path: "/job-postings", icon: Briefcase },
+          // 4. Adaylar (candidates apply to job postings)
+          { name: "Adaylar", path: "/candidates", icon: Users },
+          // 5. Analiz Sihirbazı (analyze candidates)
+          { name: "Analiz Sihirbazı", path: "/wizard", icon: Wand2 },
+          // 6. Geçmiş Analizlerim (past analyses)
+          { name: "Geçmiş Analizlerim", path: "/analyses", icon: Clock },
+          // 7. Teklifler (W1 UPDATED - has submenu with 4 items)
+          { name: "Teklifler", path: "/offers", icon: FileText, hasSubmenu: true },
+          // 8. Mülakatlar (interview scheduled candidates)
+          { name: "Mülakatlar", path: "/interviews", icon: Calendar },
+        ]
+      : []),
     // 9. Takım (team management - MANAGER+)
     ...(user?.role === "MANAGER" ||
     user?.role === "ADMIN" ||
