@@ -511,9 +511,7 @@ router.get('/organizations/:id', superAdminOnly, async (req, res) => {
       include: {
         _count: {
           select: {
-            users: true,
-            jobPostings: true,
-            analyses: true
+            users: true
           }
         }
       }
@@ -526,13 +524,19 @@ router.get('/organizations/:id', superAdminOnly, async (req, res) => {
       });
     }
 
+    // Get job postings and analyses count separately (no direct relation in schema)
+    const [jobPostingCount, analysisCount] = await Promise.all([
+      prisma.jobPosting.count({ where: { organizationId: id } }),
+      prisma.analysis.count({ where: { organizationId: id } })
+    ]);
+
     return res.json({
       success: true,
       data: {
         ...org,
         userCount: org._count.users,
-        jobPostingCount: org._count.jobPostings,
-        analysisCount: org._count.analyses
+        jobPostingCount,
+        analysisCount
       }
     });
   } catch (error) {
