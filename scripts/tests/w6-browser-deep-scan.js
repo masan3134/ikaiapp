@@ -10,6 +10,9 @@ const puppeteer = require('puppeteer');
 const fs = require('fs');
 const path = require('path');
 
+// Utility: sleep function (Puppeteer v24 removed waitForTimeout)
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
 // Test configuration
 const BASE_URL = 'http://localhost:8103';
 
@@ -141,7 +144,7 @@ class BrowserTester {
       }
 
       // Wait a bit for dynamic content
-      await page.waitForTimeout(2000);
+      await sleep(2000);
 
       // Take screenshot
       const screenshotPath = `screenshots/${role}${url.replace(/\//g, '-')}.png`;
@@ -252,7 +255,7 @@ class BrowserTester {
       });
 
       // Small delay between pages
-      await page.waitForTimeout(500);
+      await sleep(500);
     }
 
     await page.close();
