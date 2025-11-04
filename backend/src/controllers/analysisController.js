@@ -142,25 +142,23 @@ async function getAllAnalyses(req, res) {
     const skip = (pageNum - 1) * limitNum;
 
     // Role-based data filtering
-    let where = { isDeleted: false };
+    let where = {};
 
     if (userRole === 'SUPER_ADMIN') {
       // SUPER_ADMIN: ALL analyses from ALL organizations
-      where = { isDeleted: false };
+      where = {};
 
     } else if (['ADMIN', 'MANAGER', 'HR_SPECIALIST'].includes(userRole)) {
       // ADMIN/MANAGER/HR: ALL analyses from their organization
       where = {
-        organizationId,
-        isDeleted: false
+        organizationId
       };
 
     } else {
       // USER: Only their own analyses
       where = {
         userId,
-        organizationId,
-        isDeleted: false
+        organizationId
       };
     }
 
