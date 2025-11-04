@@ -394,6 +394,62 @@ class UserController {
       });
     }
   }
+
+  /**
+   * Get current user active sessions
+   * GET /api/v1/users/me/sessions
+   */
+  async getCurrentUserSessions(req, res) {
+    try {
+      // Extract session info from request
+      const userAgent = req.headers['user-agent'] || 'Unknown Device';
+      const ip = req.ip || req.connection.remoteAddress || 'Unknown IP';
+
+      // Parse user agent to get device info
+      const getDeviceInfo = (ua) => {
+        if (ua.includes('Chrome')) return 'Chrome';
+        if (ua.includes('Firefox')) return 'Firefox';
+        if (ua.includes('Safari')) return 'Safari';
+        if (ua.includes('Edge')) return 'Edge';
+        return 'Unknown Browser';
+      };
+
+      const getOSInfo = (ua) => {
+        if (ua.includes('Windows')) return 'Windows';
+        if (ua.includes('Mac OS')) return 'macOS';
+        if (ua.includes('Linux')) return 'Linux';
+        if (ua.includes('Android')) return 'Android';
+        if (ua.includes('iOS')) return 'iOS';
+        return 'Unknown OS';
+      };
+
+      const browser = getDeviceInfo(userAgent);
+      const os = getOSInfo(userAgent);
+
+      // Return current session (JWT-based, so only one active session)
+      const sessions = [
+        {
+          id: req.user.id,
+          device: `${browser} on ${os}`,
+          location: 'Turkey', // Could be enhanced with IP geolocation
+          ip: ip,
+          lastActive: new Date(),
+          current: true
+        }
+      ];
+
+      res.json({
+        success: true,
+        data: sessions
+      });
+    } catch (error) {
+      console.error('❌ Get current user sessions error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Oturum bilgileri alınamadı'
+      });
+    }
+  }
 }
 
 module.exports = new UserController();
