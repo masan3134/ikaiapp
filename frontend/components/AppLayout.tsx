@@ -262,7 +262,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           show: canViewAnalytics(userRole), // Only MANAGER+ can edit organization
         },
         {
-          name: "Fatura & Plan",
+          name: "Fatura ve Plan",
           path: "/settings/billing",
           icon: CreditCard,
           show: canViewAnalytics(userRole), // Only MANAGER+ can manage billing
