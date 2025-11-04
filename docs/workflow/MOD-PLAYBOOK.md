@@ -10,6 +10,8 @@
 
 📨 **COMMUNICATION:** Görev dağıtırken/rapor alırken `COMMUNICATION-TEMPLATES.md` kullan! Copy-paste formatları hazır, User'ın işini kolaylaştır.
 
+🎯 **TASK ASSIGNMENT:** Worker'lara görev verirken `MOD-TASK-ASSIGNMENT-TEMPLATES.md` kullan! Her worker için hazır template (copy-paste!), 5 saniyede görev dağıt!
+
 ---
 
 ## 🎭 Your Identity
