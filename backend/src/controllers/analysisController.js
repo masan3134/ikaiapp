@@ -30,8 +30,9 @@ async function createAnalysis(req, res) {
     }
 
     const organizationId = req.organizationId;
+    const userRole = req.user.role;
 
-    // Verify job posting exists and user owns it
+    // Verify job posting exists and belongs to organization
     const jobPosting = await prisma.jobPosting.findUnique({
       where: { id: jobPostingId }
     });
@@ -43,20 +44,39 @@ async function createAnalysis(req, res) {
       });
     }
 
-    if (jobPosting.userId !== userId) {
+    // Check organization isolation (all roles)
+    if (jobPosting.organizationId !== organizationId) {
       return res.status(403).json({
         error: 'Forbidden',
         message: 'Bu iş ilanına erişim yetkiniz yok'
       });
     }
 
-    // Verify candidates exist and user owns them
+    // ADMIN/MANAGER/HR_SPECIALIST can analyze any jobPosting in their org
+    // USER can only analyze their own jobPostings
+    const canAccessAnyJobPosting = ['SUPER_ADMIN', 'ADMIN', 'MANAGER', 'HR_SPECIALIST'].includes(userRole);
+    if (!canAccessAnyJobPosting && jobPosting.userId !== userId) {
+      return res.status(403).json({
+        error: 'Forbidden',
+        message: 'Bu iş ilanına erişim yetkiniz yok'
+      });
+    }
+
+    // Verify candidates exist and belong to organization
+    // ADMIN/MANAGER/HR_SPECIALIST can use any candidates in their org
+    // USER can only use their own candidates
+    const candidateWhere = {
+      id: { in: candidateIds },
+      organizationId
+    };
+
+    // Add userId filter only for USER role
+    if (!canAccessAnyJobPosting) {
+      candidateWhere.userId = userId;
+    }
+
     const candidates = await prisma.candidate.findMany({
-      where: {
-        id: { in: candidateIds },
-        userId,
-        organizationId
-      }
+      where: candidateWhere
     });
 
     if (candidates.length !== candidateIds.length) {
