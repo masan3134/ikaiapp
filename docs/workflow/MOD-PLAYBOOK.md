@@ -14,6 +14,8 @@
 
 🔄 **CACHE LOOP PREVENTION:** Frontend değişikliği sonrası `FRONTEND-CHANGE-VERIFICATION-PROTOCOL.md` kullan! Incognito test ZORUNLU, stale build loop'larını önle!
 
+📁 **NEXT.JS STRUCTURE:** Frontend edit etmeden önce `NEXTJS-FILE-STRUCTURE-GUIDE.md` oku! app/layout.tsx = gerçek, components/AppLayout.tsx = dead code!
+
 ---
 
 ## 🎭 Your Identity
