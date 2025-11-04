@@ -499,6 +499,382 @@ router.get('/system-health', superAdminOnly, async (req, res) => {
 });
 
 /**
+ * GET /organizations/:id
+ * Get single organization details
+ */
+router.get('/organizations/:id', superAdminOnly, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const org = await prisma.organization.findUnique({
+      where: { id },
+      include: {
+        _count: {
+          select: {
+            users: true,
+            jobPostings: true,
+            analyses: true
+          }
+        }
+      }
+    });
+
+    if (!org) {
+      return res.status(404).json({
+        success: false,
+        message: 'Organizasyon bulunamadı'
+      });
+    }
+
+    return res.json({
+      success: true,
+      data: {
+        ...org,
+        userCount: org._count.users,
+        jobPostingCount: org._count.jobPostings,
+        analysisCount: org._count.analyses
+      }
+    });
+  } catch (error) {
+    console.error('[SuperAdmin] Error fetching organization:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Organizasyon bilgileri alınırken hata oluştu'
+    });
+  }
+});
+
+/**
+ * POST /:id/suspend
+ * Suspend organization (set isActive to false)
+ */
+router.post('/:id/suspend', superAdminOnly, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const org = await prisma.organization.findUnique({
+      where: { id },
+      select: { name: true, isActive: true }
+    });
+
+    if (!org) {
+      return res.status(404).json({
+        success: false,
+        message: 'Organizasyon bulunamadı'
+      });
+    }
+
+    if (!org.isActive) {
+      return res.status(400).json({
+        success: false,
+        message: 'Organizasyon zaten askıya alınmış'
+      });
+    }
+
+    const updated = await prisma.organization.update({
+      where: { id },
+      data: { isActive: false }
+    });
+
+    return res.json({
+      success: true,
+      data: updated,
+      message: `${org.name} organizasyonu askıya alındı`
+    });
+  } catch (error) {
+    console.error('[SuperAdmin] Error suspending organization:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Organizasyon askıya alınırken hata oluştu'
+    });
+  }
+});
+
+/**
+ * POST /:id/reactivate
+ * Reactivate suspended organization (set isActive to true)
+ */
+router.post('/:id/reactivate', superAdminOnly, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const org = await prisma.organization.findUnique({
+      where: { id },
+      select: { name: true, isActive: true }
+    });
+
+    if (!org) {
+      return res.status(404).json({
+        success: false,
+        message: 'Organizasyon bulunamadı'
+      });
+    }
+
+    if (org.isActive) {
+      return res.status(400).json({
+        success: false,
+        message: 'Organizasyon zaten aktif'
+      });
+    }
+
+    const updated = await prisma.organization.update({
+      where: { id },
+      data: { isActive: true }
+    });
+
+    return res.json({
+      success: true,
+      data: updated,
+      message: `${org.name} organizasyonu yeniden aktif hale getirildi`
+    });
+  } catch (error) {
+    console.error('[SuperAdmin] Error reactivating organization:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Organizasyon aktifleştirilirken hata oluştu'
+    });
+  }
+});
+
+/**
+ * GET /database-stats
+ * Get detailed database statistics
+ */
+router.get('/database-stats', superAdminOnly, async (req, res) => {
+  try {
+    const stats = await prisma.$queryRaw`
+      SELECT
+        (SELECT COUNT(*) FROM "users") as total_users,
+        (SELECT COUNT(*) FROM "organizations") as total_orgs,
+        (SELECT COUNT(*) FROM "jobPostings") as total_jobs,
+        (SELECT COUNT(*) FROM "candidates") as total_candidates,
+        (SELECT COUNT(*) FROM "analyses") as total_analyses,
+        (SELECT COUNT(*) FROM "offers") as total_offers,
+        (SELECT COUNT(*) FROM "interviews") as total_interviews,
+        (SELECT COUNT(*) FROM "notifications") as total_notifications,
+        pg_size_pretty(pg_database_size(current_database())) as db_size
+    `;
+
+    const result = stats[0];
+
+    return res.json({
+      success: true,
+      data: {
+        users: Number(result.total_users),
+        organizations: Number(result.total_orgs),
+        jobPostings: Number(result.total_jobs),
+        candidates: Number(result.total_candidates),
+        analyses: Number(result.total_analyses),
+        offers: Number(result.total_offers),
+        interviews: Number(result.total_interviews),
+        notifications: Number(result.total_notifications),
+        databaseSize: result.db_size
+      }
+    });
+  } catch (error) {
+    console.error('[SuperAdmin] Error fetching database stats:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Veritabanı istatistikleri alınırken hata oluştu'
+    });
+  }
+});
+
+/**
+ * GET /redis-stats
+ * Get Redis connection and memory statistics
+ */
+router.get('/redis-stats', superAdminOnly, async (req, res) => {
+  try {
+    const { Queue } = require('bullmq');
+    const connection = {
+      host: process.env.REDIS_HOST || 'localhost',
+      port: parseInt(process.env.REDIS_PORT || '8179')
+    };
+
+    const testQueue = new Queue('health-check', { connection });
+    await testQueue.waitUntilReady();
+
+    // Get Redis client
+    const client = testQueue.redisConnection;
+
+    // Get info
+    const info = await client.info('memory');
+    const memoryLines = info.split('\r\n');
+
+    const memoryStats = {};
+    memoryLines.forEach(line => {
+      if (line.includes(':')) {
+        const [key, value] = line.split(':');
+        memoryStats[key] = value;
+      }
+    });
+
+    await testQueue.close();
+
+    return res.json({
+      success: true,
+      data: {
+        connection: `${connection.host}:${connection.port}`,
+        status: 'connected',
+        memory: {
+          usedMemory: memoryStats['used_memory_human'],
+          peakMemory: memoryStats['used_memory_peak_human'],
+          fragmentationRatio: memoryStats['mem_fragmentation_ratio']
+        }
+      }
+    });
+  } catch (error) {
+    console.error('[SuperAdmin] Error fetching Redis stats:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Redis istatistikleri alınırken hata oluştu',
+      error: error.message
+    });
+  }
+});
+
+/**
+ * GET /milvus-stats
+ * Get Milvus vector database statistics
+ */
+router.get('/milvus-stats', superAdminOnly, async (req, res) => {
+  try {
+    // Note: This is a placeholder - actual Milvus stats would require
+    // implementing proper Milvus client integration
+
+    const stats = {
+      status: 'operational',
+      collections: [
+        {
+          name: 'cv_analysis_vectors',
+          estimatedCount: await prisma.analysis.count()
+        }
+      ],
+      note: 'Detailed Milvus metrics require client integration'
+    };
+
+    return res.json({
+      success: true,
+      data: stats
+    });
+  } catch (error) {
+    console.error('[SuperAdmin] Error fetching Milvus stats:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Milvus istatistikleri alınırken hata oluştu'
+    });
+  }
+});
+
+/**
+ * GET /login-attempts
+ * Get recent login attempts (placeholder - requires login tracking)
+ */
+router.get('/login-attempts', superAdminOnly, async (req, res) => {
+  try {
+    const { limit = 50 } = req.query;
+
+    // Note: This is a placeholder - actual login tracking would require
+    // implementing a login_attempts table
+
+    const recentUsers = await prisma.user.findMany({
+      take: parseInt(limit),
+      orderBy: { createdAt: 'desc' },
+      select: {
+        id: true,
+        email: true,
+        role: true,
+        createdAt: true,
+        organization: {
+          select: { name: true }
+        }
+      }
+    });
+
+    const attempts = recentUsers.map(user => ({
+      id: user.id,
+      email: user.email,
+      status: 'success',
+      timestamp: user.createdAt,
+      organization: user.organization?.name || 'N/A',
+      ip: '***',
+      note: 'Login tracking not fully implemented'
+    }));
+
+    return res.json({
+      success: true,
+      data: {
+        attempts,
+        total: attempts.length,
+        note: 'Full login tracking requires dedicated table'
+      }
+    });
+  } catch (error) {
+    console.error('[SuperAdmin] Error fetching login attempts:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Giriş denemeleri alınırken hata oluştu'
+    });
+  }
+});
+
+/**
+ * GET /audit-trail
+ * Get audit trail of admin actions (placeholder)
+ */
+router.get('/audit-trail', superAdminOnly, async (req, res) => {
+  try {
+    const { limit = 50 } = req.query;
+
+    // Note: This is a placeholder - actual audit trail would require
+    // implementing an audit_log table
+
+    const recentActivity = await prisma.user.findMany({
+      take: parseInt(limit),
+      orderBy: { createdAt: 'desc' },
+      where: {
+        role: { in: ['SUPER_ADMIN', 'ADMIN'] }
+      },
+      select: {
+        id: true,
+        email: true,
+        role: true,
+        createdAt: true,
+        organization: {
+          select: { name: true }
+        }
+      }
+    });
+
+    const auditEntries = recentActivity.map(user => ({
+      id: user.id,
+      action: 'User Activity',
+      actor: user.email,
+      role: user.role,
+      timestamp: user.createdAt,
+      organization: user.organization?.name || 'N/A',
+      details: 'Full audit trail requires dedicated logging'
+    }));
+
+    return res.json({
+      success: true,
+      data: {
+        entries: auditEntries,
+        total: auditEntries.length,
+        note: 'Full audit trail requires dedicated audit_log table'
+      }
+    });
+  } catch (error) {
+    console.error('[SuperAdmin] Error fetching audit trail:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Denetim kaydı alınırken hata oluştu'
+    });
+  }
+});
+
+/**
  * GET /security-logs
  * Get system-wide security logs (user logins, activities)
  */
