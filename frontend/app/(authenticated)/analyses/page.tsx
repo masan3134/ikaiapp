@@ -17,9 +17,16 @@ import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import { parseApiError } from '@/lib/utils/errorHandler';
 import { withRoleProtection } from '@/lib/hoc/withRoleProtection';
 import { RoleGroups } from '@/lib/constants/roles';
+import { useAuthStore } from '@/lib/store/authStore';
+import {
+  canCreateAnalysis,
+  canDeleteAnalysis
+} from '@/lib/utils/rbac';
 
 function AnalysesPage() {
   const router = useRouter();
+  const { user } = useAuthStore();
+  const userRole = user?.role;
   const [analyses, setAnalyses] = useState<Analysis[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -163,13 +170,15 @@ function AnalysesPage() {
                   Tüm CV analiz işlemlerinizi görüntüleyin
                 </p>
               </div>
-              <button
-                onClick={() => router.push('/wizard')}
-                className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-all duration-200 flex items-center gap-2 shadow-sm hover:shadow-md"
-              >
-                <Plus className="w-5 h-5" />
-                Yeni Analiz
-              </button>
+              {canCreateAnalysis(userRole) && (
+                <button
+                  onClick={() => router.push('/wizard')}
+                  className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-all duration-200 flex items-center gap-2 shadow-sm hover:shadow-md"
+                >
+                  <Plus className="w-5 h-5" />
+                  Yeni Analiz
+                </button>
+              )}
             </div>
           </div>
 
@@ -213,10 +222,10 @@ function AnalysesPage() {
               icon={<Clock className="w-16 h-16" />}
               title="Henüz analiz yapmadınız"
               description="İlk analizinizi başlatmak için sihirbazı kullanın"
-              action={{
+              action={canCreateAnalysis(userRole) ? {
                 label: 'Analiz Başlat',
                 onClick: () => router.push('/wizard')
-              }}
+              } : undefined}
             />
           )}
 
