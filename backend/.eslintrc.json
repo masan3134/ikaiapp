@@ -3,7 +3,7 @@
     "eslint:recommended",
     "prettier"
   ],
-  "plugins": ["prettier"],
+  "plugins": ["prettier", "rbac"],
   "rules": {
     "prettier/prettier": [
       "error",
@@ -21,7 +21,9 @@
     "no-console": "off",
     "no-process-exit": "off",
     "prefer-const": "warn",
-    "no-var": "error"
+    "no-var": "error",
+    "rbac/require-authorize-middleware": "error",
+    "rbac/use-role-groups": "warn"
   },
   "env": {
     "node": true,
@@ -30,5 +32,10 @@
   "parserOptions": {
     "ecmaVersion": "latest",
     "sourceType": "module"
+  },
+  "settings": {
+    "rbac": {
+      "pluginPath": "../scripts/eslint-plugin-rbac"
+    }
   }
 }
