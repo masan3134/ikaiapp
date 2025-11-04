@@ -52,7 +52,7 @@ async function calculateSummary(userId, userRole, organizationId) {
       // Average compatibility score
       prisma.analysisResult.aggregate({
         where: {
-          analysis: whereClause.userId ? { userId: whereClause.userId } : {}
+          analysis: whereClause
         },
         _avg: {
           compatibilityScore: true
@@ -63,7 +63,7 @@ async function calculateSummary(userId, userRole, organizationId) {
       prisma.analysisResult.count({
         where: {
           compatibilityScore: { gte: 80 },
-          analysis: whereClause.userId ? { userId: whereClause.userId } : {}
+          analysis: whereClause
         }
       })
     ]);
@@ -249,7 +249,7 @@ async function generateFunnelData(userId, userRole, filters = {}) {
     const testedCandidates = await prisma.testSubmission.groupBy({
       by: ['candidateEmail'],
       where: {
-        candidate: whereClause.userId ? { userId: whereClause.userId } : undefined
+        candidate: whereClause
       }
     });
 
@@ -257,7 +257,7 @@ async function generateFunnelData(userId, userRole, filters = {}) {
     const highScorers = await prisma.analysisResult.count({
       where: {
         compatibilityScore: { gte: 70 },
-        analysis: whereClause.userId ? { userId: whereClause.userId } : {}
+        analysis: whereClause
       }
     });
 
@@ -265,7 +265,7 @@ async function generateFunnelData(userId, userRole, filters = {}) {
     const topPerformers = await prisma.analysisResult.count({
       where: {
         compatibilityScore: { gte: 80 },
-        analysis: whereClause.userId ? { userId: whereClause.userId } : {}
+        analysis: whereClause
       }
     });
 
