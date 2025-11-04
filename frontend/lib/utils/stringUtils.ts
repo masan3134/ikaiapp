@@ -7,17 +7,17 @@
  */
 export function truncate(text: string, maxLength: number): string {
   if (text.length <= maxLength) return text;
-  return text.substring(0, maxLength) + '...';
+  return text.substring(0, maxLength) + "...";
 }
 
 /**
  * Get initials from first and last name
  */
 export function getInitials(firstName: string, lastName: string): string {
-  const first = firstName?.trim() || '';
-  const last = lastName?.trim() || '';
+  const first = firstName?.trim() || "";
+  const last = lastName?.trim() || "";
 
-  if (!first && !last) return '??';
+  if (!first && !last) return "??";
   if (!first) return last.substring(0, 2).toUpperCase();
   if (!last) return first.substring(0, 2).toUpperCase();
 
@@ -32,11 +32,11 @@ export function slugify(text: string): string {
     .toString()
     .toLowerCase()
     .trim()
-    .replace(/\s+/g, '-')
-    .replace(/[^\w\-]+/g, '')
-    .replace(/\-\-+/g, '-')
-    .replace(/^-+/, '')
-    .replace(/-+$/, '');
+    .replace(/\s+/g, "-")
+    .replace(/[^\w-]+/g, "")
+    .replace(/--+/g, "-")
+    .replace(/^-+/, "")
+    .replace(/-+$/, "");
 }
 
 /**
@@ -44,16 +44,16 @@ export function slugify(text: string): string {
  */
 export function capitalizeWords(text: string): string {
   return text
-    .split(' ')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(' ');
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ");
 }
 
 /**
  * Get full name from first and last name
  */
 export function getFullName(firstName: string, lastName: string): string {
-  return `${firstName || ''} ${lastName || ''}`.trim() || 'İsimsiz';
+  return `${firstName || ""} ${lastName || ""}`.trim() || "İsimsiz";
 }
 
 /**
@@ -61,7 +61,7 @@ export function getFullName(firstName: string, lastName: string): string {
  * Handles both URI encoding and Latin-1 encoding issues
  */
 export function fixFileNameEncoding(fileName: string): string {
-  if (!fileName) return '';
+  if (!fileName) return "";
 
   try {
     // Try to decode if it's already URI encoded
