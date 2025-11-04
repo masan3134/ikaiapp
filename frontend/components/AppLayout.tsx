@@ -20,7 +20,8 @@ import {
   BarChart3,
   Layers,
   Settings,
-  Calendar
+  Calendar,
+  UserCog  // NEW: For Takım icon
 } from 'lucide-react';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import NotificationBell from '@/components/notifications/NotificationBell';
