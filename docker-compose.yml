@@ -193,7 +193,7 @@ services:
       - "8103:3000"  # IKAI unique: 8103 → 3000 inside
     environment:
       - NODE_ENV=development
-      - NEXT_PUBLIC_API_URL=http://localhost:8102
+      - NEXT_PUBLIC_API_URL=http://ikai-backend:3001
       - WATCHPACK_POLLING=true
       - CHOKIDAR_USEPOLLING=true
     volumes:
