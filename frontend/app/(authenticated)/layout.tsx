@@ -64,11 +64,11 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     { name: 'Mülakatlar', path: '/interviews', icon: Calendar },
     // 8. Takım (team management - MANAGER+)
     ...(user?.role === 'MANAGER' || user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN' ? [{ name: 'Takım', path: '/team', icon: UserCog }] : []),
-    // 8. Analitik (analytics & reports - MANAGER+)
+    // 9. Analitik (analytics & reports - MANAGER+)
     ...(user?.role === 'MANAGER' || user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN' ? [{ name: 'Analitik', path: '/analytics', icon: BarChart3 }] : []),
-    // 9. Ayarlar (settings - all roles)
+    // 10. Ayarlar (settings - all roles)
     { name: 'Ayarlar', path: '/settings/profile', icon: Settings },
-    // 9. Super Admin (only for SUPER_ADMIN role)
+    // 11. Super Admin (only for SUPER_ADMIN role)
     ...(user?.role === 'SUPER_ADMIN' ? [{ name: 'Süper Yönetici', path: '/super-admin', icon: Shield }] : []),
   ];
 
