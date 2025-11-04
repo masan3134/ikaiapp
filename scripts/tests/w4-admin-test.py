@@ -68,29 +68,29 @@ def main():
     print(f"   Role: {user.get('role')}")
     print(f"   Org ID: {user.get('organizationId')}")
 
-    # Test all endpoints (18 pages)
+    # Test all endpoints (17 API endpoints for 18 pages)
     endpoints = [
         # HR Pages (10)
         ("/api/v1/job-postings", "Job Postings - List"),
         ("/api/v1/candidates", "Candidates - List"),
-        ("/api/v1/analysis", "Analyses - List"),
+        ("/api/v1/analyses", "Analyses - List"),  # FIXED: analysis → analyses
         ("/api/v1/interviews", "Interviews - List"),
         ("/api/v1/offers", "Offers - List"),
-        ("/api/v1/offers/templates", "Offer Templates - List"),
+        ("/api/v1/offer-templates", "Offer Templates - List"),  # FIXED: offers/templates → offer-templates
         ("/api/v1/tests", "Tests - List"),
-        ("/api/v1/categories", "Categories - List"),
+        ("/api/v1/offer-template-categories", "Categories - List"),  # FIXED: categories → offer-template-categories
 
         # Team & Analytics (3)
         ("/api/v1/team", "Team - List"),
-        ("/api/v1/analytics/dashboard", "Analytics - Dashboard"),
-        ("/api/v1/analytics/offers/stats", "Offers Analytics - Stats"),
+        ("/api/v1/analytics/summary", "Analytics - Dashboard"),  # FIXED: analytics/dashboard → analytics/summary
+        ("/api/v1/offers/analytics/overview", "Offers Analytics - Overview"),  # FIXED: analytics/offers/stats → offers/analytics/overview
 
-        # Settings (6)
+        # Settings (5)
         ("/api/v1/users/me", "Settings - Profile"),
-        ("/api/v1/organization", "Settings - Organization"),
+        ("/api/v1/organizations/me", "Settings - Organization"),  # FIXED: organization → organizations/me
         ("/api/v1/notifications/preferences", "Settings - Notifications"),
-        ("/api/v1/organization/usage", "Settings - Usage"),
-        ("/api/v1/organization/limits", "Settings - Limits"),
+        ("/api/v1/organizations/me/usage", "Settings - Usage"),  # FIXED: organization/usage → organizations/me/usage
+        # NOTE: /limits endpoint doesn't exist - usage endpoint returns limit info
 
         # Dashboard (1)
         ("/api/v1/dashboard/stats", "Dashboard"),
