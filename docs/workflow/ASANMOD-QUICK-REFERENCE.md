@@ -121,16 +121,86 @@ $ grep -r 'withRoleProtection' frontend/app/ | wc -l
 ✅ ALWAYS let reviewer decide completion
 ✅ ALWAYS test endpoints with curl (real HTTP responses)
 ✅ ALWAYS show live progress updates [N/M] 🔍
+✅ ALWAYS commit after EVERY file change (git policy!)
 ```
 
 **VERIFICATION PRINCIPLE:**
 > "Ham veri konuşur" - AI cannot lie with real grep/wc outputs!
 
 **ENDPOINT TESTING PRINCIPLE:**
-> Worker MUST test ALL endpoints with curl - Mod re-runs same curl to verify!
+> Worker MUST test ALL endpoints - Use Python test helper (NOT curl)!
 
 **LIVE PROGRESS PRINCIPLE:**
 > [N/M] Icon Task - User sees what's happening NOW
+
+**🔒 GIT POLICY (MANDATORY):**
+```
+ANY FILE CHANGE = IMMEDIATE COMMIT + PUSH
+
+❌ FORBIDDEN:
+- Batching commits (multiple files → 1 commit)
+- Delaying commits ("I'll commit later")
+- "Forgot to commit" excuse
+
+✅ REQUIRED:
+1. Edit file → IMMEDIATELY: git add + commit
+2. Create MD → IMMEDIATELY: git add + commit
+3. Even 1 char change → git commit!
+
+Example (Worker):
+Edit(job-postings/page.tsx)
+→ git add frontend/app/\(authenticated\)/job-postings/page.tsx
+→ git commit -m "feat(rbac): Protect job-postings - Task 3.1"
+→ Auto-push happens
+
+Next file:
+Edit(candidates/page.tsx)
+→ git add + commit AGAIN (separate commit!)
+
+Why critical:
+- Mustafa Asan güveni (real-time tracking)
+- Mod verification (step-by-step audit)
+- Rollback safety
+```
+
+**📖 Full Git Policy:** [ASANMOD-METHODOLOGY.md](ASANMOD-METHODOLOGY.md) - Git Policy section
+
+---
+
+## 🐍 Python Test Helper (API Testing)
+
+**Problem:** curl + JWT token çok karmaşık, Worker'lar zorlanıyor
+
+**Çözüm:** `scripts/test-helper.py` kullan!
+
+### Quick Start:
+```bash
+python3 -i scripts/test-helper.py
+
+>>> helper = IKAITestHelper()
+>>> helper.login("test-hr@test-org-1.com", "TestPass123!")
+✅ Login başarılı!
+
+>>> helper.get("/api/v1/job-postings")
+# JSON çıktı otomatik formatlanır
+
+>>> helper.post("/api/v1/job-postings", {...})
+# 201 Created
+```
+
+### Hazır Kullanıcılar:
+- `TEST_USERS["org1_hr"]` - HR Specialist
+- `TEST_USERS["org2_manager"]` - Manager
+- `TEST_USERS["org3_admin"]` - Admin
+- `TEST_USERS["super_admin"]` - SUPER_ADMIN
+
+### Avantajlar:
+- ✅ Token otomatik
+- ✅ JSON pretty-print
+- ✅ Hata mesajları net
+- ✅ Terminal çıktısı raporlara yapıştırılabilir
+
+**Detaylı kullanım:** [ASANMOD-METHODOLOGY.md](ASANMOD-METHODOLOGY.md) - Python Test Helper bölümü
 
 ---
 
