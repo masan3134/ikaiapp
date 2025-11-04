@@ -99,7 +99,11 @@ async function createNotification(userId, organizationId, type, title, message, 
  */
 async function getUserNotifications(userId, organizationId, userRole, filters = {}) {
   const { read, type, page = 1, limit = 20 } = filters;
-  const skip = (page - 1) * limit;
+
+  // Parse pagination params to int (query params are strings)
+  const pageInt = parseInt(page) || 1;
+  const limitInt = parseInt(limit) || 20;
+  const skip = (pageInt - 1) * limitInt;
 
   // Build where clause
   let where = {};
@@ -146,7 +150,7 @@ async function getUserNotifications(userId, organizationId, userRole, filters = 
         }
       },
       skip,
-      take: limit,
+      take: limitInt,
       orderBy: { createdAt: 'desc' }
     }),
     prisma.notification.count({ where })
@@ -156,9 +160,9 @@ async function getUserNotifications(userId, organizationId, userRole, filters = 
     notifications,
     pagination: {
       total,
-      page,
-      limit,
-      totalPages: Math.ceil(total / limit)
+      page: pageInt,
+      limit: limitInt,
+      totalPages: Math.ceil(total / limitInt)
     }
   };
 }
