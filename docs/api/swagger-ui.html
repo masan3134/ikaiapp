@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IKAI API Documentation - Swagger UI</title>
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@5.10.0/swagger-ui.css">
+    <style>
+        html {
+            box-sizing: border-box;
+            overflow: -moz-scrollbars-vertical;
+            overflow-y: scroll;
+        }
+
+        *, *:before, *:after {
+            box-sizing: inherit;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        #swagger-ui {
+            max-width: 1460px;
+            margin: 0 auto;
+        }
+
+        .topbar {
+            background-color: #4F46E5;
+            padding: 10px 0;
+        }
+
+        .topbar-wrapper {
+            max-width: 1460px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .topbar-wrapper .link {
+            display: flex;
+            align-items: center;
+        }
+
+        .topbar-wrapper .link img {
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        .topbar-wrapper .link span {
+            color: white;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .info {
+            margin: 20px 0;
+        }
+
+        .custom-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .badge-public {
+            background-color: #10B981;
+            color: white;
+        }
+
+        .badge-protected {
+            background-color: #F59E0B;
+            color: white;
+        }
+
+        .badge-admin {
+            background-color: #EF4444;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div id="swagger-ui"></div>
+
+    <script src="https://unpkg.com/swagger-ui-dist@5.10.0/swagger-ui-bundle.js"></script>
+    <script src="https://unpkg.com/swagger-ui-dist@5.10.0/swagger-ui-standalone-preset.js"></script>
+    <script>
+        window.onload = function() {
+            // Load OpenAPI spec
+            fetch('./openapi.json')
+                .then(response => response.json())
+                .then(spec => {
+                    // Initialize Swagger UI
+                    const ui = SwaggerUIBundle({
+                        spec: spec,
+                        dom_id: '#swagger-ui',
+                        deepLinking: true,
+                        presets: [
+                            SwaggerUIBundle.presets.apis,
+                            SwaggerUIStandalonePreset
+                        ],
+                        plugins: [
+                            SwaggerUIBundle.plugins.DownloadUrl
+                        ],
+                        layout: "StandaloneLayout",
+                        defaultModelsExpandDepth: 1,
+                        defaultModelExpandDepth: 1,
+                        docExpansion: "list",
+                        filter: true,
+                        showExtensions: true,
+                        showCommonExtensions: true,
+                        tryItOutEnabled: true,
+                        requestSnippetsEnabled: true,
+                        requestSnippets: {
+                            generators: {
+                                curl_bash: {
+                                    title: "cURL (bash)",
+                                    syntax: "bash"
+                                },
+                                curl_powershell: {
+                                    title: "cURL (PowerShell)",
+                                    syntax: "powershell"
+                                },
+                                curl_cmd: {
+                                    title: "cURL (CMD)",
+                                    syntax: "bash"
+                                }
+                            },
+                            defaultExpanded: true,
+                            languages: null
+                        },
+                        // Custom request interceptor to show auth info
+                        requestInterceptor: (request) => {
+                            console.log('API Request:', request.method, request.url);
+                            return request;
+                        },
+                        // Custom response interceptor
+                        responseInterceptor: (response) => {
+                            console.log('API Response:', response.status, response.url);
+                            return response;
+                        }
+                    });
+
+                    window.ui = ui;
+
+                    // Add custom header
+                    const topbar = document.querySelector('.topbar');
+                    if (topbar) {
+                        topbar.innerHTML = `
+                            <div class="topbar-wrapper">
+                                <div class="link">
+                                    <span>🚀 IKAI HR Platform API</span>
+                                    <span class="custom-badge badge-public">46 Endpoints</span>
+                                </div>
+                            </div>
+                        `;
+                    }
+
+                    // Add custom info section
+                    setTimeout(() => {
+                        const infoContainer = document.querySelector('.info');
+                        if (infoContainer) {
+                            const customInfo = document.createElement('div');
+                            customInfo.className = 'custom-info';
+                            customInfo.innerHTML = `
+                                <div style="background-color: #EEF2FF; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                                    <h3 style="margin-top: 0; color: #4F46E5;">Quick Start Guide</h3>
+                                    <ol>
+                                        <li><strong>Authenticate:</strong> Use <code>POST /api/v1/auth/login</code> with test credentials</li>
+                                        <li><strong>Copy Token:</strong> From the response, copy the JWT token</li>
+                                        <li><strong>Authorize:</strong> Click "Authorize" button at top, paste token</li>
+                                        <li><strong>Try Endpoints:</strong> Now you can test any protected endpoint!</li>
+                                    </ol>
+                                    <h4>Test Accounts:</h4>
+                                    <ul style="font-family: monospace; font-size: 14px;">
+                                        <li><strong>ADMIN:</strong> test-admin@test-org-1.com / TestPass123!</li>
+                                        <li><strong>SUPER_ADMIN:</strong> info@gaiai.ai / 23235656</li>
+                                        <li><strong>USER:</strong> test-user@test-org-1.com / TestPass123!</li>
+                                    </ul>
+                                    <h4>Server URLs:</h4>
+                                    <ul>
+                                        <li><strong>Dev:</strong> <code>http://localhost:8102</code></li>
+                                        <li><strong>Prod:</strong> <code>https://gaiai.ai/ik</code></li>
+                                    </ul>
+                                    <p><strong>Tip:</strong> Rate limits apply to login endpoints (100 req/15min)</p>
+                                </div>
+                            `;
+                            infoContainer.appendChild(customInfo);
+                        }
+                    }, 500);
+                })
+                .catch(error => {
+                    console.error('Error loading OpenAPI spec:', error);
+                    document.getElementById('swagger-ui').innerHTML = `
+                        <div style="padding: 40px; text-align: center;">
+                            <h2 style="color: #EF4444;">Error Loading API Documentation</h2>
+                            <p>Could not load <code>openapi.json</code>. Make sure both files are in the same directory.</p>
+                            <p style="color: #6B7280; font-size: 14px;">Error: ${error.message}</p>
+                        </div>
+                    `;
+                });
+        };
+    </script>
+</body>
+</html>
