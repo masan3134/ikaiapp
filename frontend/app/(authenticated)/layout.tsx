@@ -24,6 +24,7 @@ import {
   UserCog
 } from 'lucide-react';
 import ProtectedRoute from '@/components/ProtectedRoute';
+import NotificationBell from '@/components/notifications/NotificationBell';
 import { useAuthStore } from '@/lib/store/authStore';
 import { OrganizationProvider } from '@/contexts/OrganizationContext';
 import { OnboardingGuard } from '@/components/OnboardingGuard';
@@ -80,12 +81,15 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             </div>
             <h1 className="text-xl font-bold text-gray-900">IKAI HR</h1>
           </div>
-          <button
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="p-2 rounded-lg hover:bg-gray-100"
-          >
-            {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          <div className="flex items-center gap-2">
+            <NotificationBell />
+            <button
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              className="p-2 rounded-lg hover:bg-gray-100"
+            >
+              {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
         </div>
 
         <div className="flex">
@@ -249,6 +253,13 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
           {/* Main Content */}
           <main className="flex-1 overflow-x-hidden">
+            {/* Desktop Top Bar - Bell Icon (hidden on mobile) */}
+            <div className="hidden lg:block sticky top-0 z-30 bg-white border-b border-gray-200 shadow-sm">
+              <div className="px-6 py-3 flex items-center justify-end">
+                <NotificationBell />
+              </div>
+            </div>
+
             {children}
           </main>
         </div>
