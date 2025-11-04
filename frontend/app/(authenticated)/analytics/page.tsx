@@ -232,5 +232,5 @@ function AnalyticsPage() {
 }
 
 export default withRoleProtection(AnalyticsPage, {
-  allowedRoles: RoleGroups.ADMINS, // ADMIN + SUPER_ADMIN only
+  allowedRoles: RoleGroups.MANAGERS_PLUS, // SUPER_ADMIN + ADMIN + MANAGER
 });
