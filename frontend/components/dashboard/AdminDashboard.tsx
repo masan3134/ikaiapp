@@ -76,7 +76,7 @@ export function AdminDashboard() {
   const loadAdminDashboard = async () => {
     try {
       const response = await apiClient.get("/api/v1/dashboard/admin");
-      const data = await response.json();
+      const data = response.data; // axios returns data directly, no .json() needed
 
       if (data.success) {
         setStats(data.data);
