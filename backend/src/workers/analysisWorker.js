@@ -5,6 +5,7 @@ const { setCachedAnalysis } = require('../services/cacheService');
 const { connection } = require('../queues/analysisQueue');
 const minioService = require('../services/minioService');
 const { sanitizeFileName } = require('../utils/fileName');
+const notificationService = require('../services/notificationService');
 
 const prisma = new PrismaClient();
 
@@ -21,9 +22,22 @@ const processor = async (job) => {
       data: { status: 'PROCESSING' },
       select: {
         id: true,
+        userId: true,
         organizationId: true
       }
     });
+
+    // Notification: Analysis started
+    try {
+      await notificationService.notifyAnalysisStarted(
+        analysisId,
+        analysis.userId,
+        analysis.organizationId,
+        candidateIds.length
+      );
+    } catch (notifError) {
+      console.error('⚠️  Notification failed (non-critical):', notifError.message);
+    }
 
     // 2. Fetch job posting
     const jobPosting = await prisma.jobPosting.findUnique({
@@ -134,6 +148,24 @@ const processor = async (job) => {
       // 7. Cache the results for future use
       await setCachedAnalysis(jobPostingId, candidateIds, batchResults);
 
+      // 8. Notification: Analysis completed
+      try {
+        // Find top match score
+        const topMatchScore = Math.max(...batchResults.map(r =>
+          r.scores?.finalCompatibilityScore || r.compatibilityScore || 0
+        ));
+
+        await notificationService.notifyAnalysisCompleted(
+          analysisId,
+          analysis.userId,
+          analysis.organizationId,
+          candidateIds.length,
+          topMatchScore
+        );
+      } catch (notifError) {
+        console.error('⚠️  Notification failed (non-critical):', notifError.message);
+      }
+
       console.log(`✅ Analysis ${analysisId} completed (${candidateIds.length} CVs, Direct Gemini)`);
       return { status: 'completed', cvCount: candidateIds.length };
     } else {
@@ -144,13 +176,29 @@ const processor = async (job) => {
     console.error(`❌ Analysis ${analysisId} failed:`, error.message);
 
     // Mark analysis as FAILED in the database
-    await prisma.analysis.update({
+    const failedAnalysis = await prisma.analysis.update({
       where: { id: analysisId },
       data: {
         status: 'FAILED',
         errorMessage: 'Analysis failed: ' + error.message,
       },
+      select: {
+        userId: true,
+        organizationId: true
+      }
     });
+
+    // Notification: Analysis failed
+    try {
+      await notificationService.notifyAnalysisFailed(
+        analysisId,
+        failedAnalysis.userId,
+        failedAnalysis.organizationId,
+        error.message
+      );
+    } catch (notifError) {
+      console.error('⚠️  Notification failed (non-critical):', notifError.message);
+    }
 
     // Re-throw the error to mark the job as failed in BullMQ
     throw error;
