@@ -1,5 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // DEVELOPMENT: Disable aggressive caching to prevent stale builds
+  ...(process.env.NODE_ENV === 'development' && {
+    onDemandEntries: {
+      // Keep pages in memory for 60s instead of default 25s
+      maxInactiveAge: 60 * 1000,
+      // Build 1 page at a time to avoid cache issues
+      pagesBufferLength: 1,
+    },
+  }),
   reactStrictMode: true,
   
   // ============================================
