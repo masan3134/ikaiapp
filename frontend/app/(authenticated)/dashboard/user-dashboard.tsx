@@ -47,7 +47,8 @@ export default function UserDashboard() {
       setLoading(true);
       setError(null);
 
-      const response = await fetch('/api/v1/dashboard/user', {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8102';
+      const response = await fetch(`${apiUrl}/api/v1/dashboard/user`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
