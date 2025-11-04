@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "react-hot-toast";
 import * as templateService from "@/services/templateService";
 import { withRoleProtection } from "@/lib/hoc/withRoleProtection";
 import { UserRole } from "@/lib/constants/roles";
@@ -12,10 +13,11 @@ function TemplatesPage() {
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [categoryFilter, setCategoryFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
 
   useEffect(() => {
     loadData();
-  }, [categoryFilter]);
+  }, [categoryFilter, statusFilter]);
 
   async function loadData() {
     try {
@@ -23,7 +25,7 @@ function TemplatesPage() {
       const [templatesRes, categoriesRes] = await Promise.all([
         templateService.fetchTemplates({
           categoryId: categoryFilter || undefined,
-          isActive: true,
+          isActive: statusFilter === "all" ? undefined : statusFilter === "active",
         }),
         templateService.fetchCategories(),
       ]);
@@ -41,10 +43,10 @@ function TemplatesPage() {
 
     try {
       await templateService.deleteTemplate(id);
-      alert("Şablon silindi");
+      toast.success("✅ Şablon silindi");
       loadData();
     } catch (err: any) {
-      alert(err.message);
+      toast.error(err.message || "Şablon silinemedi");
     }
   }
 
@@ -52,14 +54,14 @@ function TemplatesPage() {
     try {
       if (currentStatus) {
         await templateService.deactivateTemplate(id);
-        alert("Şablon pasif edildi");
+        toast.success("⏸ Şablon pasif edildi");
       } else {
         await templateService.activateTemplate(id);
-        alert("Şablon aktif edildi");
+        toast.success("▶ Şablon aktif edildi");
       }
       loadData();
     } catch (err: any) {
-      alert(err.message);
+      toast.error(err.message || "İşlem başarısız");
     }
   }
 
@@ -83,23 +85,44 @@ function TemplatesPage() {
         </div>
       </div>
 
-      {/* Category Filter */}
+      {/* Filters */}
       <div className="bg-white rounded-lg shadow p-4 mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Kategori Filtrele
-        </label>
-        <select
-          value={categoryFilter}
-          onChange={(e) => setCategoryFilter(e.target.value)}
-          className="border border-gray-300 rounded-lg px-4 py-2"
-        >
-          <option value="">Tümü</option>
-          {categories.map((cat) => (
-            <option key={cat.id} value={cat.id}>
-              {cat.name}
-            </option>
-          ))}
-        </select>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Category Filter */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Kategori Filtrele
+            </label>
+            <select
+              value={categoryFilter}
+              onChange={(e) => setCategoryFilter(e.target.value)}
+              className="w-full border border-gray-300 rounded-lg px-4 py-2"
+            >
+              <option value="">Tümü</option>
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Status Filter */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Durum Filtrele
+            </label>
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value as "all" | "active" | "inactive")}
+              className="w-full border border-gray-300 rounded-lg px-4 py-2"
+            >
+              <option value="all">Tümü ({templates.length})</option>
+              <option value="active">Aktif</option>
+              <option value="inactive">Pasif</option>
+            </select>
+          </div>
+        </div>
       </div>
 
       {/* Templates Grid */}
@@ -113,10 +136,21 @@ function TemplatesPage() {
               className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition"
             >
               <div className="flex justify-between items-start mb-4">
-                <div>
-                  <h3 className="font-semibold text-lg text-gray-900">
-                    {template.name}
-                  </h3>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <h3 className="font-semibold text-lg text-gray-900">
+                      {template.name}
+                    </h3>
+                    <span
+                      className={`text-xs px-2 py-1 rounded-full ${
+                        template.isActive
+                          ? "bg-green-100 text-green-700"
+                          : "bg-gray-100 text-gray-600"
+                      }`}
+                    >
+                      {template.isActive ? "✓ Aktif" : "⏸ Pasif"}
+                    </span>
+                  </div>
                   {template.category && (
                     <span className="text-sm text-gray-600">
                       {template.category.name}
@@ -154,14 +188,14 @@ function TemplatesPage() {
                   onClick={() =>
                     handleToggleActive(template.id, template.isActive)
                   }
-                  className={`px-3 py-2 rounded text-sm ${
+                  className={`px-3 py-2 rounded text-sm flex items-center gap-1 ${
                     template.isActive
                       ? "bg-gray-600 hover:bg-gray-700 text-white"
                       : "bg-green-600 hover:bg-green-700 text-white"
                   }`}
                   title={template.isActive ? "Pasif Et" : "Aktif Et"}
                 >
-                  {template.isActive ? "⏸" : "▶"}
+                  {template.isActive ? "⏸ Pasif Et" : "▶ Aktif Et"}
                 </button>
                 <button
                   onClick={() => handleDelete(template.id)}
@@ -174,8 +208,20 @@ function TemplatesPage() {
           ))}
 
           {templates.length === 0 && (
-            <div className="col-span-3 text-center py-12 text-gray-500">
-              Henüz şablon yok. Yeni şablon oluşturun.
+            <div className="col-span-3 text-center py-12">
+              <div className="text-6xl mb-4">📄</div>
+              <p className="text-gray-600 text-lg mb-2">
+                {statusFilter === "active"
+                  ? "Aktif şablon bulunamadı"
+                  : statusFilter === "inactive"
+                  ? "Pasif şablon bulunamadı"
+                  : categoryFilter
+                  ? "Bu kategoride şablon bulunamadı"
+                  : "Henüz şablon yok"}
+              </p>
+              <p className="text-gray-500 text-sm">
+                Yeni şablon oluşturmak için yukarıdaki butonu kullanın
+              </p>
             </div>
           )}
         </div>
