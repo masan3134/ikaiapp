@@ -10,7 +10,10 @@ async function sendAnalysisEmail(req, res) {
     const { id } = req.params;
     const { recipientEmail, formats } = req.body;
 
-    const analysis = await require('../services/exportService').getAnalysisData(id, req.organizationId);
+    // SUPER_ADMIN can access all analyses (no organizationId filter)
+    const organizationIdFilter = req.userRole === 'SUPER_ADMIN' ? null : req.organizationId;
+
+    const analysis = await require('../services/exportService').getAnalysisData(id, organizationIdFilter);
     if (!analysis) {
       return res.status(404).json({
         error: 'Not Found',
@@ -52,7 +55,8 @@ async function sendAnalysisEmail(req, res) {
     }
 
     // Send email directly with organizationId for security
-    const result = await sendEmail(id, recipientEmail, formats, req.organizationId);
+    // SUPER_ADMIN uses null (can access all analyses)
+    const result = await sendEmail(id, recipientEmail, formats, organizationIdFilter);
 
     console.log(`📧 Email sent for analysis ${id} to ${recipientEmail}`, result);
 

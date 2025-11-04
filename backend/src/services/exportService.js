@@ -986,8 +986,14 @@ async function exportToHTML(analysisId, organizationId) {
  * Get analysis data with all relations
  */
 async function getAnalysisData(analysisId, organizationId) {
+  // Build where clause - SUPER_ADMIN (organizationId = null) sees all
+  const where = { id: analysisId };
+  if (organizationId) {
+    where.organizationId = organizationId;
+  }
+
   const analysis = await prisma.analysis.findFirst({
-    where: { id: analysisId, organizationId },
+    where,
     select: { id: true }
   });
 
