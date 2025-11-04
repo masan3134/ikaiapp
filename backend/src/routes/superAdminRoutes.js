@@ -416,9 +416,9 @@ router.get('/system-health', superAdminOnly, async (req, res) => {
       await prisma.$queryRaw`SELECT 1`;
       const dbStats = await prisma.$queryRaw`
         SELECT
-          (SELECT COUNT(*) FROM "User") as total_users,
-          (SELECT COUNT(*) FROM "Organization") as total_orgs,
-          (SELECT COUNT(*) FROM "Analysis") as total_analyses
+          (SELECT COUNT(*) FROM "users") as total_users,
+          (SELECT COUNT(*) FROM "organizations") as total_orgs,
+          (SELECT COUNT(*) FROM "analyses") as total_analyses
       `;
       health.services.database = {
         status: 'healthy',
