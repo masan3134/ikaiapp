@@ -286,6 +286,6 @@ function TeamManagementPage() {
 }
 
 export default withRoleProtection(TeamManagementPage, {
-  allowedRoles: RoleGroups.ADMINS,
+  allowedRoles: RoleGroups.TEAM_VIEWERS,  // MANAGER can view team (read-only)
   redirectTo: '/dashboard'
 });
