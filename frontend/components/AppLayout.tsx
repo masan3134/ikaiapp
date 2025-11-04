@@ -37,6 +37,7 @@ import {
   isSuperAdmin
 } from '@/lib/utils/rbac';
 import { RoleBadge } from '@/components/ui/RoleBadge';
+import { FloatingActionButton } from '@/components/ui/FloatingActionButton';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -318,8 +319,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           )}
 
           {/* Main Content */}
-          <main className="flex-1 overflow-x-hidden">
+          <main className="flex-1 overflow-x-hidden relative">
             {children}
+            <FloatingActionButton />
           </main>
         </div>
       </div>
