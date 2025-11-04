@@ -828,6 +828,178 @@
           }
         }
       }
+    },
+    "/api/v1/job-postings": {
+      "get": {
+        "tags": ["Job Postings"],
+        "summary": "Get all job postings",
+        "description": "Returns job postings for current organization. SUPER_ADMIN sees all organizations. Requires HR_MANAGERS role (ADMIN, MANAGER, HR_SPECIALIST).",
+        "security": [{"bearerAuth": []}],
+        "x-rbac": {
+          "roles": ["SUPER_ADMIN", "ADMIN", "MANAGER", "HR_SPECIALIST"],
+          "roleGroup": "HR_MANAGERS"
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {"type": "integer", "default": 1}
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {"type": "integer", "default": 20}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of job postings",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {"$ref": "#/components/schemas/JobPosting"}
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden (USER role cannot access)"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Job Postings"],
+        "summary": "Create new job posting",
+        "description": "Create job posting for organization. Requires HR_MANAGERS role.",
+        "security": [{"bearerAuth": []}],
+        "x-rbac": {
+          "roles": ["SUPER_ADMIN", "ADMIN", "MANAGER", "HR_SPECIALIST"],
+          "roleGroup": "HR_MANAGERS"
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["title", "department", "details"],
+                "properties": {
+                  "title": {"type": "string", "minLength": 3, "maxLength": 200},
+                  "department": {"type": "string", "minLength": 2, "maxLength": 100},
+                  "details": {"type": "string", "minLength": 10},
+                  "notes": {"type": "string", "nullable": true}
+                }
+              },
+              "example": {
+                "title": "Senior Backend Developer",
+                "department": "Engineering",
+                "details": "We are looking for an experienced backend developer with Node.js and PostgreSQL expertise...",
+                "notes": "Urgent hire"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Job posting created",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/JobPosting"}
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error"
+          },
+          "403": {
+            "description": "Forbidden (USER role)"
+          }
+        }
+      }
+    },
+    "/api/v1/job-postings/{id}": {
+      "get": {
+        "tags": ["Job Postings"],
+        "summary": "Get job posting by ID",
+        "security": [{"bearerAuth": []}],
+        "x-rbac": {"roleGroup": "HR_MANAGERS"},
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {"type": "string", "format": "uuid"}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Job posting details",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/JobPosting"}
+              }
+            }
+          },
+          "404": {"description": "Job posting not found"},
+          "403": {"description": "Cannot access other organization's job posting"}
+        }
+      },
+      "put": {
+        "tags": ["Job Postings"],
+        "summary": "Update job posting",
+        "security": [{"bearerAuth": []}],
+        "x-rbac": {"roleGroup": "HR_MANAGERS"},
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {"type": "string", "format": "uuid"}
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {"type": "string"},
+                  "department": {"type": "string"},
+                  "details": {"type": "string"},
+                  "notes": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "Job posting updated"},
+          "403": {"description": "Forbidden"},
+          "404": {"description": "Not found"}
+        }
+      },
+      "delete": {
+        "tags": ["Job Postings"],
+        "summary": "Delete job posting",
+        "description": "Soft delete (sets isDeleted flag). Requires HR_MANAGERS role.",
+        "security": [{"bearerAuth": []}],
+        "x-rbac": {"roleGroup": "HR_MANAGERS"},
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {"type": "string", "format": "uuid"}
+          }
+        ],
+        "responses": {
+          "204": {"description": "Job posting deleted"},
+          "403": {"description": "Forbidden"},
+          "404": {"description": "Not found"}
+        }
+      }
     }
   },
   "tags": [
