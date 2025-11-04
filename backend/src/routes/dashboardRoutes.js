@@ -26,7 +26,7 @@ router.get('/user', [
   authorize(['USER', 'HR_SPECIALIST', 'MANAGER', 'ADMIN', 'SUPER_ADMIN'])
 ], async (req, res) => {
   try {
-    const userId = req.user.userId;
+    const userId = req.user.id;
 
     // Profile completion
     const user = await prisma.user.findUnique({
