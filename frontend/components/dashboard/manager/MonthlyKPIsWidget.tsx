@@ -16,9 +16,7 @@ interface MonthlyKPIsWidgetProps {
 export function MonthlyKPIsWidget({ data }: MonthlyKPIsWidgetProps) {
   const kpis = data?.kpis || [
     { name: 'İşe Alım Hedefi', current: 0, target: 10, percentage: 0 },
-    { name: 'Müla
-
-kat Sayısı', current: 0, target: 20, percentage: 0 },
+    { name: 'Mülakat Sayısı', current: 0, target: 20, percentage: 0 },
     { name: 'Pozisyon Doldurma', current: 0, target: 8, percentage: 0 },
     { name: 'Adayların Kalitesi', current: 0, target: 100, percentage: 0 }
   ];
