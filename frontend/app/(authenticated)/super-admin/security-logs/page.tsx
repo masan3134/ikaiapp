@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { withRoleProtection } from "@/lib/hoc/withRoleProtection";
 import { UserRole } from "@/lib/constants/roles";
+import apiClient from "@/lib/services/apiClient";
 
 interface SecurityStats {
   totalUsers: number;
@@ -44,12 +45,8 @@ function SecurityLogsPage() {
 
   const loadSecurityLogs = async () => {
     try {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
-      const token = localStorage.getItem("auth_token");
-      const res = await fetch(`${API_URL}/api/v1/super-admin/security-logs`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await res.json();
+      const res = await apiClient.get("/api/v1/super-admin/security-logs");
+      const data = res.data;
 
       if (data.success) {
         setStats(data.data.stats);
