@@ -19,6 +19,9 @@ const ROLE_GROUPS = {
   // All roles that have admin privileges
   ADMINS: [ROLES.SUPER_ADMIN, ROLES.ADMIN],
 
+  // Manager and above (for delete operations)
+  MANAGERS_PLUS: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER],
+
   // All roles that can manage HR operations
   HR_MANAGERS: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER, ROLES.HR_SPECIALIST],
 
