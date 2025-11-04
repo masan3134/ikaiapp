@@ -26,6 +26,22 @@ function OrganizationsPage() {
   const [newOrgPlan, setNewOrgPlan] = useState("FREE");
   const [creating, setCreating] = useState(false);
 
+  // Organization details/edit/delete modals
+  const [selectedOrg, setSelectedOrg] = useState<any>(null);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [editPlan, setEditPlan] = useState("FREE");
+  const [updating, setUpdating] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  // Toast notifications
+  const [toast, setToast] = useState<{
+    show: boolean;
+    message: string;
+    type: "success" | "error";
+  }>({ show: false, message: "", type: "success" });
+
   useEffect(() => {
     loadData();
   }, [search, planFilter]);
@@ -95,11 +111,84 @@ function OrganizationsPage() {
 
       // Refresh list
       await loadData();
+
+      showToast(`${newOrgName} organizasyonu oluşturuldu`, "success");
     } catch (error) {
       console.error("Error creating organization:", error);
-      alert("Organizasyon oluşturulurken hata oluştu");
+      showToast("Organizasyon oluşturulurken hata oluştu", "error");
     } finally {
       setCreating(false);
+    }
+  };
+
+  const showToast = (message: string, type: "success" | "error") => {
+    setToast({ show: true, message, type });
+    setTimeout(() => setToast({ show: false, message: "", type: "success" }), 3000);
+  };
+
+  const handleViewDetails = async (org: any) => {
+    try {
+      const res = await apiClient.get(`/api/v1/super-admin/organizations/${org.id}`);
+      if (res.data.success) {
+        setSelectedOrg(res.data.data);
+        setShowDetailsModal(true);
+      }
+    } catch (error) {
+      console.error("Error loading organization details:", error);
+      showToast("Organizasyon detayları yüklenemedi", "error");
+    }
+  };
+
+  const handleEditPlan = (org: any) => {
+    setSelectedOrg(org);
+    setEditPlan(org.plan);
+    setShowEditModal(true);
+  };
+
+  const handleUpdatePlan = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!selectedOrg) return;
+
+    try {
+      setUpdating(true);
+      await apiClient.patch(`/api/v1/super-admin/${selectedOrg.id}/plan`, {
+        plan: editPlan,
+      });
+
+      showToast(`${selectedOrg.name} planı ${editPlan} olarak güncellendi`, "success");
+      setShowEditModal(false);
+      setSelectedOrg(null);
+      await loadData();
+    } catch (error) {
+      console.error("Error updating plan:", error);
+      showToast("Plan güncellenirken hata oluştu", "error");
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  const handleDeleteConfirm = (org: any) => {
+    setSelectedOrg(org);
+    setShowDeleteConfirm(true);
+  };
+
+  const handleDelete = async () => {
+    if (!selectedOrg) return;
+
+    try {
+      setDeleting(true);
+      await apiClient.delete(`/api/v1/super-admin/${selectedOrg.id}`);
+
+      showToast(`${selectedOrg.name} organizasyonu silindi`, "success");
+      setShowDeleteConfirm(false);
+      setSelectedOrg(null);
+      await loadData();
+    } catch (error) {
+      console.error("Error deleting organization:", error);
+      showToast("Organizasyon silinirken hata oluştu", "error");
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -232,7 +321,8 @@ function OrganizationsPage() {
               {orgs.map((org) => (
                 <div
                   key={org.id}
-                  className="flex items-center justify-between p-4 bg-slate-50 rounded-lg border border-slate-200 hover:border-rose-300 transition-colors"
+                  className="flex items-center justify-between p-4 bg-slate-50 rounded-lg border border-slate-200 hover:border-rose-300 transition-colors cursor-pointer"
+                  onClick={() => handleViewDetails(org)}
                 >
                   <div className="flex items-center gap-4">
                     <div
@@ -288,7 +378,7 @@ function OrganizationsPage() {
                       </div>
                     </div>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
                     <button
                       onClick={() => handleToggleActive(org.id)}
                       className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
@@ -299,8 +389,19 @@ function OrganizationsPage() {
                     >
                       {org.isActive ? "Pasifleştir" : "Aktifleştir"}
                     </button>
-                    <button className="p-2 hover:bg-blue-50 rounded-lg transition-colors">
+                    <button
+                      onClick={() => handleEditPlan(org)}
+                      className="p-2 hover:bg-blue-50 rounded-lg transition-colors"
+                      title="Planı Değiştir"
+                    >
                       <Edit2 className="w-4 h-4 text-blue-600" />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteConfirm(org)}
+                      className="p-2 hover:bg-red-50 rounded-lg transition-colors"
+                      title="Organizasyonu Sil"
+                    >
+                      <Trash2 className="w-4 h-4 text-red-600" />
                     </button>
                   </div>
                 </div>
@@ -373,6 +474,213 @@ function OrganizationsPage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Organization Details Modal */}
+      {showDetailsModal && selectedOrg && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold text-slate-900">
+                Organizasyon Detayları
+              </h2>
+              <button
+                onClick={() => setShowDetailsModal(false)}
+                className="text-slate-400 hover:text-slate-600"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-slate-600 mb-1">Organizasyon Adı</p>
+                  <p className="font-semibold text-slate-900">{selectedOrg.name}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-slate-600 mb-1">Slug</p>
+                  <p className="font-mono text-sm text-slate-900">{selectedOrg.slug}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-slate-600 mb-1">Plan</p>
+                  <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
+                    selectedOrg.plan === "ENTERPRISE" ? "bg-purple-100 text-purple-700" :
+                    selectedOrg.plan === "PRO" ? "bg-blue-100 text-blue-700" :
+                    "bg-slate-100 text-slate-700"
+                  }`}>
+                    {selectedOrg.plan}
+                  </span>
+                </div>
+                <div>
+                  <p className="text-sm text-slate-600 mb-1">Durum</p>
+                  <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
+                    selectedOrg.isActive ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+                  }`}>
+                    {selectedOrg.isActive ? "Aktif" : "Pasif"}
+                  </span>
+                </div>
+                <div>
+                  <p className="text-sm text-slate-600 mb-1">Kullanıcı Sayısı</p>
+                  <p className="font-semibold text-slate-900">{selectedOrg.userCount || 0}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-slate-600 mb-1">İş İlanları</p>
+                  <p className="font-semibold text-slate-900">{selectedOrg.jobPostingCount || 0}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-slate-600 mb-1">Analizler</p>
+                  <p className="font-semibold text-slate-900">{selectedOrg.analysisCount || 0}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-slate-600 mb-1">Oluşturulma Tarihi</p>
+                  <p className="text-sm text-slate-900">
+                    {new Date(selectedOrg.createdAt).toLocaleString("tr-TR")}
+                  </p>
+                </div>
+              </div>
+
+              <div className="border-t pt-4">
+                <p className="text-sm text-slate-600 mb-2">Limitler</p>
+                <div className="grid grid-cols-3 gap-4 text-sm">
+                  <div>
+                    <p className="text-slate-600">Max Kullanıcı</p>
+                    <p className="font-semibold">{selectedOrg.maxUsers}</p>
+                  </div>
+                  <div>
+                    <p className="text-slate-600">Max Analiz/Ay</p>
+                    <p className="font-semibold">{selectedOrg.maxAnalysisPerMonth}</p>
+                  </div>
+                  <div>
+                    <p className="text-slate-600">Max CV/Ay</p>
+                    <p className="font-semibold">{selectedOrg.maxCvPerMonth}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setShowDetailsModal(false)}
+              className="mt-6 w-full px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors"
+            >
+              Kapat
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Plan Modal */}
+      {showEditModal && selectedOrg && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <h2 className="text-xl font-bold mb-4 text-slate-900">
+              Planı Değiştir: {selectedOrg.name}
+            </h2>
+
+            <form onSubmit={handleUpdatePlan}>
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Yeni Plan
+                </label>
+                <select
+                  value={editPlan}
+                  onChange={(e) => setEditPlan(e.target.value)}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                >
+                  <option value="FREE">FREE (10 analiz/ay, 50 CV, 2 kullanıcı)</option>
+                  <option value="PRO">PRO (100 analiz/ay, 500 CV, 10 kullanıcı)</option>
+                  <option value="ENTERPRISE">ENTERPRISE (Sınırsız)</option>
+                </select>
+                <p className="mt-2 text-xs text-slate-500">
+                  Mevcut plan: <strong>{selectedOrg.plan}</strong>
+                </p>
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowEditModal(false);
+                    setSelectedOrg(null);
+                  }}
+                  className="flex-1 px-4 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors"
+                  disabled={updating}
+                >
+                  İptal
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={updating}
+                >
+                  {updating ? "Güncelleniyor..." : "Güncelle"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirm && selectedOrg && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <h2 className="text-xl font-bold mb-4 text-slate-900">
+              Organizasyonu Sil?
+            </h2>
+
+            <p className="text-slate-600 mb-6">
+              <strong>{selectedOrg.name}</strong> organizasyonunu silmek istediğinizden emin misiniz?
+              Bu işlem organizasyonu pasif hale getirecektir.
+            </p>
+
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-6">
+              <p className="text-sm text-yellow-800">
+                <strong>Uyarı:</strong> Organizasyon pasif hale gelecek ancak verileri korunacaktır.
+                Daha sonra tekrar aktif hale getirilebilir.
+              </p>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowDeleteConfirm(false);
+                  setSelectedOrg(null);
+                }}
+                className="flex-1 px-4 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors"
+                disabled={deleting}
+              >
+                İptal
+              </button>
+              <button
+                onClick={handleDelete}
+                className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={deleting}
+              >
+                {deleting ? "Siliniyor..." : "Evet, Sil"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Toast Notification */}
+      {toast.show && (
+        <div className="fixed bottom-4 right-4 z-50 animate-in slide-in-from-right">
+          <div
+            className={`px-6 py-3 rounded-lg shadow-lg flex items-center gap-3 ${
+              toast.type === "success"
+                ? "bg-green-600 text-white"
+                : "bg-red-600 text-white"
+            }`}
+          >
+            <span className="text-lg">
+              {toast.type === "success" ? "✅" : "❌"}
+            </span>
+            <p className="font-medium">{toast.message}</p>
           </div>
         </div>
       )}
