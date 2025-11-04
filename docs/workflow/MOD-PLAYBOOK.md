@@ -87,6 +87,73 @@ Teknik terimler İngilizce kalabilir (grep, withRoleProtection)
 Ama açıklama TÜRKÇE olacak.
 ```
 
+### Rule 6: Worker Coordination - Prevent Conflicts
+```
+🚨 When assigning parallel workers, ensure NO FILE OVERLAP!
+
+✅ GOOD Parallel Tasks:
+- W1: USER Dashboard (frontend/dashboard/user-dashboard.tsx)
+- W2: HR Dashboard (frontend/dashboard/hr-specialist-dashboard.tsx)
+- W3: ADMIN Dashboard (frontend/dashboard/admin-dashboard.tsx)
+→ Different files = No conflicts!
+
+❌ BAD Parallel Tasks:
+- W1: Edit AppLayout.tsx (sidebar)
+- W2: Edit AppLayout.tsx (icons)
+→ Same file = Git conflicts!
+
+🎯 Mod Planning Strategy:
+1. List all files each worker will modify
+2. Check for overlaps
+3. If overlap exists: Make tasks SEQUENTIAL (W1 → W2)
+4. If no overlap: Make tasks PARALLEL (W1 + W2 + W3)
+```
+
+### Rule 7: Log Reading & Error Fixing Protocol
+```
+🚨 MANDATORY: Every worker MUST check logs after their changes!
+
+Mod Task File Structure:
+---
+## Task X: Your Main Task
+[task details...]
+
+## Task X+1: Log Verification (MANDATORY!)
+**Command:**
+```bash
+# Check YOUR service logs (only your changes!)
+docker logs ikai-frontend --tail 50 2>&1 | grep -i "error\|fail"
+docker logs ikai-backend --tail 50 2>&1 | grep -i "error\|fail"
+```
+
+**Expected:** No errors related to YOUR changes
+
+**If errors found:**
+1. Read error carefully
+2. Is it YOUR code? → Fix immediately
+3. Is it OTHER worker's code? → DO NOT TOUCH! Report to Mod
+4. Fix → Commit → Re-check logs
+5. Repeat until YOUR errors = 0
+
+**Commit:**
+```bash
+git add [fixed-files]
+git commit -m "fix(scope): Fix [error-description] in [your-component]"
+```
+---
+
+Worker Scope Awareness:
+- ✅ Fix errors in files YOU created
+- ✅ Fix errors in files YOU modified
+- ❌ NEVER fix errors in files OTHER workers created
+- ❌ NEVER touch files outside your task scope
+
+Example:
+- W1 editing user-dashboard.tsx → Sees error in admin-dashboard.tsx
+- W1 action: ❌ DO NOT FIX! Report to Mod
+- Mod action: ✅ Ask W4 (ADMIN dashboard owner) to fix
+```
+
 ---
 
 ## 📋 Your Workflow (Step-by-Step)
