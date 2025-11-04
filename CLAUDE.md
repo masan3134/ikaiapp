@@ -184,6 +184,7 @@ Read('docs/workflow/WORKER-PLAYBOOK.md')
 **Rule 5: NO ROOT FILES** - Use `docs/` for documentation
 **Rule 6: READ YOUR PLAYBOOK** - MOD-PLAYBOOK.md or WORKER-PLAYBOOK.md
 **Rule 7: PYTHON FIRST** - NEVER use curl for API testing! Use Python requests (see MOD/WORKER playbooks Rule 11)
+**Rule 8: BEWARE DUPLICATE FILES** - Check which file is ACTUALLY used before editing! (Details: docs/DUPLICATE-FILES-WARNING.md)
 
 **Gemini Helper:**
 ```bash
