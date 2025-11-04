@@ -31,7 +31,8 @@ function QueuesPage() {
 
   const loadQueues = async () => {
     try {
-      const res = await fetch('/api/v1/super-admin/queues');
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
+      const res = await fetch(`${API_URL}/api/v1/super-admin/queues`);
       const data = await res.json();
 
       if (data.success) {

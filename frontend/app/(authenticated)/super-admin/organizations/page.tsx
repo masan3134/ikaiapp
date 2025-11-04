@@ -26,9 +26,10 @@ function OrganizationsPage() {
       if (planFilter) params.append('plan', planFilter);
 
       // Fetch organizations and stats
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
       const [orgsRes, statsRes] = await Promise.all([
-        fetch(`/api/v1/super-admin/organizations?${params.toString()}`),
-        fetch('/api/v1/super-admin/stats')
+        fetch(`${API_URL}/api/v1/super-admin/organizations?${params.toString()}`),
+        fetch(`${API_URL}/api/v1/super-admin/stats`)
       ]);
 
       const orgsData = await orgsRes.json();
@@ -50,7 +51,8 @@ function OrganizationsPage() {
 
   const handleToggleActive = async (orgId: string) => {
     try {
-      const res = await fetch(`/api/v1/super-admin/${orgId}/toggle`, {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
+      const res = await fetch(`${API_URL}/api/v1/super-admin/${orgId}/toggle`, {
         method: 'PATCH'
       });
 

@@ -40,7 +40,8 @@ function SystemHealthPage() {
 
   const loadHealth = async () => {
     try {
-      const res = await fetch('/api/v1/super-admin/system-health');
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
+      const res = await fetch(`${API_URL}/api/v1/super-admin/system-health`);
       const data = await res.json();
 
       if (data.success) {
