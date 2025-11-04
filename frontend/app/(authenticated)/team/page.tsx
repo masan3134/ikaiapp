@@ -45,7 +45,10 @@ function TeamManagementPage() {
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
 
   // Check if user has admin access
-  const hasAccess = user?.role === "ADMIN" || user?.role === "SUPER_ADMIN";
+  const hasAccess =
+    user?.role === "ADMIN" ||
+    user?.role === "SUPER_ADMIN" ||
+    user?.role === "MANAGER";
 
   // Fetch team members
   const fetchMembers = async () => {
