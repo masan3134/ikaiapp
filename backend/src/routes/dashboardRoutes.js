@@ -427,7 +427,7 @@ router.get('/admin', [
         date: dateStr,
         analyses: analysisCount,
         cvs: cvCount,
-        activeUsers: Math.floor(Math.random() * 5) + 1 // Mock for now
+        activeUsers: null // No real data source (session tracking not implemented)
       });
     }
 
