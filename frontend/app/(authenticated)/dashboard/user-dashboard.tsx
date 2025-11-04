@@ -48,7 +48,7 @@ export default function UserDashboard() {
       setLoading(true);
       setError(null);
 
-      const data = await apiClient.get("/api/v1/dashboard/user");
+      const { data } = await apiClient.get("/api/v1/dashboard/user");
 
       if (data.success) {
         setStats(data.data);
