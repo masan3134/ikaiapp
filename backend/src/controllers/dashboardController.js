@@ -308,13 +308,13 @@ async function getManagerDashboard(req, res) {
       // Daily analyses for trend (last 30 days)
       prisma.$queryRaw`
         SELECT
-          DATE(created_at) as date,
+          DATE("createdAt") as date,
           COUNT(*) as count
         FROM analyses
-        WHERE organization_id = ${organizationId}
-          AND created_at >= ${last30Days}
+        WHERE "organizationId" = ${organizationId}
+          AND "createdAt" >= ${last30Days}
           AND status = 'COMPLETED'
-        GROUP BY DATE(created_at)
+        GROUP BY DATE("createdAt")
         ORDER BY date ASC
       `,
 
