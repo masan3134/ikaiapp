@@ -61,7 +61,7 @@ router.post('/:id/chat', trackRequest, chatRateLimiter, hrManagers, async (req, 
     const result = await simpleChat.chat(
       analysisId,
       message,
-      req.user.userId,
+      req.user.id,  // FIX: req.user.id not req.user.userId
       analysis.organizationId // Use organizationId from analysis
     );
 
