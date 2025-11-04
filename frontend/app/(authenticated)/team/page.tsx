@@ -9,12 +9,14 @@ import InviteUserModal from '@/components/team/InviteUserModal';
 import EditUserModal from '@/components/team/EditUserModal';
 import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import LoadingSkeleton from '@/components/ui/LoadingSkeleton';
+import { withRoleProtection } from '@/lib/hoc/withRoleProtection';
+import { RoleGroups } from '@/lib/constants/roles';
 import {
   canInviteUsers,
   canManageTeam
 } from '@/lib/utils/rbac';
 
-export default function TeamManagementPage() {
+function TeamManagementPage() {
   const { user } = useAuthStore();
   const userRole = user?.role;
   const toast = useToast();
@@ -282,3 +284,8 @@ export default function TeamManagementPage() {
     </div>
   );
 }
+
+export default withRoleProtection(TeamManagementPage, {
+  allowedRoles: RoleGroups.ADMINS,
+  redirectTo: '/dashboard'
+});
