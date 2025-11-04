@@ -9,9 +9,14 @@ import InviteUserModal from '@/components/team/InviteUserModal';
 import EditUserModal from '@/components/team/EditUserModal';
 import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import LoadingSkeleton from '@/components/ui/LoadingSkeleton';
+import {
+  canInviteUsers,
+  canManageTeam
+} from '@/lib/utils/rbac';
 
 export default function TeamManagementPage() {
   const { user } = useAuthStore();
+  const userRole = user?.role;
   const toast = useToast();
 
   const [members, setMembers] = useState<TeamMember[]>([]);
@@ -115,13 +120,15 @@ export default function TeamManagementPage() {
               </h1>
               <p className="text-gray-600 mt-1">Organizasyon üyelerini yönetin</p>
             </div>
-            <button
-              onClick={() => setInviteModalOpen(true)}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2"
-            >
-              <UserPlus size={20} />
-              Yeni Kullanıcı Davet Et
-            </button>
+            {canInviteUsers(userRole) && (
+              <button
+                onClick={() => setInviteModalOpen(true)}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2"
+              >
+                <UserPlus size={20} />
+                Yeni Kullanıcı Davet Et
+              </button>
+            )}
           </div>
         </div>
 
