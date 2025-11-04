@@ -316,7 +316,7 @@ router.get('/super-admin', [
     const totalAnalyses = await prisma.analysis.count();
     const totalCVs = await prisma.candidate.count();
     const totalJobPostings = await prisma.jobPosting.count();
-    const totalOffers = await prisma.offer.count();
+    const totalOffers = await prisma.jobOffer.count();
     const totalUsers = await prisma.user.count();
 
     const analytics = {
