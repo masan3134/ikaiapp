@@ -21,6 +21,10 @@ function OrganizationsPage() {
   const [stats, setStats] = useState(null);
   const [search, setSearch] = useState("");
   const [planFilter, setPlanFilter] = useState("");
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [newOrgName, setNewOrgName] = useState("");
+  const [newOrgPlan, setNewOrgPlan] = useState("FREE");
+  const [creating, setCreating] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -69,6 +73,36 @@ function OrganizationsPage() {
     }
   };
 
+  const handleCreateOrganization = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!newOrgName.trim()) {
+      alert("Organizasyon adı zorunludur");
+      return;
+    }
+
+    try {
+      setCreating(true);
+      await apiClient.post("/api/v1/super-admin/organizations", {
+        name: newOrgName,
+        plan: newOrgPlan,
+      });
+
+      // Reset form and close modal
+      setNewOrgName("");
+      setNewOrgPlan("FREE");
+      setShowCreateModal(false);
+
+      // Refresh list
+      await loadData();
+    } catch (error) {
+      console.error("Error creating organization:", error);
+      alert("Organizasyon oluşturulurken hata oluştu");
+    } finally {
+      setCreating(false);
+    }
+  };
+
   return (
     <div className="p-6">
       {/* Header */}
@@ -82,7 +116,10 @@ function OrganizationsPage() {
             Tüm organizasyonları görüntüleyin ve yönetin
           </p>
         </div>
-        <button className="bg-rose-600 hover:bg-rose-700 text-white px-4 py-2.5 rounded-lg flex items-center gap-2 font-medium transition-colors shadow-sm">
+        <button
+          onClick={() => setShowCreateModal(true)}
+          className="bg-rose-600 hover:bg-rose-700 text-white px-4 py-2.5 rounded-lg flex items-center gap-2 font-medium transition-colors shadow-sm"
+        >
           <Plus className="w-4 h-4" />
           Yeni Organizasyon
         </button>
@@ -272,6 +309,73 @@ function OrganizationsPage() {
           )}
         </div>
       </div>
+
+      {/* Create Organization Modal */}
+      {showCreateModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <h2 className="text-xl font-bold mb-4 text-slate-900">
+              Yeni Organizasyon Oluştur
+            </h2>
+
+            <form onSubmit={handleCreateOrganization}>
+              {/* Organization Name */}
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Organizasyon Adı *
+                </label>
+                <input
+                  type="text"
+                  value={newOrgName}
+                  onChange={(e) => setNewOrgName(e.target.value)}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  placeholder="Örn: Acme Corporation"
+                  required
+                />
+              </div>
+
+              {/* Plan Selection */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Plan
+                </label>
+                <select
+                  value={newOrgPlan}
+                  onChange={(e) => setNewOrgPlan(e.target.value)}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                >
+                  <option value="FREE">FREE (10 analiz/ay)</option>
+                  <option value="PRO">PRO (100 analiz/ay)</option>
+                  <option value="ENTERPRISE">ENTERPRISE (Sınırsız)</option>
+                </select>
+              </div>
+
+              {/* Buttons */}
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowCreateModal(false);
+                    setNewOrgName("");
+                    setNewOrgPlan("FREE");
+                  }}
+                  className="flex-1 px-4 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors"
+                  disabled={creating}
+                >
+                  İptal
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 px-4 py-2 bg-rose-600 text-white rounded-lg hover:bg-rose-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={creating}
+                >
+                  {creating ? "Oluşturuluyor..." : "Oluştur"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
