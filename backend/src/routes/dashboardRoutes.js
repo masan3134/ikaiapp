@@ -153,7 +153,7 @@ router.get('/hr-specialist', [
     const activePostings = await prisma.jobPosting.count({
       where: {
         organizationId,
-        status: 'ACTIVE'
+        isDeleted: false
       }
     });
 
@@ -192,11 +192,27 @@ router.get('/hr-specialist', [
     const thisWeekAnalyses = weekAnalyses;
 
     // CV Analytics
-    const avgScore = 75; // Mock - calculate from actual analyses
+    // Calculate avg score from actual analyses
+    const analysesWithScores = await prisma.analysis.findMany({
+      where: {
+        organizationId,
+        createdAt: { gte: weekStart }
+      },
+      select: { topScore: true }
+    });
+
+    const avgScore = analysesWithScores.length > 0
+      ? Math.round(analysesWithScores.reduce((sum, a) => sum + (a.topScore || 0), 0) / analysesWithScores.length)
+      : 0;
+
+    // Pending CVs (candidates without analysis results)
     const pendingCVs = await prisma.candidate.count({
       where: {
         organizationId,
-        status: 'PENDING'
+        isDeleted: false,
+        analysisResults: {
+          none: {}
+        }
       }
     });
 
@@ -388,32 +404,8 @@ router.get('/admin', [
       });
     }
 
-    // Team activity (last 20 actions)
-    const teamActivity = await prisma.activityLog.findMany({
-      where: { organizationId },
-      include: {
-        user: {
-          select: {
-            firstName: true,
-            lastName: true
-          }
-        }
-      },
-      orderBy: { createdAt: 'desc' },
-      take: 20
-    }).catch(() => []);
-
-    // Format activity
-    const formattedActivity = teamActivity.map(log => ({
-      id: log.id,
-      type: log.action || 'UNKNOWN',
-      user: {
-        firstName: log.user?.firstName || 'Unknown',
-        lastName: log.user?.lastName || 'User'
-      },
-      action: log.description || log.action || 'performed an action',
-      createdAt: log.createdAt.toISOString()
-    }));
+    // Team activity (mock for now - ActivityLog model not implemented yet)
+    const formattedActivity = [];
 
     // Security metrics
     const twoFactorUsers = await prisma.user.count({
