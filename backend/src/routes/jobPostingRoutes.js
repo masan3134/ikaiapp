@@ -21,6 +21,9 @@ const router = express.Router();
 // HR Managers middleware (HR operations)
 const hrManagers = [authenticateToken, enforceOrganizationIsolation, authorize(ROLE_GROUPS.HR_MANAGERS)];
 
+// Admin only middleware
+const adminOnly = [authenticateToken, enforceOrganizationIsolation, authorize(ROLE_GROUPS.ADMINS)];
+
 // Validation rules for creating/updating job postings
 const jobPostingValidation = [
   body('title')
@@ -55,7 +58,7 @@ router.get('/:id', hrManagers, getJobPostingById);
 
 router.put('/:id', hrManagers, jobPostingValidation, updateJobPosting);
 
-router.delete('/:id', hrManagers, deleteJobPosting);
+router.delete('/:id', adminOnly, deleteJobPosting);
 
 router.get('/export/xlsx', hrManagers, exportJobPostingsXLSX);
 router.get('/export/csv', hrManagers, exportJobPostingsCSV);
