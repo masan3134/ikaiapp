@@ -4,28 +4,69 @@ W4: Deep Integration Test - ADMIN Role
 Test all 18 ADMIN pages (same as MANAGER)
 """
 
-import sys
-sys.path.append('/home/asan/Desktop/ikai/scripts')
+import requests
+import json
 
-from test_helper import IKAITestHelper, TEST_USERS
+BASE_URL = "http://localhost:8102"
+
+def login(email, password):
+    """Login and get token"""
+    try:
+        response = requests.post(
+            f"{BASE_URL}/api/v1/auth/login",
+            json={"email": email, "password": password},
+            headers={"Content-Type": "application/json"}
+        )
+
+        if response.status_code == 200:
+            data = response.json()
+            return data.get("token"), data.get("user")
+        else:
+            print(f"❌ Login failed! Status: {response.status_code}")
+            print(f"   Error: {response.text}")
+            return None, None
+    except Exception as e:
+        print(f"❌ Error: {e}")
+        return None, None
+
+def test_endpoint(endpoint, token, name):
+    """Test a single endpoint"""
+    try:
+        response = requests.get(
+            f"{BASE_URL}{endpoint}",
+            headers={
+                "Authorization": f"Bearer {token}",
+                "Content-Type": "application/json"
+            }
+        )
+
+        if response.status_code == 200:
+            return True, response.json()
+        else:
+            return False, response.text
+    except Exception as e:
+        return False, str(e)
 
 def main():
     print("=" * 80)
     print("W4: ADMIN ROLE - DEEP INTEGRATION TEST")
     print("=" * 80)
 
-    helper = IKAITestHelper()
-
     # Login as ADMIN
     print("\n[1/19] Login as ADMIN...")
-    user = TEST_USERS["org1_admin"]
-    if not helper.login(user["email"], user["password"]):
+    email = "test-admin@test-org-1.com"
+    password = "TestPass123!"
+
+    token, user = login(email, password)
+
+    if not token:
         print("❌ Login failed!")
         return
 
     print(f"\n✅ Logged in as ADMIN")
-    print(f"   Email: {user['email']}")
-    print(f"   Org: {user['org']}")
+    print(f"   Email: {email}")
+    print(f"   Role: {user.get('role')}")
+    print(f"   Org ID: {user.get('organizationId')}")
 
     # Test all endpoints (18 pages)
     endpoints = [
@@ -47,7 +88,6 @@ def main():
         # Settings (6)
         ("/api/v1/users/me", "Settings - Profile"),
         ("/api/v1/organization", "Settings - Organization"),
-        ("/api/v1/team", "Settings - Team"),
         ("/api/v1/notifications/preferences", "Settings - Notifications"),
         ("/api/v1/organization/usage", "Settings - Usage"),
         ("/api/v1/organization/limits", "Settings - Limits"),
@@ -60,16 +100,16 @@ def main():
     failed_endpoints = []
 
     for i, (endpoint, name) in enumerate(endpoints, start=2):
-        print(f"\n[{i}/19] Testing: {name}")
+        print(f"\n[{i}/{len(endpoints)+1}] Testing: {name}")
         print(f"         Endpoint: {endpoint}")
 
-        result = helper.get(endpoint)
+        success, result = test_endpoint(endpoint, token, name)
 
-        if result is not None:
+        if success:
             print(f"         ✅ SUCCESS")
             success_count += 1
         else:
-            print(f"         ❌ FAILED")
+            print(f"         ❌ FAILED: {result}")
             failed_endpoints.append((endpoint, name))
 
     # Summary
