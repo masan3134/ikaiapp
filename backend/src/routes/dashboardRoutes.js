@@ -508,6 +508,27 @@ router.get('/admin', [
       complianceScore: Math.min(100, Math.round((twoFactorUsers / Math.max(orgStats.totalUsers, 1)) * 100))
     };
 
+    // Usage rate calculation (plan limit vs actual usage)
+    const monthStart = new Date();
+    monthStart.setDate(1);
+    monthStart.setHours(0, 0, 0, 0);
+
+    const thisMonthAnalyses = await prisma.analysis.count({
+      where: {
+        organizationId,
+        createdAt: { gte: monthStart }
+      }
+    });
+
+    const PLAN_ANALYSIS_LIMITS = {
+      'FREE': 10,
+      'PRO': 50,
+      'ENTERPRISE': 999999 // Unlimited
+    };
+
+    const analysisLimit = PLAN_ANALYSIS_LIMITS[organization.plan] || 10;
+    const usageRate = Math.min(100, Math.round((thisMonthAnalyses / analysisLimit) * 100));
+
     // Health score calculation
     const healthFactors = [
       {
@@ -522,8 +543,8 @@ router.get('/admin', [
       },
       {
         name: 'Kullanım Oranı',
-        score: 75, // Mock
-        status: 'good'
+        score: usageRate, // Real calculation: thisMonthAnalyses / analysisLimit
+        status: usageRate < 80 ? 'good' : 'warning' // Warning if approaching limit
       },
       {
         name: 'Sistem Sağlığı',
