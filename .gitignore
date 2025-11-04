@@ -282,3 +282,9 @@ test-outputs/
 *.test-output.txt
 scripts/tests/*.pyc
 scripts/tests/__pycache__/
+
+# W6 test files
+scan-*.txt
+test-*.txt
+test-*.py
+backend/error-logs/*.jsonl
