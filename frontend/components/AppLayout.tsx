@@ -95,14 +95,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       icon: LayoutDashboard,
       show: true, // All roles can see dashboard
     },
-    // 2. Bildirimler (notifications - W1 added)
-    {
-      name: "Bildirimler",
-      path: "/notifications",
-      icon: Bell,
-      show: true, // All users can see notifications
-    },
-    // 3. İş İlanları (start of hiring workflow)
+    // 2. İş İlanları (start of hiring workflow)
     {
       name: "İş İlanları",
       path: "/job-postings",
