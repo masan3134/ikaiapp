@@ -136,6 +136,7 @@ async function getManagerDashboard(req, res) {
 
     // REAL DATA QUERIES
     const [
+      organization,
       teamSize,
       activeProjects,
       completedAnalyses,
@@ -150,8 +151,23 @@ async function getManagerDashboard(req, res) {
       candidatesWithOffers,
       completedInterviews,
       totalInterviewsMonth,
-      dailyAnalyses
+      dailyAnalyses,
+      previousPeriodOffers,
+      previousAcceptedOffers,
+      candidatesWithOffersPrevious
     ] = await Promise.all([
+      // Organization (for budget calculations)
+      prisma.organization.findUnique({
+        where: { id: organizationId },
+        select: {
+          plan: true,
+          monthlyAnalysisCount: true,
+          maxAnalysisPerMonth: true,
+          monthlyCvCount: true,
+          maxCvPerMonth: true
+        }
+      }),
+
       // Team size (organization users)
       prisma.user.count({ where: { organizationId } }),
 
@@ -297,7 +313,47 @@ async function getManagerDashboard(req, res) {
           AND status = 'COMPLETED'
         GROUP BY DATE(created_at)
         ORDER BY date ASC
-      `
+      `,
+
+      // Previous period offers (for acceptance rate change)
+      prisma.jobOffer.count({
+        where: {
+          organizationId,
+          createdAt: { gte: last60Days, lt: last30Days }
+        }
+      }),
+
+      // Previous period accepted offers
+      prisma.jobOffer.count({
+        where: {
+          organizationId,
+          status: 'ACCEPTED',
+          createdAt: { gte: last60Days, lt: last30Days }
+        }
+      }),
+
+      // Previous period candidates with offers (for time change)
+      prisma.candidate.findMany({
+        where: {
+          organizationId,
+          createdAt: { gte: last60Days, lt: last30Days },
+          jobOffers: {
+            some: {
+              status: { in: ['ACCEPTED', 'PENDING', 'SENT'] }
+            }
+          }
+        },
+        include: {
+          jobOffers: {
+            where: {
+              status: { in: ['ACCEPTED', 'PENDING', 'SENT'] }
+            },
+            orderBy: { createdAt: 'asc' },
+            take: 1
+          }
+        },
+        take: 100
+      })
     ]);
 
     // Calculate metrics
@@ -366,6 +422,72 @@ async function getManagerDashboard(req, res) {
       trendData.push(...last30);
     }
 
+    // Budget usage (REAL: from organization limits)
+    let budgetUsed = 0;
+    if (organization) {
+      const analysisUsage = organization.maxAnalysisPerMonth > 0
+        ? (organization.monthlyAnalysisCount / organization.maxAnalysisPerMonth) * 100
+        : 0;
+      const cvUsage = organization.maxCvPerMonth > 0
+        ? (organization.monthlyCvCount / organization.maxCvPerMonth) * 100
+        : 0;
+      budgetUsed = Math.round((analysisUsage + cvUsage) / 2);
+    }
+
+    // Cost per hire (REAL: estimated from plan pricing)
+    let costPerHire = 0;
+    let previousCostPerHire = 0;
+    if (organization) {
+      const planCosts = {
+        FREE: 0,
+        PRO: 99,
+        ENTERPRISE: 499
+      };
+      const monthlyCost = planCosts[organization.plan] || 0;
+
+      if (monthCandidates > 0) {
+        costPerHire = Math.round(monthlyCost / monthCandidates);
+      }
+      if (previousMonthCandidates > 0) {
+        previousCostPerHire = Math.round(monthlyCost / previousMonthCandidates);
+      }
+    }
+
+    // Previous period acceptance rate
+    const previousAcceptanceRate = previousPeriodOffers > 0
+      ? Math.round((previousAcceptedOffers / previousPeriodOffers) * 100)
+      : 0;
+
+    // Previous period avgTimeToHire
+    let previousAvgTimeToHire = 0;
+    if (candidatesWithOffersPrevious.length > 0) {
+      const timeDiffs = candidatesWithOffersPrevious
+        .filter(c => c.jobOffers && c.jobOffers.length > 0)
+        .map(c => {
+          const candidateDate = new Date(c.createdAt);
+          const offerDate = new Date(c.jobOffers[0].createdAt);
+          const diffTime = Math.abs(offerDate - candidateDate);
+          return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        });
+
+      if (timeDiffs.length > 0) {
+        previousAvgTimeToHire = Math.round(timeDiffs.reduce((a, b) => a + b, 0) / timeDiffs.length);
+      }
+    }
+
+    // Calculate change percentages (REAL!)
+    const timeChange = previousAvgTimeToHire > 0
+      ? Math.round(((avgTimeToHire - previousAvgTimeToHire) / previousAvgTimeToHire) * 100)
+      : 0;
+
+    const acceptanceChange = previousAcceptanceRate > 0
+      ? Math.round(((acceptanceRate - previousAcceptanceRate) / previousAcceptanceRate) * 100)
+      : 0;
+
+    const costChange = previousCostPerHire > 0
+      ? Math.round(((costPerHire - previousCostPerHire) / previousCostPerHire) * 100)
+      : 0;
+
     // KPIs
     const hiringTarget = 10;
     const interviewTarget = 20;
@@ -377,7 +499,7 @@ async function getManagerDashboard(req, res) {
         teamSize,
         activeProjects,
         performance,
-        budgetUsed: 0 // No budget tracking yet
+        budgetUsed // REAL: (analysisUsage + cvUsage) / 2
       },
       teamPerformance: {
         teamScore: performance,
@@ -388,13 +510,13 @@ async function getManagerDashboard(req, res) {
       },
       departmentAnalytics: {
         monthHires: monthCandidates,
-        hiresChange,
-        avgTimeToHire, // Real: candidate.createdAt → offer.createdAt (in days)
-        timeChange: 0, // Would need previous period comparison
+        hiresChange, // REAL: vs previous month
+        avgTimeToHire, // REAL: candidate.createdAt → offer.createdAt (in days)
+        timeChange, // REAL: vs previous period avgTimeToHire
         acceptanceRate,
-        acceptanceChange: 0, // Would need previous period data
-        costPerHire: 0, // No budget tracking yet
-        costChange: 0
+        acceptanceChange, // REAL: vs previous period acceptance rate
+        costPerHire, // REAL: Plan cost / month hires
+        costChange // REAL: vs previous period cost per hire
       },
       actionItems: {
         urgentCount,
