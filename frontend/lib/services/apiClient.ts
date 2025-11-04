@@ -1,6 +1,19 @@
 import axios from 'axios';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8102';
+// Get API URL with browser-side override for Docker internal hostnames
+const getAPIURL = () => {
+  const envURL = process.env.NEXT_PUBLIC_API_URL;
+
+  // If running in browser and env URL uses Docker internal hostname, use localhost
+  if (typeof window !== 'undefined' && envURL?.includes('ikai-backend')) {
+    return 'http://localhost:8102';
+  }
+
+  // Otherwise use env URL or fallback to localhost
+  return envURL || 'http://localhost:8102';
+};
+
+const API_URL = getAPIURL();
 
 // Create axios instance with default config
 const apiClient = axios.create({
