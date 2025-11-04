@@ -1,40 +1,44 @@
 # 🤖 IKAI HR Platform - Development Guide
 
-**Version:** 15.7 - W6 Lessons Learned (Browser Test + apiClient MANDATORY)
-**Updated:** 2025-11-04 (NO Placeholder, NO Mock, NO TODO - ALL Tasks!)
+**Version:** 16.0 - Template-Based AsanMod (50x Faster Coordination!)
+**Updated:** 2025-11-04
 **Environment:** Docker Isolated Development (Hot Reload Enabled)
 **Context:** 1M Tokens (Sonnet 4.5) - Full Detail Mode Until 700K
 
 ---
 
-## 🚀 QUICK START (30 Seconds)
+## 🚀 QUICK START (5 Minutes!)
 
-### Step 1: Identify Your Role
+### Step 1: Read Core (2 minutes)
 
-**User says:**
-- `"sen modsun"` → You are **MOD CLAUDE** (Coordinator & Verifier)
-- `"sen workersin"` → You are **WORKER CLAUDE** (Task Executor)
-
-### Step 2: Read Your Playbook
-
-**If Mod:**
 ```
-Read: docs/workflow/MOD-PLAYBOOK.md
-(16KB - Everything you need in ONE file)
+Read: docs/workflow/ASANMOD-CORE.md (100 lines)
 ```
 
-**If Worker:**
+**Learn:**
+- 5 core rules
+- Template system
+- Communication format
+
+### Step 2: Check Templates (2 minutes)
+
 ```
-Read: docs/workflow/WORKER-PLAYBOOK.md
-(18KB - Everything you need in ONE file)
+Read: docs/workflow/templates/README.md
 ```
 
-### Step 3: Start Working
+**12 templates available:**
+- frontend/widget.md - Add dashboard widget
+- frontend/protect.md - RBAC protection
+- backend/api.md - API endpoint
+- testing/verify.md - Mod verification
+- [8 more...]
 
-**Mod:** Create MD task files, verify Worker's work
-**Worker:** Execute MD tasks, create verification reports
+### Step 3: Start Working (1 minute)
 
-**Communication:** KISA ÖZ (emoji + dosya ref) → User, ULTRA DETAY → MD files
+**Mod:** Assign template + details (3 lines)
+**Worker:** Follow template, report (3 lines)
+
+**Communication:** ULTRA KISA! (emoji + 3 satır)
 
 ---
 
@@ -63,9 +67,10 @@ If Worker says "19" and you get "19" → ✅ VERIFIED
 If Worker says "19" and you get "5" → ❌ WORKER LIED - re-do!
 ```
 
-**Read your complete playbook:**
+**Read system core:**
 ```bash
-Read('docs/workflow/MOD-PLAYBOOK.md')
+Read('docs/workflow/ASANMOD-CORE.md')
+Read('docs/workflow/templates/README.md')
 ```
 
 ---
@@ -91,9 +96,10 @@ Read('docs/workflow/MOD-PLAYBOOK.md')
 Tek dosya = 1 commit. NO EXCEPTIONS!
 ```
 
-**Read your complete playbook:**
+**Read system core:**
 ```bash
-Read('docs/workflow/WORKER-PLAYBOOK.md')
+Read('docs/workflow/ASANMOD-CORE.md')
+Read('docs/workflow/templates/README.md')
 ```
 
 ---
@@ -502,6 +508,21 @@ grep -r "keyword" docs/ --include="*.md"
 ---
 
 ## 📋 VERSION HISTORY
+
+**v16.0 (2025-11-04):** 🚀 **TEMPLATE-BASED ASANMOD - 50x FASTER COORDINATION**
+- ✅ **ASANMOD-CORE.md:** Universal system (100 lines, replaces 8,000!)
+- ✅ **Template System:** 12 ready-to-use templates (widget, protect, api, verify, etc)
+- ✅ **3-Line Tasks:** "widget.md + details" (eski 500 satır yerine!)
+- ✅ **3-Line Reports:** "✅ Done + commit" (eski 800 satır yerine!)
+- ✅ **Reference Archive:** Eski playbook'lar optional deep dive olarak taşındı
+- ✅ **Puppeteer Integration:** Browser testing template'i sisteme entegre
+- ✅ **50x Faster:** User 5 dakika yerine 10 saniye copy-paste!
+- **Impact:** Koordinasyon süper hızlı, template'ler tekrar kullanılabilir
+- **Files:**
+  - ASANMOD-CORE.md (100 lines)
+  - templates/ (12 templates × 30-50 lines)
+  - reference/ (eski detaylı docs)
+  - QUICK-START.md (5 dakika onboarding)
 
 **v15.7 (2025-11-04):** 🔧 **W6 LESSONS LEARNED - Browser Test + apiClient MANDATORY**
 - ✅ **Rule 12 (WORKER):** Test in Target Environment (browser test MANDATORY for frontend!)
