@@ -48,9 +48,13 @@ router.post('/:id/chat', trackRequest, chatRateLimiter, hrManagers, async (req, 
       });
     }
 
-    // SUPER_ADMIN and ADMIN can access all analyses, others only their own
-    if (analysis.userId !== req.user.userId &&
-        !['ADMIN', 'SUPER_ADMIN'].includes(req.user.role)) {
+    // SUPER_ADMIN can access all analyses across all orgs
+    // ADMIN can access all analyses in their org
+    // Others can only access their own analyses
+    const userRole = req.user.role;
+    const canAccessAllInOrg = ['ADMIN', 'SUPER_ADMIN'].includes(userRole);
+
+    if (!canAccessAllInOrg && analysis.userId !== req.user.id) {
       return res.status(403).json({
         error: 'Forbidden',
         message: 'Bu analize erişim yetkiniz yok'
@@ -75,8 +79,20 @@ router.post('/:id/chat', trackRequest, chatRateLimiter, hrManagers, async (req, 
     });
   } catch (error) {
     console.error('Chat error:', error);
+
+    // Handle rate limit errors specifically
+    if (error.message && error.message.includes('429')) {
+      return res.status(429).json({
+        error: 'Rate Limit',
+        message: 'Gemini API rate limit aşıldı. Lütfen birkaç saniye bekleyin.',
+        details: error.message
+      });
+    }
+
+    // Generic error
     res.status(500).json({
       error: 'Chat failed',
+      message: 'Sohbet sırasında hata oluştu',
       details: error.message
     });
   }
