@@ -185,5 +185,5 @@ function TemplatesPage() {
 }
 
 export default withRoleProtection(TemplatesPage, {
-  allowedRoles: [UserRole.MANAGER, UserRole.ADMIN, UserRole.SUPER_ADMIN],
+  allowedRoles: [UserRole.HR_SPECIALIST, UserRole.MANAGER, UserRole.ADMIN, UserRole.SUPER_ADMIN],
 });

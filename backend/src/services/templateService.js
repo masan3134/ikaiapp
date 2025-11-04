@@ -14,6 +14,11 @@ const prisma = new PrismaClient();
  */
 async function createTemplate(data) {
   try {
+    // Validate required field: organizationId
+    if (!data.organizationId) {
+      throw new Error('organizationId is required for template creation');
+    }
+
     const template = await prisma.offerTemplate.create({
       data: {
         name: data.name,
@@ -28,14 +33,15 @@ async function createTemplate(data) {
         workType: data.workType || 'office',
         terms: data.terms || '',
         emailSubject: data.emailSubject || `İş Teklifi - ${data.position}`,
-        emailBody: data.emailBody || ''
+        emailBody: data.emailBody || '',
+        organizationId: data.organizationId  // ✅ Multi-tenant isolation!
       },
       include: {
         category: true
       }
     });
 
-    console.log(`✅ Template created: ${template.name}`);
+    console.log(`✅ Template created: ${template.name} (org: ${data.organizationId})`);
     return template;
   } catch (error) {
     console.error('❌ Create template error:', error);
@@ -49,9 +55,15 @@ async function createTemplate(data) {
  */
 async function getTemplates(filters = {}) {
   try {
-    const { categoryId, isActive, search } = filters;
+    const { categoryId, isActive, search, organizationId } = filters;
 
     const where = {};
+
+    // ✅ Multi-tenant isolation: organizationId filtering
+    if (organizationId) {
+      where.organizationId = organizationId;
+    }
+
     if (categoryId) where.categoryId = categoryId;
     if (isActive !== undefined) where.isActive = isActive;
     if (search) {
@@ -86,10 +98,17 @@ async function getTemplates(filters = {}) {
 /**
  * Get template by ID
  */
-async function getTemplateById(id) {
+async function getTemplateById(id, organizationId) {
   try {
-    const template = await prisma.offerTemplate.findUnique({
-      where: { id },
+    const where = { id };
+
+    // ✅ Multi-tenant isolation: Verify organizationId
+    if (organizationId) {
+      where.organizationId = organizationId;
+    }
+
+    const template = await prisma.offerTemplate.findFirst({
+      where,
       include: {
         category: true,
         offers: {
@@ -108,7 +127,7 @@ async function getTemplateById(id) {
     });
 
     if (!template) {
-      throw new Error('Template not found');
+      throw new Error('Template not found or access denied');
     }
 
     return template;
@@ -121,8 +140,18 @@ async function getTemplateById(id) {
 /**
  * Update template
  */
-async function updateTemplate(id, data) {
+async function updateTemplate(id, data, organizationId) {
   try {
+    // ✅ Multi-tenant isolation: Verify ownership before update
+    if (organizationId) {
+      const existing = await prisma.offerTemplate.findFirst({
+        where: { id, organizationId }
+      });
+      if (!existing) {
+        throw new Error('Template not found or access denied');
+      }
+    }
+
     const updateData = {};
     if (data.name !== undefined) updateData.name = data.name;
     if (data.description !== undefined) updateData.description = data.description;
@@ -158,11 +187,17 @@ async function updateTemplate(id, data) {
 /**
  * Delete template
  */
-async function deleteTemplate(id) {
+async function deleteTemplate(id, organizationId) {
   try {
+    // ✅ Multi-tenant isolation: Build where clause with organizationId
+    const where = { id };
+    if (organizationId) {
+      where.organizationId = organizationId;
+    }
+
     // Check if template is being used
-    const template = await prisma.offerTemplate.findUnique({
-      where: { id },
+    const template = await prisma.offerTemplate.findFirst({
+      where,
       include: {
         _count: {
           select: { offers: true }
@@ -170,7 +205,11 @@ async function deleteTemplate(id) {
       }
     });
 
-    if (template && template._count.offers > 0) {
+    if (!template) {
+      throw new Error('Template not found or access denied');
+    }
+
+    if (template._count.offers > 0) {
       throw new Error(`Cannot delete template. ${template._count.offers} offers are using this template.`);
     }
 
@@ -189,8 +228,18 @@ async function deleteTemplate(id) {
 /**
  * Activate/Deactivate template
  */
-async function toggleTemplateStatus(id, isActive) {
+async function toggleTemplateStatus(id, isActive, organizationId) {
   try {
+    // ✅ Multi-tenant isolation: Verify ownership before toggle
+    if (organizationId) {
+      const existing = await prisma.offerTemplate.findFirst({
+        where: { id, organizationId }
+      });
+      if (!existing) {
+        throw new Error('Template not found or access denied');
+      }
+    }
+
     const updated = await prisma.offerTemplate.update({
       where: { id },
       data: { isActive }

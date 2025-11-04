@@ -6,17 +6,17 @@ const { enforceOrganizationIsolation } = require('../middleware/organizationIsol
 const { authorize } = require('../middleware/authorize');
 const { ROLES } = require('../constants/roles');
 
-// Manager+ middleware (category management requires manager level or higher)
-const managersPlus = [authenticateToken, enforceOrganizationIsolation, authorize([ROLES.MANAGER, ROLES.ADMIN, ROLES.SUPER_ADMIN])];
+// HR Managers+ middleware (category management for HR and above)
+const hrManagersPlus = [authenticateToken, enforceOrganizationIsolation, authorize([ROLES.HR_SPECIALIST, ROLES.MANAGER, ROLES.ADMIN, ROLES.SUPER_ADMIN])];
 
 // Reorder (must be before /:id routes)
-router.patch('/reorder', managersPlus, categoryController.reorderCategories);
+router.patch('/reorder', hrManagersPlus, categoryController.reorderCategories);
 
 // CRUD operations
-router.post('/', managersPlus, categoryController.createCategory);
-router.get('/', managersPlus, categoryController.getCategories);
-router.get('/:id', managersPlus, categoryController.getCategoryById);
-router.put('/:id', managersPlus, categoryController.updateCategory);
-router.delete('/:id', managersPlus, categoryController.deleteCategory);
+router.post('/', hrManagersPlus, categoryController.createCategory);
+router.get('/', hrManagersPlus, categoryController.getCategories);
+router.get('/:id', hrManagersPlus, categoryController.getCategoryById);
+router.put('/:id', hrManagersPlus, categoryController.updateCategory);
+router.delete('/:id', hrManagersPlus, categoryController.deleteCategory);
 
 module.exports = router;

@@ -6,19 +6,19 @@ const { enforceOrganizationIsolation } = require('../middleware/organizationIsol
 const { authorize } = require('../middleware/authorize');
 const { ROLES } = require('../constants/roles');
 
-// Manager+ middleware (template management requires manager level or higher)
-const managersPlus = [authenticateToken, enforceOrganizationIsolation, authorize([ROLES.MANAGER, ROLES.ADMIN, ROLES.SUPER_ADMIN])];
+// HR Managers+ middleware (template management for HR and above)
+const hrManagersPlus = [authenticateToken, enforceOrganizationIsolation, authorize([ROLES.HR_SPECIALIST, ROLES.MANAGER, ROLES.ADMIN, ROLES.SUPER_ADMIN])];
 
 // CRUD operations
-router.post('/', managersPlus, templateController.createTemplate);
-router.get('/', managersPlus, templateController.getTemplates);
-router.get('/:id', managersPlus, templateController.getTemplateById);
-router.put('/:id', managersPlus, templateController.updateTemplate);
-router.delete('/:id', managersPlus, templateController.deleteTemplate);
+router.post('/', hrManagersPlus, templateController.createTemplate);
+router.get('/', hrManagersPlus, templateController.getTemplates);
+router.get('/:id', hrManagersPlus, templateController.getTemplateById);
+router.put('/:id', hrManagersPlus, templateController.updateTemplate);
+router.delete('/:id', hrManagersPlus, templateController.deleteTemplate);
 
 // Actions
-router.patch('/:id/activate', managersPlus, templateController.activateTemplate);
-router.patch('/:id/deactivate', managersPlus, templateController.deactivateTemplate);
-router.post('/:id/create-offer', managersPlus, templateController.createOfferFromTemplate);
+router.patch('/:id/activate', hrManagersPlus, templateController.activateTemplate);
+router.patch('/:id/deactivate', hrManagersPlus, templateController.deactivateTemplate);
+router.post('/:id/create-offer', hrManagersPlus, templateController.createOfferFromTemplate);
 
 module.exports = router;
