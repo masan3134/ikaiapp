@@ -8,7 +8,10 @@ async function exportAnalysisToExcel(req, res) {
   try {
     const { id } = req.params;
 
-    const workbook = await exportToExcel(id, req.organizationId);
+    // SUPER_ADMIN can export all analyses (no organizationId filter)
+    const organizationIdFilter = req.userRole === 'SUPER_ADMIN' ? null : req.organizationId;
+
+    const workbook = await exportToExcel(id, organizationIdFilter);
 
     res.setHeader(
       'Content-Type',
@@ -46,7 +49,10 @@ async function exportAnalysisToCSV(req, res) {
   try {
     const { id } = req.params;
 
-    const csv = await exportToCSV(id, req.organizationId);
+    // SUPER_ADMIN can export all analyses (no organizationId filter)
+    const organizationIdFilter = req.userRole === 'SUPER_ADMIN' ? null : req.organizationId;
+
+    const csv = await exportToCSV(id, organizationIdFilter);
 
     res.setHeader('Content-Type', 'text/csv; charset=utf-8');
     res.setHeader(
@@ -83,7 +89,10 @@ async function exportAnalysisToHTML(req, res) {
   try {
     const { id } = req.params;
 
-    const html = await exportToHTML(id, req.organizationId);
+    // SUPER_ADMIN can export all analyses (no organizationId filter)
+    const organizationIdFilter = req.userRole === 'SUPER_ADMIN' ? null : req.organizationId;
+
+    const html = await exportToHTML(id, organizationIdFilter);
 
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.send(html);
