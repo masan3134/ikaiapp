@@ -13,20 +13,20 @@ const transporter = nodemailer.createTransport({
 /**
  * Send analysis via email with attachments
  */
-async function sendAnalysisEmail(analysisId, recipientEmail, formats = ['html']) {
+async function sendAnalysisEmail(analysisId, recipientEmail, formats = ['html'], organizationId = null) {
   const attachments = [];
 
   // Generate requested formats
   for (const format of formats) {
     if (format === 'html') {
-      const html = await exportToHTML(analysisId);
+      const html = await exportToHTML(analysisId, organizationId);
       attachments.push({
         filename: `analiz-${analysisId}.html`,
         content: html,
         contentType: 'text/html; charset=utf-8'
       });
     } else if (format === 'xlsx') {
-      const workbook = await exportToExcel(analysisId);
+      const workbook = await exportToExcel(analysisId, organizationId);
       const buffer = await workbook.xlsx.writeBuffer();
       attachments.push({
         filename: `analiz-${analysisId}.xlsx`,
@@ -34,7 +34,7 @@ async function sendAnalysisEmail(analysisId, recipientEmail, formats = ['html'])
         contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
       });
     } else if (format === 'csv') {
-      const csv = await exportToCSV(analysisId);
+      const csv = await exportToCSV(analysisId, organizationId);
       attachments.push({
         filename: `analiz-${analysisId}.csv`,
         content: Buffer.from('\uFEFF' + csv, 'utf-8'),

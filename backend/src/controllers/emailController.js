@@ -51,8 +51,8 @@ async function sendAnalysisEmail(req, res) {
       });
     }
 
-    // Send email directly
-    const result = await sendEmail(id, recipientEmail, formats);
+    // Send email directly with organizationId for security
+    const result = await sendEmail(id, recipientEmail, formats, req.organizationId);
 
     console.log(`📧 Email sent for analysis ${id} to ${recipientEmail}`, result);
 
