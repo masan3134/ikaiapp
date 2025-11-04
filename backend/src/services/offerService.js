@@ -221,7 +221,7 @@ async function requestApproval(offerId, userId) {
     data: { approvalStatus: ApprovalStatus.pending },
   });
 
-  notificationService.notifyManagerOfApprovalRequest(offer);
+  // TODO: notificationService.notifyManagerOfApprovalRequest(offer);
   await revisionService.createRevision(offerId, 'approval_requested', userId);
   return updatedOffer;
 }
@@ -330,14 +330,9 @@ async function _sendOfferNotification(offer, sendMode) {
       return { emailSent: false, emailError };
     }
   } else {
-    // Notify managers that a new draft offer needs approval
-    try {
-      await notificationService.notifyManagerOfApprovalRequest(offer);
-      console.log(`✅ Managers notified of new offer draft for approval`);
-    } catch (notifError) {
-      console.error('❌ Error notifying managers:', notifError);
-      // Don't fail the whole operation if notification fails
-    }
+    // TODO: Notify managers that a new draft offer needs approval
+    // notificationService.notifyManagerOfApprovalRequest(offer);
+    console.log(`📝 Offer created as draft (approval workflow not implemented yet)`);
     return { emailSent: null };
   }
 }
