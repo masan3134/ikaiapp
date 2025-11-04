@@ -1,6 +1,6 @@
 # 👷 Worker Claude Playbook - Complete Guide
 
-**Version:** 2.2 (AsanMod v15.6 - Python First)
+**Version:** 2.3 (AsanMod v15.7 - W6 Lessons Learned)
 **Last Updated:** 2025-11-04
 **Your Role:** WORKER CLAUDE (Executor)
 
@@ -846,6 +846,295 @@ r = requests.get('http://localhost:8102/api/v1/dashboard/user',
 ```
 
 This is LAW. curl is BANNED for API work. Python ONLY.
+```
+
+### Rule 12: Test in Target Environment - MANDATORY!
+```
+🚨 CRITICAL: Backend changes? Test with Python. Frontend changes? Test in BROWSER!
+
+W6 Discovered Bug:
+- W4 claimed "Build: SUCCESS" but build FAILED when W6 tested!
+- W5 claimed "Console: CLEAN" but console had 5+ errors!
+- Root cause: Workers didn't actually test in target environment!
+
+❌ WRONG Workflow (W4's Mistake):
+1. Edit component
+2. Add import { Card } from '@nextui-org/react'
+3. git commit "feat: new component"
+4. Report "Build SUCCESS ✅"
+5. (Never ran npm run build!)
+
+✅ RIGHT Workflow:
+1. Edit component
+2. If added import → npm install (check node_modules!)
+3. npm run build (verify it compiles!)
+4. Open http://localhost:8103/your-page
+5. Open DevTools (F12) → Console tab
+6. Look for errors (red text)
+7. If errors → FIX before commit!
+8. If clean → git commit
+9. Report "Working ✅ (tested: build + browser console)"
+
+Test Checklist:
+
+Backend API changes:
+- [ ] Tested with Python requests
+- [ ] Status code 200?
+- [ ] Response data correct?
+- [ ] No 401/403/500 errors?
+
+Frontend page changes:
+- [ ] Opened in browser (http://localhost:8103/page)
+- [ ] Console open (F12) - checked for errors
+- [ ] Network tab checked - no failed requests
+- [ ] Data loads correctly
+- [ ] No ERR_NAME_NOT_RESOLVED
+- [ ] No 401 Unauthorized
+
+Dependency changes:
+- [ ] npm install completed
+- [ ] node_modules/package-name exists
+- [ ] npm run build succeeded
+- [ ] Docker container restarted
+- [ ] Browser console clean
+
+If ANY step fails → DON'T commit! Fix first!
+```
+
+### Rule 13: API Standard - Use apiClient, NOT fetch()!
+```
+🚨 CRITICAL: All API calls MUST use apiClient (project standard!)
+
+W6 Discovered Bug:
+- 6 files used native fetch() (W4, W5)
+- Manual token handling (error-prone!)
+- No auto 401 redirect
+- Inconsistent code (maintenance nightmare!)
+
+❌ FORBIDDEN (native fetch):
+const token = localStorage.getItem("auth_token");
+const res = await fetch(`${API_URL}/api/v1/endpoint`, {
+  headers: { Authorization: `Bearer ${token}` }
+});
+const data = await res.json();
+
+✅ REQUIRED (apiClient):
+import apiClient from '@/lib/services/apiClient';
+
+const res = await apiClient.get('/api/v1/endpoint');
+const data = res.data; // Token added automatically!
+
+Why apiClient?
+
+1. ✅ Auto-adds Authorization header (no manual token!)
+2. ✅ Auto-redirects to /login on 401
+3. ✅ Centralized error handling
+4. ✅ Consistent code (easier to maintain)
+5. ✅ Less boilerplate
+6. ✅ Axios response format (res.data)
+
+apiClient Patterns (Copy-Paste):
+
+// GET
+const res = await apiClient.get('/api/v1/users');
+const users = res.data.data; // API returns {success, data}
+
+// POST
+const res = await apiClient.post('/api/v1/users', {
+  name: 'John',
+  email: 'john@example.com'
+});
+
+// PATCH
+const res = await apiClient.patch('/api/v1/users/123', {
+  name: 'Jane'
+});
+
+// DELETE
+await apiClient.delete('/api/v1/users/123');
+
+// With error handling
+try {
+  const res = await apiClient.get('/api/v1/users');
+  setUsers(res.data.data);
+} catch (error) {
+  console.error('Failed to fetch users:', error);
+  // apiClient already redirected to /login if 401!
+}
+
+When is fetch() allowed?
+
+❌ NEVER for backend API calls (/api/v1/*)
+✅ OK for external APIs (Google Maps, Stripe, etc.)
+✅ OK for non-authenticated public endpoints (very rare!)
+
+Before committing frontend code:
+
+1. Search your file for "fetch("
+2. If found → Replace with apiClient!
+3. Verify import: import apiClient from '@/lib/services/apiClient';
+4. Test in browser (console should be clean)
+```
+
+### Rule 14: Dependency Installation Protocol - If You Import, INSTALL!
+```
+🚨 CRITICAL: Adding import ≠ Dependency installed!
+
+W6 Discovered Bug (W4's CRITICAL Mistake):
+- W4 added: import { Card } from '@nextui-org/react';
+- W4 added to package.json: "@nextui-org/react": "^2.6.11"
+- W4 NEVER ran: npm install
+- Result: Build COMPLETELY FAILED for everyone! 🔴
+- W6 had to install 271 packages!
+
+Wrong Workflow (DON'T DO THIS!):
+1. ❌ Add to package.json manually
+2. ❌ Add import statement
+3. ❌ git commit
+4. ❌ (Build fails!)
+
+Right Workflow:
+
+Step 1: Check if installed
+```bash
+ls node_modules/@nextui-org/react
+# If "No such file" → Continue to Step 2
+```
+
+Step 2: Install dependency
+```bash
+npm install @nextui-org/react@^2.6.11
+# This updates package.json AND installs to node_modules
+```
+
+Step 3: Verify installation
+```bash
+ls node_modules/@nextui-org/react
+# Should exist now ✅
+```
+
+Step 4: Test build
+```bash
+npm run build
+# Should succeed ✅
+```
+
+Step 5: Commit BOTH files
+```bash
+git add package.json package-lock.json
+git commit -m "feat: Add @nextui-org/react dependency
+
+Installed for ADMIN dashboard components
+Version: ^2.6.11
+Verified: npm run build passes"
+```
+
+Step 6: Restart Docker
+```bash
+docker restart ikai-frontend
+# Container needs to pick up new dependency!
+```
+
+Step 7: Verify in Docker
+```bash
+docker exec ikai-frontend ls /app/node_modules/@nextui-org/react
+# Should exist ✅
+```
+
+Dependency Checklist (BEFORE COMMIT):
+
+- [ ] Ran npm install locally
+- [ ] Verified node_modules/package-name exists
+- [ ] Ran npm run build (0 errors?)
+- [ ] Build succeeded
+- [ ] Committed package.json + package-lock.json TOGETHER
+- [ ] Restarted Docker container
+- [ ] Verified Docker container has dependency
+- [ ] Opened browser, checked console (no import errors?)
+
+If ANY step fails → DON'T COMMIT! Fix first!
+
+Common mistake:
+❌ Edit package.json manually, add import, commit
+✅ npm install, verify, build, then commit
+```
+
+### Rule 15: Browser vs Docker Context - Know Where Your Code Runs!
+```
+🚨 CRITICAL: Browser code CANNOT access Docker internal hostnames!
+
+W6 Discovered Bug (W5's CRITICAL Mistake):
+- docker-compose.yml had: NEXT_PUBLIC_API_URL=http://ikai-backend:3001
+- Browser tried: GET http://ikai-backend:3001/api/v1/...
+- Result: ERR_NAME_NOT_RESOLVED (browser can't resolve Docker names!)
+- ALL super-admin pages failed! 🔴
+
+Docker Network Architecture:
+
+┌─────────────────────────────────────────┐
+│  Docker Network (ikai-network)          │
+│                                         │
+│  ┌──────────────┐    ┌──────────────┐  │
+│  │ ikai-backend │◄───┤ ikai-frontend│  │
+│  │  :3001       │    │  :3000       │  │
+│  └──────────────┘    └──────────────┘  │
+│         ▲                               │
+│         │ ✅ SSR can use "ikai-backend" │
+└─────────┼───────────────────────────────┘
+          │
+          ▼
+    ❌ Browser CANNOT use "ikai-backend"!
+
+Port Forwarding (Host → Docker):
+
+docker-compose.yml maps:
+- localhost:8102 → ikai-backend:3001
+- localhost:8103 → ikai-frontend:3000
+- localhost:8132 → ikai-postgres:5432
+
+Browser runs on HOST machine:
+✅ CAN access: localhost:8102
+❌ CANNOT access: ikai-backend:3001
+
+Environment Variables:
+
+❌ WRONG (for browser code):
+NEXT_PUBLIC_API_URL=http://ikai-backend:3001  # Browser can't resolve!
+
+✅ RIGHT (for browser code):
+NEXT_PUBLIC_API_URL=http://localhost:8102     # Browser can access!
+
+Why NEXT_PUBLIC_* is browser code:
+- Next.js exposes NEXT_PUBLIC_* to client-side
+- Browser executes client-side code
+- Browser runs on host, not in Docker!
+
+When to use Docker hostnames:
+
+✅ Server-side (Next.js SSR, API routes):
+// In getServerSideProps or API route:
+fetch('http://ikai-backend:3001/api/v1/users')  ← OK! (runs in Docker)
+
+❌ Client-side (useEffect, onClick, browser):
+// In component:
+fetch('http://ikai-backend:3001/api/v1/users')  ← FAILS! (runs in browser)
+
+How to test:
+
+After changing docker-compose.yml:
+1. docker-compose down
+2. docker-compose up -d
+3. Open http://localhost:8103
+4. Open DevTools (F12) → Console
+5. Look for ERR_NAME_NOT_RESOLVED
+6. If found → You used Docker hostname in browser code!
+
+Quick reference:
+
+Browser code → Use localhost ports
+SSR code → Can use Docker hostnames
+Database connections → Use Docker hostnames (backend only!)
+API calls from browser → Use localhost:8102
 ```
 
 ---

@@ -1,6 +1,6 @@
 # 🤖 IKAI HR Platform - Development Guide
 
-**Version:** 15.6 - Python First (curl BANNED for API testing)
+**Version:** 15.7 - W6 Lessons Learned (Browser Test + apiClient MANDATORY)
 **Updated:** 2025-11-04 (NO Placeholder, NO Mock, NO TODO - ALL Tasks!)
 **Environment:** Docker Isolated Development (Hot Reload Enabled)
 **Context:** 1M Tokens (Sonnet 4.5) - Full Detail Mode Until 700K
@@ -499,6 +499,19 @@ grep -r "keyword" docs/ --include="*.md"
 ---
 
 ## 📋 VERSION HISTORY
+
+**v15.7 (2025-11-04):** 🔧 **W6 LESSONS LEARNED - Browser Test + apiClient MANDATORY**
+- ✅ **Rule 12 (WORKER):** Test in Target Environment (browser test MANDATORY for frontend!)
+- ✅ **Rule 13 (WORKER):** ALWAYS use apiClient (NO native fetch!)
+- ✅ **Rule 14 (WORKER):** Dependency Installation Protocol (npm install verification)
+- ✅ **Rule 15 (WORKER):** Browser vs Docker Context (localhost for browser!)
+- ✅ **W4 Feedback:** Critical error - Missing dependency broke build
+- ✅ **W5 Feedback:** Critical errors - Docker hostname + missing auth tokens (5+ console errors)
+- ✅ **W6 Integration:** Debugger & Build Master role proven essential
+- **WORKER-PLAYBOOK:** v2.2 → v2.3 (+289 lines)
+- **Feedback docs:** W4 + W5 critical error reports
+- **Impact:** Prevent build failures, enforce browser testing, standardize apiClient
+- **Lesson:** 2/5 workers failed (W4, W5) - Playbook improvements prevent future failures
 
 **v15.6 (2025-11-04):** 🐍 **PYTHON FIRST - curl BANNED**
 - ✅ **Rule 11 (MOD & WORKER):** Python MANDATORY for ALL API testing

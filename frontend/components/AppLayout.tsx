@@ -23,6 +23,16 @@ import {
   Settings,
   Calendar,
   UserCog, // NEW: For Takım icon
+  HelpCircle, // W1: Help page
+  Bell, // W1: Notifications
+  User, // W1: Profile settings
+  CreditCard, // W1: Billing settings
+  BellRing, // W1: Notification settings
+  Building2, // W1: Super Admin - Organizations
+  ListChecks, // W1: Super Admin - Queues
+  FileWarning, // W1: Super Admin - Security Logs
+  Activity, // W1: Super Admin - System Health
+  TrendingUp, // W1: Offers Analytics
 } from "lucide-react";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import NotificationBell from "@/components/notifications/NotificationBell";
@@ -65,35 +75,42 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       icon: LayoutDashboard,
       show: true, // All roles can see dashboard
     },
-    // 2. İş İlanları (start of hiring workflow)
+    // 2. Bildirimler (notifications - W1 added)
+    {
+      name: "Bildirimler",
+      path: "/notifications",
+      icon: Bell,
+      show: true, // All users can see notifications
+    },
+    // 3. İş İlanları (start of hiring workflow)
     {
       name: "İş İlanları",
       path: "/job-postings",
       icon: Briefcase,
       show: canViewJobPostings(userRole),
     },
-    // 3. Adaylar (candidates apply to job postings)
+    // 4. Adaylar (candidates apply to job postings)
     {
       name: "Adaylar",
       path: "/candidates",
       icon: Users,
       show: canViewCandidates(userRole),
     },
-    // 4. Analiz Sihirbazı (analyze candidates)
+    // 5. Analiz Sihirbazı (analyze candidates)
     {
       name: "Analiz Sihirbazı",
       path: "/wizard",
       icon: Wand2,
       show: canViewAnalyses(userRole),
     },
-    // 5. Geçmiş Analizlerim (past analyses)
+    // 6. Geçmiş Analizlerim (past analyses)
     {
       name: "Geçmiş Analizlerim",
       path: "/analyses",
       icon: Clock,
       show: canViewAnalyses(userRole),
     },
-    // 6. Teklifler (make offers to best candidates)
+    // 7. Teklifler (make offers to best candidates) - W1 added analytics + fixed templates path
     {
       name: "Teklifler",
       path: "/offers",
@@ -114,39 +131,123 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         },
         {
           name: "Şablonlar",
-          path: "/offer-templates",
+          path: "/offers/templates", // W1 FIXED: was /offer-templates
           icon: Layers,
           show: canViewAnalytics(userRole), // Only MANAGER+ can manage templates
         },
+        {
+          name: "Analitik",
+          path: "/offers/analytics", // W1 ADDED
+          icon: TrendingUp,
+          show: canViewAnalytics(userRole), // Only MANAGER+ analytics
+        },
       ],
     },
-    // 7. Mülakatlar (interview scheduled candidates)
+    // 8. Mülakatlar (interview scheduled candidates)
     {
       name: "Mülakatlar",
       path: "/interviews",
       icon: Calendar,
       show: canViewInterviews(userRole),
     },
-    // 8. Takım (team management)
+    // 9. Takım (team management)
     {
       name: "Takım",
       path: "/team",
       icon: UserCog, // CHANGED from Users to UserCog (avoid conflict with Adaylar)
       show: canViewTeam(userRole),
     },
-    // 9. Analitik (analytics & reports)
+    // 10. Analitik (analytics & reports)
     {
       name: "Analitik",
       path: "/analytics",
       icon: BarChart3,
       show: canViewAnalytics(userRole),
     },
-    // 10. Ayarlar (settings - always last)
+    // 11. Super Admin (W1 ADDED - only for SUPER_ADMIN role)
+    {
+      name: "Sistem Yönetimi",
+      path: "/super-admin/organizations", // Default to organizations
+      icon: Shield,
+      show: isSuperAdmin(userRole),
+      submenu: [
+        {
+          name: "Organizasyonlar",
+          path: "/super-admin/organizations",
+          icon: Building2,
+          show: isSuperAdmin(userRole),
+        },
+        {
+          name: "Kuyruk Yönetimi",
+          path: "/super-admin/queues",
+          icon: ListChecks,
+          show: isSuperAdmin(userRole),
+        },
+        {
+          name: "Güvenlik Logları",
+          path: "/super-admin/security-logs",
+          icon: FileWarning,
+          show: isSuperAdmin(userRole),
+        },
+        {
+          name: "Sistem Sağlığı",
+          path: "/super-admin/system-health",
+          icon: Activity,
+          show: isSuperAdmin(userRole),
+        },
+      ],
+    },
+    // 12. Yardım (W1 ADDED - help & support)
+    {
+      name: "Yardım",
+      path: "/help",
+      icon: HelpCircle,
+      show: true, // All users can access help
+    },
+    // 13. Ayarlar (W1 UPDATED - converted to submenu, always last)
     {
       name: "Ayarlar",
-      path: "/settings/organization",
+      path: "/settings/overview", // Default to overview
       icon: Settings,
       show: true, // All roles can access settings (but tabs differ)
+      submenu: [
+        {
+          name: "Genel Bakış",
+          path: "/settings/overview",
+          icon: Settings,
+          show: true,
+        },
+        {
+          name: "Profil",
+          path: "/settings/profile",
+          icon: User,
+          show: true, // All users can edit their profile
+        },
+        {
+          name: "Güvenlik",
+          path: "/settings/security",
+          icon: Shield,
+          show: true, // All users can change password
+        },
+        {
+          name: "Bildirim Tercihleri",
+          path: "/settings/notifications",
+          icon: BellRing,
+          show: true, // All users can manage notification preferences
+        },
+        {
+          name: "Organizasyon",
+          path: "/settings/organization",
+          icon: Building2,
+          show: canViewAnalytics(userRole), // Only MANAGER+ can edit organization
+        },
+        {
+          name: "Fatura & Plan",
+          path: "/settings/billing",
+          icon: CreditCard,
+          show: canViewAnalytics(userRole), // Only MANAGER+ can manage billing
+        },
+      ],
     },
   ];
 
