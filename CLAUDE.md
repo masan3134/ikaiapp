@@ -1,6 +1,6 @@
 # 🤖 IKAI HR Platform - Development Guide
 
-**Version:** 15.5 - AsanMod Universal Production-Ready Delivery
+**Version:** 15.6 - Python First (curl BANNED for API testing)
 **Updated:** 2025-11-04 (NO Placeholder, NO Mock, NO TODO - ALL Tasks!)
 **Environment:** Docker Isolated Development (Hot Reload Enabled)
 **Context:** 1M Tokens (Sonnet 4.5) - Full Detail Mode Until 700K
@@ -181,6 +181,7 @@ Read('docs/workflow/WORKER-PLAYBOOK.md')
 **Rule 4: HOT RELOAD ON** - Backend (nodemon), Frontend (Next.js dev)
 **Rule 5: NO ROOT FILES** - Use `docs/` for documentation
 **Rule 6: READ YOUR PLAYBOOK** - MOD-PLAYBOOK.md or WORKER-PLAYBOOK.md
+**Rule 7: PYTHON FIRST** - NEVER use curl for API testing! Use Python requests (see MOD/WORKER playbooks Rule 11)
 
 **Gemini Helper:**
 ```bash
@@ -498,6 +499,18 @@ grep -r "keyword" docs/ --include="*.md"
 ---
 
 ## 📋 VERSION HISTORY
+
+**v15.6 (2025-11-04):** 🐍 **PYTHON FIRST - curl BANNED**
+- ✅ **Rule 11 (MOD & WORKER):** Python MANDATORY for ALL API testing
+- ✅ **curl BANNED:** No more escaping hell, subshell errors, syntax issues
+- ✅ **Ready-to-use Templates:** Login, dashboard, multi-role testing (copy-paste!)
+- ✅ **Verification Standards:** Python commands Mod can re-run
+- ✅ **Why Python:** No JSON escaping, readable, debuggable, consistent
+- **MOD-PLAYBOOK:** v2.1 → v2.2 (+103 lines Python templates)
+- **WORKER-PLAYBOOK:** v2.1 → v2.2 (+143 lines Python templates)
+- **CLAUDE.md:** Rule 7 added (Python First)
+- **Total:** +246 lines of Python verification infrastructure
+- **Impact:** Zero curl syntax errors, reliable API testing, better verification workflow
 
 **v15.5 (2025-11-04):** 🔄 **ASANMOD UNIVERSAL PRODUCTION-READY DELIVERY**
 - ✅ **Rule 8 (UNIVERSAL):** NO Placeholder, NO Mock, NO TODO - Tüm görev türleri için!

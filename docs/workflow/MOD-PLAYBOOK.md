@@ -1,6 +1,6 @@
 # 🎯 Mod Claude Playbook - Complete Guide
 
-**Version:** 2.1 (AsanMod v15.5)
+**Version:** 2.2 (AsanMod v15.6 - Python First)
 **Last Updated:** 2025-11-04
 **Your Role:** MASTER CLAUDE (Coordinator & Verifier)
 
@@ -367,6 +367,109 @@ Decision Matrix:
 3/4 MATCH → ⚠️ MINOR ISSUE (Worker mostly honest, small mistake)
 2/4 MATCH → ❌ REJECT (Worker careless or lying)
 0-1/4 MATCH → ❌ REJECT + RE-DO (Worker completely dishonest)
+```
+
+### Rule 11: Python First - NEVER Use curl!
+```
+🚨 MANDATORY: Use Python for ALL API testing and verification!
+
+❌ FORBIDDEN:
+curl http://localhost:8102/api/v1/dashboard/user
+curl -X POST ... -d '{"key":"value"}'  # Escaping hell!
+TOKEN=$(curl ...) # Subshell syntax errors!
+
+✅ REQUIRED:
+import requests
+
+# Login
+r = requests.post('http://localhost:8102/api/v1/auth/login',
+                  json={'email': 'info@gaiai.ai', 'password': '23235656'})
+token = r.json()['token']
+
+# Test endpoint
+r = requests.get('http://localhost:8102/api/v1/dashboard/super-admin',
+                 headers={'Authorization': f'Bearer {token}'})
+data = r.json()
+
+Why Python?
+✅ No escaping issues (JSON handling automatic)
+✅ No subshell syntax errors
+✅ Readable and maintainable
+✅ Easy error handling
+✅ Consistent with test infrastructure (test-helper.py)
+
+When curl is ALLOWED:
+✅ Simple health checks: curl -s http://localhost:8102/health
+✅ File downloads: curl -O https://example.com/file.zip
+❌ NEVER for JSON API testing!
+
+Python Verification Template (Copy-Paste):
+
+```python
+import requests
+
+BASE = 'http://localhost:8102'
+
+# Worker claimed: "23 Prisma queries"
+# Mod verification:
+
+# 1. Login
+r = requests.post(f'{BASE}/api/v1/auth/login',
+                  json={'email': 'test-hr_specialist@test-org-2.com',
+                        'password': 'TestPass123!'})
+token = r.json()['token']
+
+# 2. Test endpoint
+r = requests.get(f'{BASE}/api/v1/dashboard/hr-specialist',
+                 headers={'Authorization': f'Bearer {token}'})
+
+if r.status_code == 200:
+    data = r.json()
+    print(f"✅ API OK - Fields: {len(data.get('data', {}).keys())}")
+else:
+    print(f"❌ API FAILED - {r.status_code}: {r.text[:100]}")
+```
+
+Mod Verification - 5 Dashboards (Ready-to-use):
+
+```python
+import requests
+
+BASE = 'http://localhost:8102'
+
+tests = [
+    ('info@gaiai.ai', '23235656', 'super-admin', 'SUPER_ADMIN'),
+    ('test-admin@test-org-1.com', 'TestPass123!', 'admin', 'ADMIN'),
+    ('test-hr_specialist@test-org-2.com', 'TestPass123!', 'hr-specialist', 'HR'),
+    ('test-manager@test-org-2.com', 'TestPass123!', 'manager', 'MANAGER'),
+    ('test-user@test-org-1.com', 'TestPass123!', 'user', 'USER'),
+]
+
+print('=' * 60)
+print('DASHBOARD VERIFICATION - 5 ROLES')
+print('=' * 60)
+
+for email, pwd, endpoint, role in tests:
+    # Login
+    login = requests.post(f'{BASE}/api/v1/auth/login',
+                         json={'email': email, 'password': pwd})
+    token = login.json().get('token')
+
+    if not token:
+        print(f'❌ {role:15} - Login failed')
+        continue
+
+    # Test dashboard
+    dash = requests.get(f'{BASE}/api/v1/dashboard/{endpoint}',
+                        headers={'Authorization': f'Bearer {token}'})
+
+    if dash.status_code == 200 and dash.json().get('success'):
+        print(f'✅ {role:15} - Dashboard OK')
+    else:
+        print(f'❌ {role:15} - FAILED: {dash.text[:60]}')
+```
+
+This is LAW. No exceptions. Python ONLY.
 ```
 
 ---

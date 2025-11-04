@@ -1,6 +1,6 @@
 # 👷 Worker Claude Playbook - Complete Guide
 
-**Version:** 2.1 (AsanMod v15.5)
+**Version:** 2.2 (AsanMod v15.6 - Python First)
 **Last Updated:** 2025-11-04
 **Your Role:** WORKER CLAUDE (Executor)
 
@@ -703,6 +703,149 @@ Bu yüzden:
 - ✅ GERÇEK komutları çalıştır
 - ✅ GERÇEK sonuçları yaz
 - ✅ Mod doğrulayabilsin diye LINE NUMBER'ları ver
+```
+
+### Rule 11: Python First - NEVER Use curl!
+```
+🚨 MANDATORY: Use Python for ALL API testing and integration work!
+
+❌ FORBIDDEN:
+curl http://localhost:8102/api/v1/dashboard/user
+curl -X POST ... -d '{"key":"value"}'  # Syntax hell!
+TOKEN=$(curl ...) # Subshell errors!
+
+✅ REQUIRED:
+import requests
+
+# Login
+r = requests.post('http://localhost:8102/api/v1/auth/login',
+                  json={'email': 'test-user@test-org-1.com',
+                        'password': 'TestPass123!'})
+token = r.json()['token']
+
+# Test your endpoint
+r = requests.get('http://localhost:8102/api/v1/dashboard/user',
+                 headers={'Authorization': f'Bearer {token}'})
+data = r.json()
+
+Why Python?
+✅ No JSON escaping issues
+✅ No subshell syntax errors
+✅ Readable for Mod verification
+✅ Easy debugging
+✅ Consistent with test infrastructure
+
+When curl is ALLOWED:
+✅ Simple checks: curl -s http://localhost:8102/health
+❌ NEVER for JSON API testing!
+
+Worker API Testing Template:
+
+```python
+import requests
+
+BASE = 'http://localhost:8102'
+
+# Test your dashboard implementation
+print('=' * 60)
+print('USER DASHBOARD API TEST')
+print('=' * 60)
+
+# 1. Login
+login = requests.post(f'{BASE}/api/v1/auth/login',
+                     json={'email': 'test-user@test-org-1.com',
+                           'password': 'TestPass123!'})
+
+if login.status_code != 200:
+    print(f'❌ Login FAILED: {login.text}')
+    exit(1)
+
+token = login.json()['token']
+print('✅ Login OK')
+
+# 2. Test dashboard endpoint
+dash = requests.get(f'{BASE}/api/v1/dashboard/user',
+                   headers={'Authorization': f'Bearer {token}'})
+
+if dash.status_code == 200:
+    data = dash.json()
+
+    # Verify structure
+    assert data.get('success') == True, "success field missing!"
+    assert 'data' in data, "data field missing!"
+
+    # Count fields (Mod will verify!)
+    field_count = len(data['data'].keys())
+    print(f'✅ Dashboard API OK')
+    print(f'   Fields: {field_count}')
+    print(f'   Response keys: {list(data["data"].keys())}')
+else:
+    print(f'❌ Dashboard FAILED: {dash.status_code}')
+    print(f'   Error: {dash.text[:200]}')
+    exit(1)
+```
+
+Multi-Role Testing (for complex tasks):
+
+```python
+import requests
+
+BASE = 'http://localhost:8102'
+
+# Test all roles your task affects
+tests = [
+    ('test-user@test-org-1.com', 'TestPass123!', 'user', 'USER'),
+    ('test-hr_specialist@test-org-2.com', 'TestPass123!', 'hr-specialist', 'HR'),
+]
+
+for email, pwd, endpoint, role in tests:
+    print(f'\nTesting {role}...')
+
+    # Login
+    login = requests.post(f'{BASE}/api/v1/auth/login',
+                         json={'email': email, 'password': pwd})
+    token = login.json().get('token')
+
+    if not token:
+        print(f'❌ {role} - Login failed')
+        continue
+
+    # Test endpoint
+    dash = requests.get(f'{BASE}/api/v1/dashboard/{endpoint}',
+                       headers={'Authorization': f'Bearer {token}'})
+
+    if dash.status_code == 200 and dash.json().get('success'):
+        print(f'✅ {role} - Dashboard OK')
+    else:
+        print(f'❌ {role} - FAILED: {dash.text[:100]}')
+```
+
+Verification Report Format:
+
+When you test APIs, include Python commands Mod can re-run:
+
+❌ WRONG:
+"API test passed ✅"
+
+✅ RIGHT:
+```python
+# Test command (Mod can copy-paste):
+import requests
+r = requests.post('http://localhost:8102/api/v1/auth/login',
+                  json={'email': 'test-user@test-org-1.com',
+                        'password': 'TestPass123!'})
+token = r.json()['token']
+
+r = requests.get('http://localhost:8102/api/v1/dashboard/user',
+                 headers={'Authorization': f'Bearer {token}'})
+
+# Output:
+# Status: 200
+# success: True
+# Fields: 6
+```
+
+This is LAW. curl is BANNED for API work. Python ONLY.
 ```
 
 ---
