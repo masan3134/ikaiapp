@@ -8,8 +8,16 @@ import InterviewWizard from '@/components/interviews/InterviewWizard';
 import InterviewStats from '@/components/interviews/InterviewStats';
 import InterviewList from '@/components/interviews/InterviewList';
 import interviewService from '@/lib/services/interviewService';
+import { useAuthStore } from '@/lib/store/authStore';
+import {
+  canScheduleInterview,
+  canEditInterview,
+  canDeleteInterview
+} from '@/lib/utils/rbac';
 
 function InterviewsPage() {
+  const { user } = useAuthStore();
+  const userRole = user?.role;
   const [wizardOpen, setWizardOpen] = useState(false);
   const [stats, setStats] = useState({ total: 0, scheduled: 0, completed: 0, cancelled: 0 });
   const [interviews, setInterviews] = useState([]);
@@ -127,13 +135,15 @@ function InterviewsPage() {
               <option value="cancelled">İptal Edilen</option>
             </select>
 
-            <button 
-              onClick={() => setWizardOpen(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              <Plus size={20} />
-              <span>Yeni Mülakat</span>
-            </button>
+            {canScheduleInterview(userRole) && (
+              <button
+                onClick={() => setWizardOpen(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                <Plus size={20} />
+                <span>Yeni Mülakat</span>
+              </button>
+            )}
           </div>
         </div>
       </div>

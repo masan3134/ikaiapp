@@ -17,8 +17,16 @@ import { Eye, Plus, Send, Trash2, CheckSquare, Square } from 'lucide-react';
 import Link from 'next/link';
 import { withRoleProtection } from '@/lib/hoc/withRoleProtection';
 import { RoleGroups } from '@/lib/constants/roles';
+import { useAuthStore } from '@/lib/store/authStore';
+import {
+  canCreateOffer,
+  canEditOffer,
+  canDeleteOffer
+} from '@/lib/utils/rbac';
 
 function OffersPage() {
+  const { user } = useAuthStore();
+  const userRole = user?.role;
   const [offers, setOffers] = useState<Offer[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -127,12 +135,14 @@ function OffersPage() {
     <div className="container mx-auto p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-gray-900">İş Teklifleri</h1>
-        <Link href="/offers/new">
-          <Button>
-            <Plus className="h-4 w-4 mr-2" />
-            Yeni Teklif
-          </Button>
-        </Link>
+        {canCreateOffer(userRole) && (
+          <Link href="/offers/new">
+            <Button>
+              <Plus className="h-4 w-4 mr-2" />
+              Yeni Teklif
+            </Button>
+          </Link>
+        )}
       </div>
 
       {/* Toplu İşlem Butonları */}
@@ -150,24 +160,28 @@ function OffersPage() {
             </button>
           </div>
           <div className="flex gap-3">
-            <Button
-              onClick={handleBulkSend}
-              disabled={bulkActionLoading}
-              variant="outline"
-              className="bg-green-50 border-green-300 text-green-700 hover:bg-green-100"
-            >
-              <Send className="h-4 w-4 mr-2" />
-              Toplu Gönder
-            </Button>
-            <Button
-              onClick={handleBulkDelete}
-              disabled={bulkActionLoading}
-              variant="outline"
-              className="bg-red-50 border-red-300 text-red-700 hover:bg-red-100"
-            >
-              <Trash2 className="h-4 w-4 mr-2" />
-              Toplu Sil
-            </Button>
+            {canEditOffer(userRole) && (
+              <Button
+                onClick={handleBulkSend}
+                disabled={bulkActionLoading}
+                variant="outline"
+                className="bg-green-50 border-green-300 text-green-700 hover:bg-green-100"
+              >
+                <Send className="h-4 w-4 mr-2" />
+                Toplu Gönder
+              </Button>
+            )}
+            {canDeleteOffer(userRole) && (
+              <Button
+                onClick={handleBulkDelete}
+                disabled={bulkActionLoading}
+                variant="outline"
+                className="bg-red-50 border-red-300 text-red-700 hover:bg-red-100"
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Toplu Sil
+              </Button>
+            )}
           </div>
         </div>
       )}
