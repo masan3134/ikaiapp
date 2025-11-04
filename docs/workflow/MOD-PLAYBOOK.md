@@ -1,10 +1,12 @@
 # 🎯 Mod Claude Playbook - Complete Guide
 
-**Version:** 2.0
+**Version:** 2.1 (AsanMod v15.5)
 **Last Updated:** 2025-11-04
 **Your Role:** MASTER CLAUDE (Coordinator & Verifier)
 
 > **This is your ONLY file to read. Everything you need is here.**
+
+⚠️ **META-RULE:** AsanMod'u güncellerken `ASANMOD-METHODOLOGY.md` → "Self-Optimization Protocol" bölümünü oku! 4-dimension analysis yap (Architecture, Content, Usability, Relevance), quality gates'den geçir, sonra commit et.
 
 ---
 
