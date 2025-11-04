@@ -62,9 +62,29 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const { user, logout } = useAuthStore();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isOffersExpanded, setIsOffersExpanded] = useState(true); // Always expanded by default
+  const [isSettingsExpanded, setIsSettingsExpanded] = useState(false); // W1 FIX: Settings submenu state
+  const [isSuperAdminExpanded, setIsSuperAdminExpanded] = useState(true); // W1 FIX: Super Admin submenu state (default expanded for SA)
 
   // Get user role for RBAC checks
   const userRole = user?.role;
+
+  // W1 FIX: Submenu state helper functions
+  const getSubmenuState = (path: string) => {
+    if (path.startsWith('/offers')) return isOffersExpanded;
+    if (path.startsWith('/settings')) return isSettingsExpanded;
+    if (path.startsWith('/super-admin')) return isSuperAdminExpanded;
+    return false;
+  };
+
+  const toggleSubmenu = (path: string) => {
+    if (path.startsWith('/offers')) setIsOffersExpanded(!isOffersExpanded);
+    else if (path.startsWith('/settings')) setIsSettingsExpanded(!isSettingsExpanded);
+    else if (path.startsWith('/super-admin')) setIsSuperAdminExpanded(!isSuperAdminExpanded);
+  };
+
+  const isSubmenuActive = (path: string) => {
+    return pathname.startsWith(path);
+  };
 
   // Define all menu items with role requirements
   const menuItems = [
@@ -303,16 +323,18 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                     (subItem: any) => subItem.show
                   );
 
+                  const isExpanded = getSubmenuState(item.path);
+                  const isActive = isSubmenuActive(item.path);
+
                   return (
                     <div key={item.path}>
                       <button
-                        onClick={() => setIsOffersExpanded(!isOffersExpanded)}
+                        onClick={() => toggleSubmenu(item.path)}
                         className={`
                           w-full flex items-center justify-between gap-3 px-4 py-3 rounded-lg
                           transition-colors duration-150
                           ${
-                            pathname.startsWith("/offers") ||
-                            pathname.startsWith("/offer-templates")
+                            isActive
                               ? "bg-blue-50 text-blue-600 font-medium"
                               : "text-gray-700 hover:bg-gray-50"
                           }
@@ -322,7 +344,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                           <Icon size={20} />
                           <span>{item.name}</span>
                         </div>
-                        {isOffersExpanded ? (
+                        {isExpanded ? (
                           <ChevronDown size={16} />
                         ) : (
                           <ChevronRight size={16} />
@@ -330,7 +352,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                       </button>
 
                       {/* Submenu */}
-                      {isOffersExpanded && (
+                      {isExpanded && (
                         <div className="mt-1 ml-4 space-y-1">
                           {visibleSubmenuItems.map((subItem: any) => {
                             const SubIcon = subItem.icon;
