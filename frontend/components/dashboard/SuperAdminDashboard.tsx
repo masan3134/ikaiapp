@@ -1,9 +1,11 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { DashboardCard } from './DashboardCard'
 
 export const SuperAdminDashboard = () => {
+  const router = useRouter()
   const [selectedOrg, setSelectedOrg] = useState('all')
 
   return (
