@@ -1,0 +1,380 @@
+{
+  "taskName": "3 Organization Settings & RBAC Test",
+  "created": "2025-11-04",
+  "purpose": "Test 3 different organizations with different sectors, verify RBAC, update settings, test all user roles",
+
+  "mcpRequirements": {
+    "required": ["filesystem"],
+    "usage": {
+      "filesystem": "Read verification outputs, write test report MD"
+    }
+  },
+
+  "ASANMOD_STRICT_MODE": {
+    "FORBIDDEN": [
+      "❌ NO simulation - Use REAL browser",
+      "❌ NO mocking - Real HTTP requests only",
+      "❌ NO placeholders - Paste EXACT screenshots",
+      "❌ NO fake data - Real database queries",
+      "❌ NO assumptions - Verify everything"
+    ],
+    "REQUIRED": [
+      "✅ ALWAYS use real browser (http://localhost:8103)",
+      "✅ ALWAYS take screenshots of critical steps",
+      "✅ ALWAYS paste exact terminal outputs",
+      "✅ ALWAYS test with real user logins",
+      "✅ ALWAYS verify backend responses with curl",
+      "✅ ALWAYS report in TURKISH with real-world impact"
+    ]
+  },
+
+  "testOrganizations": [
+    {
+      "name": "Test Organization Free",
+      "slug": "test-org-free",
+      "sector": "Technology (Teknoloji)",
+      "plan": "FREE",
+      "size": "SMALL",
+      "limits": {
+        "analyses": "10/month",
+        "cvs": "50/month",
+        "users": "2 max"
+      },
+      "users": {
+        "admin": "test-admin@test-org-1.com",
+        "manager": "test-manager@test-org-1.com",
+        "hr": "test-hr_specialist@test-org-1.com",
+        "user": "test-user@test-org-1.com",
+        "password": "TestPass123!"
+      },
+      "candidates": 7
+    },
+    {
+      "name": "Test Organization Pro",
+      "slug": "test-org-pro",
+      "sector": "Healthcare (Sağlık)",
+      "plan": "PRO",
+      "size": "MEDIUM",
+      "limits": {
+        "analyses": "50/month",
+        "cvs": "200/month",
+        "users": "10 max"
+      },
+      "users": {
+        "admin": "test-admin@test-org-2.com",
+        "manager": "test-manager@test-org-2.com",
+        "hr": "test-hr_specialist@test-org-2.com",
+        "user": "test-user@test-org-2.com",
+        "password": "TestPass123!"
+      },
+      "candidates": 21
+    },
+    {
+      "name": "Test Organization Enterprise",
+      "slug": "test-org-enterprise",
+      "sector": "Finance (Finans)",
+      "plan": "ENTERPRISE",
+      "size": "LARGE",
+      "limits": {
+        "analyses": "200/month",
+        "cvs": "1000/month",
+        "users": "50 max"
+      },
+      "users": {
+        "admin": "test-admin@test-org-3.com",
+        "manager": "test-manager@test-org-3.com",
+        "hr": "test-hr_specialist@test-org-3.com",
+        "user": "test-user@test-org-3.com",
+        "password": "TestPass123!"
+      },
+      "candidates": 19
+    }
+  ],
+
+  "tasks": [
+    {
+      "id": "1",
+      "title": "Organization 1 (Technology/FREE) - ADMIN Role Test",
+      "description": "Login as ADMIN, verify organization settings, update info, test RBAC",
+      "steps": [
+        "1. Open browser → http://localhost:8103",
+        "2. Login: test-admin@test-org-1.com / TestPass123!",
+        "3. Navigate to Settings → Organization",
+        "4. Take screenshot of current settings",
+        "5. Verify:",
+        "   - Organization name: Test Organization Free",
+        "   - Industry: Technology",
+        "   - Size: SMALL",
+        "   - Plan: FREE",
+        "   - Country: Turkey",
+        "6. Update organization name to: 'TechStart Innovations'",
+        "7. Add primary color: #3B82F6 (blue)",
+        "8. Save changes",
+        "9. Take screenshot after save",
+        "10. Navigate to Candidates page",
+        "11. Verify you see 7 candidates (organization total)",
+        "12. Take screenshot of candidates list",
+        "13. Try to delete a candidate (should work - ADMIN has permission)",
+        "14. Logout"
+      ],
+      "verification": {
+        "screenshots": [
+          "org1-admin-login.png",
+          "org1-settings-before.png",
+          "org1-settings-after.png",
+          "org1-candidates-list.png",
+          "org1-delete-success.png"
+        ],
+        "curl_tests": [
+          {
+            "name": "Get organization settings",
+            "command": "curl -H 'Authorization: Bearer $TOKEN' http://localhost:8102/api/v1/organizations/me",
+            "expected": "200 OK, industry: Technology"
+          }
+        ]
+      },
+      "expectedResults": {
+        "login": "Success - redirects to dashboard",
+        "settings": "Can view and edit organization settings",
+        "candidates": "Sees all 7 organization candidates",
+        "delete": "Can delete candidates (ADMIN permission)",
+        "rbac": "Has access to Settings menu"
+      }
+    },
+
+    {
+      "id": "2",
+      "title": "Organization 1 (Technology/FREE) - USER Role Test",
+      "description": "Login as USER, verify limited access, test RBAC restrictions",
+      "steps": [
+        "1. Login: test-user@test-org-1.com / TestPass123!",
+        "2. Take screenshot of dashboard/sidebar",
+        "3. Verify USER can only see Dashboard menu (NO Candidates, NO Settings)",
+        "4. Try to access /candidates directly (type URL)",
+        "5. Should get 403 Forbidden or redirect",
+        "6. Take screenshot of error/redirect",
+        "7. Verify NO delete button anywhere",
+        "8. Logout"
+      ],
+      "verification": {
+        "screenshots": [
+          "org1-user-dashboard.png",
+          "org1-user-sidebar.png",
+          "org1-user-403-forbidden.png"
+        ]
+      },
+      "expectedResults": {
+        "menu": "Only Dashboard visible",
+        "candidates": "403 Forbidden when accessing /candidates",
+        "settings": "Settings menu not visible",
+        "delete": "No delete buttons anywhere"
+      }
+    },
+
+    {
+      "id": "3",
+      "title": "Organization 2 (Healthcare/PRO) - HR_SPECIALIST Role Test",
+      "description": "Login as HR_SPECIALIST, verify candidate access, test analysis",
+      "steps": [
+        "1. Login: test-hr_specialist@test-org-2.com / TestPass123!",
+        "2. Navigate to Candidates",
+        "3. Verify you see 21 candidates (all organization candidates)",
+        "4. Take screenshot",
+        "5. Select one candidate",
+        "6. View candidate details",
+        "7. Take screenshot of candidate detail page",
+        "8. Navigate to Job Postings",
+        "9. Create a new job posting:",
+        "   - Title: 'Senior Nurse'",
+        "   - Department: 'Emergency'",
+        "   - Description: 'Looking for experienced nurse'",
+        "10. Save job posting",
+        "11. Take screenshot",
+        "12. Try to access Settings → Organization",
+        "13. Should be blocked (HR_SPECIALIST doesn't have ADMIN access)",
+        "14. Take screenshot of blocked access",
+        "15. Logout"
+      ],
+      "verification": {
+        "screenshots": [
+          "org2-hr-candidates.png",
+          "org2-hr-candidate-detail.png",
+          "org2-hr-job-posting.png",
+          "org2-hr-settings-blocked.png"
+        ],
+        "curl_tests": [
+          {
+            "name": "Get candidates as HR",
+            "command": "curl -H 'Authorization: Bearer $TOKEN' http://localhost:8102/api/v1/candidates",
+            "expected": "200 OK, count: 21"
+          },
+          {
+            "name": "Try to update organization (should fail)",
+            "command": "curl -X PATCH -H 'Authorization: Bearer $TOKEN' -H 'Content-Type: application/json' -d '{\"name\":\"Test\"}' http://localhost:8102/api/v1/organizations/me",
+            "expected": "403 Forbidden"
+          }
+        ]
+      },
+      "expectedResults": {
+        "candidates": "Sees all 21 organization candidates",
+        "jobPosting": "Can create job postings",
+        "settings": "Cannot access organization settings (403)",
+        "rbac": "Has HR menus but NOT admin menus"
+      }
+    },
+
+    {
+      "id": "4",
+      "title": "Organization 3 (Finance/ENTERPRISE) - MANAGER Role Test",
+      "description": "Login as MANAGER, test approval workflows, verify RBAC",
+      "steps": [
+        "1. Login: test-manager@test-org-3.com / TestPass123!",
+        "2. Navigate to Candidates",
+        "3. Verify you see 19 candidates",
+        "4. Take screenshot",
+        "5. Navigate to Settings → Organization",
+        "6. Should be blocked (MANAGER doesn't have ADMIN)",
+        "7. Take screenshot",
+        "8. Navigate to Offers (if available)",
+        "9. Check if MANAGER can approve offers",
+        "10. Take screenshot",
+        "11. Logout"
+      ],
+      "verification": {
+        "screenshots": [
+          "org3-manager-candidates.png",
+          "org3-manager-settings-blocked.png",
+          "org3-manager-offers.png"
+        ]
+      },
+      "expectedResults": {
+        "candidates": "Sees all 19 organization candidates",
+        "settings": "Blocked from organization settings",
+        "offers": "Can view and approve offers",
+        "rbac": "Has MANAGER permissions"
+      }
+    },
+
+    {
+      "id": "5",
+      "title": "SUPER_ADMIN Test - Cross-Organization Access",
+      "description": "Login as SUPER_ADMIN, verify system-wide access",
+      "steps": [
+        "1. Login: info@gaiai.ai / 23235656",
+        "2. Navigate to Super Admin panel",
+        "3. Take screenshot of Super Admin dashboard",
+        "4. Navigate to Candidates",
+        "5. Verify you see ALL 47 candidates (7+21+19 from all orgs)",
+        "6. Take screenshot showing candidate count",
+        "7. Verify 'Organization' column is visible (extra column for SUPER_ADMIN)",
+        "8. Take screenshot of table with Organization column",
+        "9. Try to delete a candidate from Organization 2",
+        "10. Should work (SUPER_ADMIN can delete any candidate)",
+        "11. Take screenshot",
+        "12. Navigate to Super Admin → Organizations",
+        "13. Verify all 3 test organizations visible",
+        "14. Take screenshot",
+        "15. Logout"
+      ],
+      "verification": {
+        "screenshots": [
+          "superadmin-dashboard.png",
+          "superadmin-candidates-47.png",
+          "superadmin-org-column.png",
+          "superadmin-delete-any.png",
+          "superadmin-organizations.png"
+        ],
+        "curl_tests": [
+          {
+            "name": "SUPER_ADMIN gets all candidates",
+            "command": "curl -H 'Authorization: Bearer $TOKEN' http://localhost:8102/api/v1/candidates?limit=50",
+            "expected": "200 OK, total: 47 (all orgs)"
+          }
+        ]
+      },
+      "expectedResults": {
+        "candidates": "Sees ALL 47 candidates from all organizations",
+        "orgColumn": "Extra 'Organization' column visible",
+        "delete": "Can delete candidates from any organization",
+        "superAdminPanel": "Has access to Super Admin panel",
+        "organizations": "Can view and manage all organizations"
+      }
+    },
+
+    {
+      "id": "6",
+      "title": "Database Verification",
+      "description": "Verify organization settings in database",
+      "steps": [
+        "1. Run SQL query to check organization settings:",
+        "   docker exec ikai-postgres psql -U ikaiuser -d ikaidb -c \"SELECT name, slug, industry, size, plan, country FROM organizations WHERE slug LIKE 'test-org%' ORDER BY slug;\"",
+        "2. Paste EXACT output",
+        "3. Verify:",
+        "   - test-org-free: Industry=Technology, Size=SMALL, Plan=FREE",
+        "   - test-org-pro: Industry=Healthcare, Size=MEDIUM, Plan=PRO",
+        "   - test-org-enterprise: Industry=Finance, Size=LARGE, Plan=ENTERPRISE",
+        "4. Run candidate count query:",
+        "   docker exec ikai-postgres psql -U ikaiuser -d ikaidb -c \"SELECT o.name, COUNT(c.id) FROM organizations o LEFT JOIN candidates c ON o.id = c.\\\"organizationId\\\" AND c.\\\"isDeleted\\\" = false WHERE o.slug LIKE 'test-org%' GROUP BY o.name ORDER BY o.name;\"",
+        "5. Paste EXACT output",
+        "6. Verify counts match: 7, 21, 19"
+      ],
+      "verification": {
+        "commands": [
+          "docker exec ikai-postgres psql -U ikaiuser -d ikaidb -c \"SELECT name, slug, industry, size, plan FROM organizations WHERE slug LIKE 'test-org%' ORDER BY slug;\"",
+          "docker exec ikai-postgres psql -U ikaiuser -d ikaidb -c \"SELECT o.name, COUNT(c.id) as candidates FROM organizations o LEFT JOIN candidates c ON o.id = c.\\\"organizationId\\\" AND c.\\\"isDeleted\\\" = false WHERE o.slug LIKE 'test-org%' GROUP BY o.name ORDER BY o.name;\""
+        ]
+      }
+    },
+
+    {
+      "id": "7",
+      "title": "Create Verification Report",
+      "description": "Create comprehensive test report with all screenshots and outputs",
+      "steps": [
+        "1. Create file: docs/test-reports/organization-rbac-test-report.md",
+        "2. Include:",
+        "   - All screenshots (embedded or referenced)",
+        "   - All terminal outputs (RAW, not interpreted)",
+        "   - All curl test results",
+        "   - Summary table of what each role can/cannot do",
+        "   - Any bugs or issues found",
+        "   - Real-world impact summary",
+        "3. Report format:",
+        "   - Başlıklar: TÜRKÇE",
+        "   - Terminal outputs: İngilizce (paste olduğu gibi)",
+        "   - Açıklamalar: TÜRKÇE",
+        "   - Gerçek dünyada ne test edildi: TÜRKÇE"
+      ],
+      "reportTemplate": "# Organization Settings & RBAC Test Report\n\n**Date:** 2025-11-04\n**Tester:** Worker Claude\n**Environment:** DEV (Docker)\n\n## Test Summary (Özet)\n\n[Worker fills this - TURKISH]\n\n## Organization 1: Technology/FREE\n\n### ADMIN Role Test\n\n**Screenshots:**\n- [Paste screenshot paths or embed]\n\n**Terminal Outputs:**\n```\n[PASTE RAW CURL OUTPUTS HERE]\n```\n\n**Results:**\n[Worker describes in TURKISH what worked/didn't work]\n\n### USER Role Test\n\n...\n\n## Organization 2: Healthcare/PRO\n\n...\n\n## Organization 3: Finance/ENTERPRISE\n\n...\n\n## SUPER_ADMIN Test\n\n...\n\n## Database Verification\n\n```bash\n$ docker exec ikai-postgres psql ...\n```\n\n**Output:**\n```\n[PASTE EXACT OUTPUT]\n```\n\n## RBAC Matrix (Test Results)\n\n| Role | View Candidates | Delete Candidates | Edit Settings | Create Job | Super Admin Panel |\n|------|----------------|-------------------|---------------|------------|-------------------|\n| USER | ❌ | ❌ | ❌ | ❌ | ❌ |\n| HR_SPECIALIST | ✅ (org) | ✅ (org) | ❌ | ✅ | ❌ |\n| MANAGER | ✅ (org) | ✅ (org) | ❌ | ✅ | ❌ |\n| ADMIN | ✅ (org) | ✅ (org) | ✅ | ✅ | ❌ |\n| SUPER_ADMIN | ✅ (all) | ✅ (all) | ✅ (all) | ✅ | ✅ |\n\n## Bugs Found\n\n[List any issues]\n\n## Real-World Impact (Gerçek Dünyada Ne Test Edildi)\n\n[Worker explains in TURKISH]\n"
+    }
+  ],
+
+  "communication": {
+    "language": "TURKISH",
+    "format": {
+      "toUser": "Brief updates in TURKISH (3 lines max)",
+      "reports": "Comprehensive with RAW data, Turkish explanations",
+      "technical": "English terms OK (curl, grep, etc) but explain in Turkish"
+    },
+    "example": "✅ Organization 1 (Technology/FREE) - ADMIN testi tamamlandı\n\nNe yapıldı:\n- ADMIN olarak login olundu\n- 7 aday görüldü (tüm organizasyon)\n- Settings sayfası erişilebildi ✅\n- Aday silme yetkisi çalışıyor ✅\n\nGerçek dünyada:\n- ADMIN rolü organizasyon ayarlarını değiştirebiliyor\n- Tüm organizasyon adaylarını görebiliyor\n- Silme yetkisi var\n\nEkran görüntüleri: 5 adet kaydedildi"
+  },
+
+  "CRITICAL_REMINDERS": [
+    "⚠️ NEVER simulate - Use REAL browser at http://localhost:8103",
+    "⚠️ NEVER fake screenshots - Take REAL screenshots",
+    "⚠️ NEVER interpret curl outputs - Paste EXACT responses",
+    "⚠️ NEVER assume - VERIFY everything with browser/curl",
+    "⚠️ ALWAYS test with REAL user credentials",
+    "⚠️ ALWAYS report in TURKISH with real-world impact",
+    "⚠️ ALWAYS include RAW terminal outputs in report"
+  ],
+
+  "SUCCESS_CRITERIA": {
+    "allTasksCompleted": "All 7 tasks finished",
+    "screenshotsProvided": "Minimum 15 screenshots",
+    "curlTestsPassed": "All curl tests executed and verified",
+    "reportCreated": "Comprehensive MD report with RAW data",
+    "rbacVerified": "All role permissions tested and documented",
+    "realWorldImpact": "Clear explanation of what works in real system"
+  }
+}
