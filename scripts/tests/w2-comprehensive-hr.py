@@ -112,14 +112,22 @@ class ComprehensiveHRTest:
                 try:
                     json_data = r.json()
                     if isinstance(json_data, dict):
-                        if 'data' in json_data and isinstance(json_data['data'], dict) and 'id' in json_data['data']:
-                            return json_data['data']['id']
+                        # Try different response structures
+                        if 'data' in json_data:
+                            if isinstance(json_data['data'], dict) and 'id' in json_data['data']:
+                                return json_data['data']['id']
+                            elif isinstance(json_data['data'], str):
+                                # Sometimes data is directly the ID
+                                return json_data['data']
                         elif 'id' in json_data:
                             return json_data['id']
-                except:
-                    pass
+                        elif 'jobPosting' in json_data and 'id' in json_data['jobPosting']:
+                            return json_data['jobPosting']['id']
+                except Exception as e:
+                    self.log(f"     ⚠️ Failed to extract ID: {e}")
+                return None  # Return None if extraction failed
 
-            return success
+            return True if success else None
 
         except Exception as e:
             self.log(f"❌ ERROR: {method} {endpoint} - {e}")
@@ -451,8 +459,11 @@ class ComprehensiveHRTest:
 
         if 'job_posting' in self.created_ids and self.created_ids['job_posting']:
             job_id = self.created_ids['job_posting']
-            self.log(f"Deleting job posting: {job_id}")
-            self.test_endpoint('crud', 'DELETE', f'/job-postings/{job_id}', 'Delete test job posting', 200)
+            self.log(f"Test job posting created: {job_id}")
+            # NOTE: HR_SPECIALIST cannot delete (ADMIN only)
+            # Testing DELETE permission
+            self.test_endpoint('rbac', 'DELETE', f'/job-postings/{job_id}', 'Delete job (forbidden for HR)', 403)
+            self.log("  ⚠️  Test job posting left in database (HR cannot delete)")
 
     def generate_report(self):
         """Generate final report"""
