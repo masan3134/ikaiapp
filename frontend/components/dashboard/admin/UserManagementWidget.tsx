@@ -1,10 +1,7 @@
 'use client';
 
-import { useState } from 'react';
 import { UserPlus, Shield, Activity, UserMinus } from 'lucide-react';
 import { Card, CardHeader, CardBody } from '@nextui-org/react';
-import { formatDistanceToNow } from 'date-fns';
-import { tr } from 'date-fns/locale';
 
 interface UserManagementWidgetProps {
   data: {
@@ -14,8 +11,6 @@ interface UserManagementWidgetProps {
 }
 
 export default function UserManagementWidget({ data }: UserManagementWidgetProps) {
-  const [lastLogin] = useState(new Date());
-
   return (
     <Card className="bg-gradient-to-br from-indigo-50 to-white shadow-sm hover:shadow-md transition-shadow">
       <CardHeader>
@@ -57,15 +52,6 @@ export default function UserManagementWidget({ data }: UserManagementWidgetProps
             <p className="text-sm font-medium text-slate-800">Deaktif Et</p>
             <p className="text-xs text-slate-500">Erişim kapat</p>
           </button>
-        </div>
-
-        <div className="mt-4 p-3 bg-purple-50 rounded-lg">
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-slate-700">Son Giriş</span>
-            <span className="font-medium text-purple-600">
-              {formatDistanceToNow(lastLogin, { addSuffix: true, locale: tr })}
-            </span>
-          </div>
         </div>
       </CardBody>
     </Card>
