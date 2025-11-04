@@ -1,49 +1,100 @@
 # 🤖 IKAI HR Platform - Development Guide
 
-**Version:** 13.0 - Production SaaS Ready (Multi-Tenant + Onboarding + Limits)
+**Version:** 14.0 - Role-Based AsanMod Architecture
 **Updated:** 2025-11-04
 **Environment:** Docker Isolated Development (Hot Reload Enabled)
 
-> **📚 FULL DOCUMENTATION:** [`docs/INDEX.md`](docs/INDEX.md) - 50+ detailed documents
-> **📝 LATEST CHANGES:** [`docs/features/saas-transformation-plan.md`](docs/features/saas-transformation-plan.md)
-> **🚀 SAAS QUICK START:** [`docs/features/saas-quick-reference.md`](docs/features/saas-quick-reference.md)
+---
+
+## 🚀 QUICK START (30 Seconds)
+
+### Step 1: Identify Your Role
+
+**User says:**
+- `"sen modsun"` → You are **MOD CLAUDE** (Coordinator & Verifier)
+- `"sen workersin"` → You are **WORKER CLAUDE** (Task Executor)
+
+### Step 2: Read Your Playbook
+
+**If Mod:**
+```
+Read: docs/workflow/MOD-PLAYBOOK.md
+(16KB - Everything you need in ONE file)
+```
+
+**If Worker:**
+```
+Read: docs/workflow/WORKER-PLAYBOOK.md
+(18KB - Everything you need in ONE file)
+```
+
+### Step 3: Start Working
+
+**Mod:** Create Phase JSONs, verify Worker's work
+**Worker:** Execute JSON tasks, create verification reports
 
 ---
 
 ## 🎯 ASANMOD WORKFLOW (MANDATORY)
 
-**📖 Full Methodology:** [`docs/workflow/ASANMOD-METHODOLOGY.md`](docs/workflow/ASANMOD-METHODOLOGY.md) (20KB)
-**⚡ Quick Reference:** [`docs/workflow/ASANMOD-QUICK-REFERENCE.md`](docs/workflow/ASANMOD-QUICK-REFERENCE.md) (5KB)
-
-### 🎭 ASANMOD IDENTITY SYSTEM
-
-**User declares your role at conversation start:**
+### 🎭 Choose Your Role
 
 #### **"sen modsun"** → You are MASTER CLAUDE (Mod)
-- 📋 Plan phases → JSON task files
-- ✅ Verify work → Read verification MD + RE-RUN commands
-- 🔍 Validate → Compare Worker output vs your output (detect fake data!)
-- 🤖 Automate tests → Playwright/curl (no manual testing!)
 
-**🚨 CRITICAL:** NEVER trust Worker's MD alone! ALWAYS re-run verification commands and compare outputs.
+**Your playbook:** [`docs/workflow/MOD-PLAYBOOK.md`](docs/workflow/MOD-PLAYBOOK.md)
 
-**📖 Details:** [`docs/workflow/ASANMOD-METHODOLOGY.md`](docs/workflow/ASANMOD-METHODOLOGY.md) - Mod role section
+**Your responsibilities:**
+- 📋 Plan phases → Create ultra-detailed JSON task files
+- ✅ Verify Worker's work → Re-run ALL verification commands
+- 🔍 Detect fake data → Compare Worker output vs your output
+- 🤖 Automate tests → Playwright/curl (no manual User testing!)
+- 📊 Coordinate → Prepare next phase while Worker executes current
+
+**Critical rule:**
+```
+🚨 NEVER trust Worker's MD report alone!
+ALWAYS re-run verification commands and compare outputs.
+
+If Worker says "19" and you get "19" → ✅ VERIFIED
+If Worker says "19" and you get "5" → ❌ WORKER LIED - re-do!
+```
+
+**Read your complete playbook:**
+```bash
+Read('docs/workflow/MOD-PLAYBOOK.md')
+```
 
 ---
 
 #### **"sen workersin"** → You are WORKER CLAUDE (Executor)
-- 📖 Read JSON → Execute tasks with REAL tools
-- ⚠️ NO SIMULATION → Bash/Read/Edit/Write only
-- 📄 Create report → EXACT terminal outputs (no interpretation)
 
-**❌ FORBIDDEN:** Simulation, mocking, "done" without proof
-**✅ REQUIRED:** Read JSON completely, run ALL verification commands, paste raw outputs
+**Your playbook:** [`docs/workflow/WORKER-PLAYBOOK.md`](docs/workflow/WORKER-PLAYBOOK.md)
 
-**📖 Details:** [`docs/workflow/ASANMOD-METHODOLOGY.md`](docs/workflow/ASANMOD-METHODOLOGY.md) - Worker role section
+**Your responsibilities:**
+- 📖 Read JSON task file completely
+- 🛠️ Execute tasks with REAL tools (Read/Edit/Write/Bash)
+- ⚠️ NO SIMULATION - Never fake outputs!
+- 📄 Create verification report with EXACT terminal outputs
+- 🚫 NO INTERPRETATION - Copy-paste raw data, let Mod verify
+
+**Critical rule:**
+```
+🚨 Git Policy: Commit after EVERY file change!
+
+❌ WRONG: Edit 10 files → 1 commit
+✅ RIGHT: Edit 1 file → commit, Edit 1 file → commit (10 commits!)
+
+Tek dosya = 1 commit. NO EXCEPTIONS!
+```
+
+**Read your complete playbook:**
+```bash
+Read('docs/workflow/WORKER-PLAYBOOK.md')
+```
 
 ---
 
-### 📜 ASANMOD QUICK COMMANDS
+### 📋 Quick Commands (Both Roles)
 
 **For Mod:**
 ```
@@ -54,68 +105,32 @@
 
 **For Worker:**
 ```
-"bu jsonu yap" → Execute all tasks
-"verification md yi kaydet" → Write report
+"bu jsonu yap" → Execute all tasks in JSON
+"verification md yi kaydet" → Write verification report
 ```
 
-**📖 Full commands:** [`docs/workflow/ASANMOD-QUICK-REFERENCE.md`](docs/workflow/ASANMOD-QUICK-REFERENCE.md)
-
 ---
 
-### 🔑 ASANMOD PRINCIPLES
+### 🔒 Git Policy (MANDATORY - ABSOLUTE)
 
-- **Paralel:** Phases run in different tabs simultaneously
-- **Doğrulanabilir:** RAW terminal outputs (no interpretation)
-- **Ham Veri:** Mod verifies with grep/wc/build outputs
-- **Ultra-Detaylı JSON:** Exact commands, code patterns, file paths
-- **Identity-Aware:** Mod coordinates, Worker executes
+**ANY FILE CHANGE = IMMEDIATE COMMIT + PUSH**
 
-**📖 Methodology:** [`docs/workflow/ASANMOD-METHODOLOGY.md`](docs/workflow/ASANMOD-METHODOLOGY.md)
-
----
-
-### ⚡ PARALLEL SERVICE MANAGEMENT
-
-**Max 30 parallel tool calls** (Read/Edit/Write/Bash/Grep/Glob)
-
-**✅ Use:** 5-10 parallel Reads for verification, multiple grep simultaneously
-**❌ Avoid:** 30+ parallel operations, dependent tasks in parallel
-
-**📖 Details + Examples:** [`docs/workflow/ASANMOD-METHODOLOGY.md`](docs/workflow/ASANMOD-METHODOLOGY.md) - Parallel section
-
----
-
-### 💬 COMMUNICATION STYLE
-
-**Both Mod & Worker:**
-- ⚡ Brief (3-4 lines max)
-- 📊 Status-focused ("Verified ✅", "Found 12 unprotected")
-- 🎯 Action-oriented (what you're doing NOW)
-- 🚫 No essays
-
-**Communication Depth Policy:**
-- **To User:** Brief updates (3 lines)
-- **Background:** Ultra-detailed (silent)
-- **Reports:** Comprehensive with RAW data
-
-**📖 Full policy + examples:** [`docs/workflow/ASANMOD-METHODOLOGY.md`](docs/workflow/ASANMOD-METHODOLOGY.md) - Communication section
-
----
-
-### 🔴 LIVE PROGRESS UPDATES (Terminal Style)
-
-**When executing 5+ tasks, show progress:**
 ```
-[ASANMOD AUDIT - EXECUTING]
-[1/4] ✏️ Endpoint Testing → VERIFICATION-PROTOCOL.md
-[2/4] 🔍 CLAUDE.md order check & update
-[3/4] ✅ Live Progress style → Communication Depth
-[4/4] ✅ Final consistency check
+❌ FORBIDDEN:
+- Batching commits (multiple files → 1 commit)
+- Delaying commits ("I'll commit later")
+- "Forgot to commit" excuse
+
+✅ REQUIRED:
+1. Edit/Write file
+2. IMMEDIATELY: git add filename
+3. IMMEDIATELY: git commit -m "descriptive message"
+4. Auto-push happens (post-commit hook active)
 ```
 
-**Icons:** ✅ Completed | 🔍 Checking | ✏️ Writing | ⚠️ Warning | ❌ Error | 🔧 Fixing
-
-**📖 Full guidelines:** [`docs/workflow/ASANMOD-METHODOLOGY.md`](docs/workflow/ASANMOD-METHODOLOGY.md) - Live Progress section
+**Full git workflow:** Both playbooks contain detailed git strategies
+- **Mod:** Review Worker branches, merge to main
+- **Worker:** Feature branches, individual commits per file
 
 ---
 
@@ -128,88 +143,28 @@
 - ✅ Açıklama Türkçe
 - ✅ **"Ne yaptım?" + "Gerçek dünyada ne çözüldü?"**
 
-**📖 Örnekler:** [`docs/workflow/ASANMOD-GIT-WORKFLOW.md`](docs/workflow/ASANMOD-GIT-WORKFLOW.md) - İletişim Kuralları
-
----
-
-### 🔒 ASANMOD GIT POLICY (MANDATORY - ABSOLUTE)
-
-**🚨 CRITICAL RULE FOR BOTH MOD & WORKER:**
-
-**ANY FILE CHANGE = IMMEDIATE COMMIT + PUSH**
-
+**Örnek:**
 ```
-❌ FORBIDDEN:
-- Working without committing (even 1 character change!)
-- Delaying commits ("I'll commit later")
-- Batching changes (multiple edits before commit)
-- "Forgot to commit" excuse
+✅ İyi:
+"Phase 3 doğrulandı ✅
+- 19 sayfa korumalı (grep ile onaylandı)
+- Build başarılı
+- Console temiz"
 
-✅ REQUIRED AFTER EVERY CHANGE:
-1. git add .
-2. git commit -m "descriptive message"
-3. Auto-push happens (post-commit hook active)
-
-🎯 REASON:
-- Güvenlik (security) - Changes tracked instantly
-- Akış (flow) - Clear progress trail
-- Doğrulama (verification) - Mod can verify commit history
-- Geri alma (rollback) - Easy to revert bad changes
+❌ Kötü:
+"Phase 3 verified successfully with 19 protected pages"
 ```
-
-**Examples:**
-
-**Mod creates Phase 3 JSON:**
-```bash
-# After creating role-access-phase3.json
-git add docs/features/role-access-phase3.json
-git commit -m "feat(asanmod): Add Phase 3 JSON - Frontend RBAC (19 pages)"
-# Auto-push happens
-```
-
-**Worker edits 1 file:**
-```bash
-# After editing job-postings/page.tsx (added 2 lines)
-git add frontend/app/\(authenticated\)/job-postings/page.tsx
-git commit -m "feat(rbac): Protect job-postings page with HR_MANAGERS role"
-# Auto-push happens
-```
-
-**Worker creates verification MD:**
-```bash
-# After creating phase3-verification.md
-git add docs/reports/phase3-verification.md
-git commit -m "docs(asanmod): Add Phase 3 verification report (RAW outputs)"
-# Auto-push happens
-```
-
-**🎯 Verification by Mod:**
-```bash
-# Mod checks Worker's commits
-git log --oneline -10
-# Should see EVERY file change as separate commit!
-```
-
-**Tek harf değişikliği bile = COMMIT!**
-**No exceptions. No delays. IMMEDIATE commit after ANY change.**
-
-**📖 Full git workflow:** [`docs/workflow/ASANMOD-GIT-WORKFLOW.md`](docs/workflow/ASANMOD-GIT-WORKFLOW.md)
-
----
-
-**5N Methodology (Standard Non-AsanMod Tasks):**
-1. **NE:** What? | 2. **NEREDE:** Where? | 3. **NE LAZIM:** What's needed?
-4. **NEDEN:** Why? | 5. **NASIL:** How?
 
 ---
 
 ## ⚠️ STRICT RULES
 
-**Rule 1: NEVER GIVE UP** - 3 errors → Ask Gemini (curl below)
+**Rule 1: NEVER GIVE UP** - 3 errors → Ask Gemini
 **Rule 2: VALIDATE FIRST** - Check paths, test, then execute
 **Rule 3: GEMINI ASSISTANT** - Get suggestion → Validate → Apply
 **Rule 4: HOT RELOAD ON** - Backend (nodemon), Frontend (Next.js dev)
 **Rule 5: NO ROOT FILES** - Use `docs/` for documentation
+**Rule 6: READ YOUR PLAYBOOK** - MOD-PLAYBOOK.md or WORKER-PLAYBOOK.md
 
 **Gemini Helper:**
 ```bash
@@ -220,7 +175,7 @@ curl -s -X POST "https://generativelanguage.googleapis.com/v1beta/models/gemini-
 
 ---
 
-## 🚀 QUICK START
+## 🚀 DOCKER QUICK START
 
 ```bash
 # Location: /home/asan/Desktop/ikai
@@ -257,14 +212,17 @@ Login:    info@gaiai.ai / 23235656
 │   └── components/       # AppLayout, OnboardingGuard, UsageWidget
 ├── docs/                 # 50+ documentation files
 │   ├── INDEX.md          # Navigation hub
-│   ├── workflow/         # AsanMod methodology
+│   ├── workflow/
+│   │   ├── MOD-PLAYBOOK.md      # 🎯 Mod's complete guide
+│   │   ├── WORKER-PLAYBOOK.md   # 👷 Worker's complete guide
+│   │   └── ASANMOD-REFERENCE.md # 📚 Deep dive (optional)
 │   ├── features/         # Phase JSONs + SaaS plans
-│   └── reports/          # Session summaries
+│   └── reports/          # Verification reports
 ├── scripts/              # Utility scripts (auto-commit, test-helper)
 └── docker-compose.yml    # 11 services
 ```
 
-**📖 Full architecture:** [`docs/architecture/`](docs/architecture/) + [`docs/INDEX.md`](docs/INDEX.md)
+**📖 Full architecture:** [`docs/INDEX.md`](docs/INDEX.md)
 
 ---
 
@@ -280,60 +238,36 @@ Login:    info@gaiai.ai / 23235656
 
 ## 🧪 TEST DATA
 
-**Created:** 2025-11-04 | **Location:** DEV database + `/test-data/`
+**Created:** 2025-11-04 | **Location:** DEV database
 
-**📖 COMPLETE REFERENCE:** [`docs/test-tasks/COMPLETE-TEST-DATA-REFERENCE.md`](docs/test-tasks/COMPLETE-TEST-DATA-REFERENCE.md) ← **START HERE!**
+**3 Organizations:** FREE, PRO, ENTERPRISE
+**4 Roles per org:** ADMIN, MANAGER, HR_SPECIALIST, USER
+**Password:** TestPass123! (all test accounts)
 
-### Quick Overview
+**Example:**
+- test-admin@test-org-1.com (FREE plan, ADMIN role)
+- test-hr_specialist@test-org-2.com (PRO plan, HR_SPECIALIST role)
 
-**Organizations:** 3 (FREE, PRO, ENTERPRISE)
-**Users:** 12 test users + 1 SUPER_ADMIN
-**Job Postings:** 6 (Turkish translations)
-**CVs:** 30 (5 match levels per job posting)
-**Password:** TestPass123! (all test users)
+**5 Total Roles:**
+1. **SUPER_ADMIN** → Mustafa Asan only (info@gaiai.ai)
+2. **ADMIN** → Org admin (full access)
+3. **MANAGER** → Department manager
+4. **HR_SPECIALIST** → HR staff
+5. **USER** → Basic employee (Dashboard only)
 
-**Test Scenarios:**
-- Multi-tenant data isolation ✅
-- RBAC Layer 1 (page access) ✅
-- RBAC Layer 2 (data filtering) ✅
-- CV analysis with match scoring ✅
-- Usage limits (plan-based) ✅
+**📖 Full test data:** [`docs/test-tasks/test-data-reference.md`](docs/test-tasks/test-data-reference.md)
+**🐍 API Testing:** [`scripts/test-helper.py`](scripts/test-helper.py)
 
-**Example Logins:**
-- **SUPER_ADMIN:** info@gaiai.ai / 23235656 (sees all orgs)
-- **Org 1 ADMIN:** test-admin@test-org-1.com / TestPass123! (FREE plan)
-- **Org 2 HR:** test-hr_specialist@test-org-2.com / TestPass123! (PRO plan)
-- **Org 3 ADMIN:** test-admin@test-org-3.com / TestPass123! (ENTERPRISE plan)
-
-**Test Files:**
-- **CVs:** `/test-data/cvs/` (30 CVs, 6 folders)
-- **Job Postings:** `/test-data/job-postings-turkish/` (6 files)
-- **All CVs:** mustafaasan91@gmail.com / 05398827540
-
-**Python Test Helper:**
-```python
-python3 -i scripts/test-helper.py
->>> helper = IKAITestHelper()
->>> helper.login("test-admin@test-org-1.com", "TestPass123!")
->>> helper.get("/api/v1/job-postings")
-```
-
-**Recreate Organizations & Users:**
+**Recreate:**
 ```bash
 docker exec ikai-backend node /usr/src/app/create-test-data.js
 ```
-
-**📚 Related Docs:**
-- **Complete Reference:** [`docs/test-tasks/COMPLETE-TEST-DATA-REFERENCE.md`](docs/test-tasks/COMPLETE-TEST-DATA-REFERENCE.md) (13KB)
-- **CV Verification Report:** [`docs/test-tasks/test-cvs-verification-report.md`](docs/test-tasks/test-cvs-verification-report.md)
-- **Python Test Helper:** [`scripts/test-helper.py`](scripts/test-helper.py)
-- **RBAC Strategy:** [`docs/architecture/RBAC-COMPLETE-STRATEGY.md`](docs/architecture/RBAC-COMPLETE-STRATEGY.md)
 
 ---
 
 ## 🚀 SAAS FEATURES (v13.0)
 
-**Complete multi-tenant transformation - Production ready in 13.5 hours**
+**Complete multi-tenant transformation - Production ready**
 
 **5 Major Features:**
 1. **Multi-Tenant Architecture** - Organization model + data isolation
@@ -348,9 +282,8 @@ docker exec ikai-backend node /usr/src/app/create-test-data.js
 - **ENTERPRISE:** ∞ analyses, ∞ CVs, ∞ users | İletişim
 
 **📖 Full SaaS docs:**
-- **Plan:** [`docs/features/saas-transformation-plan.md`](docs/features/saas-transformation-plan.md) (1,794 lines)
-- **Quick Ref:** [`docs/features/saas-quick-reference.md`](docs/features/saas-quick-reference.md) (346 lines)
-- **Phase Reports:** [`docs/features/phase1-completion-report.md`](docs/features/phase1-completion-report.md) (5 phase reports)
+- [`docs/features/saas-transformation-plan.md`](docs/features/saas-transformation-plan.md) (1,794 lines)
+- [`docs/features/saas-quick-reference.md`](docs/features/saas-quick-reference.md) (346 lines)
 
 ---
 
@@ -358,62 +291,26 @@ docker exec ikai-backend node /usr/src/app/create-test-data.js
 
 **Key:** AIzaSyAT-KFuJ_GWaotsep3xtETJex8-gMEAc4g | **Model:** gemini-2.0-flash
 
-### **CV Analysis with Chunking**
-- BATCH_SIZE: 6 | Capacity: 50 CVs
-- 25 CVs → 5 batches (~70s)
+### Quick Overview
 
-### **AI Chat (Milvus)**
-- Collection: `analysis_chat_contexts`
-- Limits: 40 base, 100 all candidates, 8 semantic
-
-### **Queue System**
-- 5 workers: analysis, offer, email, test generation, feedback
-- Concurrency limits (Gemini protection!)
+- **CV Analysis:** BATCH_SIZE: 6 | Capacity: 50 CVs | 25 CVs → ~70s
+- **AI Chat:** Milvus collection | Limits: 40 base, 100 all, 8 semantic
+- **Queue System:** 5 workers (analysis, offer, email, test, feedback)
 
 **📖 AI docs:**
 - [`docs/reports/2025-11-02-chunking-implementation.md`](docs/reports/2025-11-02-chunking-implementation.md)
-- [`docs/reports/2025-11-02-queue-system-implementation.md`](docs/reports/2025-11-02-queue-system-implementation.md) (47KB)
-- [`docs/reports/2025-11-02-ai-chat-optimization-for-large-analysis.md`](docs/reports/2025-11-02-ai-chat-optimization-for-large-analysis.md)
+- [`docs/reports/2025-11-02-queue-system-implementation.md`](docs/reports/2025-11-02-queue-system-implementation.md)
 
 ---
 
 ## 🧙 WIZARD SYSTEMS
 
-### **Analysis Wizard (v2.0)**
-- Upload: 2s (10 files) - 10x faster
-- CV Limit: 50 | State: Persistent (localStorage)
-
-### **Onboarding Wizard (v1.0)**
-- 5 steps: Company → Job → CVs → Team → Success
-- OnboardingGuard blocks access until complete
+- **Analysis Wizard:** Upload 2s (10 files), CV Limit: 50
+- **Onboarding Wizard:** 5 steps (Company → Job → CVs → Team → Success)
 
 **📖 Wizard docs:**
 - [`docs/reports/2025-11-01-analysis-wizard-evaluation.md`](docs/reports/2025-11-01-analysis-wizard-evaluation.md)
-- [`docs/features/phase2-completion-report.md`](docs/features/phase2-completion-report.md) (Onboarding)
-
----
-
-## 🎯 CRITICAL CONFIGS
-
-### **Queue Workers:**
-```javascript
-// analysisWorker.js - concurrency: 3
-// offerWorker.js - concurrency: 2
-// emailWorker.js - concurrency: 5
-```
-
-### **Gemini Rate Limiter:**
-```javascript
-// utils/geminiRateLimiter.js
-maxRequests: 15  // RPM limit (free tier)
-```
-
-### **Gemini Batch:**
-```javascript
-BATCH_SIZE = 6   // Token-safe limit
-```
-
-**📖 Full configs:** [`docs/reports/2025-11-02-queue-system-implementation.md`](docs/reports/2025-11-02-queue-system-implementation.md)
+- [`docs/features/phase2-completion-report.md`](docs/features/phase2-completion-report.md)
 
 ---
 
@@ -422,8 +319,6 @@ BATCH_SIZE = 6   // Token-safe limit
 **Backend won't start:** `docker logs ikai-postgres` + `npx prisma migrate deploy`
 **Queue stuck:** `docker logs ikai-backend | grep "worker started"`
 **Gemini rate limit:** `GET /api/v1/queue/health` (admin only)
-**Gemini 25+ CV error:** Check BATCH_SIZE=6
-**AI Chat broken:** Check Milvus collection
 
 **📖 Full troubleshooting:** [`docs/INDEX.md`](docs/INDEX.md) - Troubleshooting section
 
@@ -435,14 +330,13 @@ BATCH_SIZE = 6   // Token-safe limit
 # 1. Code (hot reload in Docker)
 # Edit backend/src/ or frontend/app/ → Auto reload!
 
-# 2. Git Auto-Commit (3 ways)
-./scripts/auto-commit.sh "feat: New feature"  # Script
-git commit -m "message"                        # Hook auto-pushes
-# OR in VS Code: Ctrl+Shift+S                 # Keyboard shortcut
+# 2. Git Auto-Commit (MANDATORY!)
+git add filename
+git commit -m "message"  # Auto-push happens
 
 # 3. Test
-curl http://localhost:8102/health              # Backend health
-docker logs ikai-backend -f                    # Backend logs
+curl http://localhost:8102/health
+docker logs ikai-backend -f
 ```
 
 **📖 Git automation:** [`AUTO_COMMIT_GUIDE.md`](AUTO_COMMIT_GUIDE.md)
@@ -469,40 +363,30 @@ ssh root@62.169.25.186 "cd /var/www/ik && docker compose -f docker-compose.serve
 
 ---
 
-## 📚 FILE REFERENCE MAP (IKAI-Specific)
+## 📚 DOCUMENTATION PHILOSOPHY
 
-### 🎯 RBAC Files (Current Work)
+### New Architecture (v14.0)
 
-**Phase JSONs:**
-- [`docs/features/role-access-phase1-infrastructure.json`](docs/features/role-access-phase1-infrastructure.json)
-- [`docs/features/role-access-phase2-backend-routes.json`](docs/features/role-access-phase2-backend-routes.json)
-- [`docs/features/role-access-phase3-frontend-pages.json`](docs/features/role-access-phase3-frontend-pages.json)
-- [`docs/features/role-access-phase4-sidebar-navigation.json`](docs/features/role-access-phase4-sidebar-navigation.json)
+**CLAUDE.md (This file):** Quick reference + role selection hub (~300 lines)
 
-**Backend RBAC:**
-- [`backend/src/constants/roles.js`](backend/src/constants/roles.js) - ROLES, ROLE_GROUPS
-- [`backend/src/middleware/authorize.js`](backend/src/middleware/authorize.js) - authorize()
+**Role-Based Playbooks:**
+- **MOD-PLAYBOOK.md** → Everything Mod needs (16KB, 500+ lines)
+- **WORKER-PLAYBOOK.md** → Everything Worker needs (18KB, 900+ lines)
 
-**Frontend RBAC:**
-- [`frontend/lib/constants/roles.ts`](frontend/lib/constants/roles.ts) - UserRole, RoleGroups
-- [`frontend/lib/hooks/useHasRole.ts`](frontend/lib/hooks/useHasRole.ts) - useHasRole hook
-- [`frontend/lib/hoc/withRoleProtection.tsx`](frontend/lib/hoc/withRoleProtection.tsx) - Page HOC
-- [`frontend/components/AppLayout.tsx`](frontend/components/AppLayout.tsx) - Sidebar
+**Deep Dive Reference:**
+- **ASANMOD-REFERENCE.md** → Methodology, examples, advanced topics
 
-**📖 Complete file map:** [`docs/INDEX.md`](docs/INDEX.md) - All 50+ files indexed
+### Navigation
 
----
+**Start here:**
+1. Read CLAUDE.md (this file - 30 seconds)
+2. Identify your role (Mod or Worker)
+3. Read your playbook (MOD or WORKER)
+4. Start working!
 
-## 📖 DOCUMENTATION PHILOSOPHY
-
-**CLAUDE.md:** Quick reference (~25k chars)
-**docs/ folder:** Deep dive (50+ files, 18,000+ lines)
-
-### **Navigation Hub:**
-- **Start here:** [`docs/INDEX.md`](docs/INDEX.md) - Complete navigation
-- **AsanMod:** [`docs/workflow/ASANMOD-METHODOLOGY.md`](docs/workflow/ASANMOD-METHODOLOGY.md) (20KB full guide)
-- **SaaS:** [`docs/features/saas-transformation-plan.md`](docs/features/saas-transformation-plan.md) (1,794 lines)
-- **Latest:** [`docs/reports/2025-11-02-session-summary.md`](docs/reports/2025-11-02-session-summary.md)
+**Need more?**
+- **Everything:** [`docs/INDEX.md`](docs/INDEX.md) - 50+ files
+- **Deep dive:** [`docs/workflow/ASANMOD-REFERENCE.md`](docs/workflow/ASANMOD-REFERENCE.md)
 
 **Search docs:**
 ```bash
@@ -528,38 +412,31 @@ grep -r "keyword" docs/ --include="*.md"
 | **Git Auto-Commit** | ✅ | Post-commit hook + scripts |
 | **GitHub Repo** | ✅ | Clean repo with full project |
 | **MCP Integration** | ✅ | 6 MCPs in VS Code extension |
-| **RBAC Layer 2** | ✅ | **NEW: Data filtering fixed (5 controllers)** |
-| **Test Infrastructure** | ✅ | **NEW: 3 orgs + 12 users + Python helper** |
-| **Test CV Data** | ⏳ | **PENDING: Worker #2 creating (30 CVs)** |
+| **🆕 AsanMod v2** | ✅ | **Role-based architecture (MOD/WORKER playbooks)** |
 
-**Setup Date:** 2025-11-03
 **Location:** /home/asan/Desktop/ikai
 **GitHub:** https://github.com/masan3134/ikaiapp (private)
-**SaaS Status:** 🚀 Production Ready
-**RBAC Status:** ✅ Backend Complete | ⏳ Test Data Pending
+**AsanMod:** v2.0 - Role-based single source of truth
 
 ---
 
 ## 📋 VERSION HISTORY
 
-**v14.0 (2025-11-04):** 🔐 **RBAC DATA FILTERING FIX**
-- SUPER_ADMIN can now see all organizations' data
-- 5 backend controllers fixed (candidate, jobPosting, analysis, offer, interview)
-- Test infrastructure: 3 orgs + 12 users + Python test helper
-- Worker #1 completed (RBAC fix verified)
-- Worker #2 pending (30 CVs + 6 Turkish job postings)
-- **See:** [`docs/reports/rbac-session-handoff-2025-11-04.md`](docs/reports/rbac-session-handoff-2025-11-04.md)
+**v14.0 (2025-11-04):** 🎯 **ASANMOD V2 - ROLE-BASED ARCHITECTURE**
+- **NEW:** MOD-PLAYBOOK.md (16KB all-in-one Mod guide)
+- **NEW:** WORKER-PLAYBOOK.md (18KB all-in-one Worker guide)
+- **CHANGED:** CLAUDE.md → Role selection hub (300 lines)
+- **IMPROVED:** Single source of truth per role (no link jumping!)
+- **BENEFIT:** Mod/Worker read ONE file, start working immediately
 
-**v13.0 (2025-11-03):** 🚀 **COMPLETE SAAS TRANSFORMATION**
-- Multi-tenant architecture + Onboarding wizard + Usage limits + Super admin + Landing page
+**v13.0 (2025-11-03):** 🚀 **SAAS TRANSFORMATION**
+- Multi-tenant + Onboarding + Usage limits + Super admin + Landing page
 - 5 phases completed in 13.5 hours
-- **See:** [`docs/features/saas-transformation-plan.md`](docs/features/saas-transformation-plan.md)
 
-**v12.0 (2025-11-03):** 🎉 **COMPLETE LOCAL DEV SETUP**
+**v12.0 (2025-11-03):** 🎉 **LOCAL DEV SETUP**
 - Docker isolated + Git auto-commit + MCP integration
-- 388 files committed (112,571 lines)
 
-**📖 Full version history:** [`docs/reports/2025-11-02-session-summary.md`](docs/reports/2025-11-02-session-summary.md)
+**📖 Full history:** [`docs/reports/2025-11-02-session-summary.md`](docs/reports/2025-11-02-session-summary.md)
 
 ---
 
@@ -567,19 +444,24 @@ grep -r "keyword" docs/ --include="*.md"
 
 **New developer?**
 1. Read CLAUDE.md (this file - overview)
-2. Open [`docs/INDEX.md`](docs/INDEX.md) (complete navigation)
-3. Check [`docs/reports/2025-11-02-session-summary.md`](docs/reports/2025-11-02-session-summary.md) (latest)
+2. Choose role: Mod or Worker
+3. Read your playbook (MOD-PLAYBOOK or WORKER-PLAYBOOK)
+4. Start working!
 
 **Need specific info?**
 - Search in [`docs/INDEX.md`](docs/INDEX.md)
 - Or: `grep -r "keyword" docs/ --include="*.md"`
 
 **Troubleshooting?**
-- Check "TROUBLESHOOTING" section above
+- Check playbooks (MOD/WORKER)
 - Search in `docs/reports/` for related issues
 
 ---
 
-**🎯 Compact Guide (CLAUDE.md) + Detailed Docs (docs/) = Zero Information Loss**
+**🎯 Role-Based Architecture = Maximum Efficiency**
 
-**CLAUDE.md: ~25k chars | Full docs: 18,000+ lines | Navigate via docs/INDEX.md**
+**CLAUDE.md: Hub (30s) → Your Playbook (1 read) → Start working!**
+
+**Mod:** Read MOD-PLAYBOOK.md only
+**Worker:** Read WORKER-PLAYBOOK.md only
+**Both:** Everything in ONE file. No link jumping. Self-contained.
