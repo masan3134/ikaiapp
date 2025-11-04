@@ -48,7 +48,7 @@ export default function Step3_Summary() {
       };
 
       const response = await apiClient.post("/api/v1/offers/wizard", payload);
-      const offer = response.data;
+      const offer = response.data.data; // Backend response: {data: offer}
 
       resetWizard();
       router.push(
