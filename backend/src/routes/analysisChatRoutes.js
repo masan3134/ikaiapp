@@ -39,7 +39,7 @@ router.post('/:id/chat', trackRequest, chatRateLimiter, hrManagers, async (req, 
     // Analiz var mı ve kullanıcı sahibi mi kontrol et
     const analysis = await prisma.analysis.findUnique({
       where: { id: analysisId },
-      select: { userId: true, status: true }
+      select: { userId: true, organizationId: true, status: true }
     });
 
     if (!analysis) {
@@ -62,7 +62,7 @@ router.post('/:id/chat', trackRequest, chatRateLimiter, hrManagers, async (req, 
       analysisId,
       message,
       req.user.userId,
-      req.user.organizationId
+      analysis.organizationId // Use organizationId from analysis
     );
 
     res.json({
