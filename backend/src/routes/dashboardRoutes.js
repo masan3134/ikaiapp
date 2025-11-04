@@ -595,8 +595,10 @@ router.get('/admin', [
     const healthFactors = [
       {
         name: 'Kullanıcı Aktivitesi',
-        score: Math.min(100, Math.round((activeToday / Math.max(orgStats.totalUsers, 1)) * 100)),
-        status: activeToday > 0 ? 'good' : 'warning'
+        score: activeToday !== null
+          ? Math.min(100, Math.round((activeToday / Math.max(orgStats.totalUsers, 1)) * 100))
+          : 0, // No data available (session tracking not implemented)
+        status: activeToday !== null && activeToday > 0 ? 'good' : 'warning'
       },
       {
         name: 'Güvenlik',
