@@ -19,9 +19,9 @@ async function createTestData() {
       maxUsers: 2
     },
     {
-      name: 'Test Organization Startup',
-      slug: 'test-org-startup',
-      plan: 'STARTUP',
+      name: 'Test Organization Pro',
+      slug: 'test-org-pro',
+      plan: 'PRO',
       maxAnalysisPerMonth: 50,
       maxCvPerMonth: 200,
       maxUsers: 10
@@ -73,8 +73,8 @@ async function createTestData() {
 
   console.log('\n✅ Tüm test verileri oluşturuldu!\n');
   console.log('📊 Özet:');
-  console.log('   - 3 test organizasyonu');
-  console.log('   - 12 test kullanıcısı (her org\'da 4 rol)');
+  console.log('   - 3 test organizasyonu (FREE, PRO, ENTERPRISE)');
+  console.log('   - 12 test kullanıcısı (her org\'da 4 rol: ADMIN, MANAGER, HR_SPECIALIST, USER)');
   console.log('   - Şifre (hepsi): TestPass123!');
   console.log('\n🔐 SUPER_ADMIN: info@gaiai.ai (Mustafa Asan - değişmedi)\n');
 }
