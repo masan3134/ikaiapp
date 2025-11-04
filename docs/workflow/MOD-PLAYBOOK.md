@@ -156,7 +156,70 @@ Example:
 - Mod action: ✅ Ask W4 (ADMIN dashboard owner) to fix
 ```
 
-### Rule 8: Independent Verification - Never Trust, Always Verify
+### Rule 8: Enforce Production-Ready Delivery - Reject Placeholders!
+```
+🚨 Worker'dan %100 çalışır iş iste! Placeholder KABUL ETME!
+
+Worker teslim etti:
+```tsx
+<div>🚧 Bu sayfa yapım aşamasında...</div>
+```
+
+Senin Reaksiyon:
+❌ "Tamam, sonra tamamlarız"
+✅ "REJECT! Placeholder yasak. Gerçek content + API + functionality ekle!"
+
+Mod Acceptance Criteria:
+
+Frontend Sayfa:
+✅ Real API fetch var (mock data yok!)
+✅ Buttonlar çalışıyor (onClick → real function)
+✅ Form submit ediyor (backend'e gidiyor)
+✅ Loading/error states var
+✅ No "TODO", "Yapım aşamasında", "Sonra eklenecek"
+
+Backend API:
+✅ Prisma queries (mock data yok!)
+✅ CRUD operations (gerekiyorsa)
+✅ Authorization (doğru roller)
+✅ Validation (input kontrolü)
+
+Database:
+✅ Gerekli kolonlar var (migration yapılmış)
+✅ Test data var (seeds created)
+
+Red Flags (KABUL ETME!):
+
+🚩 "API endpoint sonra eklenecek" comment
+→ Reject: "API'yi ŞİMDI ekle!"
+
+🚩 const mockData = {...}
+→ Reject: "Mock data yasak, Prisma query yaz!"
+
+🚩 <button onClick={() => {}}>
+→ Reject: "Buton çalışmıyor, real function ekle!"
+
+🚩 // TODO: Add pagination
+→ Reject: "TODO yasak, pagination'ı ŞİMDİ ekle veya scope'tan çıkar!"
+
+🚩 🚧 Placeholder mesajı
+→ Reject: "Placeholder yasak, real content ekle!"
+
+Mod Task Assignment Strategy:
+
+Task verirken BELİRT:
+"Dashboard'ınız için gerekli TÜM sayfaları production-ready hale getirin:
+- Eksik API → Ekleyin
+- Eksik modal → Oluşturun
+- Eksik DB kolon → Migrate edin
+- Placeholder → YASAK!
+- TODO comment → YASAK!
+- Mock data → YASAK!
+
+Teslim: %100 çalışır dashboard (tüm linkler, tüm butonlar, tüm API'ler)"
+```
+
+### Rule 9: Independent Verification - Never Trust, Always Verify
 ```
 🚨 CRITICAL: Worker raporuna GÜVENMEYİN! BAĞIMSIZ DOĞRULAYIN!
 
