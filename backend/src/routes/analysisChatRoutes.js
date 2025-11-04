@@ -48,7 +48,9 @@ router.post('/:id/chat', trackRequest, chatRateLimiter, hrManagers, async (req, 
       });
     }
 
-    if (analysis.userId !== req.user.userId && req.user.role !== 'ADMIN') {
+    // SUPER_ADMIN and ADMIN can access all analyses, others only their own
+    if (analysis.userId !== req.user.userId &&
+        !['ADMIN', 'SUPER_ADMIN'].includes(req.user.role)) {
       return res.status(403).json({
         error: 'Forbidden',
         message: 'Bu analize erişim yetkiniz yok'
@@ -91,7 +93,9 @@ router.get('/:id/chat-stats', hrManagers, async (req, res) => {
       return res.status(404).json({ error: 'Analysis not found' });
     }
 
-    if (analysis.userId !== req.user.userId && req.user.role !== 'ADMIN') {
+    // SUPER_ADMIN and ADMIN can access all analyses, others only their own
+    if (analysis.userId !== req.user.userId &&
+        !['ADMIN', 'SUPER_ADMIN'].includes(req.user.role)) {
       return res.status(403).json({ error: 'Forbidden' });
     }
 
