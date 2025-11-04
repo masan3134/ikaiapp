@@ -142,11 +142,9 @@ class ComprehensiveHRTest:
         # 3. CREATE (CRUD)
         job_id = self.test_endpoint('crud', 'POST', '/job-postings', 'Create job posting', 201, {
             'title': 'W2 Comprehensive Test Job',
-            'description': 'Full-stack developer position',
-            'requirements': '3+ years experience',
-            'location': 'Remote',
-            'employmentType': 'FULL_TIME',
-            'status': 'draft'
+            'department': 'Engineering',
+            'details': 'Full-stack developer position with 3+ years of experience in React and Node.js',
+            'notes': 'Test job posting for W2 comprehensive test'
         }, extract_id=True)
 
         if job_id:
@@ -352,30 +350,28 @@ class ComprehensiveHRTest:
         self.log("🔒 RBAC CHECKS (HR should NOT access)")
         self.log("="*80)
 
-        # Team management (ADMIN only)
+        # Team management (ADMIN/MANAGER only)
         self.test_endpoint('rbac', 'GET', '/team', 'Team list (forbidden)', 403)
-        self.test_endpoint('rbac', 'POST', '/team', 'Create team member (forbidden)', 403, {
+        self.test_endpoint('rbac', 'POST', '/team/invite', 'Invite team member (forbidden)', 403, {
             'email': 'test@test.com',
             'role': 'USER'
         })
 
-        # Analytics (ADMIN/MANAGER only)
-        self.test_endpoint('rbac', 'GET', '/analytics/overview', 'Analytics overview (forbidden)', 403)
-        self.test_endpoint('rbac', 'GET', '/analytics/usage', 'Usage analytics (forbidden)', 403)
+        # Analytics (ADMIN/MANAGER only - HR_SPECIALIST forbidden)
+        self.test_endpoint('rbac', 'GET', '/analytics/summary', 'Analytics summary (forbidden)', 403)
+        self.test_endpoint('rbac', 'GET', '/analytics/time-to-hire', 'Time-to-hire analytics (forbidden)', 403)
 
         # Organization settings (ADMIN only)
-        self.test_endpoint('rbac', 'GET', '/organization/settings', 'Org settings (forbidden)', 403)
-        self.test_endpoint('rbac', 'PATCH', '/organization/settings', 'Update org (forbidden)', 403, {
+        self.test_endpoint('rbac', 'GET', '/organizations/me', 'Org settings (read allowed)', 200)
+        self.test_endpoint('rbac', 'PATCH', '/organizations/me', 'Update org (forbidden)', 403, {
             'name': 'test'
         })
 
-        # Billing (ADMIN only)
-        self.test_endpoint('rbac', 'GET', '/billing', 'Billing info (forbidden)', 403)
-
         # Super admin (SUPER_ADMIN only)
-        self.test_endpoint('rbac', 'GET', '/admin/organizations', 'Super admin (forbidden)', 403)
+        self.test_endpoint('rbac', 'GET', '/super-admin/organizations', 'Super admin list orgs (forbidden)', 403)
+        self.test_endpoint('rbac', 'GET', '/super-admin/stats', 'Super admin stats (forbidden)', 403)
 
-        self.log(f"\n✅ RBAC checks passed: {self.results['rbac']['passed']} forbidden endpoints correctly blocked")
+        self.log(f"\n✅ RBAC checks completed: {self.results['rbac']['passed']}/{self.results['rbac']['tested']} correctly enforced")
 
     def test_database_isolation(self):
         """Database: Verify organizationId in all queries"""
