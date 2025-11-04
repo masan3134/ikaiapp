@@ -15,7 +15,7 @@ interface PendingInterviewsWidgetProps {
     };
     jobPosting: {
       title: string;
-    };
+    } | null;
   }> | null;
 }
 
@@ -80,7 +80,7 @@ export function PendingInterviewsWidget({ data }: PendingInterviewsWidgetProps) 
                       {interview.candidate.name}
                     </p>
                     <p className="text-xs text-slate-500">
-                      {interview.jobPosting.title}
+                      {interview.jobPosting?.title || 'İlan bilgisi yok'}
                     </p>
                   </div>
                   <span className={`text-xs px-2 py-1 rounded ${getInterviewTypeColor(interview.type)}`}>
