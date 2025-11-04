@@ -426,10 +426,17 @@ router.get('/system-health', superAdminOnly, async (req, res) => {
           (SELECT COUNT(*) FROM "organizations") as total_orgs,
           (SELECT COUNT(*) FROM "analyses") as total_analyses
       `;
+
+      // Convert BigInt to Number (PostgreSQL COUNT returns BigInt)
+      const stats = dbStats[0];
       health.services.database = {
         status: 'healthy',
         type: 'PostgreSQL',
-        stats: dbStats[0]
+        stats: {
+          total_users: Number(stats.total_users),
+          total_orgs: Number(stats.total_orgs),
+          total_analyses: Number(stats.total_analyses)
+        }
       };
     } catch (error) {
       health.services.database = {
