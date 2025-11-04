@@ -23,6 +23,7 @@ router.patch('/me', allAuthenticated, userController.updateCurrentUser);
 router.get('/me/stats', allAuthenticated, userController.getUserStats);
 router.get('/me/notifications', allAuthenticated, userController.getNotificationPreferences);
 router.patch('/me/notifications', allAuthenticated, userController.updateNotificationPreferences);
+router.patch('/me/password', allAuthenticated, userController.changeOwnPassword);
 
 // Get all users with pagination
 router.get('/', adminOnly, userController.getAllUsers);
