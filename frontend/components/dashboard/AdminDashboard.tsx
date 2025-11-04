@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useAuthStore } from "@/lib/store/authStore";
 import { useOrganization } from "@/contexts/OrganizationContext";
 import DashboardSkeleton from "./DashboardSkeleton";
+import { apiClient } from "@/lib/utils/apiClient";
 
 // Import admin widgets
 import AdminWelcomeHeader from "./admin/AdminWelcomeHeader";
@@ -74,12 +75,7 @@ export function AdminDashboard() {
 
   const loadAdminDashboard = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const response = await fetch("/api/v1/dashboard/admin", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await apiClient.get("/api/v1/dashboard/admin");
       const data = await response.json();
 
       if (data.success) {
