@@ -178,6 +178,7 @@ async function login(req, res) {
         id: userWithoutPassword.id,
         email: userWithoutPassword.email,
         role: userWithoutPassword.role,
+        organizationId: userWithoutPassword.organizationId,
         createdAt: userWithoutPassword.createdAt
       },
       token
