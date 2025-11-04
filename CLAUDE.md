@@ -129,7 +129,7 @@ Read('docs/workflow/WORKER-PLAYBOOK.md')
 4. Auto-push happens (post-commit hook active)
 ```
 
-**Full git workflow:** [`docs/workflow/ASANMOD-GIT-WORKFLOW.md`](docs/workflow/ASANMOD-GIT-WORKFLOW.md)
+**📖 Full git workflow:** Git policy included in MOD-PLAYBOOK.md and WORKER-PLAYBOOK.md
 
 ---
 
