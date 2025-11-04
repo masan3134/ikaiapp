@@ -185,7 +185,7 @@ async function testRole(browser, account) {
     await login(page, account.email, account.password);
 
     // Wait a bit for sidebar to fully render
-    await page.waitForTimeout(2000);
+    await new Promise(resolve => setTimeout(resolve, 2000));
 
     // Take screenshot
     const screenshotPath = path.join(SCREENSHOT_DIR, `sidebar-${account.role.toLowerCase()}.png`);
@@ -201,7 +201,7 @@ async function testRole(browser, account) {
     console.log(`   📋 Items found:`, sidebarData.items.slice(0, 10));
 
     // Check for errors
-    await page.waitForTimeout(1000);
+    await new Promise(resolve => setTimeout(resolve, 1000));
     console.log(`   🐛 Console errors: ${errors.length}`);
     if (errors.length > 0) {
       console.log(`      ${errors.slice(0, 3).join('\n      ')}`);
