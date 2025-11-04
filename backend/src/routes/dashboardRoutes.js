@@ -280,6 +280,188 @@ router.get('/manager', [
   authorize(ROLE_GROUPS.MANAGERS_PLUS)
 ], getManagerDashboard);
 
+// GET /api/v1/dashboard/admin
+// Get ADMIN dashboard data (organization management focus)
+router.get('/admin', [
+  authenticateToken,
+  enforceOrganizationIsolation,
+  authorize(ROLE_GROUPS.ADMINS)
+], async (req, res) => {
+  try {
+    const organizationId = req.organizationId;
+    const organization = req.organization;
+    const now = new Date();
+
+    // Helper: Get active users today
+    const todayStart = new Date(now.setHours(0, 0, 0, 0));
+    const activeToday = await prisma.user.count({
+      where: {
+        organizationId,
+        lastLoginAt: { gte: todayStart }
+      }
+    });
+
+    // Organization stats
+    const orgStats = {
+      totalUsers: await prisma.user.count({ where: { organizationId } }),
+      activeToday,
+      plan: organization.plan
+    };
+
+    // Billing info
+    const PLAN_PRICES = {
+      'FREE': 0,
+      'PRO': 99,
+      'ENTERPRISE': 0
+    };
+
+    const billing = {
+      monthlyAmount: PLAN_PRICES[organization.plan] || 0,
+      nextBillingDate: organization.billingCycleStart || new Date().toISOString()
+    };
+
+    // Usage trend (last 30 days)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    const analyses = await prisma.analysis.findMany({
+      where: {
+        organizationId,
+        createdAt: { gte: thirtyDaysAgo }
+      },
+      select: { createdAt: true }
+    });
+
+    const candidates = await prisma.candidate.findMany({
+      where: {
+        organizationId,
+        createdAt: { gte: thirtyDaysAgo }
+      },
+      select: { createdAt: true }
+    });
+
+    // Group by date (simplified - last 7 days for performance)
+    const usageTrend = [];
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      const dateStr = date.toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' });
+
+      const dayStart = new Date(date.setHours(0, 0, 0, 0));
+      const dayEnd = new Date(date.setHours(23, 59, 59, 999));
+
+      const analysisCount = analyses.filter(a =>
+        new Date(a.createdAt) >= dayStart && new Date(a.createdAt) <= dayEnd
+      ).length;
+
+      const cvCount = candidates.filter(c =>
+        new Date(c.createdAt) >= dayStart && new Date(c.createdAt) <= dayEnd
+      ).length;
+
+      usageTrend.push({
+        date: dateStr,
+        analyses: analysisCount,
+        cvs: cvCount,
+        activeUsers: Math.floor(Math.random() * 5) + 1 // Mock for now
+      });
+    }
+
+    // Team activity (last 20 actions)
+    const teamActivity = await prisma.activityLog.findMany({
+      where: { organizationId },
+      include: {
+        user: {
+          select: {
+            firstName: true,
+            lastName: true
+          }
+        }
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 20
+    }).catch(() => []);
+
+    // Format activity
+    const formattedActivity = teamActivity.map(log => ({
+      id: log.id,
+      type: log.action || 'UNKNOWN',
+      user: {
+        firstName: log.user?.firstName || 'Unknown',
+        lastName: log.user?.lastName || 'User'
+      },
+      action: log.description || log.action || 'performed an action',
+      createdAt: log.createdAt.toISOString()
+    }));
+
+    // Security metrics
+    const twoFactorUsers = await prisma.user.count({
+      where: {
+        organizationId,
+        twoFactorEnabled: true
+      }
+    }).catch(() => 0);
+
+    const security = {
+      twoFactorUsers,
+      activeSessions: orgStats.totalUsers, // Mock - implement session tracking later
+      lastSecurityEvent: null,
+      complianceScore: Math.min(100, Math.round((twoFactorUsers / Math.max(orgStats.totalUsers, 1)) * 100))
+    };
+
+    // Health score calculation
+    const healthFactors = [
+      {
+        name: 'Kullanıcı Aktivitesi',
+        score: Math.min(100, Math.round((activeToday / Math.max(orgStats.totalUsers, 1)) * 100)),
+        status: activeToday > 0 ? 'good' : 'warning'
+      },
+      {
+        name: 'Güvenlik',
+        score: security.complianceScore,
+        status: security.complianceScore >= 70 ? 'good' : 'warning'
+      },
+      {
+        name: 'Kullanım Oranı',
+        score: 75, // Mock
+        status: 'good'
+      },
+      {
+        name: 'Sistem Sağlığı',
+        score: 95, // Mock
+        status: 'good'
+      }
+    ];
+
+    const avgHealthScore = Math.round(
+      healthFactors.reduce((sum, f) => sum + f.score, 0) / healthFactors.length
+    );
+
+    const health = {
+      score: avgHealthScore,
+      factors: healthFactors
+    };
+
+    res.json({
+      success: true,
+      data: {
+        orgStats,
+        userManagement: orgStats,
+        billing,
+        usageTrend,
+        teamActivity: formattedActivity,
+        security,
+        health
+      }
+    });
+  } catch (error) {
+    console.error('[DASHBOARD] ADMIN error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Dashboard verileri alınırken hata'
+    });
+  }
+});
+
 // GET /api/v1/dashboard/super-admin
 // Get SUPER_ADMIN dashboard data (platform-wide analytics)
 // NOTE: No organizationIsolation - SUPER_ADMIN sees ALL organizations
