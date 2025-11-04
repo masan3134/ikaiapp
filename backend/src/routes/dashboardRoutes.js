@@ -4,7 +4,9 @@ const { authenticateToken } = require('../middleware/auth');
 const { enforceOrganizationIsolation } = require('../middleware/organizationIsolation');
 const { authorize } = require('../middleware/authorize');
 const { ROLE_GROUPS } = require('../constants/roles');
-const prisma = require('../config/database');
+const { PrismaClient } = require('@prisma/client');
+
+const prisma = new PrismaClient();
 
 const router = express.Router();
 
