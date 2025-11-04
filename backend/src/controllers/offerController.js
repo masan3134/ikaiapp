@@ -88,7 +88,7 @@ class OfferController {
         {
           status,
           candidateId,
-          createdBy: createdBy || userId,
+          createdBy: userRole === 'SUPER_ADMIN' ? createdBy : (createdBy || userId),
           organizationId,
           userRole
         },
