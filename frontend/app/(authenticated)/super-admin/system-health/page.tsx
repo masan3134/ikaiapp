@@ -1,9 +1,20 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Activity, Database, Server, HardDrive, Cpu, Zap, CheckCircle, XCircle, RefreshCw, Clock } from 'lucide-react';
-import { withRoleProtection } from '@/lib/hoc/withRoleProtection';
-import { UserRole } from '@/lib/constants/roles';
+import { useState, useEffect } from "react";
+import {
+  Activity,
+  Database,
+  Server,
+  HardDrive,
+  Cpu,
+  Zap,
+  CheckCircle,
+  XCircle,
+  RefreshCw,
+  Clock,
+} from "lucide-react";
+import { withRoleProtection } from "@/lib/hoc/withRoleProtection";
+import { UserRole } from "@/lib/constants/roles";
 
 interface ServiceHealth {
   status: string;
@@ -40,8 +51,13 @@ function SystemHealthPage() {
 
   const loadHealth = async () => {
     try {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
-      const res = await fetch(`${API_URL}/api/v1/super-admin/system-health`);
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
+      const token = localStorage.getItem("auth_token");
+      const res = await fetch(`${API_URL}/api/v1/super-admin/system-health`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       const data = await res.json();
 
       if (data.success) {
@@ -49,7 +65,7 @@ function SystemHealthPage() {
         setLastUpdated(new Date());
       }
     } catch (error) {
-      console.error('Error loading system health:', error);
+      console.error("Error loading system health:", error);
     } finally {
       setLoading(false);
     }
@@ -67,36 +83,36 @@ function SystemHealthPage() {
 
   const services = [
     {
-      key: 'backend',
-      name: 'Backend API',
+      key: "backend",
+      name: "Backend API",
       icon: Server,
-      color: 'green',
-      data: health?.services?.backend
+      color: "green",
+      data: health?.services?.backend,
     },
     {
-      key: 'database',
-      name: 'PostgreSQL',
+      key: "database",
+      name: "PostgreSQL",
       icon: Database,
-      color: 'blue',
-      data: health?.services?.database
+      color: "blue",
+      data: health?.services?.database,
     },
     {
-      key: 'redis',
-      name: 'Redis Cache',
+      key: "redis",
+      name: "Redis Cache",
       icon: Zap,
-      color: 'orange',
-      data: health?.services?.redis
+      color: "orange",
+      data: health?.services?.redis,
     },
     {
-      key: 'milvus',
-      name: 'Milvus Vector DB',
+      key: "milvus",
+      name: "Milvus Vector DB",
       icon: HardDrive,
-      color: 'purple',
-      data: health?.services?.milvus
-    }
+      color: "purple",
+      data: health?.services?.milvus,
+    },
   ];
 
-  const allHealthy = health?.overall === 'healthy';
+  const allHealthy = health?.overall === "healthy";
 
   return (
     <div className="p-6">
@@ -115,14 +131,16 @@ function SystemHealthPage() {
           {lastUpdated && (
             <div className="text-sm text-slate-600 flex items-center gap-1">
               <Clock className="w-4 h-4" />
-              {lastUpdated.toLocaleTimeString('tr-TR')}
+              {lastUpdated.toLocaleTimeString("tr-TR")}
             </div>
           )}
-          <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium ${
-            allHealthy
-              ? 'bg-green-100 text-green-800'
-              : 'bg-red-100 text-red-800'
-          }`}>
+          <div
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium ${
+              allHealthy
+                ? "bg-green-100 text-green-800"
+                : "bg-red-100 text-red-800"
+            }`}
+          >
             {allHealthy ? (
               <>
                 <CheckCircle className="w-4 h-4" />
@@ -147,12 +165,14 @@ function SystemHealthPage() {
 
       {/* Service Status Grid */}
       {loading ? (
-        <div className="text-center py-12 text-slate-600">Sistem durumu kontrol ediliyor...</div>
+        <div className="text-center py-12 text-slate-600">
+          Sistem durumu kontrol ediliyor...
+        </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           {services.map((service) => {
             const Icon = service.icon;
-            const isHealthy = service.data?.status === 'healthy';
+            const isHealthy = service.data?.status === "healthy";
 
             return (
               <div
@@ -160,7 +180,7 @@ function SystemHealthPage() {
                 className={`bg-gradient-to-br ${
                   isHealthy
                     ? `from-${service.color}-50 to-${service.color}-100 border-${service.color}-200`
-                    : 'from-red-50 to-red-100 border-red-200'
+                    : "from-red-50 to-red-100 border-red-200"
                 } border rounded-xl p-5`}
               >
                 <div className="flex items-center justify-between mb-4">
@@ -169,7 +189,9 @@ function SystemHealthPage() {
                     <div>
                       <p className="font-bold text-slate-900">{service.name}</p>
                       {service.data?.type && (
-                        <p className="text-sm text-slate-600">{service.data.type}</p>
+                        <p className="text-sm text-slate-600">
+                          {service.data.type}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -183,8 +205,10 @@ function SystemHealthPage() {
                 <div className="space-y-2 text-sm">
                   <div className="flex items-center justify-between py-2 border-t border-slate-200">
                     <span className="text-slate-600">Durum:</span>
-                    <span className={`font-semibold ${isHealthy ? 'text-green-600' : 'text-red-600'}`}>
-                      {isHealthy ? 'Sağlıklı' : 'Sorunlu'}
+                    <span
+                      className={`font-semibold ${isHealthy ? "text-green-600" : "text-red-600"}`}
+                    >
+                      {isHealthy ? "Sağlıklı" : "Sorunlu"}
                     </span>
                   </div>
 
@@ -199,19 +223,27 @@ function SystemHealthPage() {
 
                   {service.data?.stats && (
                     <div className="mt-3 p-3 bg-white bg-opacity-50 rounded-lg">
-                      <p className="text-xs font-medium text-slate-700 mb-2">Database Stats:</p>
+                      <p className="text-xs font-medium text-slate-700 mb-2">
+                        Database Stats:
+                      </p>
                       <div className="grid grid-cols-3 gap-2 text-xs">
                         <div>
                           <p className="text-slate-600">Users</p>
-                          <p className="font-bold text-slate-900">{service.data.stats.total_users}</p>
+                          <p className="font-bold text-slate-900">
+                            {service.data.stats.total_users}
+                          </p>
                         </div>
                         <div>
                           <p className="text-slate-600">Orgs</p>
-                          <p className="font-bold text-slate-900">{service.data.stats.total_orgs}</p>
+                          <p className="font-bold text-slate-900">
+                            {service.data.stats.total_orgs}
+                          </p>
                         </div>
                         <div>
                           <p className="text-slate-600">Analyses</p>
-                          <p className="font-bold text-slate-900">{service.data.stats.total_analyses}</p>
+                          <p className="font-bold text-slate-900">
+                            {service.data.stats.total_analyses}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -238,9 +270,13 @@ function SystemHealthPage() {
       )}
 
       {/* Overall System Status */}
-      <div className={`mt-6 bg-gradient-to-br ${
-        allHealthy ? 'from-green-50 to-green-100 border-green-200' : 'from-red-50 to-red-100 border-red-200'
-      } border rounded-xl p-6`}>
+      <div
+        className={`mt-6 bg-gradient-to-br ${
+          allHealthy
+            ? "from-green-50 to-green-100 border-green-200"
+            : "from-red-50 to-red-100 border-red-200"
+        } border rounded-xl p-6`}
+      >
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-lg font-semibold text-slate-900 mb-1 flex items-center gap-2">
@@ -252,15 +288,20 @@ function SystemHealthPage() {
               Genel Sistem Durumu
             </h3>
             <p className="text-sm text-slate-600">
-              {health?.timestamp && `Son kontrol: ${new Date(health.timestamp).toLocaleString('tr-TR')}`}
+              {health?.timestamp &&
+                `Son kontrol: ${new Date(health.timestamp).toLocaleString("tr-TR")}`}
             </p>
           </div>
           <div className="text-center">
-            <div className={`text-5xl font-bold ${allHealthy ? 'text-green-600' : 'text-red-600'}`}>
-              {allHealthy ? 'OK' : 'ERR'}
+            <div
+              className={`text-5xl font-bold ${allHealthy ? "text-green-600" : "text-red-600"}`}
+            >
+              {allHealthy ? "OK" : "ERR"}
             </div>
             <p className="text-sm text-slate-600 mt-1">
-              {allHealthy ? 'Tüm Servisler Çalışıyor' : 'Bazı Servisler Sorunlu'}
+              {allHealthy
+                ? "Tüm Servisler Çalışıyor"
+                : "Bazı Servisler Sorunlu"}
             </p>
           </div>
         </div>
@@ -275,5 +316,5 @@ function SystemHealthPage() {
 }
 
 export default withRoleProtection(SystemHealthPage, {
-  allowedRoles: [UserRole.SUPER_ADMIN]
+  allowedRoles: [UserRole.SUPER_ADMIN],
 });

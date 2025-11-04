@@ -1,9 +1,17 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { Shield, AlertTriangle, Check, X, Clock, User, MapPin } from 'lucide-react';
-import { withRoleProtection } from '@/lib/hoc/withRoleProtection';
-import { UserRole } from '@/lib/constants/roles';
+import { useEffect, useState } from "react";
+import {
+  Shield,
+  AlertTriangle,
+  Check,
+  X,
+  Clock,
+  User,
+  MapPin,
+} from "lucide-react";
+import { withRoleProtection } from "@/lib/hoc/withRoleProtection";
+import { UserRole } from "@/lib/constants/roles";
 
 interface SecurityStats {
   totalUsers: number;
@@ -36,8 +44,11 @@ function SecurityLogsPage() {
 
   const loadSecurityLogs = async () => {
     try {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
-      const res = await fetch(`${API_URL}/api/v1/super-admin/security-logs`);
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
+      const token = localStorage.getItem("auth_token");
+      const res = await fetch(`${API_URL}/api/v1/super-admin/security-logs`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       const data = await res.json();
 
       if (data.success) {
@@ -45,7 +56,7 @@ function SecurityLogsPage() {
         setEvents(data.data.events);
       }
     } catch (error) {
-      console.error('Error loading security logs:', error);
+      console.error("Error loading security logs:", error);
     } finally {
       setLoading(false);
     }
@@ -80,7 +91,7 @@ function SecurityLogsPage() {
             <div>
               <p className="text-sm text-green-700 font-medium">Aktif Bugün</p>
               <p className="text-3xl font-bold text-green-900 mt-1">
-                {loading ? '...' : stats?.activeToday || 0}
+                {loading ? "..." : stats?.activeToday || 0}
               </p>
             </div>
             <Check className="w-10 h-10 text-green-600 opacity-50" />
@@ -90,9 +101,11 @@ function SecurityLogsPage() {
         <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-xl p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-blue-700 font-medium">Aktif Bu Hafta</p>
+              <p className="text-sm text-blue-700 font-medium">
+                Aktif Bu Hafta
+              </p>
               <p className="text-3xl font-bold text-blue-900 mt-1">
-                {loading ? '...' : stats?.activeThisWeek || 0}
+                {loading ? "..." : stats?.activeThisWeek || 0}
               </p>
             </div>
             <User className="w-10 h-10 text-blue-600 opacity-50" />
@@ -104,7 +117,7 @@ function SecurityLogsPage() {
             <div>
               <p className="text-sm text-purple-700 font-medium">Yeni Bugün</p>
               <p className="text-3xl font-bold text-purple-900 mt-1">
-                {loading ? '...' : stats?.newToday || 0}
+                {loading ? "..." : stats?.newToday || 0}
               </p>
             </div>
             <Clock className="w-10 h-10 text-purple-600 opacity-50" />
@@ -114,9 +127,11 @@ function SecurityLogsPage() {
         <div className="bg-gradient-to-br from-slate-50 to-slate-100 border border-slate-200 rounded-xl p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-slate-700 font-medium">Toplam Kullanıcı</p>
+              <p className="text-sm text-slate-700 font-medium">
+                Toplam Kullanıcı
+              </p>
               <p className="text-3xl font-bold text-slate-900 mt-1">
-                {loading ? '...' : stats?.totalUsers || 0}
+                {loading ? "..." : stats?.totalUsers || 0}
               </p>
             </div>
             <User className="w-10 h-10 text-slate-600 opacity-50" />
@@ -141,7 +156,9 @@ function SecurityLogsPage() {
           {loading ? (
             <div className="text-center py-8 text-slate-600">Yükleniyor...</div>
           ) : events.length === 0 ? (
-            <div className="text-center py-8 text-slate-600">Güvenlik olayı bulunamadı</div>
+            <div className="text-center py-8 text-slate-600">
+              Güvenlik olayı bulunamadı
+            </div>
           ) : (
             <div className="space-y-3">
               {events.map((log) => (
@@ -164,7 +181,7 @@ function SecurityLogsPage() {
                         </span>
                         <span className="flex items-center gap-1">
                           <Clock className="w-3 h-3" />
-                          {new Date(log.timestamp).toLocaleString('tr-TR')}
+                          {new Date(log.timestamp).toLocaleString("tr-TR")}
                         </span>
                       </div>
                     </div>
@@ -183,14 +200,16 @@ function SecurityLogsPage() {
       <div className="mt-6 bg-gradient-to-br from-indigo-50 to-indigo-100 border border-indigo-200 rounded-xl p-6">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-lg font-semibold text-slate-900 mb-1">Aktivite Özeti</h3>
+            <h3 className="text-lg font-semibold text-slate-900 mb-1">
+              Aktivite Özeti
+            </h3>
             <p className="text-sm text-slate-600">
               Son güvenlik olayları ve kullanıcı aktiviteleri
             </p>
           </div>
           <div className="text-center">
             <div className="text-5xl font-bold text-indigo-600">
-              {loading ? '...' : events.length}
+              {loading ? "..." : events.length}
             </div>
             <p className="text-sm text-slate-600 mt-1">Son olay</p>
           </div>
@@ -201,5 +220,5 @@ function SecurityLogsPage() {
 }
 
 export default withRoleProtection(SecurityLogsPage, {
-  allowedRoles: [UserRole.SUPER_ADMIN]
+  allowedRoles: [UserRole.SUPER_ADMIN],
 });

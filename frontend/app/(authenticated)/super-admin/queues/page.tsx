@@ -1,9 +1,18 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { ListIcon, Activity, Play, Pause, RefreshCw, AlertCircle, CheckCircle, Clock } from 'lucide-react';
-import { withRoleProtection } from '@/lib/hoc/withRoleProtection';
-import { UserRole } from '@/lib/constants/roles';
+import { useState, useEffect } from "react";
+import {
+  ListIcon,
+  Activity,
+  Play,
+  Pause,
+  RefreshCw,
+  AlertCircle,
+  CheckCircle,
+  Clock,
+} from "lucide-react";
+import { withRoleProtection } from "@/lib/hoc/withRoleProtection";
+import { UserRole } from "@/lib/constants/roles";
 
 interface QueueStats {
   name: string;
@@ -31,8 +40,11 @@ function QueuesPage() {
 
   const loadQueues = async () => {
     try {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
-      const res = await fetch(`${API_URL}/api/v1/super-admin/queues`);
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
+      const token = localStorage.getItem("auth_token");
+      const res = await fetch(`${API_URL}/api/v1/super-admin/queues`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       const data = await res.json();
 
       if (data.success) {
@@ -40,7 +52,7 @@ function QueuesPage() {
         setLastUpdated(new Date());
       }
     } catch (error) {
-      console.error('Error loading queues:', error);
+      console.error("Error loading queues:", error);
     } finally {
       setLoading(false);
     }
@@ -52,18 +64,18 @@ function QueuesPage() {
       waiting: acc.waiting + q.waiting,
       active: acc.active + q.active,
       completed: acc.completed + q.completed,
-      failed: acc.failed + q.failed
+      failed: acc.failed + q.failed,
     }),
     { waiting: 0, active: 0, completed: 0, failed: 0 }
   );
 
   const getQueueDisplayName = (name: string) => {
     const names: Record<string, string> = {
-      'analysis': 'CV Analysis',
-      'offer': 'Offer Generation',
-      'email': 'Email Sending',
-      'test-generation': 'AI Test Creation',
-      'feedback': 'Feedback Processing'
+      analysis: "CV Analysis",
+      offer: "Offer Generation",
+      email: "Email Sending",
+      "test-generation": "AI Test Creation",
+      feedback: "Feedback Processing",
     };
     return names[name] || name;
   };
@@ -85,7 +97,7 @@ function QueuesPage() {
           {lastUpdated && (
             <div className="text-sm text-slate-600 flex items-center gap-1">
               <Clock className="w-4 h-4" />
-              {lastUpdated.toLocaleTimeString('tr-TR')}
+              {lastUpdated.toLocaleTimeString("tr-TR")}
             </div>
           )}
           <button
@@ -103,8 +115,12 @@ function QueuesPage() {
         <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-xl p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-blue-700 font-medium">Bekleyen Job'lar</p>
-              <p className="text-3xl font-bold text-blue-900 mt-1">{totals.waiting}</p>
+              <p className="text-sm text-blue-700 font-medium">
+                Bekleyen Job'lar
+              </p>
+              <p className="text-3xl font-bold text-blue-900 mt-1">
+                {totals.waiting}
+              </p>
             </div>
             <ListIcon className="w-10 h-10 text-blue-600 opacity-50" />
           </div>
@@ -114,7 +130,9 @@ function QueuesPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-purple-700 font-medium">İşleniyor</p>
-              <p className="text-3xl font-bold text-purple-900 mt-1">{totals.active}</p>
+              <p className="text-3xl font-bold text-purple-900 mt-1">
+                {totals.active}
+              </p>
             </div>
             <Play className="w-10 h-10 text-purple-600 opacity-50" />
           </div>
@@ -124,7 +142,9 @@ function QueuesPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-green-700 font-medium">Tamamlanan</p>
-              <p className="text-3xl font-bold text-green-900 mt-1">{totals.completed}</p>
+              <p className="text-3xl font-bold text-green-900 mt-1">
+                {totals.completed}
+              </p>
             </div>
             <CheckCircle className="w-10 h-10 text-green-600 opacity-50" />
           </div>
@@ -134,7 +154,9 @@ function QueuesPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-red-700 font-medium">Başarısız</p>
-              <p className="text-3xl font-bold text-red-900 mt-1">{totals.failed}</p>
+              <p className="text-3xl font-bold text-red-900 mt-1">
+                {totals.failed}
+              </p>
             </div>
             <AlertCircle className="w-10 h-10 text-red-600 opacity-50" />
           </div>
@@ -152,52 +174,76 @@ function QueuesPage() {
           {loading ? (
             <div className="text-center py-8 text-slate-600">Yükleniyor...</div>
           ) : queues.length === 0 ? (
-            <div className="text-center py-8 text-slate-600">Queue bulunamadı</div>
+            <div className="text-center py-8 text-slate-600">
+              Queue bulunamadı
+            </div>
           ) : (
             <div className="space-y-3">
               {queues.map((queue) => (
                 <div
                   key={queue.name}
                   className={`flex items-center justify-between p-4 rounded-lg border ${
-                    queue.status === 'active' ? 'bg-green-50 border-green-200' :
-                    queue.status === 'error' ? 'bg-red-50 border-red-200' :
-                    'bg-slate-50 border-slate-200'
+                    queue.status === "active"
+                      ? "bg-green-50 border-green-200"
+                      : queue.status === "error"
+                        ? "bg-red-50 border-red-200"
+                        : "bg-slate-50 border-slate-200"
                   }`}
                 >
                   <div className="flex items-center gap-4">
-                    <Activity className={`w-6 h-6 ${
-                      queue.status === 'active' ? 'text-green-600' : 'text-red-600'
-                    }`} />
+                    <Activity
+                      className={`w-6 h-6 ${
+                        queue.status === "active"
+                          ? "text-green-600"
+                          : "text-red-600"
+                      }`}
+                    />
                     <div>
-                      <p className="font-medium text-slate-900">{getQueueDisplayName(queue.name)}</p>
+                      <p className="font-medium text-slate-900">
+                        {getQueueDisplayName(queue.name)}
+                      </p>
                       <p className="text-sm text-slate-600 flex items-center gap-1">
-                        Durum:{' '}
-                        <span className={`font-medium ${
-                          queue.status === 'active' ? 'text-green-600' : 'text-red-600'
-                        }`}>
-                          {queue.status === 'active' ? 'Aktif' : 'Hata'}
+                        Durum:{" "}
+                        <span
+                          className={`font-medium ${
+                            queue.status === "active"
+                              ? "text-green-600"
+                              : "text-red-600"
+                          }`}
+                        >
+                          {queue.status === "active" ? "Aktif" : "Hata"}
                         </span>
                         {queue.error && (
-                          <span className="text-red-600 text-xs ml-2">({queue.error})</span>
+                          <span className="text-red-600 text-xs ml-2">
+                            ({queue.error})
+                          </span>
                         )}
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-6 text-sm">
                     <div className="text-center">
-                      <p className="font-bold text-lg text-blue-600">{queue.waiting}</p>
+                      <p className="font-bold text-lg text-blue-600">
+                        {queue.waiting}
+                      </p>
                       <p className="text-slate-600">Bekleyen</p>
                     </div>
                     <div className="text-center">
-                      <p className="font-bold text-lg text-purple-600">{queue.active}</p>
+                      <p className="font-bold text-lg text-purple-600">
+                        {queue.active}
+                      </p>
                       <p className="text-slate-600">Aktif</p>
                     </div>
                     <div className="text-center">
-                      <p className="font-bold text-lg text-green-600">{queue.completed}</p>
+                      <p className="font-bold text-lg text-green-600">
+                        {queue.completed}
+                      </p>
                       <p className="text-slate-600">Tamamlanan</p>
                     </div>
                     <div className="text-center">
-                      <p className="font-bold text-lg text-red-600">{queue.failed}</p>
+                      <p className="font-bold text-lg text-red-600">
+                        {queue.failed}
+                      </p>
                       <p className="text-slate-600">Başarısız</p>
                     </div>
                   </div>
@@ -217,5 +263,5 @@ function QueuesPage() {
 }
 
 export default withRoleProtection(QueuesPage, {
-  allowedRoles: [UserRole.SUPER_ADMIN]
+  allowedRoles: [UserRole.SUPER_ADMIN],
 });
