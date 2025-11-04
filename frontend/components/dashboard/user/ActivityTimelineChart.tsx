@@ -9,22 +9,12 @@ import {
 interface ActivityTimelineChartProps {
   data: Array<{
     date: string;
-    duration: number;
-    logins: number;
+    count: number;
   }>;
 }
 
 export function ActivityTimelineChart({ data }: ActivityTimelineChartProps) {
-  // Generate default data if none provided
-  const activityData = data && data.length > 0 ? data : [
-    { date: 'Pzt', duration: 45, logins: 2 },
-    { date: 'Sal', duration: 120, logins: 5 },
-    { date: 'Çar', duration: 90, logins: 3 },
-    { date: 'Per', duration: 150, logins: 6 },
-    { date: 'Cum', duration: 60, logins: 2 },
-    { date: 'Cmt', duration: 30, logins: 1 },
-    { date: 'Paz', duration: 20, logins: 1 },
-  ];
+  const activityData = data && data.length > 0 ? data : [];
 
   return (
     <div className="bg-white rounded-xl p-6 shadow-sm">
@@ -52,7 +42,7 @@ export function ActivityTimelineChart({ data }: ActivityTimelineChartProps) {
             stroke="#94a3b8"
             tick={{ fontSize: 12 }}
             tickLine={{ stroke: '#cbd5e1' }}
-            label={{ value: 'Dakika', angle: -90, position: 'insideLeft', style: { fontSize: 12, fill: '#64748b' } }}
+            label={{ value: 'Aktivite', angle: -90, position: 'insideLeft', style: { fontSize: 12, fill: '#64748b' } }}
           />
           <Tooltip
             contentStyle={{
@@ -65,7 +55,7 @@ export function ActivityTimelineChart({ data }: ActivityTimelineChartProps) {
           />
           <Area
             type="monotone"
-            dataKey="duration"
+            dataKey="count"
             stroke="#64748b"
             strokeWidth={2}
             fillOpacity={1}
@@ -74,10 +64,12 @@ export function ActivityTimelineChart({ data }: ActivityTimelineChartProps) {
         </AreaChart>
       </ResponsiveContainer>
 
-      <div className="mt-4 flex items-center justify-between text-xs text-slate-500">
-        <span>Toplam giriş: {activityData.reduce((sum, item) => sum + item.logins, 0)}</span>
-        <span>Toplam süre: {activityData.reduce((sum, item) => sum + item.duration, 0)} dk</span>
-      </div>
+      {activityData.length > 0 && (
+        <div className="mt-4 flex items-center justify-between text-xs text-slate-500">
+          <span>Son 7 gün</span>
+          <span>Toplam aktivite: {activityData.reduce((sum, item) => sum + item.count, 0)}</span>
+        </div>
+      )}
     </div>
   );
 }

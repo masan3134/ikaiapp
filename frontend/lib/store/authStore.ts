@@ -37,6 +37,12 @@ export const useAuthStore = create<AuthState>()(
           localStorage.setItem('auth_token', response.token);
           localStorage.setItem('auth_user', JSON.stringify(response.user));
 
+          // Track session start for activity tracking
+          const now = new Date();
+          localStorage.setItem('sessionStartTimestamp', Date.now().toString());
+          localStorage.setItem('sessionLoginTime', now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }));
+          localStorage.setItem('sessionPageViews', '0'); // Reset page view counter
+
           set({
             user: response.user,
             token: response.token,
@@ -94,6 +100,11 @@ export const useAuthStore = create<AuthState>()(
           // Clear localStorage
           localStorage.removeItem('auth_token');
           localStorage.removeItem('auth_user');
+
+          // Clear session tracking
+          localStorage.removeItem('sessionStartTimestamp');
+          localStorage.removeItem('sessionLoginTime');
+          localStorage.removeItem('sessionPageViews');
 
           set({
             user: null,
