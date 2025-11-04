@@ -280,30 +280,54 @@ Login:    info@gaiai.ai / 23235656
 
 ## 🧪 TEST DATA
 
-**Created:** 2025-11-04 | **Location:** DEV database
+**Created:** 2025-11-04 | **Location:** DEV database + `/test-data/`
 
-**3 Organizations:** FREE, PRO, ENTERPRISE
-**4 Roles per org:** ADMIN, MANAGER, HR_SPECIALIST, USER
-**Password:** TestPass123! (all test accounts)
+**📖 COMPLETE REFERENCE:** [`docs/test-tasks/COMPLETE-TEST-DATA-REFERENCE.md`](docs/test-tasks/COMPLETE-TEST-DATA-REFERENCE.md) ← **START HERE!**
 
-**Example:**
-- test-admin@test-org-1.com (FREE plan, ADMIN role)
-- test-hr_specialist@test-org-2.com (PRO plan, HR_SPECIALIST role)
+### Quick Overview
 
-**5 Total Roles:**
-1. **SUPER_ADMIN** → Mustafa Asan only (info@gaiai.ai)
-2. **ADMIN** → Org admin (full access)
-3. **MANAGER** → Department manager
-4. **HR_SPECIALIST** → HR staff
-5. **USER** → Basic employee (Dashboard only)
+**Organizations:** 3 (FREE, PRO, ENTERPRISE)
+**Users:** 12 test users + 1 SUPER_ADMIN
+**Job Postings:** 6 (Turkish translations)
+**CVs:** 30 (5 match levels per job posting)
+**Password:** TestPass123! (all test users)
 
-**📖 Full test data table:** [`docs/test-tasks/test-data-reference.md`](docs/test-tasks/test-data-reference.md)
-**🐍 API Testing:** [`scripts/test-helper.py`](scripts/test-helper.py) - Python helper for API calls
+**Test Scenarios:**
+- Multi-tenant data isolation ✅
+- RBAC Layer 1 (page access) ✅
+- RBAC Layer 2 (data filtering) ✅
+- CV analysis with match scoring ✅
+- Usage limits (plan-based) ✅
 
-**Recreate test data:**
+**Example Logins:**
+- **SUPER_ADMIN:** info@gaiai.ai / 23235656 (sees all orgs)
+- **Org 1 ADMIN:** test-admin@test-org-1.com / TestPass123! (FREE plan)
+- **Org 2 HR:** test-hr_specialist@test-org-2.com / TestPass123! (PRO plan)
+- **Org 3 ADMIN:** test-admin@test-org-3.com / TestPass123! (ENTERPRISE plan)
+
+**Test Files:**
+- **CVs:** `/test-data/cvs/` (30 CVs, 6 folders)
+- **Job Postings:** `/test-data/job-postings-turkish/` (6 files)
+- **All CVs:** mustafaasan91@gmail.com / 05398827540
+
+**Python Test Helper:**
+```python
+python3 -i scripts/test-helper.py
+>>> helper = IKAITestHelper()
+>>> helper.login("test-admin@test-org-1.com", "TestPass123!")
+>>> helper.get("/api/v1/job-postings")
+```
+
+**Recreate Organizations & Users:**
 ```bash
 docker exec ikai-backend node /usr/src/app/create-test-data.js
 ```
+
+**📚 Related Docs:**
+- **Complete Reference:** [`docs/test-tasks/COMPLETE-TEST-DATA-REFERENCE.md`](docs/test-tasks/COMPLETE-TEST-DATA-REFERENCE.md) (13KB)
+- **CV Verification Report:** [`docs/test-tasks/test-cvs-verification-report.md`](docs/test-tasks/test-cvs-verification-report.md)
+- **Python Test Helper:** [`scripts/test-helper.py`](scripts/test-helper.py)
+- **RBAC Strategy:** [`docs/architecture/RBAC-COMPLETE-STRATEGY.md`](docs/architecture/RBAC-COMPLETE-STRATEGY.md)
 
 ---
 
@@ -504,15 +528,27 @@ grep -r "keyword" docs/ --include="*.md"
 | **Git Auto-Commit** | ✅ | Post-commit hook + scripts |
 | **GitHub Repo** | ✅ | Clean repo with full project |
 | **MCP Integration** | ✅ | 6 MCPs in VS Code extension |
+| **RBAC Layer 2** | ✅ | **NEW: Data filtering fixed (5 controllers)** |
+| **Test Infrastructure** | ✅ | **NEW: 3 orgs + 12 users + Python helper** |
+| **Test CV Data** | ⏳ | **PENDING: Worker #2 creating (30 CVs)** |
 
 **Setup Date:** 2025-11-03
 **Location:** /home/asan/Desktop/ikai
 **GitHub:** https://github.com/masan3134/ikaiapp (private)
 **SaaS Status:** 🚀 Production Ready
+**RBAC Status:** ✅ Backend Complete | ⏳ Test Data Pending
 
 ---
 
 ## 📋 VERSION HISTORY
+
+**v14.0 (2025-11-04):** 🔐 **RBAC DATA FILTERING FIX**
+- SUPER_ADMIN can now see all organizations' data
+- 5 backend controllers fixed (candidate, jobPosting, analysis, offer, interview)
+- Test infrastructure: 3 orgs + 12 users + Python test helper
+- Worker #1 completed (RBAC fix verified)
+- Worker #2 pending (30 CVs + 6 Turkish job postings)
+- **See:** [`docs/reports/rbac-session-handoff-2025-11-04.md`](docs/reports/rbac-session-handoff-2025-11-04.md)
 
 **v13.0 (2025-11-03):** 🚀 **COMPLETE SAAS TRANSFORMATION**
 - Multi-tenant architecture + Onboarding wizard + Usage limits + Super admin + Landing page
