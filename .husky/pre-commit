@@ -1,0 +1,21 @@
+echo "🔍 Running RBAC linting checks..."
+
+# Frontend linting
+cd frontend
+npm run lint --quiet
+FRONTEND_RESULT=$?
+
+# Backend linting
+cd ../backend
+npm run lint --quiet
+BACKEND_RESULT=$?
+
+# Check results
+if [ $FRONTEND_RESULT -ne 0 ] || [ $BACKEND_RESULT -ne 0 ]; then
+  echo "❌ RBAC linting failed! Fix violations before committing."
+  echo "💡 Run 'npm run lint:fix' to auto-fix some issues."
+  exit 1
+fi
+
+echo "✅ RBAC linting passed!"
+exit 0

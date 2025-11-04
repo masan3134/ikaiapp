@@ -5,7 +5,7 @@
     "next/core-web-vitals",
     "prettier"
   ],
-  "plugins": ["prettier", "rbac"],
+  "plugins": ["prettier"],
   "rules": {
     "prettier/prettier": [
       "error",
@@ -28,9 +28,7 @@
       {
         "allow": ["warn", "error"]
       }
-    ],
-    "rbac/require-role-protection": "error",
-    "rbac/use-role-groups": "warn"
+    ]
   },
   "env": {
     "browser": true,
@@ -42,11 +40,6 @@
     "sourceType": "module",
     "ecmaFeatures": {
       "jsx": true
-    }
-  },
-  "settings": {
-    "rbac": {
-      "pluginPath": "../scripts/eslint-plugin-rbac"
     }
   }
 }
