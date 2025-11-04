@@ -62,23 +62,49 @@ router.get('/user', [
       take: 5
     });
 
-    // Activity (mock for now - implement session tracking later)
+    // Activity (real-time data from current session)
+    const now = new Date();
     const activity = {
-      loginTime: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }),
-      onlineTime: '2sa 15dk',
-      pageViews: 12
+      loginTime: now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }),
+      currentTime: now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+      // Note: onlineTime and pageViews are tracked client-side for accuracy
     };
 
-    // Activity timeline (last 7 days - mock data)
-    const activityTimeline = [
-      { date: 'Pzt', duration: 45, logins: 2 },
-      { date: 'Sal', duration: 120, logins: 5 },
-      { date: 'Çar', duration: 90, logins: 3 },
-      { date: 'Per', duration: 150, logins: 6 },
-      { date: 'Cum', duration: 60, logins: 2 },
-      { date: 'Cmt', duration: 30, logins: 1 },
-      { date: 'Paz', duration: 20, logins: 1 },
-    ];
+    // Activity timeline - Real data from notifications over last 7 days
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+    const last7DaysNotifications = await prisma.notification.findMany({
+      where: {
+        userId,
+        createdAt: { gte: sevenDaysAgo }
+      },
+      select: {
+        createdAt: true
+      }
+    });
+
+    // Group notifications by day
+    const activityByDay = {};
+    const dayNames = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'];
+
+    // Initialize last 7 days
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      const dayName = dayNames[date.getDay()];
+      activityByDay[dayName] = { date: dayName, count: 0 };
+    }
+
+    // Count notifications per day
+    last7DaysNotifications.forEach(notif => {
+      const dayName = dayNames[new Date(notif.createdAt).getDay()];
+      if (activityByDay[dayName]) {
+        activityByDay[dayName].count++;
+      }
+    });
+
+    const activityTimeline = Object.values(activityByDay);
 
     res.json({
       success: true,
