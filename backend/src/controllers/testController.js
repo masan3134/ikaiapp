@@ -45,8 +45,8 @@ async function createTest(req, res) {
       });
     }
 
-    // Check organization isolation
-    if (jobPosting.organizationId !== organizationId) {
+    // Check organization isolation (all roles EXCEPT SUPER_ADMIN)
+    if (userRole !== 'SUPER_ADMIN' && jobPosting.organizationId !== organizationId) {
       return res.status(403).json({
         error: 'Forbidden',
         message: 'Bu iş ilanına erişim yetkiniz yok'
