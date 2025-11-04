@@ -218,7 +218,7 @@ async function getManagerDashboard(req, res) {
           approvalStatus: 'pending'
         },
         include: {
-          candidate: { select: { name: true } },
+          candidate: { select: { firstName: true, lastName: true } },
           jobPosting: { select: { title: true } }
         },
         orderBy: { createdAt: 'desc' },
@@ -510,7 +510,7 @@ async function getManagerDashboard(req, res) {
         queue: pendingOffers.map(offer => ({
           id: offer.id,
           type: 'OFFER',
-          title: `${offer.jobPosting?.title || 'Pozisyon'} - ${offer.candidate?.name || 'Aday'}`,
+          title: `${offer.jobPosting?.title || 'Pozisyon'} - ${offer.candidate?.firstName || ''} ${offer.candidate?.lastName || 'Aday'}`.trim(),
           createdAt: offer.createdAt
         }))
       },
