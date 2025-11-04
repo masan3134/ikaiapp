@@ -1,7 +1,7 @@
 # 🤖 IKAI HR Platform - Development Guide
 
-**Version:** 15.0 - Production Ready with Complete Documentation
-**Updated:** 2025-11-04 (Final Session)
+**Version:** 15.1 - Streamlined AsanMod (3 Core Docs)
+**Updated:** 2025-11-04 (Final Session - Cleanup Complete)
 **Environment:** Docker Isolated Development (Hot Reload Enabled)
 **Context:** 1M Tokens (Sonnet 4.5) - Full Detail Mode Until 700K
 
@@ -31,8 +31,10 @@ Read: docs/workflow/WORKER-PLAYBOOK.md
 
 ### Step 3: Start Working
 
-**Mod:** Create Phase JSONs, verify Worker's work
-**Worker:** Execute JSON tasks, create verification reports
+**Mod:** Create MD task files, verify Worker's work
+**Worker:** Execute MD tasks, create verification reports
+
+**Communication:** KISA ÖZ (emoji + dosya ref) → User, ULTRA DETAY → MD files
 
 ---
 
@@ -45,10 +47,10 @@ Read: docs/workflow/WORKER-PLAYBOOK.md
 **Your playbook:** [`docs/workflow/MOD-PLAYBOOK.md`](docs/workflow/MOD-PLAYBOOK.md)
 
 **Your responsibilities:**
-- 📋 Plan phases → Create ultra-detailed JSON task files
+- 📋 Plan phases → Create ultra-detailed MD task files
 - ✅ Verify Worker's work → Re-run ALL verification commands
 - 🔍 Detect fake data → Compare Worker output vs your output
-- 🤖 Automate tests → Playwright/curl (no manual User testing!)
+- 💬 User'a kısa mesaj → Emoji + dosya ref (3-5 satır max!)
 - 📊 Coordinate → Prepare next phase while Worker executes current
 
 **Critical rule:**
@@ -72,11 +74,11 @@ Read('docs/workflow/MOD-PLAYBOOK.md')
 **Your playbook:** [`docs/workflow/WORKER-PLAYBOOK.md`](docs/workflow/WORKER-PLAYBOOK.md)
 
 **Your responsibilities:**
-- 📖 Read JSON task file completely
+- 📖 Read MD task file completely
 - 🛠️ Execute tasks with REAL tools (Read/Edit/Write/Bash)
 - ⚠️ NO SIMULATION - Never fake outputs!
 - 📄 Create verification report with EXACT terminal outputs
-- 🚫 NO INTERPRETATION - Copy-paste raw data, let Mod verify
+- 💬 User'a kısa rapor → Emoji + dosya ref + metrik (3-5 satır)
 
 **Critical rule:**
 ```
