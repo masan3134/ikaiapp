@@ -23,11 +23,17 @@ import {
   Settings,
   UserCog
 } from 'lucide-react';
+import dynamic from 'next/dynamic';
 import ProtectedRoute from '@/components/ProtectedRoute';
-import NotificationBell from '@/components/notifications/NotificationBell';
 import { useAuthStore } from '@/lib/store/authStore';
 import { OrganizationProvider } from '@/contexts/OrganizationContext';
 import { OnboardingGuard } from '@/components/OnboardingGuard';
+
+// Dynamic import to avoid SSR issues (uses localStorage/hooks)
+const NotificationBell = dynamic(
+  () => import('@/components/notifications/NotificationBell'),
+  { ssr: false }
+);
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
