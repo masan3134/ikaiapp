@@ -14,6 +14,30 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [validationError, setValidationError] = useState("");
 
+  // Quick Login için test accounts
+  const quickLoginAccounts = [
+    { label: "SUPER_ADMIN (Mustafa Asan)", email: "info@gaiai.ai", password: "23235656" },
+    { label: "ADMIN - Test Org 1 (FREE)", email: "test-admin@test-org-1.com", password: "TestPass123!" },
+    { label: "USER - Test Org 1 (FREE)", email: "test-user@test-org-1.com", password: "TestPass123!" },
+    { label: "ADMIN - Test Org 2 (PRO)", email: "test-admin@test-org-2.com", password: "TestPass123!" },
+    { label: "MANAGER - Test Org 2 (PRO)", email: "test-manager@test-org-2.com", password: "TestPass123!" },
+    { label: "HR_SPECIALIST - Test Org 2 (PRO)", email: "test-hr_specialist@test-org-2.com", password: "TestPass123!" },
+    { label: "USER - Test Org 2 (PRO)", email: "test-user@test-org-2.com", password: "TestPass123!" },
+    { label: "ADMIN - Test Org 3 (ENTERPRISE)", email: "test-admin@test-org-3.com", password: "TestPass123!" },
+  ];
+
+  const handleQuickLogin = (account: typeof quickLoginAccounts[0]) => {
+    setEmail(account.email);
+    setPassword(account.password);
+    // Automatically submit after setting values
+    setTimeout(() => {
+      const form = document.querySelector('form');
+      if (form) {
+        form.requestSubmit();
+      }
+    }, 100);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setValidationError("");
@@ -147,12 +171,29 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {/* Test credentials hint for development */}
+        {/* Quick Login for development */}
         {process.env.NODE_ENV === "development" && (
-          <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-            <p className="text-xs text-gray-600 font-medium mb-2">Test için:</p>
-            <p className="text-xs text-gray-500">Email: test@example.com</p>
-            <p className="text-xs text-gray-500">Şifre: Test1234</p>
+          <div className="mt-6 p-4 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg border-2 border-green-200">
+            <p className="text-sm text-gray-700 font-bold mb-3 flex items-center">
+              <span className="mr-2">⚡</span>
+              Quick Login (Dev Only)
+            </p>
+            <div className="space-y-2">
+              {quickLoginAccounts.map((account, index) => (
+                <button
+                  key={index}
+                  type="button"
+                  onClick={() => handleQuickLogin(account)}
+                  className="w-full text-left px-3 py-2 bg-white hover:bg-green-50 border border-gray-200 hover:border-green-300 rounded-lg transition-all duration-200 text-sm text-gray-700 hover:text-green-700 font-medium"
+                  disabled={isLoading}
+                >
+                  {account.label}
+                </button>
+              ))}
+            </div>
+            <p className="text-xs text-gray-500 mt-3 text-center">
+              Tıkla → Otomatik login! 🚀
+            </p>
           </div>
         )}
       </div>
