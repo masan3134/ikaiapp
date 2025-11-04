@@ -48,18 +48,7 @@ export default function UserDashboard() {
       setLoading(true);
       setError(null);
 
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8102";
-      const response = await fetch(`${apiUrl}/api/v1/dashboard/user`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error("Dashboard verileri yüklenemedi");
-      }
-
-      const data = await response.json();
+      const data = await apiClient.get("/api/v1/dashboard/user");
 
       if (data.success) {
         setStats(data.data);
