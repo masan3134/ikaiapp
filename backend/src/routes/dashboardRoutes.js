@@ -364,8 +364,8 @@ router.get('/admin', [
     // Organization stats
     const totalUsers = await prisma.user.count({ where: { organizationId } });
 
-    // Helper: Get active users today (mock for now - implement session tracking later)
-    const activeToday = Math.max(1, Math.floor(totalUsers * 0.6)); // Mock: 60% active
+    // Note: Active users today not available - requires session tracking implementation
+    const activeToday = null; // No real data source (no lastLogin field in User model)
 
     const orgStats = {
       totalUsers,
