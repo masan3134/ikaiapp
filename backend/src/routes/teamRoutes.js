@@ -18,7 +18,10 @@ const {
 // Read operations (MANAGER can view team)
 const teamViewers = [authenticateToken, enforceOrganizationIsolation, authorize(['ADMIN', 'SUPER_ADMIN', 'MANAGER'])];
 
-// Write operations (ADMIN only)
+// Team management operations (MANAGER can manage team)
+const teamManagers = [authenticateToken, enforceOrganizationIsolation, authorize(['ADMIN', 'SUPER_ADMIN', 'MANAGER'])];
+
+// Critical write operations (ADMIN only - org settings, billing, etc)
 const adminOnly = [authenticateToken, enforceOrganizationIsolation, authorize(['ADMIN', 'SUPER_ADMIN'])];
 
 // POST /api/v1/team/accept-invitation - Accept invitation (PUBLIC - no auth)
@@ -36,16 +39,16 @@ router.get('/hierarchy', ...teamViewers, getTeamHierarchy);
 // GET /api/v1/team/:id - Get single team member (MANAGER can view)
 router.get('/:id', ...teamViewers, getTeamMember);
 
-// POST /api/v1/team/invite - Invite new team member
-router.post('/invite', ...adminOnly, inviteTeamMember);
+// POST /api/v1/team/invite - Invite new team member (MANAGER can invite)
+router.post('/invite', ...teamManagers, inviteTeamMember);
 
-// PATCH /api/v1/team/:id - Update team member
-router.patch('/:id', ...adminOnly, updateTeamMember);
+// PATCH /api/v1/team/:id - Update team member (MANAGER can update)
+router.patch('/:id', ...teamManagers, updateTeamMember);
 
-// PATCH /api/v1/team/:id/toggle - Toggle active status
-router.patch('/:id/toggle', ...adminOnly, toggleTeamMember);
+// PATCH /api/v1/team/:id/toggle - Toggle active status (MANAGER can toggle)
+router.patch('/:id/toggle', ...teamManagers, toggleTeamMember);
 
-// DELETE /api/v1/team/:id - Delete team member
-router.delete('/:id', ...adminOnly, deleteTeamMember);
+// DELETE /api/v1/team/:id - Delete team member (MANAGER can delete)
+router.delete('/:id', ...teamManagers, deleteTeamMember);
 
 module.exports = router;
