@@ -1,12 +1,36 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { DashboardCard } from './DashboardCard'
+import { getDashboardStats } from '@/lib/services/dashboardService'
+import LoadingSkeleton from '@/components/ui/LoadingSkeleton'
 
 export const SuperAdminDashboard = () => {
   const router = useRouter()
   const [selectedOrg, setSelectedOrg] = useState('all')
+  const [stats, setStats] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    loadStats()
+  }, [])
+
+  async function loadStats() {
+    try {
+      setLoading(true)
+      const data = await getDashboardStats()
+      setStats(data)
+    } catch (error) {
+      console.error('Dashboard stats error:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (loading) {
+    return <LoadingSkeleton variant="grid" rows={3} columns={4} />
+  }
 
   return (
     <div className="space-y-6">
@@ -35,7 +59,7 @@ export const SuperAdminDashboard = () => {
       {/* System Health */}
       <div className="bg-white rounded-xl shadow-sm border-2 border-red-500 p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">
-          System Health
+          Sistem Sağlığı
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="text-center">
@@ -64,29 +88,29 @@ export const SuperAdminDashboard = () => {
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <DashboardCard
-          title="Total Organizations"
-          value={150}
+          title="Toplam Organizasyon"
+          value={3}
+          subtitle="Sistem geneli"
           icon={<span className="text-2xl">🏢</span>}
           color="#EF4444"
           gradient="linear-gradient(135deg, #EF4444, #991B1B)"
         />
         <DashboardCard
-          title="Total Users"
-          value="2,340"
+          title="Toplam Kullanıcı"
+          value={stats?.overview?.totalUsers || 0}
           icon={<span className="text-2xl">👥</span>}
           color="#EF4444"
-          trend={{ value: 8, isPositive: true }}
         />
         <DashboardCard
-          title="Total Job Postings"
-          value={892}
+          title="Toplam İş İlanı"
+          value={stats?.overview?.totalJobPostings || 0}
           icon={<span className="text-2xl">📄</span>}
           color="#EF4444"
         />
         <DashboardCard
-          title="Active Analyses"
-          value={45}
-          subtitle="Processing now"
+          title="Aktif Analizler"
+          value={stats?.overview?.totalAnalyses || 0}
+          subtitle={`${stats?.analysisByStatus?.PROCESSING || 0} işleniyor`}
           icon={<span className="text-2xl">⚙️</span>}
           color="#EF4444"
         />
@@ -95,7 +119,7 @@ export const SuperAdminDashboard = () => {
       {/* Organizations by Plan */}
       <div className="bg-white rounded-xl shadow-sm border-2 border-red-500 p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">
-          Organizations by Plan
+          Plana Göre Organizasyonlar
         </h2>
         <div className="space-y-3">
           <div>
@@ -140,7 +164,7 @@ export const SuperAdminDashboard = () => {
       {/* Recent Events */}
       <div className="bg-white rounded-xl shadow-sm border-2 border-red-500 p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">
-          Recent System Events
+          Son Sistem Olayları
         </h2>
         <div className="space-y-3">
           <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">

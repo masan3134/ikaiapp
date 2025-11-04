@@ -1,14 +1,39 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuthStore } from '@/lib/store/authStore'
 import { ROLE_COLORS } from '@/lib/constants/roleColors'
 import { StatCards } from './StatCards'
+import { getDashboardStats } from '@/lib/services/dashboardService'
+import LoadingSkeleton from '@/components/ui/LoadingSkeleton'
 
 export const AdminDashboard = () => {
   const router = useRouter()
   const { user } = useAuthStore()
   const roleColor = ROLE_COLORS.ADMIN.primary
+  const [stats, setStats] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    loadStats()
+  }, [])
+
+  async function loadStats() {
+    try {
+      setLoading(true)
+      const data = await getDashboardStats()
+      setStats(data)
+    } catch (error) {
+      console.error('Dashboard stats error:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (loading) {
+    return <LoadingSkeleton variant="grid" rows={3} columns={4} />
+  }
 
   return (
     <div className="space-y-6">
@@ -16,7 +41,7 @@ export const AdminDashboard = () => {
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">
-            👋 Good morning, {user?.name || 'Admin'}!
+            👋 Günaydın, {user?.name || 'Admin'}!
           </h1>
           <p className="text-sm text-gray-500">
             {user?.organization?.name} • {user?.organization?.plan || 'FREE'} Plan
@@ -29,31 +54,30 @@ export const AdminDashboard = () => {
             onClick={() => router.push('/settings/billing')}
             className="px-6 py-3 bg-gradient-to-r from-purple-500 to-purple-700 text-white rounded-lg font-medium hover:shadow-lg transition-all hover:scale-105"
           >
-            🚀 Upgrade to PRO
+            🚀 PRO'ya Yükselt
           </button>
         )}
       </div>
 
       {/* Stat Cards */}
       <StatCards stats={{
-        activeJobs: 8,
-        totalCandidates: 47,
-        thisMonthAnalyses: 12,
-        usagePercent: 120 // Over limit!
+        activeJobs: stats?.overview?.totalJobPostings || 0,
+        totalCandidates: stats?.overview?.totalCandidates || 0,
+        thisMonthAnalyses: stats?.overview?.totalAnalyses || 0,
+        usagePercent: 0 // TODO: Add usage tracking API
       }} />
 
       {/* Candidate Pipeline */}
       <div className="bg-white rounded-xl shadow-sm border-2 p-6" style={{ borderColor: roleColor }}>
         <h2 className="text-lg font-semibold text-gray-900 mb-6">
-          Candidate Pipeline
+          Analiz Durumları
         </h2>
         <div className="flex items-center justify-between gap-2 overflow-x-auto">
           {[
-            { label: 'New', count: 12, color: '#6B7280' },
-            { label: 'Screening', count: 8, color: '#3B82F6' },
-            { label: 'Interview', count: 5, color: '#F59E0B' },
-            { label: 'Offer', count: 2, color: '#10B981' },
-            { label: 'Hired', count: 1, color: '#A855F7' }
+            { label: 'Pending', count: stats?.analysisByStatus?.PENDING || 0, color: '#F59E0B' },
+            { label: 'Processing', count: stats?.analysisByStatus?.PROCESSING || 0, color: '#3B82F6' },
+            { label: 'Completed', count: stats?.analysisByStatus?.COMPLETED || 0, color: '#10B981' },
+            { label: 'Failed', count: stats?.analysisByStatus?.FAILED || 0, color: '#EF4444' }
           ].map((stage, index) => (
             <div key={stage.label} className="flex items-center">
               <div className="flex flex-col items-center">
@@ -73,6 +97,9 @@ export const AdminDashboard = () => {
             </div>
           ))}
         </div>
+        <p className="text-xs text-gray-500 mt-4 text-center">
+          Analiz durum dağılımı
+        </p>
       </div>
 
       {/* Two Columns */}
@@ -80,46 +107,40 @@ export const AdminDashboard = () => {
         {/* Today's Activity */}
         <div className="bg-white rounded-xl shadow-sm border-2 p-6" style={{ borderColor: roleColor }}>
           <h2 className="text-lg font-semibold text-gray-900 mb-4">
-            Today's Activity
+            Son Aktiviteler
           </h2>
           <div className="space-y-3">
-            <div className="flex items-start gap-3 p-3 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors">
-              <span className="text-2xl">🆕</span>
-              <div className="flex-1">
-                <p className="text-sm font-medium text-gray-900">
-                  John Doe applied for Frontend Developer
-                </p>
-                <p className="text-xs text-gray-500">2 hours ago</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">
-              <span className="text-2xl">📅</span>
-              <div className="flex-1">
-                <p className="text-sm font-medium text-gray-900">
-                  Interview scheduled: Jane Smith
-                </p>
-                <p className="text-xs text-gray-500">Today at 14:00</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3 p-3 bg-green-50 rounded-lg hover:bg-green-100 transition-colors">
-              <span className="text-2xl">💼</span>
-              <div className="flex-1">
-                <p className="text-sm font-medium text-gray-900">
-                  Offer sent to Mike Johnson
-                </p>
-                <p className="text-xs text-gray-500">Waiting response</p>
-              </div>
-            </div>
+            {stats?.recentAnalyses && stats.recentAnalyses.length > 0 ? (
+              stats.recentAnalyses.slice(0, 3).map((analysis: any) => (
+                <div
+                  key={analysis.id}
+                  onClick={() => router.push(`/analyses/${analysis.id}`)}
+                  className="flex items-start gap-3 p-3 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors cursor-pointer"
+                >
+                  <span className="text-2xl">📊</span>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-900">
+                      {analysis.jobPostingTitle}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {analysis.candidateCount} candidates • {analysis.status}
+                    </p>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p className="text-sm text-gray-500 text-center py-4">Henüz aktivite yok</p>
+            )}
           </div>
           <button className="w-full mt-4 text-sm text-purple-600 font-medium hover:text-purple-700 transition-colors">
-            View All Activity →
+            Tümünü Gör →
           </button>
         </div>
 
         {/* Quick Actions */}
         <div className="bg-white rounded-xl shadow-sm border-2 p-6" style={{ borderColor: roleColor }}>
           <h2 className="text-lg font-semibold text-gray-900 mb-4">
-            Quick Actions
+            Hızlı İşlemler
           </h2>
           <div className="space-y-3">
             <button
@@ -128,7 +149,7 @@ export const AdminDashboard = () => {
             >
               <span className="text-2xl">📄</span>
               <span className="text-sm font-medium text-gray-900">
-                Create Job Posting
+                İş İlanı Oluştur
               </span>
             </button>
             <button
@@ -137,7 +158,7 @@ export const AdminDashboard = () => {
             >
               <span className="text-2xl">📤</span>
               <span className="text-sm font-medium text-gray-900">
-                Upload CV
+                CV Yükle
               </span>
             </button>
             <button
@@ -146,7 +167,7 @@ export const AdminDashboard = () => {
             >
               <span className="text-2xl">📅</span>
               <span className="text-sm font-medium text-gray-900">
-                Schedule Interview
+                Mülakat Planla
               </span>
             </button>
             <button
@@ -155,7 +176,7 @@ export const AdminDashboard = () => {
             >
               <span className="text-2xl">👥</span>
               <span className="text-sm font-medium text-gray-900">
-                Invite Team Member
+                Kullanıcı Davet Et
               </span>
             </button>
           </div>

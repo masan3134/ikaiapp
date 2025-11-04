@@ -19,31 +19,31 @@ export const FloatingActionButton = () => {
 
   const actions = [
     {
-      label: 'Create Job Posting',
+      label: 'İş İlanı Oluştur',
       icon: '📄',
       href: '/job-postings/new',
       show: canCreateJobPosting(user?.role)
     },
     {
-      label: 'Upload CV',
+      label: 'CV Yükle',
       icon: '📤',
       href: '/wizard',
       show: canCreateCandidate(user?.role)
     },
     {
-      label: 'Add Candidate',
+      label: 'Aday Ekle',
       icon: '👥',
       href: '/candidates/new',
       show: canCreateCandidate(user?.role)
     },
     {
-      label: 'Schedule Interview',
+      label: 'Mülakat Planla',
       icon: '📅',
       href: '/interviews/new',
       show: canScheduleInterview(user?.role)
     },
     {
-      label: 'Create Offer',
+      label: 'Teklif Oluştur',
       icon: '💼',
       href: '/offers/new',
       show: canCreateOffer(user?.role)
@@ -91,7 +91,7 @@ export const FloatingActionButton = () => {
         style={{
           background: `linear-gradient(135deg, ${roleColor}, ${roleColor}dd)`
         }}
-        title={isOpen ? 'Close' : 'Quick Actions'}
+        title={isOpen ? 'Kapat' : 'Hızlı İşlemler'}
       >
         {isOpen ? '✕' : '+'}
       </button>

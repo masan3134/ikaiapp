@@ -1,23 +1,48 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuthStore } from '@/lib/store/authStore'
 import { ROLE_COLORS } from '@/lib/constants/roleColors'
+import { getDashboardStats } from '@/lib/services/dashboardService'
+import LoadingSkeleton from '@/components/ui/LoadingSkeleton'
 
 export const HRDashboard = () => {
   const router = useRouter()
   const { user } = useAuthStore()
   const roleColor = ROLE_COLORS.HR_SPECIALIST.primary
+  const [stats, setStats] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    loadStats()
+  }, [])
+
+  async function loadStats() {
+    try {
+      setLoading(true)
+      const data = await getDashboardStats()
+      setStats(data)
+    } catch (error) {
+      console.error('Dashboard stats error:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (loading) {
+    return <LoadingSkeleton variant="grid" rows={3} columns={2} />
+  }
 
   return (
     <div className="space-y-6">
       {/* Greeting */}
       <div>
         <h1 className="text-2xl font-bold text-gray-900">
-          👋 Welcome back, {user?.name || 'HR Specialist'}!
+          👋 Tekrar hoşgeldin, {user?.name || 'İK Uzmanı'}!
         </h1>
         <p className="text-sm text-gray-500">
-          HR Specialist • {user?.organization?.name || 'Your Organization'}
+          İK Uzmanı • {user?.organization?.name || 'Organizasyonunuz'}
         </p>
       </div>
 
@@ -70,16 +95,16 @@ export const HRDashboard = () => {
       >
         <div className="text-6xl mb-4">📤</div>
         <h3 className="text-lg font-semibold text-gray-900 mb-2">
-          Upload CV (Drag & Drop)
+          CV Yükle (Sürükle Bırak)
         </h3>
         <p className="text-sm text-gray-500 mb-4">
-          Drag your CV file here or click to browse
+          CV dosyanızı buraya sürükleyin veya göz atmak için tıklayın
         </p>
         <button className="px-6 py-3 bg-gradient-to-r from-green-500 to-green-700 text-white rounded-lg font-medium hover:shadow-lg transition-all hover:scale-105">
-          Browse Files
+          Dosya Seç
         </button>
         <p className="text-xs text-gray-400 mt-3">
-          Supports: PDF, DOCX, TXT (max 10MB)
+          Desteklenen: PDF, DOCX, TXT (max 10MB)
         </p>
       </div>
 
@@ -88,15 +113,14 @@ export const HRDashboard = () => {
         {/* Candidate Pipeline */}
         <div className="bg-white rounded-xl shadow-sm border-2 border-green-500 p-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">
-            Candidate Pipeline
+            Analiz Süreçleri
           </h2>
           <div className="space-y-4">
             {[
-              { stage: 'New', count: 12, color: '#6B7280' },
-              { stage: 'Screening', count: 8, color: '#3B82F6' },
-              { stage: 'Interview', count: 5, color: '#F59E0B' },
-              { stage: 'Offer', count: 2, color: '#10B981' },
-              { stage: 'Hired', count: 1, color: '#A855F7' }
+              { stage: 'Pending', count: stats?.analysisByStatus?.PENDING || 0, color: '#F59E0B' },
+              { stage: 'Processing', count: stats?.analysisByStatus?.PROCESSING || 0, color: '#3B82F6' },
+              { stage: 'Completed', count: stats?.analysisByStatus?.COMPLETED || 0, color: '#10B981' },
+              { stage: 'Failed', count: stats?.analysisByStatus?.FAILED || 0, color: '#EF4444' }
             ].map((item) => (
               <div key={item.stage} className="flex items-center gap-3">
                 <div
@@ -110,7 +134,7 @@ export const HRDashboard = () => {
                     {item.stage}
                   </div>
                   <div className="text-xs text-gray-500">
-                    {item.count} candidates
+                    {item.count} analiz
                   </div>
                 </div>
                 <span className="text-2xl text-gray-300">↓</span>
@@ -122,48 +146,31 @@ export const HRDashboard = () => {
         {/* This Week's Interviews */}
         <div className="bg-white rounded-xl shadow-sm border-2 border-green-500 p-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">
-            📅 This Week's Interviews
+            📊 Analysis Status
           </h2>
-          <div className="space-y-4">
-            <div>
-              <div className="text-xs text-gray-500 mb-2">Monday</div>
-              <div className="p-3 bg-green-50 rounded-lg hover:bg-green-100 transition-colors">
-                <p className="text-sm font-medium text-gray-900">
-                  John Doe
-                </p>
-                <p className="text-xs text-gray-500">
-                  Frontend Developer • 14:00
-                </p>
-              </div>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg">
+              <span className="text-sm font-medium text-gray-900">⏳ Pending</span>
+              <span className="text-2xl font-bold text-yellow-600">{stats?.analysisByStatus?.PENDING || 0}</span>
             </div>
-            <div>
-              <div className="text-xs text-gray-500 mb-2">Wednesday</div>
-              <div className="p-3 bg-green-50 rounded-lg hover:bg-green-100 transition-colors">
-                <p className="text-sm font-medium text-gray-900">
-                  Jane Smith
-                </p>
-                <p className="text-xs text-gray-500">
-                  Backend Developer • 10:00
-                </p>
-              </div>
+            <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+              <span className="text-sm font-medium text-gray-900">🔄 Processing</span>
+              <span className="text-2xl font-bold text-blue-600">{stats?.analysisByStatus?.PROCESSING || 0}</span>
             </div>
-            <div>
-              <div className="text-xs text-gray-500 mb-2">Friday</div>
-              <div className="p-3 bg-green-50 rounded-lg hover:bg-green-100 transition-colors">
-                <p className="text-sm font-medium text-gray-900">
-                  Mike Johnson
-                </p>
-                <p className="text-xs text-gray-500">
-                  QA Engineer • 11:00
-                </p>
-              </div>
+            <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+              <span className="text-sm font-medium text-gray-900">✅ Completed</span>
+              <span className="text-2xl font-bold text-green-600">{stats?.analysisByStatus?.COMPLETED || 0}</span>
+            </div>
+            <div className="flex items-center justify-between p-3 bg-red-50 rounded-lg">
+              <span className="text-sm font-medium text-gray-900">❌ Failed</span>
+              <span className="text-2xl font-bold text-red-600">{stats?.analysisByStatus?.FAILED || 0}</span>
             </div>
           </div>
           <button
-            onClick={() => router.push('/interviews')}
+            onClick={() => router.push('/analyses')}
             className="w-full mt-4 text-sm text-green-600 font-medium hover:text-green-700 transition-colors"
           >
-            View Calendar →
+            Tüm Analizleri Gör →
           </button>
         </div>
       </div>
@@ -171,39 +178,33 @@ export const HRDashboard = () => {
       {/* Recent Activity */}
       <div className="bg-white rounded-xl shadow-sm border-2 border-green-500 p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">
-          Recent Activity
+          Son Analizler
         </h2>
         <div className="space-y-3">
-          <div className="flex items-start gap-3 p-3 bg-green-50 rounded-lg hover:bg-green-100 transition-colors">
-            <span className="text-2xl">🆕</span>
-            <div className="flex-1">
-              <p className="text-sm font-medium text-gray-900">
-                AHMET YILMAZ - 95% match
-              </p>
-              <p className="text-xs text-gray-500">2 hours ago</p>
-            </div>
-            <button
-              onClick={() => router.push('/candidates')}
-              className="text-sm text-green-600 font-medium hover:text-green-700 transition-colors"
-            >
-              View →
-            </button>
-          </div>
-          <div className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">
-            <span className="text-2xl">📊</span>
-            <div className="flex-1">
-              <p className="text-sm font-medium text-gray-900">
-                Analysis completed: 5 CVs
-              </p>
-              <p className="text-xs text-gray-500">5 hours ago</p>
-            </div>
-            <button
-              onClick={() => router.push('/analyses')}
-              className="text-sm text-blue-600 font-medium hover:text-blue-700 transition-colors"
-            >
-              Review →
-            </button>
-          </div>
+          {stats?.recentAnalyses && stats.recentAnalyses.length > 0 ? (
+            stats.recentAnalyses.slice(0, 3).map((analysis: any) => (
+              <div
+                key={analysis.id}
+                onClick={() => router.push(`/analyses/${analysis.id}`)}
+                className="flex items-start gap-3 p-3 bg-green-50 rounded-lg hover:bg-green-100 transition-colors cursor-pointer"
+              >
+                <span className="text-2xl">📊</span>
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-gray-900">
+                    {analysis.jobPostingTitle}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    {analysis.department} • {analysis.candidateCount} candidates
+                  </p>
+                </div>
+                <button className="text-sm text-green-600 font-medium hover:text-green-700 transition-colors">
+                  View →
+                </button>
+              </div>
+            ))
+          ) : (
+            <p className="text-sm text-gray-500 text-center py-4">No recent analyses</p>
+          )}
         </div>
       </div>
     </div>

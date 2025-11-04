@@ -12,17 +12,17 @@ export const UserDashboard = () => {
       {/* Greeting */}
       <div className="text-center">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          👋 Hi {user?.name || 'there'}!
+          👋 Merhaba {user?.name || 'Kullanıcı'}!
         </h1>
         <p className="text-gray-500">
-          Welcome to your dashboard
+          Dashboard'unuza hoşgeldiniz
         </p>
       </div>
 
       {/* Your Profile */}
       <div className="bg-white rounded-xl shadow-sm border-2 border-gray-300 p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">
-          Your Profile
+          Profiliniz
         </h2>
         <div className="space-y-3">
           <div className="flex items-center gap-3">
@@ -46,23 +46,23 @@ export const UserDashboard = () => {
           onClick={() => router.push('/settings/profile')}
           className="w-full mt-6 px-4 py-2 bg-gray-100 text-gray-900 rounded-lg font-medium hover:bg-gray-200 transition-all"
         >
-          Edit Profile →
+          Profili Düzenle →
         </button>
       </div>
 
       {/* Company Snapshot */}
       <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl border-2 border-gray-300 p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">
-          Company Snapshot
+          Şirket Özeti
         </h2>
         <div className="grid grid-cols-2 gap-4">
           <div className="text-center">
             <div className="text-3xl font-bold text-gray-900 mb-1">8</div>
-            <div className="text-sm text-gray-600">Active Job Postings</div>
+            <div className="text-sm text-gray-600">Aktif İş İlanı</div>
           </div>
           <div className="text-center">
             <div className="text-3xl font-bold text-gray-900 mb-1">4</div>
-            <div className="text-sm text-gray-600">Team Members</div>
+            <div className="text-sm text-gray-600">Takım Üyesi</div>
           </div>
         </div>
       </div>
@@ -71,34 +71,34 @@ export const UserDashboard = () => {
       <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl border-2 border-blue-300 p-6 text-center">
         <div className="text-4xl mb-3">💡</div>
         <h3 className="text-lg font-semibold text-gray-900 mb-2">
-          Need More Access?
+          Daha Fazla Yetkiye Mi İhtiyacınız Var?
         </h3>
         <p className="text-sm text-gray-600 mb-4">
-          Want to access HR features? Contact your admin to upgrade your role.
+          İK özelliklerine erişmek ister misiniz? Rolünüzü yükseltmek için yöneticinizle iletişime geçin.
         </p>
         <button
           onClick={() => router.push('/settings/overview')}
           className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-all hover:scale-105"
         >
-          Request Access
+          Erişim Talep Et
         </button>
       </div>
 
       {/* Recent Activity */}
       <div className="bg-white rounded-xl shadow-sm border-2 border-gray-300 p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">
-          Recent Activity
+          Son Aktiviteler
         </h2>
         <div className="space-y-3">
           <div className="flex items-center gap-3 text-sm text-gray-600">
             <span>✏️</span>
-            <span>Profile updated</span>
-            <span className="ml-auto text-xs">2 days ago</span>
+            <span>Profil güncellendi</span>
+            <span className="ml-auto text-xs">2 gün önce</span>
           </div>
           <div className="flex items-center gap-3 text-sm text-gray-600">
             <span>🔒</span>
-            <span>Password changed</span>
-            <span className="ml-auto text-xs">1 week ago</span>
+            <span>Şifre değiştirildi</span>
+            <span className="ml-auto text-xs">1 hafta önce</span>
           </div>
         </div>
       </div>
