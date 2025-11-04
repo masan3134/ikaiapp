@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useAuthStore } from "@/lib/store/authStore";
 import { useOrganization } from "@/contexts/OrganizationContext";
 import DashboardSkeleton from "./DashboardSkeleton";
-import { apiClient } from "@/lib/utils/apiClient";
+import apiClient from "@/lib/utils/apiClient";
 
 // Import admin widgets
 import AdminWelcomeHeader from "./admin/AdminWelcomeHeader";

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useAuthStore } from "@/lib/store/authStore";
-import { apiClient } from "@/lib/utils/apiClient";
+import apiClient from "@/lib/utils/apiClient";
 import LoadingSkeleton from "@/components/ui/LoadingSkeleton";
 
 // Manager Widgets

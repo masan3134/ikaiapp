@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useAuthStore } from "@/lib/store/authStore";
-import { apiClient } from "@/lib/utils/apiClient";
+import apiClient from "@/lib/utils/apiClient";
 
 // HR Specialist Widgets
 import { HRWelcomeHeader } from "./hr-specialist/HRWelcomeHeader";
