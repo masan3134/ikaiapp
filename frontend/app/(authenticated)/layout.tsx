@@ -22,6 +22,16 @@ import {
   Layers,
   Settings,
   UserCog,
+  HelpCircle, // W1: Help
+  Bell, // W1: Notifications
+  User, // W1: Profile
+  CreditCard, // W1: Billing
+  BellRing, // W1: Notification settings
+  Building2, // W1: Organizations
+  ListChecks, // W1: Queues
+  FileWarning, // W1: Security Logs
+  Activity, // W1: System Health
+  TrendingUp, // W1: Offers Analytics
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import ProtectedRoute from "@/components/ProtectedRoute";
@@ -45,48 +55,88 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const { user, logout } = useAuthStore();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isOffersExpanded, setIsOffersExpanded] = useState(true);
+  const [isSettingsExpanded, setIsSettingsExpanded] = useState(false); // W1: Settings submenu
+  const [isSuperAdminExpanded, setIsSuperAdminExpanded] = useState(true); // W1: Super Admin submenu
 
-  // Sidebar menü itemları (HR workflow order)
+  // Sidebar menü itemları (HR workflow order) - W1 UPDATED
   const allMenuItems = [
     // 1. Dashboard (always first)
     { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
-    // 2. İş İlanları (start of hiring workflow)
+    // 2. Bildirimler (W1 ADDED - all users)
+    { name: "Bildirimler", path: "/notifications", icon: Bell },
+    // 3. İş İlanları (start of hiring workflow)
     { name: "İş İlanları", path: "/job-postings", icon: Briefcase },
-    // 3. Adaylar (candidates apply to job postings)
+    // 4. Adaylar (candidates apply to job postings)
     { name: "Adaylar", path: "/candidates", icon: Users },
-    // 4. Analiz Sihirbazı (analyze candidates)
+    // 5. Analiz Sihirbazı (analyze candidates)
     { name: "Analiz Sihirbazı", path: "/wizard", icon: Wand2 },
-    // 5. Geçmiş Analizlerim (past analyses)
+    // 6. Geçmiş Analizlerim (past analyses)
     { name: "Geçmiş Analizlerim", path: "/analyses", icon: Clock },
-    // 6. Teklifler (make offers to selected candidates) - has submenu
+    // 7. Teklifler (W1 UPDATED - has submenu with 4 items)
     { name: "Teklifler", path: "/offers", icon: FileText, hasSubmenu: true },
-    // 7. Mülakatlar (interview scheduled candidates)
+    // 8. Mülakatlar (interview scheduled candidates)
     { name: "Mülakatlar", path: "/interviews", icon: Calendar },
-    // 8. Takım (team management - MANAGER+)
+    // 9. Takım (team management - MANAGER+)
     ...(user?.role === "MANAGER" ||
     user?.role === "ADMIN" ||
     user?.role === "SUPER_ADMIN"
       ? [{ name: "Takım", path: "/team", icon: UserCog }]
       : []),
-    // 9. Analitik (analytics & reports - MANAGER+)
+    // 10. Analitik (analytics & reports - MANAGER+)
     ...(user?.role === "MANAGER" ||
     user?.role === "ADMIN" ||
     user?.role === "SUPER_ADMIN"
       ? [{ name: "Analitik", path: "/analytics", icon: BarChart3 }]
       : []),
-    // 10. Ayarlar (settings - all roles)
-    { name: "Ayarlar", path: "/settings/profile", icon: Settings },
-    // 11. Super Admin (only for SUPER_ADMIN role)
+    // 11. Sistem Yönetimi (W1 ADDED - SUPER_ADMIN only, has 4 submenu items)
     ...(user?.role === "SUPER_ADMIN"
-      ? [{ name: "Süper Yönetici", path: "/super-admin", icon: Shield }]
+      ? [{ name: "Sistem Yönetimi", path: "/super-admin/organizations", icon: Shield, hasSubmenu: true, submenuType: "superadmin" }]
       : []),
+    // 12. Yardım (W1 ADDED - all users)
+    { name: "Yardım", path: "/help", icon: HelpCircle },
+    // 13. Ayarlar (W1 UPDATED - has 6 submenu items, all users)
+    { name: "Ayarlar", path: "/settings/overview", icon: Settings, hasSubmenu: true, submenuType: "settings" },
   ];
 
-  // Offer submenu items
+  // Offer submenu items - W1 ADDED Analytics
   const offerSubMenuItems = [
     { name: "Tüm Teklifler", path: "/offers", icon: FileText },
     { name: "Yeni Teklif", path: "/offers/wizard", icon: Plus },
     { name: "Şablonlar", path: "/offers/templates", icon: Layers },
+    {
+      name: "Analitik",
+      path: "/offers/analytics",
+      icon: TrendingUp,
+      show: user?.role === "MANAGER" || user?.role === "ADMIN" || user?.role === "SUPER_ADMIN"
+    },
+  ];
+
+  // W1: Settings submenu items
+  const settingsSubMenuItems = [
+    { name: "Genel Bakış", path: "/settings/overview", icon: Settings, show: true },
+    { name: "Profil", path: "/settings/profile", icon: User, show: true },
+    { name: "Güvenlik", path: "/settings/security", icon: Shield, show: true },
+    { name: "Bildirim Tercihleri", path: "/settings/notifications", icon: BellRing, show: true },
+    {
+      name: "Organizasyon",
+      path: "/settings/organization",
+      icon: Building2,
+      show: user?.role === "MANAGER" || user?.role === "ADMIN" || user?.role === "SUPER_ADMIN"
+    },
+    {
+      name: "Fatura ve Plan",
+      path: "/settings/billing",
+      icon: CreditCard,
+      show: user?.role === "MANAGER" || user?.role === "ADMIN" || user?.role === "SUPER_ADMIN"
+    },
+  ];
+
+  // W1: Super Admin submenu items
+  const superAdminSubMenuItems = [
+    { name: "Organizasyonlar", path: "/super-admin/organizations", icon: Building2 },
+    { name: "Kuyruk Yönetimi", path: "/super-admin/queues", icon: ListChecks },
+    { name: "Güvenlik Logları", path: "/super-admin/security-logs", icon: FileWarning },
+    { name: "Sistem Sağlığı", path: "/super-admin/system-health", icon: Activity },
   ];
 
   const handleLogout = async () => {
@@ -148,19 +198,39 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                     const Icon = item.icon;
                     const isActive = pathname === item.path;
 
-                    // Handle Teklifler with submenu
-                    if (item.hasSubmenu && item.name === "Teklifler") {
+                    // W1 FIX: Handle ALL submenus dynamically (Teklifler, Settings, Super Admin)
+                    if (item.hasSubmenu) {
+                      // Get correct submenu items based on type
+                      const submenuItems =
+                        item.submenuType === "settings" ? settingsSubMenuItems :
+                        item.submenuType === "superadmin" ? superAdminSubMenuItems :
+                        offerSubMenuItems; // Default to offers
+
+                      // Get correct expanded state
+                      const isExpanded =
+                        item.submenuType === "settings" ? isSettingsExpanded :
+                        item.submenuType === "superadmin" ? isSuperAdminExpanded :
+                        isOffersExpanded; // Default to offers
+
+                      // Get correct toggle function
+                      const toggleExpanded = () => {
+                        if (item.submenuType === "settings") setIsSettingsExpanded(!isSettingsExpanded);
+                        else if (item.submenuType === "superadmin") setIsSuperAdminExpanded(!isSuperAdminExpanded);
+                        else setIsOffersExpanded(!isOffersExpanded);
+                      };
+
+                      // Filter by show property (for role-specific submenu items)
+                      const visibleSubmenuItems = submenuItems.filter((sub: any) => sub.show !== false);
+
                       return (
                         <div key={item.path}>
                           <button
-                            onClick={() =>
-                              setIsOffersExpanded(!isOffersExpanded)
-                            }
+                            onClick={toggleExpanded}
                             className={`
                           w-full flex items-center justify-between gap-3 px-4 py-3 rounded-lg
                           transition-colors duration-150
                           ${
-                            pathname.startsWith("/offers")
+                            isActive
                               ? "bg-blue-50 text-blue-600 font-medium"
                               : "text-gray-700 hover:bg-gray-50"
                           }
@@ -170,7 +240,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                               <Icon size={20} />
                               <span>{item.name}</span>
                             </div>
-                            {isOffersExpanded ? (
+                            {isExpanded ? (
                               <ChevronDown size={16} />
                             ) : (
                               <ChevronRight size={16} />
@@ -178,9 +248,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                           </button>
 
                           {/* Submenu */}
-                          {isOffersExpanded && (
+                          {isExpanded && (
                             <div className="mt-1 ml-4 space-y-1">
-                              {offerSubMenuItems.map((subItem) => {
+                              {visibleSubmenuItems.map((subItem: any) => {
                                 const SubIcon = subItem.icon;
                                 const isSubActive = pathname === subItem.path;
 
