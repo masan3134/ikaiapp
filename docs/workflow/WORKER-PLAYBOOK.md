@@ -211,60 +211,122 @@ Scenario 4: W1 creates user-dashboard.tsx, W2 creates hr-dashboard.tsx, both imp
 → ❌ DON'T FIX shared component (coordinate via Mod)
 ```
 
-### Rule 8: Production-Ready Delivery - NO Placeholder, NO Mock, NO "TODO"!
+### Rule 8: Production-Ready Delivery - NO Placeholder, NO Mock, NO "TODO"! (UNIVERSAL)
 ```
-🚨 YASAK KELIMELER:
+🚨 UNIVERSAL KURAL: HER GÖREV için geçerli!
+
+YASAK KELIMELER (Her Görev Türünde):
 ❌ "Yapım aşamasında"
 ❌ "Sonra eklenecek"
 ❌ "İleride yapılacak"
-❌ "TODO: API ekle"
+❌ "TODO: ..."
+❌ "FIXME: ..."
+❌ "HACK: ..."
 ❌ "MOCK data"
+❌ "FAKE data"
 ❌ const mockData = {...}
 ❌ <p>Placeholder...</p>
+❌ <div>🚧 ...</div>
 
-✅ ZORUNLU:
-- Her sayfa %100 çalışır olacak
-- Her buton çalışacak (onClick → real action)
-- Her data API'den gelecek (fetch/axios)
-- Gerekli API yoksa → EKLE!
-- Gerekli modal yoksa → OLUŞTUR!
-- Gerekli DB kolon yoksa → MIGRATE ET!
+✅ ZORUNLU (Her Görev İçin):
+- Teslim ettiğin HER ŞEY %100 çalışır olacak
+- Eksik dependency varsa → EKLE (npm install, Prisma migration)
+- Eksik API varsa → OLUŞTUR (backend endpoint + controller)
+- Eksik component varsa → YAZ (modal, form, widget)
+- Eksik DB kolon varsa → MİGRATE ET (Prisma schema + migrate)
+- Eksik test data varsa → OLUŞTUR (seed script)
 
-Dashboard Teslim Kriterleri:
+UNIVERSAL Production-Ready Checklist:
 
-Senin Dashboard'ın İçin Gereken HER ŞEY:
+HER GÖREV TÜRÜ İçin (RBAC, Dashboard, API, Feature):
 
-Frontend:
-✅ Dashboard component (main)
-✅ Widget components (hepsi çalışır!)
-✅ Modal components (gerekiyorsa)
-✅ Link edilen TÜM sayfalar (dolu, çalışır!)
+Frontend (Eğer görev frontend içeriyorsa):
+✅ Components çalışır durumda
+✅ API fetch gerçek (mock yok!)
+✅ Buttonlar onClick fonksiyonları var
+✅ Formlar submit ediyor
+✅ Link'ler mevcut sayfalara gidiyor (404 yok!)
+✅ Loading/error states var
+✅ TypeScript hatası yok (npm run build success)
 
-Backend:
-✅ Dashboard API endpoint (real Prisma!)
-✅ Widget data API'leri (gerekiyorsa)
-✅ CRUD endpoints (sayfalar için gerekiyorsa)
+Backend (Eğer görev backend içeriyorsa):
+✅ API endpoints var (route + controller)
+✅ Prisma queries gerçek (mock data yok!)
+✅ Authorization middleware eklenmiş
+✅ Input validation var
+✅ Error handling var
+✅ Test edilmiş (curl → 200 OK)
 
-Database:
-✅ Gerekli kolonlar var (migration yap!)
-✅ Test data var (yoksa oluştur!)
+Database (Eğer yeni tablo/kolon gerekiyorsa):
+✅ Prisma schema updated
+✅ Migration created (npx prisma migrate dev)
+✅ Migration deployed (npx prisma migrate deploy)
+✅ Test data created (seeds)
 
-Test:
-✅ API test (curl → 200 OK)
-✅ Frontend render (hata yok!)
-✅ Buttonlar çalışıyor (click → action)
-✅ Linkler çalışıyor (404 yok!)
+Dependencies (Eğer yeni package gerekiyorsa):
+✅ npm install yapılmış
+✅ package.json committed
+✅ Docker container'da yüklü (restart test edilmiş)
 
-Örnek: /settings Sayfası Oluşturuyorsun
+UNIVERSAL Örnekler (Her Görev Türü):
+
+═══════════════════════════════════════════
+Örnek 1: RBAC Görevi - Sayfa Koruma
+═══════════════════════════════════════════
+
+Görev: "/team sayfasını ADMIN ile koru"
+
+❌ YANLIŞ (İncomplete):
+```tsx
+// Sadece import eklemişsin
+import { withRoleProtection } from '@/lib/hoc/withRoleProtection';
+
+// Ama export etmemişsin!
+export default function TeamPage() {
+  return <div>Team</div>;
+}
+```
+→ Reject: "withRoleProtection kullanmamışsın!"
+
+✅ DOĞRU (Complete):
+```tsx
+import { withRoleProtection } from '@/lib/hoc/withRoleProtection';
+import { RoleGroups } from '@/lib/constants/roles';
+
+function TeamPage() {
+  return <div>Team</div>;
+}
+
+export default withRoleProtection(TeamPage, {
+  allowedRoles: RoleGroups.ADMINS
+});
+```
+→ Accept: %100 çalışır! ✅
+
+═══════════════════════════════════════════
+Örnek 2: Dashboard Görevi - Link Ekleme
+═══════════════════════════════════════════
+
+Görev: "USER dashboard'ına Settings linki ekle"
 
 ❌ YANLIŞ (Placeholder):
 ```tsx
-export default function SettingsPage() {
-  return <div>🚧 Ayarlar sayfası yapım aşamasında</div>;
-}
+<Link href="/settings">
+  Settings
+</Link>
 ```
 
-✅ DOĞRU (Production-Ready):
+Ama /settings sayfası:
+```tsx
+export default function SettingsPage() {
+  return <div>🚧 Yapım aşamasında</div>;  ← YASAK!
+}
+```
+→ Reject: "Link var ama sayfa placeholder!"
+
+✅ DOĞRU (Full Stack Implementation):
+
+// 1. Frontend Page (REAL!)
 ```tsx
 'use client';
 
@@ -319,7 +381,129 @@ router.put('/', async (req, res) => {
 });
 ```
 
-Eksik Workflow:
+// 3. Test Et!
+```bash
+curl -s http://localhost:8102/api/v1/settings -H "Authorization: Bearer $TOKEN"
+# → 200 OK, real data!
+```
+
+→ Accept: Link + Sayfa + API + Test = %100 çalışır! ✅
+
+═══════════════════════════════════════════
+Örnek 3: API Görevi - Endpoint Ekleme
+═══════════════════════════════════════════
+
+Görev: "Analiz silme endpoint'i ekle"
+
+❌ YANLIŞ (Mock Response):
+```javascript
+router.delete('/:id', async (req, res) => {
+  // TODO: Implement delete logic
+  res.json({ success: true });  ← MOCK! Gerçekte silmiyor!
+});
+```
+→ Reject: "TODO var! Gerçek delete logic ekle!"
+
+✅ DOĞRU (Real Implementation):
+```javascript
+router.delete('/:id', [
+  authenticateToken,
+  enforceOrganizationIsolation,
+  authorize(ROLE_GROUPS.ADMINS)  ← Authorization!
+], async (req, res) => {
+  // REAL delete with validation
+  const analysis = await prisma.analysis.findUnique({
+    where: { id: req.params.id }
+  });
+
+  if (!analysis) {
+    return res.status(404).json({ error: 'Not found' });
+  }
+
+  // Soft delete (production best practice!)
+  await prisma.analysis.update({
+    where: { id: req.params.id },
+    data: { isDeleted: true }
+  });
+
+  res.json({ success: true });
+});
+```
+→ Accept: Authorization + Validation + Real delete! ✅
+
+═══════════════════════════════════════════
+Örnek 4: Feature Görevi - New Component
+═══════════════════════════════════════════
+
+Görev: "Notification bell component ekle"
+
+❌ YANLIŞ (Hardcoded):
+```tsx
+export function NotificationBell() {
+  const count = 5;  ← MOCK!
+  return <div>{count} notifications</div>;
+}
+```
+→ Reject: "Mock data! Real API fetch ekle!"
+
+✅ DOĞRU (API Integrated):
+```tsx
+export function NotificationBell() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    fetch('/api/v1/notifications/unread-count')
+      .then(res => res.json())
+      .then(data => setCount(data.count));
+  }, []);
+
+  return <div>{count} notifications</div>;
+}
+```
+
+VE Backend:
+```javascript
+router.get('/unread-count', async (req, res) => {
+  const count = await prisma.notification.count({
+    where: { userId: req.user.userId, read: false }
+  });
+  res.json({ count });
+});
+```
+→ Accept: Frontend + Backend + Real data! ✅
+
+═══════════════════════════════════════════
+UNIVERSAL Delivery Rule:
+═══════════════════════════════════════════
+
+HER GÖREVE BAŞLARKEN KENDİNE SOR:
+
+Q1: "Oluşturduğum sayfa/component çalışıyor mu?"
+    → Browser'da aç, test et, çalışmazsa düzelt!
+
+Q2: "Mock data var mı?"
+    → grep -r "mock\|MOCK\|fake" [my-files]
+    → Varsa → Prisma query'e çevir!
+
+Q3: "TODO/FIXME comment var mı?"
+    → grep -r "TODO\|FIXME\|HACK" [my-files]
+    → Varsa → ŞİMDİ yap veya scope'tan çıkar!
+
+Q4: "Placeholder mesaj var mı?"
+    → grep -r "yapım aşamasında\|sonra\|🚧" [my-files]
+    → Varsa → Real content ekle!
+
+Q5: "Eksik dependency/API/DB var mı?"
+    → Liste yap, hepsini ekle!
+
+Q6: "Test ettim mi?"
+    → curl (backend), browser (frontend), logs (error?)
+    → Test FAIL → Düzelt!
+
+HEPSİ ✅ → Teslim Et!
+HERHANGİ BİRİ ❌ → TAMAMLA önce!
+
+Eksik Workflow (Full Stack Example):
 
 Dashboard'da "Settings" butonu var → /settings linkine gidiyor
 
