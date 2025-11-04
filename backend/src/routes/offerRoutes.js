@@ -9,6 +9,9 @@ const { ROLE_GROUPS } = require('../constants/roles');
 // HR Managers middleware (HR operations)
 const hrManagers = [authenticateToken, enforceOrganizationIsolation, authorize(ROLE_GROUPS.HR_MANAGERS)];
 
+// Manager+ middleware (for delete operations)
+const managerPlus = [authenticateToken, enforceOrganizationIsolation, authorize(ROLE_GROUPS.MANAGERS_PLUS)];
+
 // Wizard endpoint (must be before '/' to avoid conflict)
 router.post('/wizard', hrManagers, offerController.createOfferFromWizard);
 
@@ -21,7 +24,7 @@ router.post('/bulk-send', hrManagers, offerController.bulkSend); // Feature #19
 
 router.get('/:id', hrManagers, offerController.getOfferById);
 router.put('/:id', hrManagers, offerController.updateOffer);
-router.delete('/:id', hrManagers, offerController.deleteOffer);
+router.delete('/:id', managerPlus, offerController.deleteOffer);
 
 // Single-offer actions
 router.patch('/:id/send', hrManagers, offerController.sendOffer);
