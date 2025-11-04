@@ -1137,6 +1137,138 @@ Database connections → Use Docker hostnames (backend only!)
 API calls from browser → Use localhost:8102
 ```
 
+### Rule 16: NEVER Touch System-Wide Operations!
+```
+🚨 CRITICAL: You are NOT allowed to restart Docker or clear cache!
+
+FORBIDDEN Operations (W1-W5):
+
+Docker Commands:
+❌ docker restart ikai-frontend
+❌ docker restart ikai-backend
+❌ docker-compose down
+❌ docker-compose up -d
+❌ docker system prune
+❌ docker volume prune
+
+Cache/Build Commands:
+❌ rm -rf frontend/.next
+❌ rm -rf frontend/node_modules
+❌ npm cache clean --force
+❌ docker exec ikai-frontend rm -rf /app/.next
+
+Why FORBIDDEN?
+
+You are W[1-5] - Specialized worker with LOCAL scope!
+
+System operations affect EVERYONE:
+- W1 restarts Docker → W2, W3, W4, W5 all lose hot reload!
+- W1 clears cache → ALL workers' builds break!
+- W1 stops containers → ALL workers blocked!
+
+Real Example:
+
+❌ DISASTER Scenario:
+- W1, W2, W3, W4, W5 all working (parallel)
+- W1: "Hmm, hot reload stuck, let me restart Docker..."
+- W1 runs: docker restart ikai-frontend
+- Result:
+  * W2 loses unsaved dashboard changes
+  * W3's file edit corrupted
+  * W4's npm install interrupted
+  * W5's API test fails
+  * CHAOS! Everyone blocked!
+
+✅ CORRECT Scenario:
+- W1: "Hot reload stuck..."
+- W1: "Mod, Docker restart gerekiyor?"
+- MOD: "Wait, W2-W5 active. W1 save work, I'll restart when safe."
+- W1: "Saved, ready!"
+- MOD: Checks all workers → Restarts when safe
+- Everyone resumes safely!
+
+Who CAN Do System Operations?
+
+✅ MOD (Coordinator)
+  - Coordinates all workers
+  - Announces before system ops
+  - Ensures no work lost
+
+✅ W6 (Debugger & Build Master)
+  - Runs AFTER W1-W5 complete
+  - No other workers active
+  - Safe to restart/clear cache
+
+❌ W1-W5 (Regular Workers)
+  - Focus on YOUR scope only!
+  - Don't touch system-wide stuff!
+
+If You Need System Operation:
+
+❌ DON'T:
+docker restart ikai-frontend
+
+✅ DO:
+Report to Mod:
+"Mod, [problem] nedeniyle Docker restart gerekiyor.
+Yapabilir misin? Ben [current task] kaydettim, hazırım."
+
+Mod will:
+1. Check other workers
+2. Announce restart
+3. Coordinate timing
+4. Execute safely
+5. Verify all OK
+
+What You CAN Do:
+
+File Operations (Your scope):
+✅ Read, Edit, Write files in YOUR scope
+✅ git add, git commit YOUR changes
+✅ grep, find files in YOUR scope
+
+Testing (Non-destructive):
+✅ Python API tests (localhost:8102)
+✅ Check logs: docker logs --tail 50 (read-only!)
+✅ Browser testing (F12 console)
+
+Development:
+✅ npm install (local node_modules - but commit both files!)
+✅ Code changes in YOUR scope
+✅ API integration for YOUR features
+
+Safe Principle:
+
+If it affects ONLY you → ✅ OK
+If it affects OTHER workers → ❌ Ask Mod!
+
+Examples:
+
+✅ SAFE (your scope only):
+- Edit frontend/components/dashboard/user/ProfileWidget.tsx
+- git commit
+- Python test YOUR endpoint
+- Browser test YOUR page
+
+❌ UNSAFE (affects others):
+- docker restart (ALL workers!)
+- rm -rf .next (ALL workers!)
+- Edit AppLayout.tsx (SHARED file!)
+- Edit dashboardRoutes.js (SHARED file!)
+
+For Shared Files:
+
+If you must edit shared file (AppLayout, shared routes):
+1. Announce to Mod: "I need to edit AppLayout.tsx"
+2. Mod checks: Other workers editing it?
+3. Mod approves: "OK, W1 can edit. W2-W5 don't touch it!"
+4. You edit quickly
+5. You commit immediately
+6. Announce done: "AppLayout edit committed"
+
+This prevents file conflicts, protects all workers, maintains order.
+```
+
 ---
 
 ## 📋 Your Workflow (Step-by-Step)

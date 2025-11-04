@@ -474,6 +474,131 @@ for email, pwd, endpoint, role in tests:
 This is LAW. No exceptions. Python ONLY.
 ```
 
+### Rule 12: System-Wide Operations - Only MOD & W6!
+```
+🚨 CRITICAL: Docker restart, cache clear = System-wide impact!
+
+ONLY Allowed:
+✅ MOD (you)
+✅ W6 (Debugger & Build Master)
+
+NEVER Allowed:
+❌ W1 (USER worker)
+❌ W2 (HR worker)
+❌ W3 (MANAGER worker)
+❌ W4 (ADMIN worker)
+❌ W5 (SUPER_ADMIN worker)
+
+Why?
+
+System-wide operations affect ALL workers:
+- docker restart → All containers restart → All workers lose work!
+- rm -rf .next → Cache clear → All workers' hot reload breaks!
+- docker-compose down → Everything stops → ALL workers blocked!
+
+Impact Example:
+
+W3 editing manager dashboard (in progress)
+→ W1 runs: docker restart ikai-frontend
+→ W3's hot reload breaks
+→ W3 loses unsaved work
+→ W3's file changes may be lost
+→ Chaos!
+
+Operations ONLY for MOD & W6:
+
+Docker Operations (System-wide):
+❌ docker restart ikai-frontend
+❌ docker restart ikai-backend
+❌ docker-compose down
+❌ docker-compose up -d
+❌ docker system prune
+❌ docker volume prune
+
+Cache Operations (System-wide):
+❌ rm -rf frontend/.next
+❌ rm -rf frontend/node_modules
+❌ npm cache clean --force
+❌ docker exec ikai-frontend rm -rf /app/.next
+
+Build Operations (May affect others):
+❌ npm run build (in shared container)
+⚠️ OK locally, NOT in Docker!
+
+When MOD Uses These:
+
+Scenario 1: Critical Bug Fix
+- MOD fixes Docker hostname issue
+- Affects ALL workers
+- MOD announces: "Docker restart in 1 min - save work!"
+- Workers save & report status
+- MOD restarts
+- Workers resume
+
+Scenario 2: W6 Final Build
+- W6 needs clean build
+- Runs: rm -rf .next && npm run build
+- No other workers active (W6 runs AFTER W1-W5!)
+- Safe!
+
+When to Use:
+
+MOD:
+✅ Critical system-wide bugs
+✅ Environment variable changes
+✅ Dependency conflicts
+✅ Container issues
+
+W6:
+✅ Final build (after W1-W5 complete!)
+✅ Cache clear (for clean verification)
+✅ Integration testing setup
+
+W1-W5:
+❌ NEVER! (Can break other workers!)
+
+Safe Operations for W1-W5:
+
+File Operations (Local scope):
+✅ Read, Edit, Write files
+✅ git add, git commit
+✅ grep, find, wc (read-only!)
+✅ Python scripts (local!)
+
+Testing (Non-destructive):
+✅ Python API tests (no restart needed!)
+✅ Check logs: docker logs --tail X (read-only!)
+✅ Browser testing (no system impact!)
+
+If Worker Needs System Operation:
+
+❌ WRONG:
+W1: "I'll just restart Docker real quick..."
+(Breaks W2, W3, W4, W5!)
+
+✅ RIGHT:
+W1: "Mod, Docker restart gerekiyor, yapabilir misin?"
+MOD: Checks other workers → Announces → Restarts
+
+Coordination Protocol:
+
+MOD Before System Operation:
+1. Check: Are other workers active?
+2. Announce: "Docker restart in 2 min!"
+3. Wait: Workers save & report status
+4. Execute: System operation
+5. Verify: All workers can resume
+6. Announce: "Docker ready, resume work!"
+
+Emergency (Must restart NOW):
+1. Announce: "EMERGENCY restart NOW!"
+2. Execute immediately
+3. Workers report any lost work
+4. MOD coordinates recovery
+
+This prevents chaos, protects worker progress, maintains stability.
+```
+
 ---
 
 ## 📋 Your Workflow (Step-by-Step)
