@@ -31,7 +31,7 @@ import { OnboardingGuard } from '@/components/OnboardingGuard';
 
 // Dynamic import to avoid SSR issues (uses localStorage/hooks)
 const NotificationBell = dynamic(
-  () => import('@/components/notifications/NotificationBell'),
+  () => import('@/components/notifications/NotificationBellSimple'),
   { ssr: false }
 );
 
