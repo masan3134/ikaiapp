@@ -44,7 +44,7 @@
   ],
   "item": [
     {
-      "name": "🔐 Authentication",
+      "name": "\ud83d\udd10 Authentication",
       "item": [
         {
           "name": "Login (ADMIN)",
@@ -57,10 +57,10 @@
                   "if (pm.response.code === 200) {",
                   "    const response = pm.response.json();",
                   "    pm.collectionVariables.set('jwt_token', response.token);",
-                  "    console.log('✅ Token saved:', response.token.substring(0, 20) + '...');",
-                  "    console.log('✅ User:', response.user.email, '| Role:', response.user.role);",
+                  "    console.log('\u2705 Token saved:', response.token.substring(0, 20) + '...');",
+                  "    console.log('\u2705 User:', response.user.email, '| Role:', response.user.role);",
                   "} else {",
-                  "    console.error('❌ Login failed');",
+                  "    console.error('\u274c Login failed');",
                   "}"
                 ],
                 "type": "text/javascript"
@@ -81,8 +81,15 @@
             },
             "url": {
               "raw": "{{base_url}}/api/v1/auth/login",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "auth", "login"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "login"
+              ]
             },
             "description": "Login as ADMIN for Test Org 1 (FREE plan)"
           }
@@ -97,7 +104,7 @@
                   "if (pm.response.code === 200) {",
                   "    const response = pm.response.json();",
                   "    pm.collectionVariables.set('jwt_token', response.token);",
-                  "    console.log('✅ Token saved (SUPER_ADMIN)');",
+                  "    console.log('\u2705 Token saved (SUPER_ADMIN)');",
                   "}"
                 ],
                 "type": "text/javascript"
@@ -118,8 +125,15 @@
             },
             "url": {
               "raw": "{{base_url}}/api/v1/auth/login",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "auth", "login"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "login"
+              ]
             },
             "description": "Login as SUPER_ADMIN (cross-org access)"
           }
@@ -134,7 +148,7 @@
                   "if (pm.response.code === 200) {",
                   "    const response = pm.response.json();",
                   "    pm.collectionVariables.set('jwt_token', response.token);",
-                  "    console.log('✅ Token saved (USER role - limited access)');",
+                  "    console.log('\u2705 Token saved (USER role - limited access)');",
                   "}"
                 ],
                 "type": "text/javascript"
@@ -155,8 +169,15 @@
             },
             "url": {
               "raw": "{{base_url}}/api/v1/auth/login",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "auth", "login"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "login"
+              ]
             },
             "description": "Login as USER (limited to dashboard only - most endpoints return 403)"
           }
@@ -177,10 +198,38 @@
             },
             "url": {
               "raw": "{{base_url}}/api/v1/auth/register",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "auth", "register"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "register"
+              ]
             },
-            "description": "Register new user (creates organization automatically)"
+            "description": "Register new user (creates organization automatically)",
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status code is 200', function() {",
+                    "    pm.response.to.have.status(200);",
+                    "});",
+                    "",
+                    "pm.test('Response time is less than 2000ms', function() {",
+                    "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                    "});",
+                    "",
+                    "pm.test('Response is JSON', function() {",
+                    "    pm.response.to.be.json;",
+                    "});"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ]
           }
         },
         {
@@ -199,10 +248,38 @@
             "method": "GET",
             "url": {
               "raw": "{{base_url}}/api/v1/auth/me",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "auth", "me"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "me"
+              ]
             },
-            "description": "Get authenticated user's profile"
+            "description": "Get authenticated user's profile",
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status code is 200', function() {",
+                    "    pm.response.to.have.status(200);",
+                    "});",
+                    "",
+                    "pm.test('Response time is less than 2000ms', function() {",
+                    "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                    "});",
+                    "",
+                    "pm.test('Response is JSON', function() {",
+                    "    pm.response.to.be.json;",
+                    "});"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ]
           }
         },
         {
@@ -221,10 +298,38 @@
             "method": "POST",
             "url": {
               "raw": "{{base_url}}/api/v1/auth/refresh",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "auth", "refresh"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "refresh"
+              ]
             },
-            "description": "Refresh JWT token (extends session)"
+            "description": "Refresh JWT token (extends session)",
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status code is 200', function() {",
+                    "    pm.response.to.have.status(200);",
+                    "});",
+                    "",
+                    "pm.test('Response time is less than 2000ms', function() {",
+                    "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                    "});",
+                    "",
+                    "pm.test('Response is JSON', function() {",
+                    "    pm.response.to.be.json;",
+                    "});"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ]
           }
         },
         {
@@ -243,16 +348,44 @@
             "method": "POST",
             "url": {
               "raw": "{{base_url}}/api/v1/auth/logout",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "auth", "logout"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "logout"
+              ]
             },
-            "description": "Logout (invalidate session in Redis)"
+            "description": "Logout (invalidate session in Redis)",
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status code is 200', function() {",
+                    "    pm.response.to.have.status(200);",
+                    "});",
+                    "",
+                    "pm.test('Response time is less than 2000ms', function() {",
+                    "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                    "});",
+                    "",
+                    "pm.test('Response is JSON', function() {",
+                    "    pm.response.to.be.json;",
+                    "});"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ]
           }
         }
       ]
     },
     {
-      "name": "💼 Job Postings",
+      "name": "\ud83d\udcbc Job Postings",
       "item": [
         {
           "name": "Get All Job Postings",
@@ -270,8 +403,14 @@
             "method": "GET",
             "url": {
               "raw": "{{base_url}}/api/v1/job-postings?page=1&limit=20",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "job-postings"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "job-postings"
+              ],
               "query": [
                 {
                   "key": "page",
@@ -283,7 +422,28 @@
                 }
               ]
             },
-            "description": "Get all job postings for current organization (SUPER_ADMIN sees all orgs)"
+            "description": "Get all job postings for current organization (SUPER_ADMIN sees all orgs)",
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status code is 200', function() {",
+                    "    pm.response.to.have.status(200);",
+                    "});",
+                    "",
+                    "pm.test('Response time is less than 2000ms', function() {",
+                    "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                    "});",
+                    "",
+                    "pm.test('Response is JSON', function() {",
+                    "    pm.response.to.be.json;",
+                    "});"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ]
           }
         },
         {
@@ -296,7 +456,7 @@
                   "if (pm.response.code === 201) {",
                   "    const response = pm.response.json();",
                   "    pm.collectionVariables.set('job_posting_id', response.id);",
-                  "    console.log('✅ Job posting created, ID saved:', response.id);",
+                  "    console.log('\u2705 Job posting created, ID saved:', response.id);",
                   "}"
                 ],
                 "type": "text/javascript"
@@ -327,8 +487,14 @@
             },
             "url": {
               "raw": "{{base_url}}/api/v1/job-postings",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "job-postings"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "job-postings"
+              ]
             },
             "description": "Create new job posting (requires HR_MANAGERS role)"
           }
@@ -349,10 +515,38 @@
             "method": "GET",
             "url": {
               "raw": "{{base_url}}/api/v1/job-postings/{{job_posting_id}}",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "job-postings", "{{job_posting_id}}"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "job-postings",
+                "{{job_posting_id}}"
+              ]
             },
-            "description": "Get job posting by UUID"
+            "description": "Get job posting by UUID",
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status code is 200', function() {",
+                    "    pm.response.to.have.status(200);",
+                    "});",
+                    "",
+                    "pm.test('Response time is less than 2000ms', function() {",
+                    "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                    "});",
+                    "",
+                    "pm.test('Response is JSON', function() {",
+                    "    pm.response.to.be.json;",
+                    "});"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ]
           }
         },
         {
@@ -381,9 +575,33 @@
             },
             "url": {
               "raw": "{{base_url}}/api/v1/job-postings/{{job_posting_id}}",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "job-postings", "{{job_posting_id}}"]
-            }
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "job-postings",
+                "{{job_posting_id}}"
+              ]
+            },
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status code is 200', function() {",
+                    "    pm.response.to.have.status(200);",
+                    "});",
+                    "",
+                    "pm.test('Response time is less than 2000ms', function() {",
+                    "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                    "});"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ]
           }
         },
         {
@@ -402,16 +620,40 @@
             "method": "DELETE",
             "url": {
               "raw": "{{base_url}}/api/v1/job-postings/{{job_posting_id}}",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "job-postings", "{{job_posting_id}}"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "job-postings",
+                "{{job_posting_id}}"
+              ]
             },
-            "description": "Soft delete job posting (sets isDeleted flag)"
+            "description": "Soft delete job posting (sets isDeleted flag)",
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status code is 204', function() {",
+                    "    pm.response.to.have.status(204);",
+                    "});",
+                    "",
+                    "pm.test('Response time is less than 2000ms', function() {",
+                    "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                    "});"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ]
           }
         }
       ]
     },
     {
-      "name": "👥 Candidates",
+      "name": "\ud83d\udc65 Candidates",
       "item": [
         {
           "name": "Get All Candidates",
@@ -429,9 +671,36 @@
             "method": "GET",
             "url": {
               "raw": "{{base_url}}/api/v1/candidates",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "candidates"]
-            }
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "candidates"
+              ]
+            },
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status code is 200', function() {",
+                    "    pm.response.to.have.status(200);",
+                    "});",
+                    "",
+                    "pm.test('Response time is less than 2000ms', function() {",
+                    "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                    "});",
+                    "",
+                    "pm.test('Response is JSON', function() {",
+                    "    pm.response.to.be.json;",
+                    "});"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ]
           }
         },
         {
@@ -444,7 +713,7 @@
                   "if (pm.response.code === 201) {",
                   "    const response = pm.response.json();",
                   "    pm.collectionVariables.set('candidate_id', response.id);",
-                  "    console.log('✅ Candidate created, ID saved:', response.id);",
+                  "    console.log('\u2705 Candidate created, ID saved:', response.id);",
                   "}"
                 ],
                 "type": "text/javascript"
@@ -475,15 +744,21 @@
             },
             "url": {
               "raw": "{{base_url}}/api/v1/candidates",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "candidates"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "candidates"
+              ]
             }
           }
         }
       ]
     },
     {
-      "name": "🔍 Analyses",
+      "name": "\ud83d\udd0d Analyses",
       "item": [
         {
           "name": "Upload CV for Analysis",
@@ -495,8 +770,8 @@
                   "if (pm.response.code === 201) {",
                   "    const response = pm.response.json();",
                   "    pm.collectionVariables.set('analysis_id', response.id);",
-                  "    console.log('✅ Analysis created, ID saved:', response.id);",
-                  "    console.log('⏳ Status:', response.status);",
+                  "    console.log('\u2705 Analysis created, ID saved:', response.id);",
+                  "    console.log('\u23f3 Status:', response.status);",
                   "}"
                 ],
                 "type": "text/javascript"
@@ -534,8 +809,14 @@
             },
             "url": {
               "raw": "{{base_url}}/api/v1/analyses",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "analyses"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "analyses"
+              ]
             },
             "description": "Upload CV for AI analysis (multipart/form-data)"
           }
@@ -556,9 +837,36 @@
             "method": "GET",
             "url": {
               "raw": "{{base_url}}/api/v1/analyses",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "analyses"]
-            }
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "analyses"
+              ]
+            },
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status code is 200', function() {",
+                    "    pm.response.to.have.status(200);",
+                    "});",
+                    "",
+                    "pm.test('Response time is less than 2000ms', function() {",
+                    "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                    "});",
+                    "",
+                    "pm.test('Response is JSON', function() {",
+                    "    pm.response.to.be.json;",
+                    "});"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ]
           }
         },
         {
@@ -577,16 +885,44 @@
             "method": "GET",
             "url": {
               "raw": "{{base_url}}/api/v1/analyses/{{analysis_id}}",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "analyses", "{{analysis_id}}"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "analyses",
+                "{{analysis_id}}"
+              ]
             },
-            "description": "Check analysis status and results (PENDING → PROCESSING → COMPLETED)"
+            "description": "Check analysis status and results (PENDING \u2192 PROCESSING \u2192 COMPLETED)",
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status code is 200', function() {",
+                    "    pm.response.to.have.status(200);",
+                    "});",
+                    "",
+                    "pm.test('Response time is less than 2000ms', function() {",
+                    "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                    "});",
+                    "",
+                    "pm.test('Response is JSON', function() {",
+                    "    pm.response.to.be.json;",
+                    "});"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ]
           }
         }
       ]
     },
     {
-      "name": "📊 Dashboard",
+      "name": "\ud83d\udcca Dashboard",
       "item": [
         {
           "name": "Get Dashboard Stats",
@@ -604,16 +940,43 @@
             "method": "GET",
             "url": {
               "raw": "{{base_url}}/api/v1/dashboard",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "dashboard"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "dashboard"
+              ]
             },
-            "description": "Get dashboard analytics (all roles have access)"
+            "description": "Get dashboard analytics (all roles have access)",
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status code is 200', function() {",
+                    "    pm.response.to.have.status(200);",
+                    "});",
+                    "",
+                    "pm.test('Response time is less than 2000ms', function() {",
+                    "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                    "});",
+                    "",
+                    "pm.test('Response is JSON', function() {",
+                    "    pm.response.to.be.json;",
+                    "});"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ]
           }
         }
       ]
     },
     {
-      "name": "🏢 Organization",
+      "name": "\ud83c\udfe2 Organization",
       "item": [
         {
           "name": "Get Organization Info",
@@ -631,9 +994,36 @@
             "method": "GET",
             "url": {
               "raw": "{{base_url}}/api/v1/organization",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "organization"]
-            }
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organization"
+              ]
+            },
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status code is 200', function() {",
+                    "    pm.response.to.have.status(200);",
+                    "});",
+                    "",
+                    "pm.test('Response time is less than 2000ms', function() {",
+                    "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                    "});",
+                    "",
+                    "pm.test('Response is JSON', function() {",
+                    "    pm.response.to.be.json;",
+                    "});"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ]
           }
         },
         {
@@ -652,16 +1042,44 @@
             "method": "GET",
             "url": {
               "raw": "{{base_url}}/api/v1/organization/usage",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "organization", "usage"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organization",
+                "usage"
+              ]
             },
-            "description": "Get current month usage (analyses, CVs, users)"
+            "description": "Get current month usage (analyses, CVs, users)",
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status code is 200', function() {",
+                    "    pm.response.to.have.status(200);",
+                    "});",
+                    "",
+                    "pm.test('Response time is less than 2000ms', function() {",
+                    "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                    "});",
+                    "",
+                    "pm.test('Response is JSON', function() {",
+                    "    pm.response.to.be.json;",
+                    "});"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ]
           }
         }
       ]
     },
     {
-      "name": "⚡ Health Check",
+      "name": "\u26a1 Health Check",
       "item": [
         {
           "name": "Health Check",
@@ -669,10 +1087,35 @@
             "method": "GET",
             "url": {
               "raw": "{{base_url}}/health",
-              "host": ["{{base_url}}"],
-              "path": ["health"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "health"
+              ]
             },
-            "description": "Public health check endpoint (no auth required)"
+            "description": "Public health check endpoint (no auth required)",
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status code is 200', function() {",
+                    "    pm.response.to.have.status(200);",
+                    "});",
+                    "",
+                    "pm.test('Response time is less than 2000ms', function() {",
+                    "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                    "});",
+                    "",
+                    "pm.test('Response is JSON', function() {",
+                    "    pm.response.to.be.json;",
+                    "});"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ]
           }
         }
       ]
