@@ -582,16 +582,41 @@ router.get('/super-admin', [
       where: { isActive: true }
     });
 
-    // Revenue calculation (mock - implement actual pricing later)
+    // Revenue calculation - Real data
     const proPlanCount = planCounts.find(p => p.plan === 'PRO')?._count || 0;
     const enterpriseCount = planCounts.find(p => p.plan === 'ENTERPRISE')?._count || 0;
 
+    // MRR calculation (ENTERPRISE custom pricing = 0 for calculation purposes)
+    const PRO_PRICE = 99;
+    const currentMRR = proPlanCount * PRO_PRICE; // Only PRO plans counted
+
+    // Calculate MRR growth (last 30 days vs previous 30 days)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    // Get PRO organization count from 30 days ago
+    const orgsLastMonth = await prisma.organization.count({
+      where: {
+        plan: 'PRO',
+        createdAt: { lt: thirtyDaysAgo }
+      }
+    });
+
+    const lastMonthMRR = orgsLastMonth * PRO_PRICE;
+    const mrrGrowth = lastMonthMRR > 0
+      ? Math.round(((currentMRR - lastMonthMRR) / lastMonthMRR) * 100)
+      : 0;
+
+    // Estimate average LTV (avg subscription months * MRR)
+    // Assumption: Average subscription is 12 months
+    const avgLTV = PRO_PRICE * 12;
+
     const revenue = {
-      mrr: (proPlanCount * 99) + (enterpriseCount * 999), // Mock pricing
-      mrrGrowth: 12,
-      avgLTV: 5000,
-      enterprise: enterpriseCount * 999,
-      pro: proPlanCount * 99
+      mrr: currentMRR,
+      mrrGrowth: mrrGrowth,
+      avgLTV: avgLTV,
+      enterprise: 0, // ENTERPRISE custom pricing
+      pro: proPlanCount * PRO_PRICE
     };
 
     // Platform analytics
