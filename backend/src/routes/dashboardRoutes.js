@@ -192,17 +192,19 @@ router.get('/hr-specialist', [
     const thisWeekAnalyses = weekAnalyses;
 
     // CV Analytics
-    // Calculate avg score from actual analyses
-    const analysesWithScores = await prisma.analysis.findMany({
+    // Calculate avg score from actual analysis results
+    const analysisResults = await prisma.analysisResult.findMany({
       where: {
         organizationId,
-        createdAt: { gte: weekStart }
+        analysis: {
+          createdAt: { gte: weekStart }
+        }
       },
-      select: { topScore: true }
+      select: { compatibilityScore: true }
     });
 
-    const avgScore = analysesWithScores.length > 0
-      ? Math.round(analysesWithScores.reduce((sum, a) => sum + (a.topScore || 0), 0) / analysesWithScores.length)
+    const avgScore = analysisResults.length > 0
+      ? Math.round(analysisResults.reduce((sum, ar) => sum + ar.compatibilityScore, 0) / analysisResults.length)
       : 0;
 
     // Pending CVs (candidates without analysis results)
@@ -216,26 +218,34 @@ router.get('/hr-specialist', [
       }
     });
 
-    // Recent analyses (last 5)
+    // Recent analyses (last 5) with real candidate counts and scores
     const recentAnalyses = await prisma.analysis.findMany({
       where: { organizationId },
       include: {
         jobPosting: {
           select: { title: true }
+        },
+        analysisResults: {
+          select: { compatibilityScore: true }
         }
       },
       orderBy: { createdAt: 'desc' },
       take: 5
     });
 
-    // Format recent analyses
-    const formattedAnalyses = recentAnalyses.map(analysis => ({
-      id: analysis.id,
-      createdAt: analysis.createdAt,
-      jobPosting: { title: analysis.jobPosting.title },
-      candidateCount: analysis.candidateCount || 0,
-      topScore: analysis.topScore || 0
-    }));
+    // Format recent analyses with REAL data from analysisResults
+    const formattedAnalyses = recentAnalyses.map(analysis => {
+      const scores = analysis.analysisResults.map(ar => ar.compatibilityScore);
+      const topScore = scores.length > 0 ? Math.max(...scores) : 0;
+
+      return {
+        id: analysis.id,
+        createdAt: analysis.createdAt,
+        jobPosting: { title: analysis.jobPosting.title },
+        candidateCount: analysis.analysisResults.length,
+        topScore: topScore
+      };
+    });
 
     // Hiring pipeline (mock data - implement with candidate statuses later)
     const pipeline = [
