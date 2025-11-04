@@ -17,6 +17,9 @@ interface TeamPerformanceTrendWidgetProps {
 }
 
 export function TeamPerformanceTrendWidget({ data }: TeamPerformanceTrendWidgetProps) {
+  // Use real trend data from backend API
+  const trendData = data?.trend || [];
+
   return (
     <div className="bg-white shadow-sm rounded-xl">
       <div className="p-6">
@@ -25,19 +28,25 @@ export function TeamPerformanceTrendWidget({ data }: TeamPerformanceTrendWidgetP
           Takım Performans Trendi (30 Gün)
         </h3>
 
-        {/* Chart Placeholder - Real implementation would use recharts */}
+        {/* Real data visualization - uses backend trend data */}
         <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-lg p-8 mb-4">
-          <div className="flex items-end justify-around h-40">
-            {[65, 70, 75, 80, 85, 88, 90].map((height, idx) => (
-              <div key={idx} className="flex flex-col items-center gap-1">
-                <div
-                  className="w-8 bg-blue-500 rounded-t"
-                  style={{ height: `${height}%` }}
-                />
-                <span className="text-xs text-slate-500">{idx + 1}</span>
-              </div>
-            ))}
-          </div>
+          {trendData.length === 0 ? (
+            <div className="flex items-center justify-center h-40">
+              <p className="text-sm text-slate-500">Henüz trend verisi bulunmuyor</p>
+            </div>
+          ) : (
+            <div className="flex items-end justify-around h-40">
+              {trendData.map((item, idx) => (
+                <div key={item.date || idx} className="flex flex-col items-center gap-1">
+                  <div
+                    className="w-8 bg-blue-500 rounded-t"
+                    style={{ height: `${item.productivity || 0}%` }}
+                  />
+                  <span className="text-xs text-slate-500">{idx + 1}</span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-3 gap-4">
