@@ -246,24 +246,41 @@ router.get('/hr-specialist', [
       { stage: 'İşe Alım', count: Math.floor(weekCVs * 0.15), percentage: 15 }
     ];
 
-    // Pending interviews
+    // Pending interviews (upcoming)
     const interviews = await prisma.interview.findMany({
       where: {
         organizationId,
-        status: 'SCHEDULED',
-        scheduledAt: { gte: now }
+        status: 'scheduled',
+        date: { gte: now }
       },
       include: {
-        candidate: {
-          select: { name: true }
-        },
-        jobPosting: {
-          select: { title: true }
+        candidates: {
+          include: {
+            candidate: {
+              select: { firstName: true, lastName: true }
+            }
+          },
+          take: 1
         }
       },
-      orderBy: { scheduledAt: 'asc' },
+      orderBy: { date: 'asc' },
       take: 5
     });
+
+    // Format interviews with candidate info
+    const formattedInterviews = interviews.map(interview => ({
+      id: interview.id,
+      scheduledAt: interview.date,
+      type: interview.type,
+      candidate: {
+        name: interview.candidates[0]
+          ? `${interview.candidates[0].candidate.firstName} ${interview.candidates[0].candidate.lastName}`
+          : 'Unknown'
+      },
+      jobPosting: {
+        title: 'Interview' // Mock - no direct jobPosting relation in Interview model
+      }
+    }));
 
     // Monthly stats
     const monthlyStats = {
@@ -271,7 +288,7 @@ router.get('/hr-specialist', [
       applicationsChange: 12,
       analyses: weekAnalyses * 4,
       analysesChange: 8,
-      interviews: interviews.length * 4,
+      interviews: formattedInterviews.length * 4,
       interviewsChange: 15,
       offers: Math.floor(weekCVs * 0.2 * 4),
       offersChange: 10,
@@ -301,7 +318,7 @@ router.get('/hr-specialist', [
         },
         recentAnalyses: formattedAnalyses,
         pipeline,
-        interviews,
+        interviews: formattedInterviews,
         monthlyStats
       }
     });
