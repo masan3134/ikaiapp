@@ -248,6 +248,49 @@ class UserService {
 
     return { message: 'Şifre değiştirildi' };
   }
+
+  /**
+   * Change own password (authenticated user)
+   * Validates current password before changing
+   */
+  async changeOwnPassword(userId, currentPassword, newPassword) {
+    // Get user with password
+    const user = await prisma.user.findUnique({
+      where: { id: userId }
+    });
+
+    if (!user) {
+      throw new Error('Kullanıcı bulunamadı');
+    }
+
+    // Validate current password
+    const isPasswordValid = await bcrypt.compare(currentPassword, user.password);
+    if (!isPasswordValid) {
+      throw new Error('Mevcut şifre hatalı');
+    }
+
+    // Validate new password
+    if (!newPassword || newPassword.length < 8) {
+      throw new Error('Yeni şifre en az 8 karakter olmalıdır');
+    }
+
+    // Check if new password is same as current
+    const isSamePassword = await bcrypt.compare(newPassword, user.password);
+    if (isSamePassword) {
+      throw new Error('Yeni şifre mevcut şifre ile aynı olamaz');
+    }
+
+    // Hash new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update password
+    await prisma.user.update({
+      where: { id: userId },
+      data: { password: hashedPassword }
+    });
+
+    return { message: 'Şifre başarıyla değiştirildi' };
+  }
 }
 
 module.exports = new UserService();
