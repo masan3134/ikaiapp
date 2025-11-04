@@ -8,6 +8,8 @@
 
 ⚠️ **META-RULE:** AsanMod'u güncellerken `ASANMOD-METHODOLOGY.md` → "Self-Optimization Protocol" bölümünü oku! 4-dimension analysis yap (Architecture, Content, Usability, Relevance), quality gates'den geçir, sonra commit et.
 
+📨 **COMMUNICATION:** Görev dağıtırken/rapor alırken `COMMUNICATION-TEMPLATES.md` kullan! Copy-paste formatları hazır, User'ın işini kolaylaştır.
+
 ---
 
 ## 🎭 Your Identity
