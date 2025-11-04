@@ -24,7 +24,7 @@ async function createTest(req, res) {
     const { jobPostingId, analysisId } = req.body;
     const userId = req.user.id;
     const organizationId = req.organizationId;
-    const userRole = req.user.role;
+    const userRole = req.userRole || req.user.role; // Fix: Use req.userRole from middleware
 
     if (!jobPostingId) {
       return res.status(400).json({
