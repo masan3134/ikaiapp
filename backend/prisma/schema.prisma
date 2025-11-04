@@ -132,11 +132,8 @@ model User {
   revisions      OfferRevision[]
 
   // Notification System Relations
-  notifications             Notification[]
-  notificationPreferences   NotificationPreference[]
-
-  // AI Chat History Relations
-  chatMessages              AnalysisChatMessage[]
+  notifications           Notification[]
+  notificationPreferences NotificationPreference[]
 
   @@index([organizationId])
   @@map("users")
@@ -219,10 +216,9 @@ model Analysis {
   updatedAt      DateTime  @default(now()) @updatedAt // Auto-update timestamp
 
   // Relations
-  jobPosting      JobPosting             @relation(fields: [jobPostingId], references: [id], onDelete: Cascade)
-  user            User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  jobPosting      JobPosting       @relation(fields: [jobPostingId], references: [id], onDelete: Cascade)
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   analysisResults AnalysisResult[]
-  chatMessages    AnalysisChatMessage[] // Chat history for this analysis
 
   @@index([userId])
   @@index([organizationId])
@@ -819,9 +815,9 @@ model NotificationPreference {
 // ============================================
 
 model AnalysisChatMessage {
-  id         String @id @default(uuid())
-  analysisId String
-  userId     String
+  id             String @id @default(uuid())
+  analysisId     String
+  userId         String
   organizationId String
 
   // Message content
@@ -838,10 +834,6 @@ model AnalysisChatMessage {
   // Semantic search (if used)
   usedSemanticSearch Boolean @default(false)
   semanticResults    Json? // Top candidates from Milvus
-
-  // Relations
-  analysis     Analysis     @relation(fields: [analysisId], references: [id], onDelete: Cascade)
-  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
 

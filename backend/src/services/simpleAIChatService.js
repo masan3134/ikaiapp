@@ -127,19 +127,15 @@ Cevap:`;
     // 5. SAVE TO DATABASE (Chat History)
     const chatMessage = await prisma.analysisChatMessage.create({
       data: {
+        analysisId,
+        userId,
+        organizationId,
         message: userMessage,
         response: reply,
         candidateCount: context.aday_sayisi,
         responseTime,
         usedSemanticSearch: false, // Will be true when Milvus is integrated
-        contextTokens: Math.ceil((fullPrompt.length + reply.length) / 4), // Rough estimate
-        organizationId,
-        analysis: {
-          connect: { id: analysisId }
-        },
-        user: {
-          connect: { id: userId }
-        }
+        contextTokens: Math.ceil((fullPrompt.length + reply.length) / 4) // Rough estimate
       }
     });
 
