@@ -84,11 +84,12 @@ function SecurityLogsPage() {
           </div>
         </div>
         <div className="p-6">
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-            <p className="text-sm text-yellow-800">
-              🚧 <strong>Yapım aşamasında:</strong> Gerçek zamanlı güvenlik log'ları,
-              kullanıcı aktivite izleme, IP tabanlı analiz ve güvenlik uyarı sistemi
-              yakında eklenecek.
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+            <p className="text-sm text-blue-800">
+              <strong>Güvenlik Log Sistemi:</strong> Gerçek zamanlı güvenlik olayları,
+              kullanıcı aktivite izleme ve IP tabanlı analiz özellikleri için backend
+              log tracking sistemi geliştirilmesi gerekiyor. Bu özellik gelecek
+              sprint'lerde eklenecektir.
             </p>
           </div>
 
