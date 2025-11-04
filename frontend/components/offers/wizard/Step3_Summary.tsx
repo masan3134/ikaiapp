@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useOfferWizardStore } from "@/lib/store/offerWizardStore";
 import { getAuthToken } from "@/services/auth";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8102"; // W1 FIX: was 3001
 
 export default function Step3_Summary() {
   const router = useRouter();

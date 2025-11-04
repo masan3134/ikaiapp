@@ -9,7 +9,7 @@ import {
 import { getAuthToken } from "@/services/auth";
 import { Sparkles, FileText, User, TrendingUp } from "lucide-react";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8102"; // W1 FIX: was 3001
 
 export default function Step1_TemplateOrScratch() {
   const {
