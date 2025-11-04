@@ -247,13 +247,72 @@ router.get('/hr-specialist', [
       };
     });
 
-    // Hiring pipeline (mock data - implement with candidate statuses later)
+    // Hiring pipeline - REAL DATA from database
+    // Stage 1: Başvurular (Applications) = total candidates this week
+    const pipelineApplications = weekCVs;
+
+    // Stage 2: Eleme (Screened) = candidates with analysis results
+    const pipelineScreened = await prisma.candidate.count({
+      where: {
+        organizationId,
+        createdAt: { gte: weekStart },
+        analysisResults: {
+          some: {}
+        }
+      }
+    });
+
+    // Stage 3: Mülakat (Interview) = interviews scheduled/completed this week
+    const pipelineInterviews = await prisma.interview.count({
+      where: {
+        organizationId,
+        createdAt: { gte: weekStart }
+      }
+    });
+
+    // Stage 4: Teklif (Offer) = job offers created this week
+    const pipelineOffers = await prisma.jobOffer.count({
+      where: {
+        organizationId,
+        createdAt: { gte: weekStart }
+      }
+    });
+
+    // Stage 5: İşe Alım (Hired) = accepted offers this week
+    const pipelineHires = await prisma.jobOffer.count({
+      where: {
+        organizationId,
+        createdAt: { gte: weekStart },
+        status: 'ACCEPTED'
+      }
+    });
+
     const pipeline = [
-      { stage: 'Başvurular', count: weekCVs, percentage: 100 },
-      { stage: 'Eleme', count: Math.floor(weekCVs * 0.7), percentage: 70 },
-      { stage: 'Mülakat', count: Math.floor(weekCVs * 0.4), percentage: 40 },
-      { stage: 'Teklif', count: Math.floor(weekCVs * 0.2), percentage: 20 },
-      { stage: 'İşe Alım', count: Math.floor(weekCVs * 0.15), percentage: 15 }
+      {
+        stage: 'Başvurular',
+        count: pipelineApplications,
+        percentage: 100
+      },
+      {
+        stage: 'Eleme',
+        count: pipelineScreened,
+        percentage: pipelineApplications > 0 ? Math.round((pipelineScreened / pipelineApplications) * 100) : 0
+      },
+      {
+        stage: 'Mülakat',
+        count: pipelineInterviews,
+        percentage: pipelineApplications > 0 ? Math.round((pipelineInterviews / pipelineApplications) * 100) : 0
+      },
+      {
+        stage: 'Teklif',
+        count: pipelineOffers,
+        percentage: pipelineApplications > 0 ? Math.round((pipelineOffers / pipelineApplications) * 100) : 0
+      },
+      {
+        stage: 'İşe Alım',
+        count: pipelineHires,
+        percentage: pipelineApplications > 0 ? Math.round((pipelineHires / pipelineApplications) * 100) : 0
+      }
     ];
 
     // Pending interviews (upcoming)
