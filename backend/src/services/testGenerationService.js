@@ -21,7 +21,7 @@ if (!GEMINI_API_KEY) {
  *
  * KEY: Same job posting, different analysis → Different questions!
  */
-async function generateTest(jobPostingId, userId, analysisId = null) {
+async function generateTest(jobPostingId, userId, analysisId = null, organizationId = null) {
   // Get job posting
   const jobPosting = await prisma.jobPosting.findUnique({
     where: { id: jobPostingId }
@@ -68,6 +68,7 @@ async function generateTest(jobPostingId, userId, analysisId = null) {
           jobPostingId,
           createdBy: userId,
           analysisId, // NEW: Link to analysis
+          organizationId, // REQUIRED by Prisma
           token: masterToken,
           questions,
           expiresAt: masterExpiresAt,
@@ -111,6 +112,7 @@ async function generateTest(jobPostingId, userId, analysisId = null) {
           jobPostingId,
           createdBy: userId,
           analysisId: null, // Legacy mode
+          organizationId, // REQUIRED by Prisma
           token: masterToken,
           questions,
           expiresAt: masterExpiresAt,
@@ -133,6 +135,7 @@ async function generateTest(jobPostingId, userId, analysisId = null) {
       jobPostingId,
       createdBy: userId,
       analysisId, // Link instance to analysis
+      organizationId, // REQUIRED by Prisma
       token,
       questions, // Copy from master
       expiresAt,

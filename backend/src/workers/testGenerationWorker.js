@@ -15,12 +15,12 @@ const { generateTest } = require('../services/testGenerationService');
  */
 
 const processor = async (job) => {
-  const { jobPostingId, userId, analysisId } = job.data;
+  const { jobPostingId, userId, analysisId, organizationId } = job.data;
   console.log(`🤖 Generating test for job ${jobPostingId} (analysis: ${analysisId || 'N/A'})`);
 
   try {
     // Generate test with AI (Gemini API call)
-    const test = await generateTest(jobPostingId, userId, analysisId);
+    const test = await generateTest(jobPostingId, userId, analysisId, organizationId);
 
     console.log(`✅ Test generated: ${test.id} (10 questions)`);
     return {
