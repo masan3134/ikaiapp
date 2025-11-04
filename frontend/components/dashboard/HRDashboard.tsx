@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '@/lib/store/authStore';
-import LoadingSkeleton from '@/components/ui/LoadingSkeleton';
 
 // HR Specialist Widgets
 import { HRWelcomeHeader } from './hr-specialist/HRWelcomeHeader';
@@ -13,6 +12,7 @@ import { HiringPipelineWidget } from './hr-specialist/HiringPipelineWidget';
 import { QuickActionsWidget } from './hr-specialist/QuickActionsWidget';
 import { PendingInterviewsWidget } from './hr-specialist/PendingInterviewsWidget';
 import { MonthlyStatsWidget } from './hr-specialist/MonthlyStatsWidget';
+import { HRDashboardSkeleton } from './hr-specialist/HRDashboardSkeleton';
 
 export const HRDashboard = () => {
   const { user } = useAuthStore();
@@ -49,11 +49,7 @@ export const HRDashboard = () => {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-slate-50 p-6">
-        <LoadingSkeleton variant="grid" rows={3} columns={3} />
-      </div>
-    );
+    return <HRDashboardSkeleton />;
   }
 
   if (error) {
