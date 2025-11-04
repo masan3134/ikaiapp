@@ -21,6 +21,133 @@ AsanMod, büyük yazılım projelerini **paralel olarak**, **doğrulanabilir şe
 
 ---
 
+## 🐍 Python Test Helper (API Testing için)
+
+### Neden Python Test Helper?
+
+**Problem:** Worker'lar API endpoint'lerini test ederken curl + JWT token almakta zorlanıyor.
+
+**Çözüm:** Python script ile otomatik login, token yönetimi ve temiz çıktılar.
+
+### Kullanım (Hem Mod Hem Worker)
+
+**Script:** `scripts/test-helper.py`
+
+#### Interactive Mode (Önerilen):
+```bash
+python3 -i scripts/test-helper.py
+
+>>> helper = IKAITestHelper()
+>>> user = TEST_USERS["org1_hr"]
+>>> helper.login(user["email"], user["password"])
+✅ Login başarılı!
+   Email: test-hr_specialist@test-org-1.com
+   Rol: HR_SPECIALIST
+
+>>> helper.get("/api/v1/job-postings")
+============================================================
+GET /api/v1/job-postings
+Status: 200
+============================================================
+{
+  "jobPostings": [...],
+  "count": 2
+}
+
+>>> helper.post("/api/v1/job-postings", {...})
+```
+
+#### Hazır Test Kullanıcıları:
+```python
+TEST_USERS = {
+    "org1_admin": "test-admin@test-org-1.com",
+    "org1_hr": "test-hr_specialist@test-org-1.com",
+    "org2_manager": "test-manager@test-org-2.com",
+    "org2_hr": "test-hr_specialist@test-org-2.com",
+    "org3_admin": "test-admin@test-org-3.com",
+    "super_admin": "info@gaiai.ai"
+}
+# Hepsi: TestPass123! (super_admin hariç: 23235656)
+```
+
+#### Avantajlar:
+- ✅ Token otomatik alınıyor ve yönetiliyor
+- ✅ Login basit: `helper.login(email, password)`
+- ✅ Endpoints hazır: `get()`, `post()`, `put()`, `delete()`
+- ✅ JSON çıktıları otomatik formatlanıyor
+- ✅ Terminal çıktıları doğrudan kopyalanabilir
+- ✅ Hata mesajları net görünüyor
+
+#### JSON Task Dosyalarında Kullanım:
+
+```json
+{
+  "task": {
+    "id": "1.1",
+    "title": "Test job posting creation",
+    "instructions": [
+      "1. Open Python interactive: python3 -i scripts/test-helper.py",
+      "2. Login: helper.login(TEST_USERS['org1_hr']['email'], ...)",
+      "3. Create posting: helper.post('/api/v1/job-postings', {...})",
+      "4. Copy terminal output to verification MD",
+      "5. Verify response has 201 status and jobPosting.id"
+    ],
+    "verification": {
+      "method": "Copy RAW Python terminal output to MD report",
+      "expectedStatus": 201,
+      "expectedFields": ["jobPosting.id", "jobPosting.title"]
+    }
+  }
+}
+```
+
+#### Verification MD Formatı:
+
+```markdown
+## Task 1.1: Create Job Posting (Org 1)
+
+**Python Commands:**
+\```python
+>>> helper = IKAITestHelper()
+>>> user = TEST_USERS["org1_hr"]
+>>> helper.login(user["email"], user["password"])
+✅ Login başarılı!
+   Token: eyJhbGci...
+
+>>> job = {"title": "Junior Developer", "department": "Engineering", ...}
+>>> result = helper.post("/api/v1/job-postings", job)
+============================================================
+POST /api/v1/job-postings
+Status: 201
+============================================================
+{
+  "jobPosting": {
+    "id": "abc-123",
+    "title": "Junior Developer",
+    "department": "Engineering"
+  }
+}
+\```
+
+**Status:** ✅ PASS (201 Created)
+**Job ID:** abc-123
+```
+
+#### Örnek Komutlar:
+
+```bash
+# Yardım
+python3 scripts/test-helper.py help
+
+# Örnek test çalıştır
+python3 scripts/test-helper.py example_job_postings
+python3 scripts/test-helper.py example_candidates
+```
+
+**Önemli:** curl + JWT token yerine Python test helper kullan! Sistem bozmadan gerçek kullanıcı gibi test yapabilirsin.
+
+---
+
 ## 📋 Çalışma Akışı (Workflow)
 
 ### 1. Proje Analizi ve Faz Planlama
@@ -308,6 +435,242 @@ User: "ok p3 başlat"
 "Phase 3 JSON hazır (23KB): docs/features/role-access-phase3-frontend-pages.json
 Yeni tab'da aç ve çalıştır."
 ```
+
+---
+
+## 🔒 Git Policy (ZORUNLU - ABSOLUTE)
+
+**🚨 CRITICAL RULE FOR BOTH MOD & WORKER:**
+
+### **ANY FILE CHANGE = IMMEDIATE COMMIT + PUSH**
+
+```
+❌ FORBIDDEN:
+- Working without committing (even 1 character change!)
+- Delaying commits ("I'll commit later")
+- Batching changes (multiple edits before commit)
+- "Forgot to commit" excuse
+- Multi-file edits without intermediate commits
+
+✅ REQUIRED AFTER EVERY CHANGE:
+1. File değişikliği yap (Read → Edit/Write)
+2. IMMEDIATELY: git add .
+3. IMMEDIATELY: git commit -m "descriptive message"
+4. Auto-push happens (post-commit hook active)
+
+🎯 REASON:
+- Güvenlik (security) - Changes tracked instantly
+- Akış (flow) - Clear progress trail for Mustafa Asan
+- Doğrulama (verification) - Mod can verify commit history
+- Geri alma (rollback) - Easy to revert bad changes
+- Şeffaflık (transparency) - User sees real-time progress
+```
+
+### Mod Git Workflow
+
+**Phase JSON oluşturma:**
+```bash
+# Step 1: Create JSON file
+Write(file_path: "docs/features/role-access-phase3.json", content: {...})
+
+# Step 2: IMMEDIATE commit
+git add docs/features/role-access-phase3.json
+git commit -m "feat(asanmod): Add Phase 3 JSON - Frontend RBAC (19 pages)
+
+Tasks:
+- 3.1-3.19: Protect 19 authenticated pages
+- Verification: grep + build + console checks
+- Estimated: 2.5 hours"
+# Auto-push happens
+```
+
+**Verification MD update:**
+```bash
+# After re-running Worker's commands and comparing outputs
+Write(file_path: "docs/reports/phase3-mod-verification.md", content: "...")
+
+# IMMEDIATE commit
+git add docs/reports/phase3-mod-verification.md
+git commit -m "docs(asanmod): Mod verification of Phase 3 - ✅ VERIFIED
+
+Comparison:
+- Worker grep output: 19 files ✅ MATCH
+- Worker build: SUCCESS ✅ MATCH
+- Console logs: No role errors ✅ MATCH
+
+VERDICT: Phase 3 verified, Phase 4 can start"
+# Auto-push happens
+```
+
+### Worker Git Workflow
+
+**Single file edit:**
+```bash
+# Step 1: Read file
+Read(file_path: "frontend/app/(authenticated)/job-postings/page.tsx")
+
+# Step 2: Edit file
+Edit(
+  file_path: "frontend/app/(authenticated)/job-postings/page.tsx",
+  old_string: "export default JobPostingsPage;",
+  new_string: "export default withRoleProtection(JobPostingsPage, {...});"
+)
+
+# Step 3: IMMEDIATE commit (do NOT edit another file yet!)
+git add frontend/app/\(authenticated\)/job-postings/page.tsx
+git commit -m "feat(rbac): Protect job-postings page with HR_MANAGERS role
+
+Task 3.1 completed:
+- Added withRoleProtection HOC
+- Allowed roles: HR_MANAGERS (ADMIN, MANAGER, HR_SPECIALIST)"
+# Auto-push happens
+
+# Step 4: Now move to next file (candidates/page.tsx)
+```
+
+**Verification MD creation:**
+```bash
+# After completing ALL tasks and running verification commands
+Write(file_path: "docs/reports/phase3-verification.md", content: "...")
+
+# IMMEDIATE commit
+git add docs/reports/phase3-verification.md
+git commit -m "docs(asanmod): Phase 3 verification report (RAW outputs)
+
+Results:
+- Protected pages: 19 (grep output pasted)
+- Build: SUCCESS (npm output pasted)
+- Console: No role errors (screenshot attached)
+
+Phase 3 COMPLETE - ready for Mod verification"
+# Auto-push happens
+```
+
+### Commit Message Format
+
+**Mod commits:**
+```
+feat(asanmod): Add Phase X JSON - [Brief description]
+docs(asanmod): Mod verification of Phase X - ✅ VERIFIED/❌ FAILED
+fix(asanmod): Update Phase X JSON - [What was fixed]
+```
+
+**Worker commits:**
+```
+feat(rbac): [What changed] - Task X.Y
+
+[Optional details:
+- What was added
+- Why it matters]
+
+docs(asanmod): Phase X verification report (RAW outputs)
+```
+
+### Verification by Mod
+
+**Mod checks Worker commit history:**
+```bash
+# Should see individual commits for EACH file change
+git log --oneline -20
+
+# Example GOOD Worker commits:
+9a2b3c4 docs(asanmod): Phase 3 verification report (RAW outputs)
+8d7e6f5 feat(rbac): Protect team page with ADMINS role - Task 3.19
+7c6b5a4 feat(rbac): Protect settings/billing with ADMINS - Task 3.18
+6a5b4c3 feat(rbac): Protect settings/org with ADMINS - Task 3.17
+...
+
+# Example BAD Worker (batched commits):
+9a2b3c4 feat(rbac): Protected all 19 pages  ❌ TOO VAGUE!
+# Missing: Individual commits for each file
+```
+
+### Git Automation
+
+**Auto-commit hook already active:**
+- Location: `.git/hooks/post-commit`
+- Action: `git push origin main` after every commit
+- No manual push needed!
+
+**Verification:**
+```bash
+# Check auto-commit hook
+cat .git/hooks/post-commit
+
+# Should output:
+#!/bin/bash
+git push origin main
+```
+
+### Emergency Situations
+
+**❌ NEVER batch commits even if:**
+- "I'm editing 10 files in a row"
+  → Commit after EACH file!
+
+- "I'll commit when task is done"
+  → Commit after EACH subtask!
+
+- "Git history will be messy"
+  → Detailed history > clean history
+
+- "It's just a typo fix"
+  → Even 1 character = commit!
+
+**✅ ONLY exception:**
+- If you're editing 1 file multiple times for the SAME logical change
+- Example: Adding import → Using import in same file
+  → Can be 1 commit
+
+But if touching 2+ files → MUST commit after each file!
+
+### Examples: Right vs Wrong
+
+**❌ WRONG:**
+```bash
+# Edit 5 files
+Edit(job-postings/page.tsx)
+Edit(candidates/page.tsx)
+Edit(analyses/page.tsx)
+Edit(offers/page.tsx)
+Edit(interviews/page.tsx)
+
+# Then commit all at once
+git add .
+git commit -m "Protected 5 pages"
+```
+
+**✅ RIGHT:**
+```bash
+# Edit file 1
+Edit(job-postings/page.tsx)
+git add frontend/app/\(authenticated\)/job-postings/page.tsx
+git commit -m "feat(rbac): Protect job-postings - Task 3.1"
+
+# Edit file 2
+Edit(candidates/page.tsx)
+git add frontend/app/\(authenticated\)/candidates/page.tsx
+git commit -m "feat(rbac): Protect candidates - Task 3.2"
+
+# Edit file 3
+Edit(analyses/page.tsx)
+git add frontend/app/\(authenticated\)/analyses/page.tsx
+git commit -m "feat(rbac): Protect analyses - Task 3.3"
+
+# ... and so on
+```
+
+### Summary
+
+**Tek harf değişikliği bile = COMMIT!**
+**No exceptions. No delays. IMMEDIATE commit after ANY change.**
+
+**Why this is CRITICAL:**
+1. **Mustafa Asan güveni** - Real-time progress tracking
+2. **Mod verification** - Can verify each step individually
+3. **Rollback safety** - Easy to undo specific changes
+4. **Transparency** - Clear audit trail
+5. **Discipline** - Forces structured, incremental work
 
 ---
 
