@@ -11,10 +11,15 @@ class InterviewService {
    */
   async getRecentCandidates(userId, organizationId, { search, limit = 10 }) {
     const where = {
-      userId,
       organizationId,
       isDeleted: false,
     };
+
+    // Add userId filter only if provided (USER role)
+    // ADMIN/MANAGER/HR_SPECIALIST will pass null to see all org candidates
+    if (userId !== null) {
+      where.userId = userId;
+    }
 
     if (search) {
       where.OR = [
@@ -34,6 +39,7 @@ class InterviewService {
         lastName: true,
         email: true,
         createdAt: true,
+        desiredPosition: true, // Add for frontend display
       }
     });
   }

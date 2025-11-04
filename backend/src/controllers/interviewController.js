@@ -18,9 +18,15 @@ class InterviewController {
     try {
       const { search, limit } = req.query;
       const userId = req.user.id;
+      const userRole = req.user.role;
       const organizationId = req.organizationId;
 
-      const candidates = await interviewService.getRecentCandidates(userId, organizationId, {
+      // ADMIN/MANAGER/HR_SPECIALIST can see all org candidates
+      // USER can only see their own candidates
+      const canSeeAllCandidates = ['SUPER_ADMIN', 'ADMIN', 'MANAGER', 'HR_SPECIALIST'].includes(userRole);
+      const filterUserId = canSeeAllCandidates ? null : userId;
+
+      const candidates = await interviewService.getRecentCandidates(filterUserId, organizationId, {
         search,
         limit
       });
