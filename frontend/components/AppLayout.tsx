@@ -57,36 +57,42 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
   // Define all menu items with role requirements
   const menuItems = [
+    // 1. Dashboard (always first)
     {
       name: 'Dashboard',
       path: '/dashboard',
       icon: LayoutDashboard,
       show: true // All roles can see dashboard
     },
-    {
-      name: 'Analiz Sihirbazı',
-      path: '/wizard',
-      icon: Wand2,
-      show: canViewAnalyses(userRole)
-    },
+    // 2. İş İlanları (start of hiring workflow)
     {
       name: 'İş İlanları',
       path: '/job-postings',
       icon: Briefcase,
       show: canViewJobPostings(userRole)
     },
+    // 3. Adaylar (candidates apply to job postings)
     {
       name: 'Adaylar',
       path: '/candidates',
       icon: Users,
       show: canViewCandidates(userRole)
     },
+    // 4. Analiz Sihirbazı (analyze candidates)
+    {
+      name: 'Analiz Sihirbazı',
+      path: '/wizard',
+      icon: Wand2,
+      show: canViewAnalyses(userRole)
+    },
+    // 5. Geçmiş Analizlerim (past analyses)
     {
       name: 'Geçmiş Analizlerim',
       path: '/analyses',
       icon: Clock,
       show: canViewAnalyses(userRole)
     },
+    // 6. Teklifler (make offers to best candidates)
     {
       name: 'Teklifler',
       path: '/offers',
@@ -94,49 +100,47 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       show: canViewOffers(userRole),
       submenu: [
         {
-          name: 'Yeni Teklif',
-          path: '/offers/wizard',
-          icon: Plus,
-          show: canViewOffers(userRole)
-        },
-        {
           name: 'Tüm Teklifler',
           path: '/offers',
           icon: FileText,
           show: canViewOffers(userRole)
         },
         {
+          name: 'Yeni Teklif',
+          path: '/offers/wizard',
+          icon: Plus,
+          show: canViewOffers(userRole)
+        },
+        {
           name: 'Şablonlar',
           path: '/offer-templates',
           icon: Layers,
-          show: canViewAnalytics(userRole)
-        },
-        {
-          name: 'Analytics',
-          path: '/offers/analytics',
-          icon: BarChart3,
-          show: canViewAnalytics(userRole)
+          show: canViewAnalytics(userRole) // Only MANAGER+ can manage templates
         }
       ]
     },
+    // 7. Mülakatlar (interview scheduled candidates)
     {
       name: 'Mülakatlar',
       path: '/interviews',
       icon: Calendar,
       show: canViewInterviews(userRole)
     },
+    // 8. Takım (team management)
     {
       name: 'Takım',
       path: '/team',
-      icon: Users,
+      icon: UserCog, // CHANGED from Users to UserCog (avoid conflict with Adaylar)
       show: canViewTeam(userRole)
     },
+    // 9. Analitik (analytics & reports)
     {
       name: 'Analitik',
       path: '/analytics',
       icon: BarChart3,
       show: canViewAnalytics(userRole)
     },
+    // 10. Ayarlar (settings - always last)
     {
       name: 'Ayarlar',
       path: '/settings/organization',
