@@ -324,6 +324,13 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
           {/* Main Content */}
           <main className="flex-1 overflow-x-hidden relative">
+            {/* Desktop Top Bar (hidden on mobile) */}
+            <div className="hidden lg:block sticky top-0 z-30 bg-white border-b border-gray-200 shadow-sm">
+              <div className="px-6 py-3 flex items-center justify-end">
+                <NotificationBell />
+              </div>
+            </div>
+
             {children}
             <FloatingActionButton />
           </main>
