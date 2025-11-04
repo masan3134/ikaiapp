@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { withRoleProtection } from "@/lib/hoc/withRoleProtection";
 import { RoleGroups } from "@/lib/constants/roles";
+import apiClient from "@/lib/utils/apiClient";
 
 interface AnalyticsData {
   totalAnalyses: number;
@@ -31,8 +32,8 @@ function AnalyticsPage() {
 
   const loadAnalytics = async () => {
     try {
-      const res = await fetch("/api/v1/analytics/summary");
-      const data = await res.json();
+      const res = await apiClient.get("/api/v1/analytics/summary");
+      const data = res.data;
       if (data.success) {
         setAnalytics(data.data);
       }
