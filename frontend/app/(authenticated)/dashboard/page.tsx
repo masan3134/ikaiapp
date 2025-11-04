@@ -3,6 +3,7 @@
 import { useAuthStore } from '@/lib/store/authStore';
 import { SuperAdminDashboard } from '@/components/dashboard/SuperAdminDashboard';
 import { AdminDashboard } from '@/components/dashboard/AdminDashboard';
+import { ManagerDashboard } from '@/components/dashboard/ManagerDashboard';
 import { HRDashboard } from '@/components/dashboard/HRDashboard';
 import { UserDashboard } from '@/components/dashboard/UserDashboard';
 import UserDashboardNew from './user-dashboard'; // New USER dashboard
@@ -28,7 +29,7 @@ export default function DashboardPage() {
       <div className="max-w-7xl mx-auto px-4 py-8">
         {user.role === 'SUPER_ADMIN' && <SuperAdminDashboard />}
         {user.role === 'ADMIN' && <AdminDashboard />}
-        {user.role === 'MANAGER' && <AdminDashboard />}
+        {user.role === 'MANAGER' && <ManagerDashboard />}
         {user.role === 'HR_SPECIALIST' && <HRDashboard />}
         {user.role === 'USER' && <UserDashboardNew />}
       </div>
