@@ -689,7 +689,7 @@ async function exportToHTML(analysisId, organizationId) {
 </head>
 <body>
   <!-- Print Button -->
-  <button class="print-button no-print" onclick="window.print()">
+  <button class="print-button no-print" id="printButton">
     🖨️ PDF Yazdır
   </button>
 
@@ -976,6 +976,18 @@ async function exportToHTML(analysisId, organizationId) {
       </p>
     </div>
   </div>
+
+  <!-- Print functionality (CSP-compliant) -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const printBtn = document.getElementById('printButton');
+      if (printBtn) {
+        printBtn.addEventListener('click', function() {
+          window.print();
+        });
+      }
+    });
+  </script>
 </body>
 </html>`;
 
