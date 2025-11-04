@@ -405,26 +405,6 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                   </Link>
                 );
               })}
-
-              {/* Super Admin only */}
-              {isSuperAdmin(userRole) && (
-                <Link
-                  href="/super-admin"
-                  onClick={() => setIsSidebarOpen(false)}
-                  className={`
-                    flex items-center gap-3 px-4 py-3 rounded-lg
-                    transition-colors duration-150
-                    ${
-                      pathname === "/super-admin"
-                        ? "bg-blue-50 text-blue-600 font-medium"
-                        : "text-gray-700 hover:bg-gray-50"
-                    }
-                  `}
-                >
-                  <Shield size={20} />
-                  <span>Super Admin</span>
-                </Link>
-              )}
             </nav>
 
             {/* User Section */}
