@@ -21,9 +21,17 @@ import { parseApiError } from '@/lib/utils/errorHandler';
 import { downloadBlob } from '@/lib/utils/fileUtils';
 import { withRoleProtection } from '@/lib/hoc/withRoleProtection';
 import { RoleGroups } from '@/lib/constants/roles';
+import { useAuthStore } from '@/lib/store/authStore';
+import {
+  canCreateCandidate,
+  canEditCandidate,
+  canDeleteCandidate
+} from '@/lib/utils/rbac';
 
 function CandidatesPage() {
   const router = useRouter();
+  const { user } = useAuthStore();
+  const userRole = user?.role;
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -255,13 +263,15 @@ function CandidatesPage() {
                   Tüm adaylarınızı yönetin ve CV'leri inceleyin
                 </p>
               </div>
-              <button
-                onClick={handleUploadClick}
-                className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-all duration-200 flex items-center gap-2 shadow-sm hover:shadow-md"
-              >
-                <Upload className="w-5 h-5" />
-                CV Yükle
-              </button>
+              {canCreateCandidate(userRole) && (
+                <button
+                  onClick={handleUploadClick}
+                  className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-all duration-200 flex items-center gap-2 shadow-sm hover:shadow-md"
+                >
+                  <Upload className="w-5 h-5" />
+                  CV Yükle
+                </button>
+              )}
             </div>
           </div>
 
@@ -296,7 +306,7 @@ function CandidatesPage() {
                 </button>
 
                 {/* Bulk Delete Button */}
-                {selectedIds.length > 0 && (
+                {selectedIds.length > 0 && canDeleteCandidate(userRole) && (
                   <button
                     onClick={() => setShowBulkDeleteDialog(true)}
                     className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
@@ -315,10 +325,10 @@ function CandidatesPage() {
               icon={<User className="w-16 h-16" />}
               title="Henüz aday eklemediniz"
               description="İlk adayınızı eklemek için analiz sihirbazını kullanın"
-              action={{
+              action={canCreateCandidate(userRole) ? {
                 label: 'Analiz Başlat',
                 onClick: handleUploadClick
-              }}
+              } : undefined}
             />
           )}
 
