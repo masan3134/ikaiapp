@@ -361,6 +361,39 @@ class UserController {
       });
     }
   }
+
+  /**
+   * Change own password
+   * PATCH /api/v1/users/me/password
+   */
+  async changeOwnPassword(req, res) {
+    try {
+      const { currentPassword, newPassword } = req.body;
+
+      if (!currentPassword || !newPassword) {
+        return res.status(400).json({
+          success: false,
+          message: 'Mevcut şifre ve yeni şifre gereklidir'
+        });
+      }
+
+      await userService.changeOwnPassword(req.user.id, currentPassword, newPassword);
+
+      res.json({
+        success: true,
+        message: 'Şifre başarıyla değiştirildi'
+      });
+    } catch (error) {
+      console.error('❌ Change own password error:', error);
+
+      const statusCode = error.message === 'Mevcut şifre hatalı' ? 401 : 400;
+
+      res.status(statusCode).json({
+        success: false,
+        message: error.message || 'Şifre değiştirilemedi'
+      });
+    }
+  }
 }
 
 module.exports = new UserController();
