@@ -49,7 +49,13 @@
           },
           "role": {
             "type": "string",
-            "enum": ["USER", "ADMIN", "MANAGER", "HR_SPECIALIST", "SUPER_ADMIN"],
+            "enum": [
+              "USER",
+              "ADMIN",
+              "MANAGER",
+              "HR_SPECIALIST",
+              "SUPER_ADMIN"
+            ],
             "description": "User role for RBAC"
           },
           "organizationId": {
@@ -111,7 +117,12 @@
             "format": "date-time"
           }
         },
-        "required": ["id", "email", "role", "organizationId"]
+        "required": [
+          "id",
+          "email",
+          "role",
+          "organizationId"
+        ]
       },
       "Organization": {
         "type": "object",
@@ -157,7 +168,11 @@
           },
           "plan": {
             "type": "string",
-            "enum": ["FREE", "PRO", "ENTERPRISE"],
+            "enum": [
+              "FREE",
+              "PRO",
+              "ENTERPRISE"
+            ],
             "default": "FREE"
           },
           "planStartedAt": {
@@ -277,7 +292,11 @@
             "format": "date-time"
           }
         },
-        "required": ["title", "department", "details"]
+        "required": [
+          "title",
+          "department",
+          "details"
+        ]
       },
       "Candidate": {
         "type": "object",
@@ -334,7 +353,12 @@
           },
           "status": {
             "type": "string",
-            "enum": ["PENDING", "PROCESSING", "COMPLETED", "FAILED"],
+            "enum": [
+              "PENDING",
+              "PROCESSING",
+              "COMPLETED",
+              "FAILED"
+            ],
             "default": "PENDING"
           },
           "score": {
@@ -403,7 +427,15 @@
           },
           "status": {
             "type": "string",
-            "enum": ["DRAFT", "PENDING", "SENT", "ACCEPTED", "REJECTED", "NEGOTIATING", "EXPIRED"],
+            "enum": [
+              "DRAFT",
+              "PENDING",
+              "SENT",
+              "ACCEPTED",
+              "REJECTED",
+              "NEGOTIATING",
+              "EXPIRED"
+            ],
             "default": "DRAFT"
           },
           "organizationId": {
@@ -453,7 +485,12 @@
           },
           "status": {
             "type": "string",
-            "enum": ["SCHEDULED", "COMPLETED", "CANCELLED", "NO_SHOW"]
+            "enum": [
+              "SCHEDULED",
+              "COMPLETED",
+              "CANCELLED",
+              "NO_SHOW"
+            ]
           },
           "notes": {
             "type": "string",
@@ -492,7 +529,10 @@
             "description": "Validation errors (if applicable)"
           }
         },
-        "required": ["error", "message"]
+        "required": [
+          "error",
+          "message"
+        ]
       },
       "LoginRequest": {
         "type": "object",
@@ -508,7 +548,10 @@
             "example": "TestPass123!"
           }
         },
-        "required": ["email", "password"]
+        "required": [
+          "email",
+          "password"
+        ]
       },
       "LoginResponse": {
         "type": "object",
@@ -539,14 +582,19 @@
             "minLength": 8
           }
         },
-        "required": ["email", "password"]
+        "required": [
+          "email",
+          "password"
+        ]
       }
     }
   },
   "paths": {
     "/api/v1/auth/register": {
       "post": {
-        "tags": ["Authentication"],
+        "tags": [
+          "Authentication"
+        ],
         "summary": "Register new user",
         "description": "Create new user account with automatic organization creation. Returns JWT token. Public endpoint with rate limiting (100 requests per 15 minutes).",
         "requestBody": {
@@ -630,7 +678,7 @@
                 },
                 "example": {
                   "error": "Too Many Requests",
-                  "message": "Çok fazla giriş denemesi yapıldı. Lütfen 15 dakika sonra tekrar deneyin."
+                  "message": "\u00c7ok fazla giri\u015f denemesi yap\u0131ld\u0131. L\u00fctfen 15 dakika sonra tekrar deneyin."
                 }
               }
             }
@@ -640,7 +688,9 @@
     },
     "/api/v1/auth/login": {
       "post": {
-        "tags": ["Authentication"],
+        "tags": [
+          "Authentication"
+        ],
         "summary": "Login to platform",
         "description": "Authenticate user with email and password. Returns JWT token. Public endpoint with rate limiting (100 requests per 15 minutes).",
         "requestBody": {
@@ -713,7 +763,9 @@
     },
     "/api/v1/auth/logout": {
       "post": {
-        "tags": ["Authentication"],
+        "tags": [
+          "Authentication"
+        ],
         "summary": "Logout current user",
         "description": "Invalidate user session (remove from Redis). Requires authentication.",
         "security": [
@@ -753,7 +805,9 @@
     },
     "/api/v1/auth/me": {
       "get": {
-        "tags": ["Authentication"],
+        "tags": [
+          "Authentication"
+        ],
         "summary": "Get current user info",
         "description": "Returns authenticated user's profile. Requires authentication.",
         "security": [
@@ -794,7 +848,9 @@
     },
     "/api/v1/auth/refresh": {
       "post": {
-        "tags": ["Authentication"],
+        "tags": [
+          "Authentication"
+        ],
         "summary": "Refresh JWT token",
         "description": "Generate new JWT token using current valid token. Extends session. Requires authentication.",
         "security": [
@@ -831,24 +887,41 @@
     },
     "/api/v1/job-postings": {
       "get": {
-        "tags": ["Job Postings"],
+        "tags": [
+          "Job Postings"
+        ],
         "summary": "Get all job postings",
         "description": "Returns job postings for current organization. SUPER_ADMIN sees all organizations. Requires HR_MANAGERS role (ADMIN, MANAGER, HR_SPECIALIST).",
-        "security": [{"bearerAuth": []}],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "x-rbac": {
-          "roles": ["SUPER_ADMIN", "ADMIN", "MANAGER", "HR_SPECIALIST"],
+          "roles": [
+            "SUPER_ADMIN",
+            "ADMIN",
+            "MANAGER",
+            "HR_SPECIALIST"
+          ],
           "roleGroup": "HR_MANAGERS"
         },
         "parameters": [
           {
             "in": "query",
             "name": "page",
-            "schema": {"type": "integer", "default": 1}
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
           },
           {
             "in": "query",
             "name": "limit",
-            "schema": {"type": "integer", "default": 20}
+            "schema": {
+              "type": "integer",
+              "default": 20
+            }
           }
         ],
         "responses": {
@@ -858,7 +931,9 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {"$ref": "#/components/schemas/JobPosting"}
+                  "items": {
+                    "$ref": "#/components/schemas/JobPosting"
+                  }
                 }
               }
             }
@@ -869,12 +944,23 @@
         }
       },
       "post": {
-        "tags": ["Job Postings"],
+        "tags": [
+          "Job Postings"
+        ],
         "summary": "Create new job posting",
         "description": "Create job posting for organization. Requires HR_MANAGERS role.",
-        "security": [{"bearerAuth": []}],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "x-rbac": {
-          "roles": ["SUPER_ADMIN", "ADMIN", "MANAGER", "HR_SPECIALIST"],
+          "roles": [
+            "SUPER_ADMIN",
+            "ADMIN",
+            "MANAGER",
+            "HR_SPECIALIST"
+          ],
           "roleGroup": "HR_MANAGERS"
         },
         "requestBody": {
@@ -883,12 +969,30 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["title", "department", "details"],
+                "required": [
+                  "title",
+                  "department",
+                  "details"
+                ],
                 "properties": {
-                  "title": {"type": "string", "minLength": 3, "maxLength": 200},
-                  "department": {"type": "string", "minLength": 2, "maxLength": 100},
-                  "details": {"type": "string", "minLength": 10},
-                  "notes": {"type": "string", "nullable": true}
+                  "title": {
+                    "type": "string",
+                    "minLength": 3,
+                    "maxLength": 200
+                  },
+                  "department": {
+                    "type": "string",
+                    "minLength": 2,
+                    "maxLength": 100
+                  },
+                  "details": {
+                    "type": "string",
+                    "minLength": 10
+                  },
+                  "notes": {
+                    "type": "string",
+                    "nullable": true
+                  }
                 }
               },
               "example": {
@@ -905,7 +1009,9 @@
             "description": "Job posting created",
             "content": {
               "application/json": {
-                "schema": {"$ref": "#/components/schemas/JobPosting"}
+                "schema": {
+                  "$ref": "#/components/schemas/JobPosting"
+                }
               }
             }
           },
@@ -920,16 +1026,27 @@
     },
     "/api/v1/job-postings/{id}": {
       "get": {
-        "tags": ["Job Postings"],
+        "tags": [
+          "Job Postings"
+        ],
         "summary": "Get job posting by ID",
-        "security": [{"bearerAuth": []}],
-        "x-rbac": {"roleGroup": "HR_MANAGERS"},
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
         "parameters": [
           {
             "in": "path",
             "name": "id",
             "required": true,
-            "schema": {"type": "string", "format": "uuid"}
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
         ],
         "responses": {
@@ -937,25 +1054,42 @@
             "description": "Job posting details",
             "content": {
               "application/json": {
-                "schema": {"$ref": "#/components/schemas/JobPosting"}
+                "schema": {
+                  "$ref": "#/components/schemas/JobPosting"
+                }
               }
             }
           },
-          "404": {"description": "Job posting not found"},
-          "403": {"description": "Cannot access other organization's job posting"}
+          "404": {
+            "description": "Job posting not found"
+          },
+          "403": {
+            "description": "Cannot access other organization's job posting"
+          }
         }
       },
       "put": {
-        "tags": ["Job Postings"],
+        "tags": [
+          "Job Postings"
+        ],
         "summary": "Update job posting",
-        "security": [{"bearerAuth": []}],
-        "x-rbac": {"roleGroup": "HR_MANAGERS"},
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
         "parameters": [
           {
             "in": "path",
             "name": "id",
             "required": true,
-            "schema": {"type": "string", "format": "uuid"}
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
         ],
         "requestBody": {
@@ -965,54 +1099,122 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "title": {"type": "string"},
-                  "department": {"type": "string"},
-                  "details": {"type": "string"},
-                  "notes": {"type": "string"}
+                  "title": {
+                    "type": "string"
+                  },
+                  "department": {
+                    "type": "string"
+                  },
+                  "details": {
+                    "type": "string"
+                  },
+                  "notes": {
+                    "type": "string"
+                  }
                 }
               }
             }
           }
         },
         "responses": {
-          "200": {"description": "Job posting updated"},
-          "403": {"description": "Forbidden"},
-          "404": {"description": "Not found"}
+          "200": {
+            "description": "Job posting updated"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not found"
+          }
         }
       },
       "delete": {
-        "tags": ["Job Postings"],
+        "tags": [
+          "Job Postings"
+        ],
         "summary": "Delete job posting",
         "description": "Soft delete (sets isDeleted flag). Requires HR_MANAGERS role.",
-        "security": [{"bearerAuth": []}],
-        "x-rbac": {"roleGroup": "HR_MANAGERS"},
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
         "parameters": [
           {
             "in": "path",
             "name": "id",
             "required": true,
-            "schema": {"type": "string", "format": "uuid"}
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
         ],
         "responses": {
-          "204": {"description": "Job posting deleted"},
-          "403": {"description": "Forbidden"},
-          "404": {"description": "Not found"}
+          "204": {
+            "description": "Job posting deleted"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not found"
+          }
         }
       }
     },
     "/api/v1/candidates": {
       "get": {
-        "tags": ["Candidates"],
+        "tags": [
+          "Candidates"
+        ],
         "summary": "Get all candidates",
         "description": "Returns candidates for current organization. Requires HR_MANAGERS role.",
-        "security": [{"bearerAuth": []}],
-        "x-rbac": {"roleGroup": "HR_MANAGERS"},
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
         "parameters": [
-          {"in": "query", "name": "page", "schema": {"type": "integer", "default": 1}},
-          {"in": "query", "name": "limit", "schema": {"type": "integer", "default": 20}},
-          {"in": "query", "name": "search", "schema": {"type": "string"}, "description": "Search by name or email"},
-          {"in": "query", "name": "jobPostingId", "schema": {"type": "string", "format": "uuid"}, "description": "Filter by job posting"}
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "default": 20
+            }
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Search by name or email"
+          },
+          {
+            "in": "query",
+            "name": "jobPostingId",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Filter by job posting"
+          }
         ],
         "responses": {
           "200": {
@@ -1021,22 +1223,34 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {"$ref": "#/components/schemas/Candidate"}
+                  "items": {
+                    "$ref": "#/components/schemas/Candidate"
+                  }
                 }
               }
             }
           },
-          "403": {"description": "Forbidden (USER role)"}
+          "403": {
+            "description": "Forbidden (USER role)"
+          }
         }
       }
     },
     "/api/v1/candidates/check-duplicate": {
       "post": {
-        "tags": ["Candidates"],
+        "tags": [
+          "Candidates"
+        ],
         "summary": "Check duplicate CV file",
         "description": "Check if CV file already exists before upload. Prevents duplicate uploads.",
-        "security": [{"bearerAuth": []}],
-        "x-rbac": {"roleGroup": "HR_MANAGERS"},
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
         "requestBody": {
           "required": true,
           "content": {
@@ -1044,9 +1258,16 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "fileName": {"type": "string"},
-                  "fileSize": {"type": "integer"},
-                  "fileHash": {"type": "string", "description": "MD5 hash of file"}
+                  "fileName": {
+                    "type": "string"
+                  },
+                  "fileSize": {
+                    "type": "integer"
+                  },
+                  "fileHash": {
+                    "type": "string",
+                    "description": "MD5 hash of file"
+                  }
                 }
               }
             }
@@ -1060,8 +1281,13 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "isDuplicate": {"type": "boolean"},
-                    "existingCandidate": {"$ref": "#/components/schemas/Candidate", "nullable": true}
+                    "isDuplicate": {
+                      "type": "boolean"
+                    },
+                    "existingCandidate": {
+                      "$ref": "#/components/schemas/Candidate",
+                      "nullable": true
+                    }
                   }
                 }
               }
@@ -1072,27 +1298,45 @@
     },
     "/api/v1/candidates/upload": {
       "post": {
-        "tags": ["Candidates"],
+        "tags": [
+          "Candidates"
+        ],
         "summary": "Upload CV and create candidate",
         "description": "Upload CV file (PDF, DOCX, TXT) and create candidate record. Tracks usage limits (maxCvPerMonth).",
-        "security": [{"bearerAuth": []}],
-        "x-rbac": {"roleGroup": "HR_MANAGERS"},
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
         "requestBody": {
           "required": true,
           "content": {
             "multipart/form-data": {
               "schema": {
                 "type": "object",
-                "required": ["cv"],
+                "required": [
+                  "cv"
+                ],
                 "properties": {
                   "cv": {
                     "type": "string",
                     "format": "binary",
                     "description": "CV file (PDF, DOCX, TXT, max 10MB)"
                   },
-                  "name": {"type": "string", "description": "Candidate name (optional, extracted from CV if not provided)"},
-                  "email": {"type": "string", "format": "email"},
-                  "phone": {"type": "string"}
+                  "name": {
+                    "type": "string",
+                    "description": "Candidate name (optional, extracted from CV if not provided)"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "phone": {
+                    "type": "string"
+                  }
                 }
               }
             }
@@ -1103,72 +1347,137 @@
             "description": "CV uploaded, candidate created",
             "content": {
               "application/json": {
-                "schema": {"$ref": "#/components/schemas/Candidate"}
+                "schema": {
+                  "$ref": "#/components/schemas/Candidate"
+                }
               }
             }
           },
-          "400": {"description": "Invalid file format or size"},
-          "403": {"description": "Usage limit exceeded (FREE plan: 50 CVs/month)"},
-          "413": {"description": "File too large (max 10MB)"}
+          "400": {
+            "description": "Invalid file format or size"
+          },
+          "403": {
+            "description": "Usage limit exceeded (FREE plan: 50 CVs/month)"
+          },
+          "413": {
+            "description": "File too large (max 10MB)"
+          }
         }
       }
     },
     "/api/v1/candidates/{id}": {
       "get": {
-        "tags": ["Candidates"],
+        "tags": [
+          "Candidates"
+        ],
         "summary": "Get candidate by ID",
-        "security": [{"bearerAuth": []}],
-        "x-rbac": {"roleGroup": "HR_MANAGERS"},
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
         "parameters": [
-          {"in": "path", "name": "id", "required": true, "schema": {"type": "string", "format": "uuid"}}
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
         ],
         "responses": {
           "200": {
             "description": "Candidate details",
             "content": {
               "application/json": {
-                "schema": {"$ref": "#/components/schemas/Candidate"}
+                "schema": {
+                  "$ref": "#/components/schemas/Candidate"
+                }
               }
             }
           },
-          "404": {"description": "Candidate not found"},
-          "403": {"description": "Cannot access other organization's candidate"}
+          "404": {
+            "description": "Candidate not found"
+          },
+          "403": {
+            "description": "Cannot access other organization's candidate"
+          }
         }
       },
       "delete": {
-        "tags": ["Candidates"],
+        "tags": [
+          "Candidates"
+        ],
         "summary": "Delete candidate",
         "description": "Delete candidate and associated CV file from MinIO.",
-        "security": [{"bearerAuth": []}],
-        "x-rbac": {"roleGroup": "HR_MANAGERS"},
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
         "parameters": [
-          {"in": "path", "name": "id", "required": true, "schema": {"type": "string", "format": "uuid"}}
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
         ],
         "responses": {
-          "204": {"description": "Candidate deleted"},
-          "403": {"description": "Forbidden"},
-          "404": {"description": "Not found"}
+          "204": {
+            "description": "Candidate deleted"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not found"
+          }
         }
       }
     },
     "/api/v1/candidates/export/xlsx": {
       "get": {
-        "tags": ["Candidates"],
+        "tags": [
+          "Candidates"
+        ],
         "summary": "Export candidates to Excel",
         "description": "Download all candidates as XLSX file",
-        "security": [{"bearerAuth": []}],
-        "x-rbac": {"roleGroup": "HR_MANAGERS"},
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
         "responses": {
           "200": {
             "description": "XLSX file download",
             "content": {
               "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {
-                "schema": {"type": "string", "format": "binary"}
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
               }
             },
             "headers": {
               "Content-Disposition": {
-                "schema": {"type": "string"},
+                "schema": {
+                  "type": "string"
+                },
                 "description": "attachment; filename=candidates.xlsx"
               }
             }
@@ -1178,22 +1487,34 @@
     },
     "/api/v1/candidates/export/csv": {
       "get": {
-        "tags": ["Candidates"],
+        "tags": [
+          "Candidates"
+        ],
         "summary": "Export candidates to CSV",
         "description": "Download all candidates as CSV file",
-        "security": [{"bearerAuth": []}],
-        "x-rbac": {"roleGroup": "HR_MANAGERS"},
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
         "responses": {
           "200": {
             "description": "CSV file download",
             "content": {
               "text/csv": {
-                "schema": {"type": "string"}
+                "schema": {
+                  "type": "string"
+                }
               }
             },
             "headers": {
               "Content-Disposition": {
-                "schema": {"type": "string"},
+                "schema": {
+                  "type": "string"
+                },
                 "description": "attachment; filename=candidates.csv"
               }
             }
@@ -1203,26 +1524,52 @@
     },
     "/api/v1/analyses": {
       "post": {
-        "tags": ["Analyses"],
+        "tags": [
+          "Analyses"
+        ],
         "summary": "Create new CV analysis",
         "description": "Create AI-powered CV analysis for multiple candidates against a job posting. Uses Gemini AI. Tracks usage limits (maxAnalysisPerMonth). Jobs are queued in BullMQ.",
-        "security": [{"bearerAuth": []}],
-        "x-rbac": {"roleGroup": "HR_MANAGERS"},
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["jobPostingId", "candidateIds"],
+                "required": [
+                  "jobPostingId",
+                  "candidateIds"
+                ],
                 "properties": {
-                  "jobPostingId": {"type": "string", "format": "uuid", "description": "Job posting to analyze against"},
-                  "candidateIds": {"type": "array", "items": {"type": "string", "format": "uuid"}, "minItems": 1, "description": "Candidate IDs to analyze (min 1)"}
+                  "jobPostingId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "Job posting to analyze against"
+                  },
+                  "candidateIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "minItems": 1,
+                    "description": "Candidate IDs to analyze (min 1)"
+                  }
                 }
               },
               "example": {
                 "jobPostingId": "550e8400-e29b-41d4-a716-446655440000",
-                "candidateIds": ["candidate-uuid-1", "candidate-uuid-2"]
+                "candidateIds": [
+                  "candidate-uuid-1",
+                  "candidate-uuid-2"
+                ]
               }
             }
           }
@@ -1232,25 +1579,74 @@
             "description": "Analysis created (queued for processing)",
             "content": {
               "application/json": {
-                "schema": {"$ref": "#/components/schemas/Analysis"}
+                "schema": {
+                  "$ref": "#/components/schemas/Analysis"
+                }
               }
             }
           },
-          "400": {"description": "Validation error (invalid IDs)"},
-          "403": {"description": "Usage limit exceeded (FREE plan: 10 analyses/month)"}
+          "400": {
+            "description": "Validation error (invalid IDs)"
+          },
+          "403": {
+            "description": "Usage limit exceeded (FREE plan: 10 analyses/month)"
+          }
         }
       },
       "get": {
-        "tags": ["Analyses"],
+        "tags": [
+          "Analyses"
+        ],
         "summary": "Get all analyses",
         "description": "Returns all analyses for current organization with status and results",
-        "security": [{"bearerAuth": []}],
-        "x-rbac": {"roleGroup": "HR_MANAGERS"},
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
         "parameters": [
-          {"in": "query", "name": "page", "schema": {"type": "integer", "default": 1}},
-          {"in": "query", "name": "limit", "schema": {"type": "integer", "default": 20}},
-          {"in": "query", "name": "status", "schema": {"type": "string", "enum": ["PENDING", "PROCESSING", "COMPLETED", "FAILED"]}, "description": "Filter by status"},
-          {"in": "query", "name": "jobPostingId", "schema": {"type": "string", "format": "uuid"}, "description": "Filter by job posting"}
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "default": 20
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "PENDING",
+                "PROCESSING",
+                "COMPLETED",
+                "FAILED"
+              ]
+            },
+            "description": "Filter by status"
+          },
+          {
+            "in": "query",
+            "name": "jobPostingId",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Filter by job posting"
+          }
         ],
         "responses": {
           "200": {
@@ -1259,7 +1655,9 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {"$ref": "#/components/schemas/Analysis"}
+                  "items": {
+                    "$ref": "#/components/schemas/Analysis"
+                  }
                 }
               }
             }
@@ -1269,28 +1667,51 @@
     },
     "/api/v1/analyses/{id}": {
       "get": {
-        "tags": ["Analyses"],
+        "tags": [
+          "Analyses"
+        ],
         "summary": "Get analysis by ID with results",
         "description": "Returns detailed analysis results including AI scores and recommendations",
-        "security": [{"bearerAuth": []}],
-        "x-rbac": {"roleGroup": "HR_MANAGERS"},
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
         "parameters": [
-          {"in": "path", "name": "id", "required": true, "schema": {"type": "string", "format": "uuid"}}
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
         ],
         "responses": {
           "200": {
             "description": "Analysis details with AI results",
             "content": {
               "application/json": {
-                "schema": {"$ref": "#/components/schemas/Analysis"},
+                "schema": {
+                  "$ref": "#/components/schemas/Analysis"
+                },
                 "example": {
                   "id": "analysis-uuid",
                   "status": "COMPLETED",
                   "score": 85,
                   "aiResponse": {
                     "matchScore": 85,
-                    "strengths": ["5+ years Node.js", "PostgreSQL expert"],
-                    "weaknesses": ["No Docker experience"],
+                    "strengths": [
+                      "5+ years Node.js",
+                      "PostgreSQL expert"
+                    ],
+                    "weaknesses": [
+                      "No Docker experience"
+                    ],
                     "recommendation": "HIRE"
                   },
                   "completedAt": "2025-11-04T12:00:00.000Z"
@@ -1298,33 +1719,73 @@
               }
             }
           },
-          "404": {"description": "Analysis not found"},
-          "403": {"description": "Cannot access other organization's analysis"}
+          "404": {
+            "description": "Analysis not found"
+          },
+          "403": {
+            "description": "Cannot access other organization's analysis"
+          }
         }
       },
       "delete": {
-        "tags": ["Analyses"],
+        "tags": [
+          "Analyses"
+        ],
         "summary": "Delete analysis",
-        "security": [{"bearerAuth": []}],
-        "x-rbac": {"roleGroup": "HR_MANAGERS"},
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
         "parameters": [
-          {"in": "path", "name": "id", "required": true, "schema": {"type": "string", "format": "uuid"}}
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
         ],
         "responses": {
-          "204": {"description": "Analysis deleted"},
-          "404": {"description": "Not found"}
+          "204": {
+            "description": "Analysis deleted"
+          },
+          "404": {
+            "description": "Not found"
+          }
         }
       }
     },
     "/api/v1/analyses/{id}/add-candidates": {
       "post": {
-        "tags": ["Analyses"],
+        "tags": [
+          "Analyses"
+        ],
         "summary": "Add more candidates to existing analysis",
         "description": "Extend existing analysis with additional candidates",
-        "security": [{"bearerAuth": []}],
-        "x-rbac": {"roleGroup": "HR_MANAGERS"},
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
         "parameters": [
-          {"in": "path", "name": "id", "required": true, "schema": {"type": "string", "format": "uuid"}}
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
         ],
         "requestBody": {
           "required": true,
@@ -1332,36 +1793,70 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["candidateIds"],
+                "required": [
+                  "candidateIds"
+                ],
                 "properties": {
-                  "candidateIds": {"type": "array", "items": {"type": "string", "format": "uuid"}, "minItems": 1}
+                  "candidateIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "minItems": 1
+                  }
                 }
               }
             }
           }
         },
         "responses": {
-          "200": {"description": "Candidates added to analysis"},
-          "400": {"description": "Validation error"},
-          "404": {"description": "Analysis not found"}
+          "200": {
+            "description": "Candidates added to analysis"
+          },
+          "400": {
+            "description": "Validation error"
+          },
+          "404": {
+            "description": "Analysis not found"
+          }
         }
       }
     },
     "/api/v1/analyses/{id}/export/xlsx": {
       "get": {
-        "tags": ["Analyses"],
+        "tags": [
+          "Analyses"
+        ],
         "summary": "Export analysis results to Excel",
-        "security": [{"bearerAuth": []}],
-        "x-rbac": {"roleGroup": "HR_MANAGERS"},
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
         "parameters": [
-          {"in": "path", "name": "id", "required": true, "schema": {"type": "string", "format": "uuid"}}
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
         ],
         "responses": {
           "200": {
             "description": "XLSX file with analysis results",
             "content": {
               "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {
-                "schema": {"type": "string", "format": "binary"}
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
               }
             }
           }
@@ -1370,48 +1865,108 @@
     },
     "/api/v1/analyses/{id}/export/csv": {
       "get": {
-        "tags": ["Analyses"],
+        "tags": [
+          "Analyses"
+        ],
         "summary": "Export analysis results to CSV",
-        "security": [{"bearerAuth": []}],
-        "x-rbac": {"roleGroup": "HR_MANAGERS"},
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
         "parameters": [
-          {"in": "path", "name": "id", "required": true, "schema": {"type": "string", "format": "uuid"}}
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
         ],
         "responses": {
           "200": {
             "description": "CSV file with analysis results",
-            "content": {"text/csv": {"schema": {"type": "string"}}}
+            "content": {
+              "text/csv": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       }
     },
     "/api/v1/analyses/{id}/export/html": {
       "get": {
-        "tags": ["Analyses"],
+        "tags": [
+          "Analyses"
+        ],
         "summary": "Export analysis results to HTML",
         "description": "Download formatted HTML report with analysis results",
-        "security": [{"bearerAuth": []}],
-        "x-rbac": {"roleGroup": "HR_MANAGERS"},
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
         "parameters": [
-          {"in": "path", "name": "id", "required": true, "schema": {"type": "string", "format": "uuid"}}
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
         ],
         "responses": {
           "200": {
             "description": "HTML report",
-            "content": {"text/html": {"schema": {"type": "string"}}}
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       }
     },
     "/api/v1/analyses/{id}/send-email": {
       "post": {
-        "tags": ["Analyses"],
+        "tags": [
+          "Analyses"
+        ],
         "summary": "Email analysis results",
         "description": "Send analysis results via email in specified formats",
-        "security": [{"bearerAuth": []}],
-        "x-rbac": {"roleGroup": "HR_MANAGERS"},
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
         "parameters": [
-          {"in": "path", "name": "id", "required": true, "schema": {"type": "string", "format": "uuid"}}
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
         ],
         "requestBody": {
           "required": true,
@@ -1419,30 +1974,67 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["recipientEmail", "formats"],
+                "required": [
+                  "recipientEmail",
+                  "formats"
+                ],
                 "properties": {
-                  "recipientEmail": {"type": "string", "format": "email"},
-                  "formats": {"type": "array", "items": {"type": "string", "enum": ["xlsx", "csv", "html"]}, "minItems": 1}
+                  "recipientEmail": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "formats": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "xlsx",
+                        "csv",
+                        "html"
+                      ]
+                    },
+                    "minItems": 1
+                  }
                 }
               }
             }
           }
         },
         "responses": {
-          "200": {"description": "Email sent successfully"},
-          "400": {"description": "Invalid email or formats"}
+          "200": {
+            "description": "Email sent successfully"
+          },
+          "400": {
+            "description": "Invalid email or formats"
+          }
         }
       }
     },
     "/api/v1/analyses/{id}/send-feedback": {
       "post": {
-        "tags": ["Analyses"],
+        "tags": [
+          "Analyses"
+        ],
         "summary": "Send feedback to candidates",
         "description": "Send automated feedback emails to candidates based on analysis results. Can filter by score threshold.",
-        "security": [{"bearerAuth": []}],
-        "x-rbac": {"roleGroup": "HR_MANAGERS"},
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
         "parameters": [
-          {"in": "path", "name": "id", "required": true, "schema": {"type": "string", "format": "uuid"}}
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
         ],
         "requestBody": {
           "required": false,
@@ -1451,16 +2043,998 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "scoreThreshold": {"type": "integer", "minimum": 0, "maximum": 100, "description": "Send to candidates with score >= threshold"},
-                  "candidateIds": {"type": "array", "items": {"type": "string", "format": "uuid"}, "description": "Send to specific candidates only"}
+                  "scoreThreshold": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 100,
+                    "description": "Send to candidates with score >= threshold"
+                  },
+                  "candidateIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "description": "Send to specific candidates only"
+                  }
                 }
               }
             }
           }
         },
         "responses": {
-          "200": {"description": "Feedback emails sent"},
-          "400": {"description": "Invalid parameters"}
+          "200": {
+            "description": "Feedback emails sent"
+          },
+          "400": {
+            "description": "Invalid parameters"
+          }
+        }
+      }
+    },
+    "/api/v1/offers": {
+      "get": {
+        "tags": [
+          "Offers"
+        ],
+        "summary": "Get all offers",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
+        "responses": {
+          "200": {
+            "description": "List of offers"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Offers"
+        ],
+        "summary": "Create offer",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JobOffer"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Offer created"
+          }
+        }
+      }
+    },
+    "/api/v1/offers/wizard": {
+      "post": {
+        "tags": [
+          "Offers"
+        ],
+        "summary": "Create offer from wizard",
+        "description": "Multi-step wizard for offer creation",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
+        "responses": {
+          "201": {
+            "description": "Offer created from wizard"
+          }
+        }
+      }
+    },
+    "/api/v1/offers/bulk-send": {
+      "post": {
+        "tags": [
+          "Offers"
+        ],
+        "summary": "Send multiple offers",
+        "description": "Bulk send offers to candidates",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
+        "responses": {
+          "200": {
+            "description": "Offers sent"
+          }
+        }
+      }
+    },
+    "/api/v1/offers/{id}": {
+      "get": {
+        "tags": [
+          "Offers"
+        ],
+        "summary": "Get offer by ID",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Offer details"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Offers"
+        ],
+        "summary": "Update offer",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Offer updated"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Offers"
+        ],
+        "summary": "Delete offer",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Offer deleted"
+          }
+        }
+      }
+    },
+    "/api/v1/offers/{id}/send": {
+      "patch": {
+        "tags": [
+          "Offers"
+        ],
+        "summary": "Send offer to candidate",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Offer sent"
+          }
+        }
+      }
+    },
+    "/api/v1/offers/{id}/preview-pdf": {
+      "get": {
+        "tags": [
+          "Offers"
+        ],
+        "summary": "Preview offer PDF",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "PDF preview",
+            "content": {
+              "application/pdf": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/offers/{id}/download-pdf": {
+      "get": {
+        "tags": [
+          "Offers"
+        ],
+        "summary": "Download offer PDF",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "PDF download",
+            "content": {
+              "application/pdf": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/offers/{id}/request-approval": {
+      "patch": {
+        "tags": [
+          "Offers"
+        ],
+        "summary": "Request approval for offer",
+        "description": "Submit offer for approval workflow",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Approval requested"
+          }
+        }
+      }
+    },
+    "/api/v1/offers/{id}/approve": {
+      "patch": {
+        "tags": [
+          "Offers"
+        ],
+        "summary": "Approve offer",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Offer approved"
+          }
+        }
+      }
+    },
+    "/api/v1/offers/{id}/reject-approval": {
+      "patch": {
+        "tags": [
+          "Offers"
+        ],
+        "summary": "Reject offer approval",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Approval rejected"
+          }
+        }
+      }
+    },
+    "/api/v1/offers/{id}/expire": {
+      "patch": {
+        "tags": [
+          "Offers"
+        ],
+        "summary": "Expire offer manually",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Offer expired"
+          }
+        }
+      }
+    },
+    "/api/v1/offers/{id}/extend": {
+      "patch": {
+        "tags": [
+          "Offers"
+        ],
+        "summary": "Extend offer expiration",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Expiration extended"
+          }
+        }
+      }
+    },
+    "/api/v1/interviews": {
+      "get": {
+        "tags": [
+          "Interviews"
+        ],
+        "summary": "Get all interviews",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
+        "responses": {
+          "200": {
+            "description": "List of interviews"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Interviews"
+        ],
+        "summary": "Create interview",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
+        "responses": {
+          "201": {
+            "description": "Interview created"
+          }
+        }
+      }
+    },
+    "/api/v1/interviews/stats": {
+      "get": {
+        "tags": [
+          "Interviews"
+        ],
+        "summary": "Get interview statistics",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
+        "responses": {
+          "200": {
+            "description": "Interview stats"
+          }
+        }
+      }
+    },
+    "/api/v1/interviews/{id}": {
+      "get": {
+        "tags": [
+          "Interviews"
+        ],
+        "summary": "Get interview by ID",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Interview details"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Interviews"
+        ],
+        "summary": "Delete interview",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Interview deleted"
+          }
+        }
+      }
+    },
+    "/api/v1/interviews/{id}/status": {
+      "patch": {
+        "tags": [
+          "Interviews"
+        ],
+        "summary": "Update interview status",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Status updated"
+          }
+        }
+      }
+    },
+    "/api/v1/team": {
+      "get": {
+        "tags": [
+          "Team"
+        ],
+        "summary": "Get all team members",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roles": [
+            "ADMIN",
+            "SUPER_ADMIN"
+          ]
+        },
+        "responses": {
+          "200": {
+            "description": "List of team members"
+          }
+        }
+      }
+    },
+    "/api/v1/team/invite": {
+      "post": {
+        "tags": [
+          "Team"
+        ],
+        "summary": "Invite team member",
+        "description": "Send invitation email",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roles": [
+            "ADMIN",
+            "SUPER_ADMIN"
+          ]
+        },
+        "responses": {
+          "201": {
+            "description": "Invitation sent"
+          }
+        }
+      }
+    },
+    "/api/v1/team/{id}": {
+      "get": {
+        "tags": [
+          "Team"
+        ],
+        "summary": "Get team member",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roles": [
+            "ADMIN",
+            "SUPER_ADMIN"
+          ]
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Team member"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Team"
+        ],
+        "summary": "Update team member",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roles": [
+            "ADMIN",
+            "SUPER_ADMIN"
+          ]
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Team"
+        ],
+        "summary": "Delete team member",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roles": [
+            "ADMIN",
+            "SUPER_ADMIN"
+          ]
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted"
+          }
+        }
+      }
+    },
+    "/api/v1/organization/me": {
+      "get": {
+        "tags": [
+          "Organizations"
+        ],
+        "summary": "Get current organization",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Organization details"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Organizations"
+        ],
+        "summary": "Update organization",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roles": [
+            "ADMIN",
+            "SUPER_ADMIN"
+          ]
+        },
+        "responses": {
+          "200": {
+            "description": "Updated"
+          }
+        }
+      }
+    },
+    "/api/v1/organization/usage": {
+      "get": {
+        "tags": [
+          "Organizations"
+        ],
+        "summary": "Get usage statistics",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usage stats"
+          }
+        }
+      }
+    },
+    "/api/v1/users/me": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get current user profile",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User profile"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Update profile",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated"
+          }
+        }
+      }
+    },
+    "/api/v1/users": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get all users",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roles": [
+            "ADMIN",
+            "SUPER_ADMIN"
+          ]
+        },
+        "responses": {
+          "200": {
+            "description": "Users list"
+          }
+        }
+      }
+    },
+    "/api/v1/users/{id}": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get user by ID",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roles": [
+            "ADMIN",
+            "SUPER_ADMIN"
+          ]
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Update user",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roles": [
+            "ADMIN",
+            "SUPER_ADMIN"
+          ]
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated"
+          }
+        }
+      }
+    },
+    "/api/v1/dashboard": {
+      "get": {
+        "tags": [
+          "Dashboard"
+        ],
+        "summary": "Get dashboard statistics",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dashboard stats"
+          }
         }
       }
     }
@@ -1541,9 +3115,23 @@
       "authorize": "Checks user role against allowed roles for endpoint"
     },
     "roleGroups": {
-      "HR_MANAGERS": ["SUPER_ADMIN", "ADMIN", "MANAGER", "HR_SPECIALIST"],
-      "ADMINS": ["SUPER_ADMIN", "ADMIN"],
-      "ALL_AUTHENTICATED": ["SUPER_ADMIN", "ADMIN", "MANAGER", "HR_SPECIALIST", "USER"]
+      "HR_MANAGERS": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "MANAGER",
+        "HR_SPECIALIST"
+      ],
+      "ADMINS": [
+        "SUPER_ADMIN",
+        "ADMIN"
+      ],
+      "ALL_AUTHENTICATED": [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "MANAGER",
+        "HR_SPECIALIST",
+        "USER"
+      ]
     }
   }
 }
