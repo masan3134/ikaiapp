@@ -543,7 +543,293 @@
       }
     }
   },
-  "paths": {},
+  "paths": {
+    "/api/v1/auth/register": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Register new user",
+        "description": "Create new user account with automatic organization creation. Returns JWT token. Public endpoint with rate limiting (100 requests per 15 minutes).",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterRequest"
+              },
+              "example": {
+                "email": "newuser@example.com",
+                "password": "SecurePass123!"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Registration successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "User registered successfully"
+                    },
+                    "user": {
+                      "$ref": "#/components/schemas/User"
+                    },
+                    "token": {
+                      "type": "string",
+                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Validation Error",
+                  "message": "Invalid input data",
+                  "details": [
+                    {
+                      "field": "password",
+                      "message": "Password must be at least 8 characters long"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Email already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Conflict",
+                  "message": "Email already exists"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests (rate limit exceeded)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Too Many Requests",
+                  "message": "Çok fazla giriş denemesi yapıldı. Lütfen 15 dakika sonra tekrar deneyin."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Login to platform",
+        "description": "Authenticate user with email and password. Returns JWT token. Public endpoint with rate limiting (100 requests per 15 minutes).",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              },
+              "example": {
+                "email": "test-admin@test-org-1.com",
+                "password": "TestPass123!"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                },
+                "example": {
+                  "message": "Login successful",
+                  "user": {
+                    "id": "96d1d73f-7e33-4c5d-bd10-da74e860add2",
+                    "email": "test-admin@test-org-1.com",
+                    "role": "ADMIN",
+                    "organizationId": "org-uuid-here",
+                    "name": "Test ADMIN 1",
+                    "isActive": true,
+                    "createdAt": "2025-11-04T10:00:00.000Z"
+                  },
+                  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI5NmQxZDczZi03ZTMzLTRjNWQtYmQxMC1kYTc0ZTg2MGFkZDIiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NjIyMDM0NzIsImV4cCI6MTc2MjgwODI3Mn0.dFOYkFjnSZtxMvgpRluGNCZYr-zpEh5wHA29IQVuvvM"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Unauthorized",
+                  "message": "Invalid email or password"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests (rate limit exceeded)"
+          }
+        }
+      }
+    },
+    "/api/v1/auth/logout": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Logout current user",
+        "description": "Invalidate user session (remove from Redis). Requires authentication.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Logout successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Logout successful"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized (missing or invalid token)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/me": {
+      "get": {
+        "tags": ["Authentication"],
+        "summary": "Get current user info",
+        "description": "Returns authenticated user's profile. Requires authentication.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User info retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                },
+                "example": {
+                  "id": "96d1d73f-7e33-4c5d-bd10-da74e860add2",
+                  "email": "test-admin@test-org-1.com",
+                  "role": "ADMIN",
+                  "organizationId": "org-uuid-here",
+                  "name": "Test ADMIN 1",
+                  "firstName": "Test",
+                  "lastName": "ADMIN 1",
+                  "isActive": true,
+                  "isOnboarded": true,
+                  "emailNotifications": true,
+                  "createdAt": "2025-11-04T10:00:00.000Z",
+                  "updatedAt": "2025-11-04T10:00:00.000Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized (missing or invalid token)"
+          }
+        }
+      }
+    },
+    "/api/v1/auth/refresh": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Refresh JWT token",
+        "description": "Generate new JWT token using current valid token. Extends session. Requires authentication.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Token refreshed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string",
+                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Token refreshed successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized (missing or invalid token)"
+          }
+        }
+      }
+    }
+  },
   "tags": [
     {
       "name": "Authentication",
