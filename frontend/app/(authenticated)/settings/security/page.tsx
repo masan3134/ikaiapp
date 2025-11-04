@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuthStore } from '@/lib/store/authStore';
 import { useToast } from '@/lib/hooks/useToast';
 import { Card } from '@/components/ui/Card';
@@ -14,6 +14,8 @@ export default function SecurityPage() {
   const { user, logout } = useAuthStore();
   const toast = useToast();
   const [changingPassword, setChangingPassword] = useState(false);
+  const [sessions, setSessions] = useState<any[]>([]);
+  const [loadingSessions, setLoadingSessions] = useState(true);
   const [showPasswords, setShowPasswords] = useState({
     current: false,
     new: false,
@@ -85,16 +87,32 @@ export default function SecurityPage() {
 
   const strength = getPasswordStrength(passwordForm.newPassword);
 
-  const mockSessions = [
-    {
-      id: '1',
-      device: 'Chrome on Linux',
-      location: 'Istanbul, Turkey',
-      ip: '192.168.1.100',
-      lastActive: new Date(),
-      current: true
-    }
-  ];
+  // Fetch active sessions
+  useEffect(() => {
+    const fetchSessions = async () => {
+      try {
+        const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+        const token = localStorage.getItem('authToken');
+
+        const response = await fetch(`${API_URL}/api/v1/users/me/sessions`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          setSessions(result.data || []);
+        }
+      } catch (error) {
+        console.error('Failed to fetch sessions:', error);
+      } finally {
+        setLoadingSessions(false);
+      }
+    };
+
+    fetchSessions();
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -289,7 +307,18 @@ export default function SecurityPage() {
         </div>
 
         <div className="space-y-3">
-          {mockSessions.map((session) => (
+          {loadingSessions ? (
+            <div className="text-center py-8 text-gray-500">
+              <Clock className="inline animate-spin mb-2" size={24} />
+              <p>Oturumlar yükleniyor...</p>
+            </div>
+          ) : sessions.length === 0 ? (
+            <div className="text-center py-8 text-gray-500">
+              <Monitor className="inline mb-2" size={24} />
+              <p>Aktif oturum bulunamadı</p>
+            </div>
+          ) : (
+            sessions.map((session) => (
             <div
               key={session.id}
               className={`p-5 rounded-xl border-2 transition-all hover:shadow-md ${
@@ -340,7 +369,7 @@ export default function SecurityPage() {
                 )}
               </div>
             </div>
-          ))}
+          )))}
         </div>
 
         <div className="mt-4 p-5 bg-gradient-to-br from-yellow-50 to-orange-50 border-2 border-yellow-200 rounded-xl">
