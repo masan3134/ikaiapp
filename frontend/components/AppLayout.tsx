@@ -36,6 +36,7 @@ import {
   canViewAnalytics,
   isSuperAdmin
 } from '@/lib/utils/rbac';
+import { RoleBadge } from '@/components/ui/RoleBadge';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -292,14 +293,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                   <p className="text-sm font-medium text-gray-900 truncate">
                     {user?.email}
                   </p>
-                  <div className="flex items-center gap-2 mt-1">
-                    <span className="text-xs text-gray-500">{user?.role}</span>
-                    {user?.role === 'ADMIN' && (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-800">
-                        <Shield size={12} />
-                        Admin
-                      </span>
-                    )}
+                  <div className="flex items-center gap-2 mt-2">
+                    <RoleBadge role={user?.role} size="sm" />
                   </div>
                 </div>
               </div>
