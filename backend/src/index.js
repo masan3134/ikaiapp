@@ -240,6 +240,11 @@ apiV1Router.use('/analytics', analyticsRoutes);
 
   logger.info('✅ Offer routes registered (Phases 1-5)');
 
+// Notification System (Worker #2 - 2025-11-04)
+const notificationRoutes = require('./routes/notificationRoutes');
+apiV1Router.use('/notifications', notificationRoutes);
+logger.info('✅ Notification routes registered');
+
 // MANDATORY FEATURE: Centralized Error Logging
 const errorLoggingRoutes = require('./routes/errorLoggingRoutes');
 apiV1Router.use('/errors', errorLoggingRoutes);
