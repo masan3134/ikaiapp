@@ -36,19 +36,6 @@ const nextConfig = {
   env: {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8102',
   },
-
-  // ============================================
-  // API PROXY (Rewrites)
-  // ============================================
-  // Proxy all /api/* requests to backend server
-  async rewrites() {
-    return [
-      {
-        source: '/api/:path*',
-        destination: `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8102'}/api/:path*`,
-      },
-    ];
-  },
 }
 
 module.exports = nextConfig
