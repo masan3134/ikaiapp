@@ -326,7 +326,23 @@ router.get('/hr-specialist', [
         candidates: {
           include: {
             candidate: {
-              select: { firstName: true, lastName: true }
+              select: {
+                firstName: true,
+                lastName: true,
+                analysisResults: {
+                  include: {
+                    analysis: {
+                      include: {
+                        jobPosting: {
+                          select: { title: true }
+                        }
+                      }
+                    }
+                  },
+                  take: 1,
+                  orderBy: { createdAt: 'desc' }
+                }
+              }
             }
           },
           take: 1
@@ -336,20 +352,24 @@ router.get('/hr-specialist', [
       take: 5
     });
 
-    // Format interviews with candidate info
-    const formattedInterviews = interviews.map(interview => ({
-      id: interview.id,
-      scheduledAt: interview.date,
-      type: interview.type,
-      candidate: {
-        name: interview.candidates[0]
-          ? `${interview.candidates[0].candidate.firstName} ${interview.candidates[0].candidate.lastName}`
-          : 'Unknown'
-      },
-      jobPosting: {
-        title: 'Interview' // Mock - no direct jobPosting relation in Interview model
-      }
-    }));
+    // Format interviews with candidate info and real jobPosting data
+    const formattedInterviews = interviews.map(interview => {
+      const candidateData = interview.candidates[0];
+      const analysisResult = candidateData?.candidate?.analysisResults?.[0];
+      const jobPosting = analysisResult?.analysis?.jobPosting;
+
+      return {
+        id: interview.id,
+        scheduledAt: interview.date,
+        type: interview.type,
+        candidate: {
+          name: candidateData
+            ? `${candidateData.candidate.firstName} ${candidateData.candidate.lastName}`
+            : 'Unknown'
+        },
+        jobPosting: jobPosting || null
+      };
+    });
 
     // Monthly stats - REAL DATA from database
     // Date ranges for comparison
