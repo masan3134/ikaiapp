@@ -154,6 +154,103 @@ Example:
 - Mod action: ✅ Ask W4 (ADMIN dashboard owner) to fix
 ```
 
+### Rule 8: Independent Verification - Never Trust, Always Verify
+```
+🚨 CRITICAL: Worker raporuna GÜVENMEYİN! BAĞIMSIZ DOĞRULAYIN!
+
+Sorun: Worker 2+2=5 diyebilir, sen kontrol etmezsen kabul edersin!
+
+Senin Görevin:
+1. Worker raporunu oku
+2. Worker'ın iddialarını çıkar
+3. AYNI komutları SEN çalıştır
+4. Sonuçları KARŞILAŞTIR
+5. Match → Honest ✅ / Mismatch → LIED ❌
+
+Örnek Doğrulama:
+
+Worker Raporu:
+---
+## Prisma Query Count
+```bash
+$ grep -c "await prisma\." backend/src/routes/dashboardRoutes.js
+18
+```
+**Status:** ✅ 18 Prisma query (100% real data)
+---
+
+Senin Verification:
+---
+Step 1: AYNI komutu çalıştır
+```bash
+grep -c "await prisma\." backend/src/routes/dashboardRoutes.js
+```
+
+Step 2: Sonucu karşılaştır
+Worker dedi: 18
+Sen buldun: 5
+
+Step 3: Karar
+18 ≠ 5 → WORKER LIED! ❌
+Action: Reject report, demand re-do with REAL data
+---
+
+Doğrulama Checklist:
+
+✅ Prisma query count
+  Worker: "18 query"
+  Mod: grep -c "await prisma\." [file]
+  Compare: 18 = ?
+
+✅ Mock data count
+  Worker: "0 mock"
+  Mod: grep -ic "mock\|TODO" [file]
+  Compare: 0 = ?
+
+✅ API test result
+  Worker: "200 OK, 6 fields"
+  Mod: curl [endpoint] | jq '.data | keys | length'
+  Compare: 6 = ?
+
+✅ Git commit count
+  Worker: "5 commits"
+  Mod: git log --oneline --grep="W1" --since="3 hours" | wc -l
+  Compare: 5 = ?
+
+✅ Widget count
+  Worker: "8 widgets"
+  Mod: ls frontend/components/dashboard/user/*.tsx | wc -l
+  Compare: 8 = ?
+
+READY-TO-USE VERIFICATION COMMANDS:
+
+# For W1 (USER Dashboard)
+ENDPOINT_START=$(grep -n "router.get('/user'" backend/src/routes/dashboardRoutes.js | cut -d: -f1)
+ENDPOINT_END=$((ENDPOINT_START + 150))
+
+echo "Prisma queries (W1 claim vs Mod actual):"
+sed -n "${ENDPOINT_START},${ENDPOINT_END}p" backend/src/routes/dashboardRoutes.js | grep -c "await prisma\."
+
+echo "Mock data (W1 claim vs Mod actual):"
+sed -n "${ENDPOINT_START},${ENDPOINT_END}p" backend/src/routes/dashboardRoutes.js | grep -ic "mock\|TODO"
+
+echo "Widgets (W1 claim vs Mod actual):"
+find frontend/components/dashboard/user -name "*.tsx" | wc -l
+
+echo "API fields (W1 claim vs Mod actual):"
+TOKEN=$(curl -s -X POST http://localhost:8102/api/v1/auth/login -H "Content-Type: application/json" -d '{"email":"test-user@test-org-1.com","password":"TestPass123!"}' | jq -r '.token')
+curl -s http://localhost:8102/api/v1/dashboard/user -H "Authorization: Bearer $TOKEN" | jq '.data | keys | length'
+
+THEN COMPARE ALL 4 NUMBERS!
+
+Decision Matrix:
+
+4/4 MATCH → ✅ VERIFIED (Worker 100% honest)
+3/4 MATCH → ⚠️ MINOR ISSUE (Worker mostly honest, small mistake)
+2/4 MATCH → ❌ REJECT (Worker careless or lying)
+0-1/4 MATCH → ❌ REJECT + RE-DO (Worker completely dishonest)
+```
+
 ---
 
 ## 📋 Your Workflow (Step-by-Step)
