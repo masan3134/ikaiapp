@@ -8,6 +8,8 @@ import { useToast } from '@/lib/hooks/useToast';
 import { useAuthStore } from '@/lib/store/authStore';
 import { parseApiError } from '@/lib/utils/errorHandler';
 import LoadingSkeleton from '@/components/ui/LoadingSkeleton';
+import { withRoleProtection } from '@/lib/hoc/withRoleProtection';
+import { UserRole } from '@/lib/constants/roles';
 import {
   getStats,
   getOrganizations,
@@ -17,7 +19,7 @@ import {
   type Organization
 } from '@/lib/services/superAdminService';
 
-export default function SuperAdminPage() {
+function SuperAdminPage() {
   const router = useRouter();
   const toast = useToast();
   const { user } = useAuthStore();
@@ -375,3 +377,8 @@ export default function SuperAdminPage() {
     </div>
   );
 }
+
+export default withRoleProtection(SuperAdminPage, {
+  allowedRoles: [UserRole.SUPER_ADMIN],
+  redirectTo: '/dashboard'
+});

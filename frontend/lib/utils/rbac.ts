@@ -100,7 +100,7 @@ export const canEditOffer = (role?: UserRole): boolean => {
 
 export const canDeleteOffer = (role?: UserRole): boolean => {
   if (!role) return false
-  return ['SUPER_ADMIN', 'ADMIN'].includes(role)
+  return ['SUPER_ADMIN', 'ADMIN', 'MANAGER'].includes(role)  // MANAGER can delete offers
 }
 
 export const canViewOffers = (role?: UserRole): boolean => {
@@ -124,7 +124,7 @@ export const canEditInterview = (role?: UserRole): boolean => {
 
 export const canDeleteInterview = (role?: UserRole): boolean => {
   if (!role) return false
-  return ['SUPER_ADMIN', 'ADMIN'].includes(role)
+  return ['SUPER_ADMIN', 'ADMIN', 'MANAGER'].includes(role)  // MANAGER can delete interviews
 }
 
 export const canViewInterviews = (role?: UserRole): boolean => {

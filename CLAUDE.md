@@ -1,7 +1,7 @@
 # 🤖 IKAI HR Platform - Development Guide
 
-**Version:** 15.0 - Production Ready with Complete Documentation
-**Updated:** 2025-11-04 (Final Session)
+**Version:** 15.1 - Streamlined AsanMod (3 Core Docs)
+**Updated:** 2025-11-04 (Final Session - Cleanup Complete)
 **Environment:** Docker Isolated Development (Hot Reload Enabled)
 **Context:** 1M Tokens (Sonnet 4.5) - Full Detail Mode Until 700K
 
@@ -31,8 +31,10 @@ Read: docs/workflow/WORKER-PLAYBOOK.md
 
 ### Step 3: Start Working
 
-**Mod:** Create Phase JSONs, verify Worker's work
-**Worker:** Execute JSON tasks, create verification reports
+**Mod:** Create MD task files, verify Worker's work
+**Worker:** Execute MD tasks, create verification reports
+
+**Communication:** KISA ÖZ (emoji + dosya ref) → User, ULTRA DETAY → MD files
 
 ---
 
@@ -45,10 +47,10 @@ Read: docs/workflow/WORKER-PLAYBOOK.md
 **Your playbook:** [`docs/workflow/MOD-PLAYBOOK.md`](docs/workflow/MOD-PLAYBOOK.md)
 
 **Your responsibilities:**
-- 📋 Plan phases → Create ultra-detailed JSON task files
+- 📋 Plan phases → Create ultra-detailed MD task files
 - ✅ Verify Worker's work → Re-run ALL verification commands
 - 🔍 Detect fake data → Compare Worker output vs your output
-- 🤖 Automate tests → Playwright/curl (no manual User testing!)
+- 💬 User'a kısa mesaj → Emoji + dosya ref (3-5 satır max!)
 - 📊 Coordinate → Prepare next phase while Worker executes current
 
 **Critical rule:**
@@ -72,11 +74,11 @@ Read('docs/workflow/MOD-PLAYBOOK.md')
 **Your playbook:** [`docs/workflow/WORKER-PLAYBOOK.md`](docs/workflow/WORKER-PLAYBOOK.md)
 
 **Your responsibilities:**
-- 📖 Read JSON task file completely
+- 📖 Read MD task file completely
 - 🛠️ Execute tasks with REAL tools (Read/Edit/Write/Bash)
 - ⚠️ NO SIMULATION - Never fake outputs!
 - 📄 Create verification report with EXACT terminal outputs
-- 🚫 NO INTERPRETATION - Copy-paste raw data, let Mod verify
+- 💬 User'a kısa rapor → Emoji + dosya ref + metrik (3-5 satır)
 
 **Critical rule:**
 ```
@@ -129,7 +131,7 @@ Read('docs/workflow/WORKER-PLAYBOOK.md')
 4. Auto-push happens (post-commit hook active)
 ```
 
-**Full git workflow:** [`docs/workflow/ASANMOD-GIT-WORKFLOW.md`](docs/workflow/ASANMOD-GIT-WORKFLOW.md)
+**📖 Full git workflow:** Git policy included in MOD-PLAYBOOK.md and WORKER-PLAYBOOK.md
 
 ---
 
@@ -354,6 +356,62 @@ docker logs ikai-backend -f
 ```
 
 **📖 Git automation:** [`AUTO_COMMIT_GUIDE.md`](AUTO_COMMIT_GUIDE.md)
+
+---
+
+## 🐍 TEST SCRIPTS (Workers)
+
+**6 Ready-to-Use Templates** - Copy, customize, run!
+
+**Quick Start:**
+```bash
+# 1. Copy template
+cp scripts/templates/api-test-template.py scripts/tests/w1-my-test.py
+
+# 2. Customize
+nano scripts/tests/w1-my-test.py
+
+# 3. Run
+python3 scripts/tests/w1-my-test.py > test-outputs/w1-output.txt
+```
+
+**Available Templates:**
+- `api-test-template.py` - Basic CRUD testing
+- `rbac-test-template.py` - Role permission testing
+- `workflow-test-template.py` - Full hiring workflow
+- `performance-test-template.py` - Response time measurement
+- `ai-chat-test-template.py` - AI chat testing
+- `cleanup-test-template.py` - Cleanup test data
+
+**Base Helper:**
+```python
+from test_helper import IKAITestHelper, TEST_USERS
+
+helper = IKAITestHelper()
+helper.login("test-admin@test-org-1.com", "TestPass123!")
+helper.get("/api/v1/job-postings")
+```
+
+**📚 Complete Guide:**
+- **Workers:** [`docs/test-tasks/WORKER-SCRIPT-GUIDE.md`](docs/test-tasks/WORKER-SCRIPT-GUIDE.md) (9KB)
+- **Templates:** [`scripts/templates/README.md`](scripts/templates/README.md)
+- **Base Helper:** [`scripts/test-helper.py`](scripts/test-helper.py)
+
+**Directory Structure:**
+```
+scripts/
+├── test-helper.py         # Base helper (READONLY)
+├── templates/             # 6 templates (READONLY)
+├── tests/                 # Worker scripts (write here)
+└── test-outputs/          # Test results (ignored by git)
+```
+
+**⚠️ Rules:**
+- ✅ Copy templates to `tests/`
+- ✅ Save outputs to `test-outputs/`
+- ❌ NEVER modify `test-helper.py`
+- ❌ NEVER modify templates
+- ❌ NEVER modify `test-data/`
 
 ---
 

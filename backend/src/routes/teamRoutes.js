@@ -13,17 +13,20 @@ const {
   acceptInvitation
 } = require('../controllers/teamController');
 
-// All routes require authentication, organization isolation, and ADMIN/SUPER_ADMIN role
+// Read operations (MANAGER can view team)
+const teamViewers = [authenticateToken, enforceOrganizationIsolation, authorize(['ADMIN', 'SUPER_ADMIN', 'MANAGER'])];
+
+// Write operations (ADMIN only)
 const adminOnly = [authenticateToken, enforceOrganizationIsolation, authorize(['ADMIN', 'SUPER_ADMIN'])];
 
 // POST /api/v1/team/accept-invitation - Accept invitation (PUBLIC - no auth)
 router.post('/accept-invitation', acceptInvitation);
 
-// GET /api/v1/team - List all team members
-router.get('/', ...adminOnly, getTeamMembers);
+// GET /api/v1/team - List all team members (MANAGER can view)
+router.get('/', ...teamViewers, getTeamMembers);
 
-// GET /api/v1/team/:id - Get single team member
-router.get('/:id', ...adminOnly, getTeamMember);
+// GET /api/v1/team/:id - Get single team member (MANAGER can view)
+router.get('/:id', ...teamViewers, getTeamMember);
 
 // POST /api/v1/team/invite - Invite new team member
 router.post('/invite', ...adminOnly, inviteTeamMember);

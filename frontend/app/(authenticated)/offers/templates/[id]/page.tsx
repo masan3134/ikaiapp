@@ -3,8 +3,10 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import * as templateService from '@/services/templateService';
+import { withRoleProtection } from '@/lib/hoc/withRoleProtection';
+import { RoleGroups } from '@/lib/constants/roles';
 
-export default function TemplateDetailPage() {
+function TemplateDetailPage() {
   const params = useParams();
   const router = useRouter();
   const templateId = params.id as string;
@@ -301,3 +303,8 @@ export default function TemplateDetailPage() {
     </div>
   );
 }
+
+export default withRoleProtection(TemplateDetailPage, {
+  allowedRoles: RoleGroups.HR_MANAGERS,
+  redirectTo: '/dashboard'
+});

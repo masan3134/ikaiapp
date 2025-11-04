@@ -14,10 +14,200 @@ AsanMod, büyük yazılım projelerini **paralel olarak**, **doğrulanabilir şe
 ### Temel Prensipler:
 
 1. **Paralel Yürütme** - Farklı fazlar farklı tab'larda eşzamanlı çalışır
-2. **Ultra-Detaylı JSON Task Dosyaları** - Her task için step-by-step talimatlar
+2. **Ultra-Detaylı MD Task Dosyaları** - Her task için step-by-step talimatlar
 3. **Ham Veri Raporlama** - AI yorumlamaz, sadece terminal çıktısını kopyalar
 4. **Gerçek Doğrulama** - Master Claude MD dosyasını okuyarak durumu anlar
-5. **MCP Requirements** - Her fazda hangi tool'ların kullanılacağı belirtilir
+5. **Kısa User İletişimi** - User'a 3-5 satır, MD'de ultra detay
+
+---
+
+## 💬 Communication Protocol (CRITICAL)
+
+**AsanMod'un en önemli özelliği: İki katmanlı iletişim**
+
+### Layer 1: User Communication (KISA ÖZ - 3-5 Satır Max!)
+
+**Mod → User:**
+```
+✅ W1'e görev verdim
+📄 Görev: docs/test-tasks/worker1-rbac-audit.md
+🎯 Hedef: SUPER_ADMIN cross-org test
+⏱️ Süre: 45-60 dk
+```
+
+**Worker → User:**
+```
+✅ Görev tamamlandı!
+📄 Rapor: docs/reports/worker1-rbac-audit-report.md
+🎯 Sonuç: 6 job posting, 3 org ✅
+```
+
+**Format:**
+- ✅ Emoji + dosya referansı
+- ✅ 3-5 satır maksimum
+- ✅ Metrik (sayı, %, ✅/❌)
+- ❌ Uzun açıklamalar YOK
+- ❌ Kod blokları YOK
+- ❌ Terminal outputs YOK
+
+**Reasoning:**
+- User mesaj taşıyıcı (Mod ↔ Worker)
+- User overwhelmed olmamalı
+- Detaylar MD'de (User MD'yi açar, okur)
+
+### Layer 2: Background Communication (ULTRA DETAY - MD Files)
+
+**Görev Dosyaları (task-x.md):**
+```markdown
+# worker1-rbac-audit.md
+
+[500-2000 satır ultra detaylı görev]
+
+## Task 1: Backend Health (5 min)
+
+### Commands:
+```bash
+curl -s http://localhost:8102/health | jq
+docker ps --filter name=ikai-backend --format '{{.Status}}'
+```
+
+### Expected Output:
+```json
+{"status":"ok"}
+```
+
+### Verification:
+- ✅ Status is "ok"
+- ✅ Container is "Up X minutes"
+
+[100+ satır bu task için...]
+
+## Task 2: Login & Token (10 min)
+
+[200+ satır detaylı talimat...]
+
+## Task 3: ...
+[devam...]
+```
+
+**Rapor Dosyaları (report-x.md):**
+```markdown
+# worker1-rbac-audit-report.md
+
+[500-1500 satır ultra detaylı rapor]
+
+## Executive Summary
+✅ PASS - All tests passed
+- 6 job postings (expected: 6) ✅
+- 3 orgs (expected: 3) ✅
+- RBAC isolation verified ✅
+
+## Test 1: Backend Health
+
+```bash
+$ curl -s http://localhost:8102/health | jq
+```
+
+**RAW Output:**
+```json
+{
+  "status": "ok",
+  "uptime": 12345,
+  "database": "connected"
+}
+```
+
+**Verification:**
+- ✅ Status: ok (expected: ok)
+- ✅ Database: connected
+
+[400+ satır RAW outputs...]
+
+## Issues Found
+[Detaylı bug raporu, 100+ satır...]
+
+## Recommendations
+[50+ satır öneriler...]
+```
+
+**Format:**
+- ✅ Comprehensive (500-1500+ satır)
+- ✅ RAW terminal outputs (copy-paste)
+- ✅ Before/after code
+- ✅ Full verification
+- ✅ Issues documented
+- ✅ Recommendations
+
+**Reasoning:**
+- Verifiable (RAW data var)
+- Handoff quality (yeni Mod anlar)
+- Documentation (tarihsel kayıt)
+- No information loss
+
+### Communication Flow Example
+
+**Scenario: Mod, W1'e RBAC görevi veriyor**
+
+**1. Mod creates task (background - silent):**
+```
+[Mod writes 1000-line task file: worker1-rbac-audit.md]
+[Includes: 11 tasks, code examples, verification commands]
+[User doesn't see this creation process]
+```
+
+**2. Mod → User (short message):**
+```
+✅ W1'e görev verdim
+📄 docs/test-tasks/worker1-rbac-audit.md
+🎯 SUPER_ADMIN cross-org test
+⏱️ 45-60 dk
+```
+
+**3. User → W1 (copy-paste):**
+```
+[User copies Mod's message to W1 tab]
+```
+
+**4. W1 works (background - silent):**
+```
+[W1 reads 1000-line task file]
+[W1 executes all commands]
+[W1 writes 1000-line report]
+[User doesn't see work in progress]
+```
+
+**5. W1 → User (short message):**
+```
+✅ Tamamlandı!
+📄 docs/reports/worker1-rbac-audit-report.md
+🎯 6 job posting, 3 org ✅
+```
+
+**6. User → Mod (copy-paste):**
+```
+[User copies W1's message to Mod tab]
+```
+
+**7. Mod verifies (background - silent):**
+```
+[Mod reads 1000-line report]
+[Mod re-runs verification commands]
+[Mod compares outputs]
+[User doesn't see verification process]
+```
+
+**8. Mod → User (short message):**
+```
+✅ W1 doğrulandı
+📊 6 job posting ✅, 3 org ✅
+🎯 Sıradaki: W2'ye görev ver
+```
+
+**Key Points:**
+- User sees: 8 short messages (~40 lines total)
+- Background: 2000+ lines of task + report (MD files)
+- User role: Message courier (not reader of details)
+- Details: In MD files (read when needed)
 
 ---
 

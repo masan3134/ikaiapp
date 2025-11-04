@@ -7,14 +7,14 @@ const { getAllQueueStats, getSystemHealth, cleanupOldJobs } = require('../utils/
 
 /**
  * Queue Monitoring Routes
- * Admin-only endpoints for monitoring BullMQ queues
+ * SUPER_ADMIN-only endpoints for monitoring BullMQ queues
  */
 
-// Admin-only middleware
-const adminOnly = [authenticateToken, authorize([ROLES.ADMIN, ROLES.SUPER_ADMIN])];
+// SUPER_ADMIN-only middleware
+const superAdminOnly = [authenticateToken, authorize([ROLES.SUPER_ADMIN])];
 
 // Get all queue statistics
-router.get('/stats', adminOnly, async (req, res) => {
+router.get('/stats', superAdminOnly, async (req, res) => {
   try {
     const stats = await getAllQueueStats();
     res.json({ success: true, stats });
@@ -24,7 +24,7 @@ router.get('/stats', adminOnly, async (req, res) => {
 });
 
 // Get comprehensive system health
-router.get('/health', adminOnly, async (req, res) => {
+router.get('/health', superAdminOnly, async (req, res) => {
   try {
     const health = await getSystemHealth();
     res.json({ success: true, ...health });
@@ -34,7 +34,7 @@ router.get('/health', adminOnly, async (req, res) => {
 });
 
 // Clean old jobs (maintenance)
-router.post('/cleanup', adminOnly, async (req, res) => {
+router.post('/cleanup', superAdminOnly, async (req, res) => {
   try {
     const results = await cleanupOldJobs();
     res.json({ success: true, results });

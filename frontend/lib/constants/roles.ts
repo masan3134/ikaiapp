@@ -16,8 +16,10 @@ export enum UserRole {
  */
 export const RoleGroups = {
   ADMINS: [UserRole.SUPER_ADMIN, UserRole.ADMIN],
+  MANAGERS_PLUS: [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.MANAGER],
   HR_MANAGERS: [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.MANAGER, UserRole.HR_SPECIALIST],
   ANALYTICS_VIEWERS: [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.MANAGER],
+  TEAM_VIEWERS: [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.MANAGER],
   ALL_AUTHENTICATED: [
     UserRole.SUPER_ADMIN,
     UserRole.ADMIN,
