@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { withRoleProtection } from "@/lib/hoc/withRoleProtection";
 import { UserRole } from "@/lib/constants/roles";
+import apiClient from "@/lib/services/apiClient";
 
 function OrganizationsPage() {
   const [orgs, setOrgs] = useState([]);
@@ -35,19 +36,15 @@ function OrganizationsPage() {
       if (planFilter) params.append("plan", planFilter);
 
       // Fetch organizations and stats
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
-      const token = localStorage.getItem("auth_token");
-      const headers = { Authorization: `Bearer ${token}` };
       const [orgsRes, statsRes] = await Promise.all([
-        fetch(
-          `${API_URL}/api/v1/super-admin/organizations?${params.toString()}`,
-          { headers }
+        apiClient.get(
+          `/api/v1/super-admin/organizations?${params.toString()}`
         ),
-        fetch(`${API_URL}/api/v1/super-admin/stats`, { headers }),
+        apiClient.get("/api/v1/super-admin/stats"),
       ]);
 
-      const orgsData = await orgsRes.json();
-      const statsData = await statsRes.json();
+      const orgsData = orgsRes.data;
+      const statsData = statsRes.data;
 
       if (orgsData.success) {
         setOrgs(orgsData.data);
@@ -65,14 +62,8 @@ function OrganizationsPage() {
 
   const handleToggleActive = async (orgId: string) => {
     try {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
-      const res = await fetch(`${API_URL}/api/v1/super-admin/${orgId}/toggle`, {
-        method: "PATCH",
-      });
-
-      if (res.ok) {
-        loadData(); // Refresh list
-      }
+      await apiClient.patch(`/api/v1/super-admin/${orgId}/toggle`);
+      loadData(); // Refresh list
     } catch (error) {
       console.error("Error toggling organization:", error);
     }
