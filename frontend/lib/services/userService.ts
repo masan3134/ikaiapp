@@ -19,6 +19,20 @@ export interface NotificationPreferences {
   offerNotifications: boolean;
 }
 
+export interface UserStats {
+  totalAnalyses: number;
+  totalCandidates: number;
+  totalJobPostings: number;
+  totalInterviews: number;
+  totalOffers: number;
+  recentAnalyses: Array<{
+    id: string;
+    createdAt: string;
+    status: string;
+    jobPosting: { title: string };
+  }>;
+}
+
 /**
  * Get current user profile
  */
@@ -48,5 +62,13 @@ export async function getNotificationPreferences(): Promise<NotificationPreferen
  */
 export async function updateNotificationPreferences(data: Partial<NotificationPreferences>): Promise<NotificationPreferences> {
   const response = await apiClient.patch('/api/v1/users/me/notifications', data);
+  return response.data.data;
+}
+
+/**
+ * Get user activity statistics
+ */
+export async function getUserStats(): Promise<UserStats> {
+  const response = await apiClient.get('/api/v1/users/me/stats');
   return response.data.data;
 }

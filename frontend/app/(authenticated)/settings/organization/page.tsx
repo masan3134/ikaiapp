@@ -38,17 +38,13 @@ function OrganizationSettingsPage() {
     e.preventDefault();
     setSaving(true);
 
-    console.log('[SETTINGS] Saving organization:', formData);
-
     try {
-      const result = await updateOrganization(formData);
-      console.log('[SETTINGS] Update successful:', result);
-      toast.success('Organizasyon bilgileri güncellendi');
+      await updateOrganization(formData);
+      toast.success('✓ Organizasyon bilgileri başarıyla kaydedildi!', { duration: 3000 });
       await refreshOrganization();
-      console.log('[SETTINGS] Organization refreshed');
     } catch (error: any) {
       console.error('[SETTINGS] Update failed:', error);
-      toast.error(error?.response?.data?.message || 'Güncelleme başarısız');
+      toast.error(error?.response?.data?.message || '✗ Güncelleme başarısız. Lütfen tekrar deneyin.');
     } finally {
       setSaving(false);
     }

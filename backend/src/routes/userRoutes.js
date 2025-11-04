@@ -20,6 +20,7 @@ const allAuthenticated = [authenticateToken, enforceOrganizationIsolation];
 // Current user endpoints (any authenticated user)
 router.get('/me', allAuthenticated, userController.getCurrentUser);
 router.patch('/me', allAuthenticated, userController.updateCurrentUser);
+router.get('/me/stats', allAuthenticated, userController.getUserStats);
 router.get('/me/notifications', allAuthenticated, userController.getNotificationPreferences);
 router.patch('/me/notifications', allAuthenticated, userController.updateNotificationPreferences);
 

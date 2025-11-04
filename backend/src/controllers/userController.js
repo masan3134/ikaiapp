@@ -198,6 +198,61 @@ class UserController {
   }
 
   /**
+   * Get current user activity stats
+   */
+  async getUserStats(req, res) {
+    try {
+      const userId = req.user.id;
+
+      const [
+        analysisCount,
+        candidateCount,
+        jobPostingCount,
+        interviewCount,
+        offerCount,
+        recentAnalyses
+      ] = await Promise.all([
+        prisma.analysis.count({ where: { userId } }),
+        prisma.candidate.count({ where: { userId, isDeleted: false } }),
+        prisma.jobPosting.count({ where: { userId, isDeleted: false } }),
+        prisma.interview.count({ where: { createdBy: userId } }),
+        prisma.jobOffer.count({ where: { createdBy: userId } }),
+        prisma.analysis.findMany({
+          where: { userId },
+          take: 5,
+          orderBy: { createdAt: 'desc' },
+          select: {
+            id: true,
+            createdAt: true,
+            status: true,
+            jobPosting: {
+              select: { title: true }
+            }
+          }
+        })
+      ]);
+
+      res.json({
+        success: true,
+        data: {
+          totalAnalyses: analysisCount,
+          totalCandidates: candidateCount,
+          totalJobPostings: jobPostingCount,
+          totalInterviews: interviewCount,
+          totalOffers: offerCount,
+          recentAnalyses
+        }
+      });
+    } catch (error) {
+      console.error('❌ Get user stats error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'İstatistikler alınamadı'
+      });
+    }
+  }
+
+  /**
    * Update current user profile
    */
   async updateCurrentUser(req, res) {

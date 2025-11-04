@@ -48,10 +48,11 @@ export default function NotificationsPage() {
 
     try {
       await updateNotificationPreferences(preferences);
-      toast.success('Bildirim ayarları kaydedildi');
+      const enabledCount = Object.values(preferences).filter(Boolean).length;
+      toast.success(`✓ Bildirim tercihleri kaydedildi! (${enabledCount}/4 aktif)`, { duration: 3000 });
     } catch (error: any) {
       console.error('[NOTIFICATIONS] Update error:', error);
-      toast.error(error?.response?.data?.message || 'Ayarlar kaydedilemedi');
+      toast.error(error?.response?.data?.message || '✗ Ayarlar kaydedilemedi. Lütfen tekrar deneyin.');
     } finally {
       setSaving(false);
     }
