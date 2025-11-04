@@ -444,7 +444,7 @@ router.get('/admin', [
 
     const security = {
       twoFactorUsers,
-      activeSessions: orgStats.totalUsers, // Mock - implement session tracking later
+      activeSessions: null, // No real data source (session tracking not implemented)
       lastSecurityEvent: null,
       complianceScore: Math.min(100, Math.round((twoFactorUsers / Math.max(orgStats.totalUsers, 1)) * 100))
     };
