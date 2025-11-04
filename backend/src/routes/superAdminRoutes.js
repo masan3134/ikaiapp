@@ -509,12 +509,11 @@ router.get('/security-logs', superAdminOnly, async (req, res) => {
     // Get recent user activities (cross-org)
     const recentUsers = await prisma.user.findMany({
       take: parseInt(limit),
-      orderBy: { lastLogin: 'desc' },
+      orderBy: { createdAt: 'desc' },
       select: {
         id: true,
         email: true,
         role: true,
-        lastLogin: true,
         createdAt: true,
         organization: {
           select: {
@@ -534,14 +533,14 @@ router.get('/security-logs', superAdminOnly, async (req, res) => {
       prisma.user.count(),
       prisma.user.count({
         where: {
-          lastLogin: {
+          createdAt: {
             gte: new Date(new Date().setHours(0, 0, 0, 0))
           }
         }
       }),
       prisma.user.count({
         where: {
-          lastLogin: {
+          createdAt: {
             gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
           }
         }
@@ -555,15 +554,15 @@ router.get('/security-logs', superAdminOnly, async (req, res) => {
       })
     ]);
 
-    // Format security events
+    // Format security events (recent user registrations as activity)
     const securityEvents = recentUsers.map(user => ({
       id: user.id,
-      event: 'User Login',
+      event: 'User Registration',
       type: 'success',
       user: user.email,
       role: user.role,
       organization: user.organization?.name || 'N/A',
-      timestamp: user.lastLogin || user.createdAt,
+      timestamp: user.createdAt,
       ip: '***',  // IP tracking not implemented yet
     }));
 
