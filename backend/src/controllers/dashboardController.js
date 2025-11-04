@@ -207,7 +207,7 @@ async function getManagerDashboard(req, res) {
       prisma.jobOffer.count({
         where: {
           organizationId,
-          status: 'ACCEPTED',
+          status: 'accepted',
           createdAt: { gte: last30Days }
         }
       }),
@@ -216,7 +216,7 @@ async function getManagerDashboard(req, res) {
       prisma.jobOffer.findMany({
         where: {
           organizationId,
-          status: 'PENDING'
+          approvalStatus: 'pending'
         },
         include: {
           candidate: { select: { name: true } },
@@ -271,14 +271,14 @@ async function getManagerDashboard(req, res) {
           createdAt: { gte: last60Days },
           jobOffers: {
             some: {
-              status: { in: ['ACCEPTED', 'PENDING', 'SENT'] }
+              status: { in: ['accepted', 'sent', 'draft'] }
             }
           }
         },
         include: {
           jobOffers: {
             where: {
-              status: { in: ['ACCEPTED', 'PENDING', 'SENT'] }
+              status: { in: ['accepted', 'sent', 'draft'] }
             },
             orderBy: { createdAt: 'asc' },
             take: 1
@@ -330,7 +330,7 @@ async function getManagerDashboard(req, res) {
       prisma.jobOffer.count({
         where: {
           organizationId,
-          status: 'ACCEPTED',
+          status: 'accepted',
           createdAt: { gte: last60Days, lt: last30Days }
         }
       }),
@@ -342,14 +342,14 @@ async function getManagerDashboard(req, res) {
           createdAt: { gte: last60Days, lt: last30Days },
           jobOffers: {
             some: {
-              status: { in: ['ACCEPTED', 'PENDING', 'SENT'] }
+              status: { in: ['accepted', 'sent', 'draft'] }
             }
           }
         },
         include: {
           jobOffers: {
             where: {
-              status: { in: ['ACCEPTED', 'PENDING', 'SENT'] }
+              status: { in: ['accepted', 'sent', 'draft'] }
             },
             orderBy: { createdAt: 'asc' },
             take: 1
