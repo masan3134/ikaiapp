@@ -5,6 +5,7 @@ import { SuperAdminDashboard } from '@/components/dashboard/SuperAdminDashboard'
 import { AdminDashboard } from '@/components/dashboard/AdminDashboard';
 import { HRDashboard } from '@/components/dashboard/HRDashboard';
 import { UserDashboard } from '@/components/dashboard/UserDashboard';
+import UserDashboardNew from './user-dashboard'; // New USER dashboard
 import LoadingSkeleton from '@/components/ui/LoadingSkeleton';
 
 export default function DashboardPage() {
@@ -29,7 +30,7 @@ export default function DashboardPage() {
         {user.role === 'ADMIN' && <AdminDashboard />}
         {user.role === 'MANAGER' && <AdminDashboard />}
         {user.role === 'HR_SPECIALIST' && <HRDashboard />}
-        {user.role === 'USER' && <UserDashboard />}
+        {user.role === 'USER' && <UserDashboardNew />}
       </div>
     </div>
   );
