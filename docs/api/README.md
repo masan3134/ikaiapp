@@ -1,7 +1,8 @@
 # IKAI API Documentation
 
 **Version:** 1.0.0
-**Total Endpoints:** 141
+**Total Endpoints:** 141 (119 documented in OpenAPI - 84% coverage)
+**OpenAPI Paths:** 92 unique paths
 **Base URL (Dev):** http://localhost:8102
 **Base URL (Prod):** https://gaiai.ai/ik
 **Last Updated:** 2025-11-04
@@ -11,7 +12,7 @@
 ## 📚 Quick Links
 
 ### Core Documentation
-- **[OpenAPI Specification](openapi.json)** - Machine-readable API spec (46 endpoints documented)
+- **[OpenAPI Specification](openapi.json)** - Machine-readable API spec (**119 methods, 92 paths, 84% coverage**)
 - **[Swagger UI](swagger-ui.html)** - 🆕 Interactive API explorer (open in browser!)
 - **[Postman Collection](postman-collection.json)** - Importable collection with auto-token + test assertions
 - **[Endpoint Inventory](endpoint-inventory.md)** - Complete list of all 141 endpoints
@@ -27,21 +28,40 @@
 ## 🆕 What's New (v1.0.0 - 2025-11-04)
 
 ### Enhanced Documentation
-- ✅ **46 endpoints** now fully documented in OpenAPI (up from 10)
+- ✅ **119 methods (84% coverage)** now fully documented in OpenAPI across **92 unique paths**
 - ✅ **Interactive Swagger UI** - Try endpoints directly in browser!
 - ✅ **Test Assertions** - Postman collection now validates responses automatically
 - ✅ **SDK Generation** - Generate type-safe clients for your language
 - ✅ **API Changelog** - Track breaking changes and new features
+- ✅ **26 Categories** - All major endpoint groups documented
 
-### Coverage Expansion
-- ✅ **Candidates** (7 endpoints) - CV upload, duplicate detection, export
-- ✅ **Analyses** (10 endpoints) - AI-powered CV analysis, export, feedback
-- ✅ **Offers** (15 endpoints) - Wizard, PDF generation, approval workflow
-- ✅ **Interviews** (4 endpoints) - Scheduling, conflict detection
-- ✅ **Team** (3 endpoints) - Member management, invitations
-- ✅ **Organizations** (2 endpoints) - Settings, usage stats
-- ✅ **Users** (3 endpoints) - Profile management
-- ✅ **Dashboard** (1 endpoint) - Analytics
+### Coverage Expansion - 119 Methods Documented!
+- ✅ **Authentication** (5) - Login, register, logout, profile, refresh
+- ✅ **Job Postings** (7) - CRUD, export (XLSX/CSV)
+- ✅ **Candidates** (7) - CV upload, duplicate detection, export
+- ✅ **Analyses** (12) - AI analysis, export, email, feedback, chat
+- ✅ **Offers** (15) - Wizard, CRUD, approval workflow, PDF, bulk
+- ✅ **Interviews** (8) - CRUD, scheduling, conflict detection, stats
+- ✅ **Team** (5) - Member management, invitations
+- ✅ **Organizations** (3) - Settings, usage stats
+- ✅ **Users** (5) - Profile, list, management
+- ✅ **Dashboard** (1) - Analytics
+- ✅ **Super Admin** (5) - System management, org control, plan changes
+- ✅ **Queue** (3) - BullMQ monitoring, health checks
+- ✅ **Onboarding** (3) - Wizard flow
+- ✅ **Templates** (5) - Email/document templates
+- ✅ **Categories** (5) - Job/skill categories
+- ✅ **Analytics** (5) - Advanced reporting
+- ✅ **Attachments** (3) - File management
+- ✅ **Negotiations** (3) - Salary negotiations
+- ✅ **Smart Search** (2) - AI semantic search
+- ✅ **Testing** (3) - Development utilities
+- ✅ **Public Offers** (3) - Public pages (no auth)
+- ✅ **Milvus** (2) - Vector DB sync
+- ✅ **Cache** (3) - Redis management
+- ✅ **Error Logging** (4) - Error tracking
+- ✅ **Metrics** (1) - System metrics
+- ✅ **Revisions** (1) - Resource history
 
 ### Developer Experience
 - 🎨 Custom-branded Swagger UI
