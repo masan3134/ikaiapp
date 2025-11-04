@@ -275,16 +275,30 @@ class InterviewService {
   /**
    * Get all interviews with filters
    */
-  async getInterviews(userId, organizationId, filters = {}) {
+  async getInterviews(userId, organizationId, userRole, filters = {}) {
     const { status, type, candidateId, page = 1, limit = 20 } = filters; // Parse to int
     const pageInt = parseInt(page, 10);
     const limitInt = parseInt(limit, 10);
     const skip = (pageInt - 1) * limitInt;
 
-    const where = {
-      createdBy: userId,
-      organizationId
-    };
+    // Role-based filtering
+    let where = {};
+
+    if (userRole === 'SUPER_ADMIN') {
+      // SUPER_ADMIN: ALL interviews from ALL organizations
+      where = {};
+    } else if (['ADMIN', 'MANAGER', 'HR_SPECIALIST'].includes(userRole)) {
+      // ADMIN/MANAGER/HR: ALL interviews from their organization
+      where = {
+        organizationId
+      };
+    } else {
+      // USER: Only their own interviews
+      where = {
+        createdBy: userId,
+        organizationId
+      };
+    }
 
     if (status) where.status = status;
     if (type) where.type = type;
@@ -337,12 +351,26 @@ class InterviewService {
   /**
    * Get interview statistics
    */
-  async getStats(userId, organizationId) {
+  async getStats(userId, organizationId, userRole) {
+    // Role-based filtering
+    let where = {};
+
+    if (userRole === 'SUPER_ADMIN') {
+      // SUPER_ADMIN: ALL interviews from ALL organizations
+      where = {};
+    } else if (['ADMIN', 'MANAGER', 'HR_SPECIALIST'].includes(userRole)) {
+      // ADMIN/MANAGER/HR: ALL interviews from their organization
+      where = { organizationId };
+    } else {
+      // USER: Only their own interviews
+      where = { createdBy: userId, organizationId };
+    }
+
     const [total, scheduled, completed, cancelled] = await Promise.all([
-      prisma.interview.count({ where: { createdBy: userId, organizationId } }),
-      prisma.interview.count({ where: { createdBy: userId, organizationId, status: 'scheduled' } }),
-      prisma.interview.count({ where: { createdBy: userId, organizationId, status: 'completed' } }),
-      prisma.interview.count({ where: { createdBy: userId, organizationId, status: 'cancelled' } })
+      prisma.interview.count({ where }),
+      prisma.interview.count({ where: { ...where, status: 'scheduled' } }),
+      prisma.interview.count({ where: { ...where, status: 'completed' } }),
+      prisma.interview.count({ where: { ...where, status: 'cancelled' } })
     ]);
 
     return { total, scheduled, completed, cancelled };

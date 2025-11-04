@@ -53,6 +53,7 @@ const enforceOrganizationIsolation = async (req, res, next) => {
     // Attach organization data to request
     req.organizationId = user.organizationId;
     req.organization = user.organization;
+    req.userRole = user.role; // Attach role for SUPER_ADMIN checks
 
     // Continue to next middleware/controller
     next();

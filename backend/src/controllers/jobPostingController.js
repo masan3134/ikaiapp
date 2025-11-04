@@ -11,7 +11,7 @@ const prisma = new PrismaClient();
 async function getAllJobPostings(req, res) {
   try {
     const userId = req.user.id;
-    const isAdmin = req.user.role === 'ADMIN';
+    const userRole = req.userRole;
     const organizationId = req.organizationId;
     const { page = 1, limit = 20 } = req.query;
 
@@ -20,8 +20,27 @@ async function getAllJobPostings(req, res) {
     const limitNum = parseInt(limit);
     const skip = (pageNum - 1) * limitNum;
 
-    // Build query based on user role (exclude deleted)
-    const where = isAdmin ? { isDeleted: false } : { userId, organizationId, isDeleted: false };
+    // Role-based data filtering
+    let where = { isDeleted: false };
+
+    if (userRole === 'SUPER_ADMIN') {
+      // SUPER_ADMIN: ALL job postings from ALL organizations
+      where = { isDeleted: false };
+
+    } else if (['ADMIN', 'MANAGER', 'HR_SPECIALIST'].includes(userRole)) {
+      // ADMIN/MANAGER/HR: ALL job postings from their organization
+      where = {
+        organizationId,
+        isDeleted: false
+      };
+
+    } else {
+      // USER: Organization job postings only
+      where = {
+        organizationId,
+        isDeleted: false
+      };
+    }
 
     // Get total count for pagination
     const totalCount = await prisma.jobPosting.count({ where });
@@ -130,7 +149,7 @@ async function getJobPostingById(req, res) {
   try {
     const { id } = req.params;
     const userId = req.user.id;
-    const isAdmin = req.user.role === 'ADMIN';
+    const userRole = req.userRole;
     const organizationId = req.organizationId;
 
     const jobPosting = await prisma.jobPosting.findUnique({
@@ -162,12 +181,28 @@ async function getJobPostingById(req, res) {
       });
     }
 
-    // Check ownership
-    if ((jobPosting.userId !== userId || jobPosting.organizationId !== organizationId) && !isAdmin) {
-      return res.status(403).json({
-        error: 'Forbidden',
-        message: 'Bu ilana erişim yetkiniz yok'
-      });
+    // Role-based access control
+    if (userRole === 'SUPER_ADMIN') {
+      // SUPER_ADMIN can view any job posting
+      // No restriction
+
+    } else if (['ADMIN', 'MANAGER', 'HR_SPECIALIST'].includes(userRole)) {
+      // ADMIN/MANAGER/HR can view job postings from their organization
+      if (jobPosting.organizationId !== organizationId) {
+        return res.status(403).json({
+          error: 'Forbidden',
+          message: 'Bu ilana erişim yetkiniz yok'
+        });
+      }
+
+    } else {
+      // USER: Check if has access (organization only)
+      if (jobPosting.organizationId !== organizationId) {
+        return res.status(403).json({
+          error: 'Forbidden',
+          message: 'Bu ilana erişim yetkiniz yok'
+        });
+      }
     }
 
     res.json({ jobPosting });
@@ -188,7 +223,7 @@ async function updateJobPosting(req, res) {
   try {
     const { id } = req.params;
     const userId = req.user.id;
-    const isAdmin = req.user.role === 'ADMIN';
+    const userRole = req.userRole;
     const organizationId = req.organizationId;
     const { title, department, details, notes } = req.body;
 
@@ -204,12 +239,28 @@ async function updateJobPosting(req, res) {
       });
     }
 
-    // Check ownership
-    if ((existingJobPosting.userId !== userId || existingJobPosting.organizationId !== organizationId) && !isAdmin) {
-      return res.status(403).json({
-        error: 'Forbidden',
-        message: 'Bu ilanı düzenleme yetkiniz yok'
-      });
+    // Role-based access control
+    if (userRole === 'SUPER_ADMIN') {
+      // SUPER_ADMIN can update any job posting
+      // No restriction
+
+    } else if (['ADMIN', 'MANAGER', 'HR_SPECIALIST'].includes(userRole)) {
+      // ADMIN/MANAGER/HR can update job postings from their organization
+      if (existingJobPosting.organizationId !== organizationId) {
+        return res.status(403).json({
+          error: 'Forbidden',
+          message: 'Bu ilanı düzenleme yetkiniz yok'
+        });
+      }
+
+    } else {
+      // USER: Check if has access (organization only)
+      if (existingJobPosting.organizationId !== organizationId) {
+        return res.status(403).json({
+          error: 'Forbidden',
+          message: 'Bu ilanı düzenleme yetkiniz yok'
+        });
+      }
     }
 
     // Update job posting
@@ -253,7 +304,7 @@ async function deleteJobPosting(req, res) {
   try {
     const { id } = req.params;
     const userId = req.user.id;
-    const isAdmin = req.user.role === 'ADMIN';
+    const userRole = req.userRole;
     const organizationId = req.organizationId;
 
     // Check if job posting exists
@@ -275,12 +326,28 @@ async function deleteJobPosting(req, res) {
       });
     }
 
-    // Check ownership
-    if ((jobPosting.userId !== userId || jobPosting.organizationId !== organizationId) && !isAdmin) {
-      return res.status(403).json({
-        error: 'Forbidden',
-        message: 'Bu ilanı silme yetkiniz yok'
-      });
+    // Role-based access control
+    if (userRole === 'SUPER_ADMIN') {
+      // SUPER_ADMIN can delete any job posting
+      // No restriction
+
+    } else if (['ADMIN', 'MANAGER', 'HR_SPECIALIST'].includes(userRole)) {
+      // ADMIN/MANAGER/HR can delete job postings from their organization
+      if (jobPosting.organizationId !== organizationId) {
+        return res.status(403).json({
+          error: 'Forbidden',
+          message: 'Bu ilanı silme yetkiniz yok'
+        });
+      }
+
+    } else {
+      // USER: Check if has access (organization only)
+      if (jobPosting.organizationId !== organizationId) {
+        return res.status(403).json({
+          error: 'Forbidden',
+          message: 'Bu ilanı silme yetkiniz yok'
+        });
+      }
     }
 
     // Check if already deleted

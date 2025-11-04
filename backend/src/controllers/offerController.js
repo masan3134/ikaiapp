@@ -81,6 +81,7 @@ class OfferController {
     try {
       const { status, candidateId, createdBy, page, limit } = req.query;
       const userId = req.user.id;
+      const userRole = req.userRole;
       const organizationId = req.organizationId;
 
       const result = await offerService.getOffers(
@@ -88,7 +89,8 @@ class OfferController {
           status,
           candidateId,
           createdBy: createdBy || userId,
-          organizationId
+          organizationId,
+          userRole
         },
         {
           page: parseInt(page) || 1,
@@ -118,8 +120,9 @@ class OfferController {
   async getOfferById(req, res) {
     try {
       const { id } = req.params;
+      const userRole = req.userRole;
       const organizationId = req.organizationId;
-      const offer = await offerService.getOfferById(id, organizationId);
+      const offer = await offerService.getOfferById(id, organizationId, userRole);
 
       res.json({
         success: true,
@@ -142,8 +145,9 @@ class OfferController {
     try {
       const { id } = req.params;
       const userId = req.user.id;
+      const userRole = req.userRole;
       const organizationId = req.organizationId;
-      const offer = await offerService.updateOffer(id, req.body, userId, organizationId);
+      const offer = await offerService.updateOffer(id, req.body, userId, organizationId, userRole);
 
       res.json({
         success: true,
@@ -167,8 +171,9 @@ class OfferController {
     try {
       const { id } = req.params;
       const userId = req.user.id;
+      const userRole = req.userRole;
       const organizationId = req.organizationId;
-      await offerService.deleteOffer(id, userId, organizationId);
+      await offerService.deleteOffer(id, userId, organizationId, userRole);
 
       res.json({
         success: true,

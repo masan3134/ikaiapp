@@ -101,10 +101,11 @@ class InterviewController {
   async getInterviews(req, res) {
     try {
       const userId = req.user.id;
+      const userRole = req.userRole;
       const organizationId = req.organizationId;
       const filters = req.query;
 
-      const result = await interviewService.getInterviews(userId, organizationId, filters);
+      const result = await interviewService.getInterviews(userId, organizationId, userRole, filters);
 
       res.json({
         success: true,
@@ -127,8 +128,9 @@ class InterviewController {
   async getStats(req, res) {
     try {
       const userId = req.user.id;
+      const userRole = req.userRole;
       const organizationId = req.organizationId;
-      const stats = await interviewService.getStats(userId, organizationId);
+      const stats = await interviewService.getStats(userId, organizationId, userRole);
 
       res.json({
         success: true,
@@ -151,14 +153,25 @@ class InterviewController {
     try {
       const { id } = req.params;
       const userId = req.user.id;
+      const userRole = req.userRole;
       const organizationId = req.organizationId;
 
+      // Role-based filtering
+      let where = { id };
+
+      if (userRole === 'SUPER_ADMIN') {
+        // SUPER_ADMIN: Can view any interview
+        where = { id };
+      } else if (['ADMIN', 'MANAGER', 'HR_SPECIALIST'].includes(userRole)) {
+        // ADMIN/MANAGER/HR: Can view interviews from their organization
+        where = { id, organizationId };
+      } else {
+        // USER: Can view only their own interviews
+        where = { id, createdBy: userId, organizationId };
+      }
+
       const interview = await prisma.interview.findFirst({
-        where: {
-          id,
-          createdBy: userId,
-          organizationId
-        },
+        where,
         include: {
           candidates: {
             include: {
@@ -200,14 +213,25 @@ class InterviewController {
       const { id } = req.params;
       const { status } = req.body;
       const userId = req.user.id;
+      const userRole = req.userRole;
       const organizationId = req.organizationId;
 
+      // Role-based filtering
+      let where = { id };
+
+      if (userRole === 'SUPER_ADMIN') {
+        // SUPER_ADMIN: Can update any interview
+        where = { id };
+      } else if (['ADMIN', 'MANAGER', 'HR_SPECIALIST'].includes(userRole)) {
+        // ADMIN/MANAGER/HR: Can update interviews from their organization
+        where = { id, organizationId };
+      } else {
+        // USER: Can update only their own interviews
+        where = { id, createdBy: userId, organizationId };
+      }
+
       const interview = await prisma.interview.updateMany({
-        where: {
-          id,
-          createdBy: userId,
-          organizationId
-        },
+        where,
         data: { status }
       });
 
@@ -239,11 +263,26 @@ class InterviewController {
     try {
       const { id } = req.params;
       const userId = req.user.id;
+      const userRole = req.userRole;
       const organizationId = req.organizationId;
+
+      // Role-based filtering
+      let where = { id };
+
+      if (userRole === 'SUPER_ADMIN') {
+        // SUPER_ADMIN: Can delete any interview
+        where = { id };
+      } else if (['ADMIN', 'MANAGER', 'HR_SPECIALIST'].includes(userRole)) {
+        // ADMIN/MANAGER/HR: Can delete interviews from their organization
+        where = { id, organizationId };
+      } else {
+        // USER: Can delete only their own interviews
+        where = { id, createdBy: userId, organizationId };
+      }
 
       // Cancel Google Meet event if exists
       const interview = await prisma.interview.findFirst({
-        where: { id, createdBy: userId, organizationId }
+        where
       });
 
       if (!interview) {

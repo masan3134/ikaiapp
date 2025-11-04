@@ -11,6 +11,7 @@ async function getAllCandidates(req, res) {
   try {
     const userId = req.user.id;
     const organizationId = req.organizationId;
+    const userRole = req.userRole;
     const { page = 1, limit = 20 } = req.query;
 
     // Pagination
@@ -18,11 +19,28 @@ async function getAllCandidates(req, res) {
     const limitNum = parseInt(limit);
     const skip = (pageNum - 1) * limitNum;
 
-    const where = {
-      userId,
-      organizationId,
-      isDeleted: false
-    };
+    // Role-based data filtering
+    let where = { isDeleted: false };
+
+    if (userRole === 'SUPER_ADMIN') {
+      // SUPER_ADMIN: ALL candidates from ALL organizations
+      where = { isDeleted: false };
+
+    } else if (['ADMIN', 'MANAGER', 'HR_SPECIALIST'].includes(userRole)) {
+      // ADMIN/MANAGER/HR: ALL candidates from their organization
+      where = {
+        organizationId,
+        isDeleted: false
+      };
+
+    } else {
+      // USER: Only their own uploaded candidates
+      where = {
+        userId,
+        organizationId,
+        isDeleted: false
+      };
+    }
 
     // Get total count for pagination
     const totalCount = await prisma.candidate.count({ where });
@@ -71,6 +89,7 @@ async function checkDuplicateFile(req, res) {
     const { fileName } = req.body;
     const userId = req.user.id;
     const organizationId = req.organizationId;
+    const userRole = req.userRole;
 
     if (!fileName) {
       return res.status(400).json({
@@ -79,15 +98,38 @@ async function checkDuplicateFile(req, res) {
       });
     }
 
-    // Check if candidate with this file name exists (exclude deleted)
-    const existingCandidate = await prisma.candidate.findFirst({
-      where: {
+    // Role-based duplicate check scope
+    let where = {
+      sourceFileName: fileName,
+      isDeleted: false
+    };
+
+    if (userRole === 'SUPER_ADMIN') {
+      // SUPER_ADMIN: Check across ALL organizations
+      where = {
+        sourceFileName: fileName,
+        isDeleted: false
+      };
+
+    } else if (['ADMIN', 'MANAGER', 'HR_SPECIALIST'].includes(userRole)) {
+      // ADMIN/MANAGER/HR: Check within organization
+      where = {
+        organizationId,
+        sourceFileName: fileName,
+        isDeleted: false
+      };
+
+    } else {
+      // USER: Check only their own uploads
+      where = {
         userId,
         organizationId,
         sourceFileName: fileName,
         isDeleted: false
-      }
-    });
+      };
+    }
+
+    const existingCandidate = await prisma.candidate.findFirst({ where });
 
     if (existingCandidate) {
       return res.json({
@@ -211,6 +253,7 @@ async function getCandidateById(req, res) {
     const { id } = req.params;
     const userId = req.user.id;
     const organizationId = req.organizationId;
+    const userRole = req.userRole;
 
     const candidate = await prisma.candidate.findUnique({
       where: { id },
@@ -240,12 +283,28 @@ async function getCandidateById(req, res) {
       });
     }
 
-    // Check ownership
-    if (candidate.userId !== userId || candidate.organizationId !== organizationId) {
-      return res.status(403).json({
-        error: 'Forbidden',
-        message: 'Bu adaya erişim yetkiniz yok'
-      });
+    // Role-based access control
+    if (userRole === 'SUPER_ADMIN') {
+      // SUPER_ADMIN can view any candidate
+      // No restriction
+
+    } else if (['ADMIN', 'MANAGER', 'HR_SPECIALIST'].includes(userRole)) {
+      // ADMIN/MANAGER/HR can view candidates from their organization
+      if (candidate.organizationId !== organizationId) {
+        return res.status(403).json({
+          error: 'Forbidden',
+          message: 'Bu adaya erişim yetkiniz yok'
+        });
+      }
+
+    } else {
+      // USER can only view their own uploaded candidates
+      if (candidate.userId !== userId || candidate.organizationId !== organizationId) {
+        return res.status(403).json({
+          error: 'Forbidden',
+          message: 'Bu adaya erişim yetkiniz yok'
+        });
+      }
     }
 
     res.json({ candidate });
@@ -267,6 +326,7 @@ async function deleteCandidate(req, res) {
     const { id } = req.params;
     const userId = req.user.id;
     const organizationId = req.organizationId;
+    const userRole = req.userRole;
 
     // Get candidate
     const candidate = await prisma.candidate.findUnique({
@@ -287,11 +347,25 @@ async function deleteCandidate(req, res) {
       });
     }
 
-    // Check ownership
-    if (candidate.userId !== userId || candidate.organizationId !== organizationId) {
+    // Role-based delete permission
+    if (userRole === 'SUPER_ADMIN') {
+      // SUPER_ADMIN can delete any candidate
+      // No restriction
+
+    } else if (['ADMIN', 'MANAGER', 'HR_SPECIALIST'].includes(userRole)) {
+      // ADMIN/MANAGER/HR can delete candidates from their organization
+      if (candidate.organizationId !== organizationId) {
+        return res.status(403).json({
+          error: 'Forbidden',
+          message: 'Bu adayı silme yetkiniz yok'
+        });
+      }
+
+    } else {
+      // USER cannot delete candidates
       return res.status(403).json({
         error: 'Forbidden',
-        message: 'Bu adayı silme yetkiniz yok'
+        message: 'Aday silme yetkiniz yok'
       });
     }
 

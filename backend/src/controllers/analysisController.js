@@ -132,7 +132,7 @@ async function createAnalysis(req, res) {
 async function getAllAnalyses(req, res) {
   try {
     const userId = req.user.id;
-    const isAdmin = req.user.role === 'ADMIN' || req.user.role === 'SUPER_ADMIN';
+    const userRole = req.userRole;
     const organizationId = req.organizationId;
     const { candidateId, page = 1, limit = 20 } = req.query;
 
@@ -141,8 +141,28 @@ async function getAllAnalyses(req, res) {
     const limitNum = parseInt(limit);
     const skip = (pageNum - 1) * limitNum;
 
-    // Build query based on user role
-    const where = isAdmin ? { organizationId } : { userId, organizationId };
+    // Role-based data filtering
+    let where = { isDeleted: false };
+
+    if (userRole === 'SUPER_ADMIN') {
+      // SUPER_ADMIN: ALL analyses from ALL organizations
+      where = { isDeleted: false };
+
+    } else if (['ADMIN', 'MANAGER', 'HR_SPECIALIST'].includes(userRole)) {
+      // ADMIN/MANAGER/HR: ALL analyses from their organization
+      where = {
+        organizationId,
+        isDeleted: false
+      };
+
+    } else {
+      // USER: Only their own analyses
+      where = {
+        userId,
+        organizationId,
+        isDeleted: false
+      };
+    }
 
     // If candidateId filter is provided, add it to where clause
     if (candidateId) {
@@ -246,7 +266,7 @@ async function getAnalysisById(req, res) {
   try {
     const { id } = req.params;
     const userId = req.user.id;
-    const isAdmin = req.user.role === 'ADMIN' || req.user.role === 'SUPER_ADMIN';
+    const userRole = req.userRole;
     const organizationId = req.organizationId;
 
     const analysis = await prisma.analysis.findUnique({
@@ -306,12 +326,28 @@ async function getAnalysisById(req, res) {
       });
     }
 
-    // Check ownership
-    if ((analysis.userId !== userId || analysis.organizationId !== organizationId) && !isAdmin) {
-      return res.status(403).json({
-        error: 'Forbidden',
-        message: 'Bu analize erişim yetkiniz yok'
-      });
+    // Role-based access control
+    if (userRole === 'SUPER_ADMIN') {
+      // SUPER_ADMIN can view any analysis
+      // No restriction
+
+    } else if (['ADMIN', 'MANAGER', 'HR_SPECIALIST'].includes(userRole)) {
+      // ADMIN/MANAGER/HR can view analyses from their organization
+      if (analysis.organizationId !== organizationId) {
+        return res.status(403).json({
+          error: 'Forbidden',
+          message: 'Bu analize erişim yetkiniz yok'
+        });
+      }
+
+    } else {
+      // USER: Check if has access (organization + own analyses)
+      if (analysis.userId !== userId || analysis.organizationId !== organizationId) {
+        return res.status(403).json({
+          error: 'Forbidden',
+          message: 'Bu analize erişim yetkiniz yok'
+        });
+      }
     }
 
     res.json({ analysis });
@@ -333,7 +369,7 @@ async function deleteAnalysis(req, res) {
   try {
     const { id } = req.params;
     const userId = req.user.id;
-    const isAdmin = req.user.role === 'ADMIN' || req.user.role === 'SUPER_ADMIN';
+    const userRole = req.userRole;
     const organizationId = req.organizationId;
 
     // Check if analysis exists
@@ -355,12 +391,28 @@ async function deleteAnalysis(req, res) {
       });
     }
 
-    // Check ownership
-    if ((analysis.userId !== userId || analysis.organizationId !== organizationId) && !isAdmin) {
-      return res.status(403).json({
-        error: 'Forbidden',
-        message: 'Bu analizi silme yetkiniz yok'
-      });
+    // Role-based access control
+    if (userRole === 'SUPER_ADMIN') {
+      // SUPER_ADMIN can delete any analysis
+      // No restriction
+
+    } else if (['ADMIN', 'MANAGER', 'HR_SPECIALIST'].includes(userRole)) {
+      // ADMIN/MANAGER/HR can delete analyses from their organization
+      if (analysis.organizationId !== organizationId) {
+        return res.status(403).json({
+          error: 'Forbidden',
+          message: 'Bu analizi silme yetkiniz yok'
+        });
+      }
+
+    } else {
+      // USER: Check if has access (organization + own analyses)
+      if (analysis.userId !== userId || analysis.organizationId !== organizationId) {
+        return res.status(403).json({
+          error: 'Forbidden',
+          message: 'Bu analizi silme yetkiniz yok'
+        });
+      }
     }
 
     // Delete analysis (cascade will handle results)

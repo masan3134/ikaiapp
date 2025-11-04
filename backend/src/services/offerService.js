@@ -45,10 +45,25 @@ async function createOffer(data, userId, organizationId) {
   });
 }
 
-async function updateOffer(id, data, userId, organizationId) {
+async function updateOffer(id, data, userId, organizationId, userRole) {
   const existing = await prisma.jobOffer.findUnique({ where: { id } });
   if (!existing) throw new NotFoundError('Teklif bulunamadı');
-  if (existing.createdBy !== userId || existing.organizationId !== organizationId) throw new AuthorizationError('Bu teklifi güncelleme yetkiniz yok');
+
+  // Role-based access control
+  if (userRole === 'SUPER_ADMIN') {
+    // SUPER_ADMIN can update any offer
+    // No restriction
+  } else if (['ADMIN', 'MANAGER', 'HR_SPECIALIST'].includes(userRole)) {
+    // ADMIN/MANAGER/HR can update offers from their organization
+    if (existing.organizationId !== organizationId) {
+      throw new AuthorizationError('Bu teklifi güncelleme yetkiniz yok');
+    }
+  } else {
+    // USER: Check ownership
+    if (existing.createdBy !== userId || existing.organizationId !== organizationId) {
+      throw new AuthorizationError('Bu teklifi güncelleme yetkiniz yok');
+    }
+  }
 
   // Validate salary if present
   if (data.salary !== undefined) {
@@ -83,23 +98,46 @@ async function updateOffer(id, data, userId, organizationId) {
   });
 }
 
-async function deleteOffer(id, userId, organizationId) {
+async function deleteOffer(id, userId, organizationId, userRole) {
     const offer = await prisma.jobOffer.findUnique({ where: { id } });
     if (!offer) throw new NotFoundError('Teklif bulunamadı');
-    if (offer.createdBy !== userId || offer.organizationId !== organizationId) throw new AuthorizationError('Bu teklifi silme yetkiniz yok');
+
+    // Role-based access control
+    if (userRole === 'SUPER_ADMIN') {
+        // SUPER_ADMIN can delete any offer
+        // No restriction
+    } else if (['ADMIN', 'MANAGER', 'HR_SPECIALIST'].includes(userRole)) {
+        // ADMIN/MANAGER/HR can delete offers from their organization
+        if (offer.organizationId !== organizationId) {
+            throw new AuthorizationError('Bu teklifi silme yetkiniz yok');
+        }
+    } else {
+        // USER: Check ownership
+        if (offer.createdBy !== userId || offer.organizationId !== organizationId) {
+            throw new AuthorizationError('Bu teklifi silme yetkiniz yok');
+        }
+    }
 
     await prisma.jobOffer.delete({ where: { id } });
 }
 
 async function getOffers(filters = {}, pagination = {}) {
-    const { status, candidateId, createdBy, organizationId } = filters;
+    const { status, candidateId, createdBy, organizationId, userRole } = filters;
     const { page = 1, limit = 20 } = pagination;
 
     const where = {};
     if (status) where.status = status;
     if (candidateId) where.candidateId = candidateId;
     if (createdBy) where.createdBy = createdBy;
-    if (organizationId) where.organizationId = organizationId;
+
+    // Role-based filtering
+    if (userRole === 'SUPER_ADMIN') {
+      // SUPER_ADMIN: ALL offers from ALL organizations
+      // No organizationId filter
+    } else {
+      // Others: Filter by organization
+      if (organizationId) where.organizationId = organizationId;
+    }
 
     const [offers, total] = await Promise.all([
         prisma.jobOffer.findMany({
@@ -123,7 +161,7 @@ async function getOffers(filters = {}, pagination = {}) {
     };
 }
 
-async function getOfferById(id, organizationId) {
+async function getOfferById(id, organizationId, userRole) {
     // First check if offer exists and has jobPostingId
     const basicOffer = await prisma.jobOffer.findUnique({
         where: { id },
@@ -134,8 +172,20 @@ async function getOfferById(id, organizationId) {
         throw new NotFoundError('Teklif bulunamadı');
     }
 
-    if (basicOffer.organizationId !== organizationId) {
-        throw new AuthorizationError('Bu teklife erişim yetkiniz yok');
+    // Role-based access control
+    if (userRole === 'SUPER_ADMIN') {
+        // SUPER_ADMIN can view any offer
+        // No restriction
+    } else if (['ADMIN', 'MANAGER', 'HR_SPECIALIST'].includes(userRole)) {
+        // ADMIN/MANAGER/HR can view offers from their organization
+        if (basicOffer.organizationId !== organizationId) {
+            throw new AuthorizationError('Bu teklife erişim yetkiniz yok');
+        }
+    } else {
+        // USER: Organization offers only
+        if (basicOffer.organizationId !== organizationId) {
+            throw new AuthorizationError('Bu teklife erişim yetkiniz yok');
+        }
     }
 
     // Then fetch with includes, conditionally including jobPosting
