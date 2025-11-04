@@ -153,8 +153,10 @@ class AdminComprehensiveTest:
         # Invite team member
         print(f"\n[3/6] Invite Team Member")
         print(f"       POST /api/v1/team/invite")
+        import time
+        timestamp = str(int(time.time()))
         invite_data = {
-            "email": f"test-invite-{self.org_id[:8]}@test.com",
+            "email": f"test-invite-{timestamp}@test.com",
             "role": "USER",
             "firstName": "Test",
             "lastName": "Invited"
@@ -245,7 +247,8 @@ class AdminComprehensiveTest:
                 )
 
                 if all_same_org:
-                    print(f"       ✅ VERIFIED: All {len(team_data)} users belong to org {self.org_id[:8]}")
+                    org_display = self.org_id[:8] if self.org_id else "N/A"
+                    print(f"       ✅ VERIFIED: All {len(team_data)} users belong to same org ({org_display})")
                 else:
                     print(f"       ❌ ERROR: Found users from other organizations!")
             else:
