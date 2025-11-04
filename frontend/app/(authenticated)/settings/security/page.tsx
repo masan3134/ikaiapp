@@ -41,15 +41,34 @@ export default function SecurityPage() {
     setChangingPassword(true);
 
     try {
-      // TODO: Implement password change endpoint
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+      const token = localStorage.getItem('authToken');
+
+      const response = await fetch(`${API_URL}/api/v1/users/me/password`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          currentPassword: passwordForm.currentPassword,
+          newPassword: passwordForm.newPassword
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Şifre değiştirilemedi');
+      }
+
       toast.success('✅ Şifre başarıyla değiştirildi. Lütfen tekrar giriş yapın.');
 
       setTimeout(() => {
         logout();
       }, 2000);
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || 'Şifre değiştirilemedi');
+      toast.error(error?.message || 'Şifre değiştirilemedi');
     } finally {
       setChangingPassword(false);
     }
