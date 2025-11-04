@@ -65,11 +65,17 @@ function NewTemplatePage() {
 
     try {
       setSubmitting(true);
-      await templateService.createTemplate(formData);
+      // Fix categoryId: empty string → null
+      const payload = {
+        ...formData,
+        categoryId: formData.categoryId || null,
+      };
+      const response = await templateService.createTemplate(payload);
+      const template = response.data; // Backend response: {data: template}
       alert("Şablon oluşturuldu!");
       router.push("/offers/templates");
     } catch (error: any) {
-      alert(error.message);
+      alert(error.response?.data?.error || error.message || "Şablon oluşturulamadı");
     } finally {
       setSubmitting(false);
     }
