@@ -3,7 +3,7 @@
  * Worker #2 - 2025-11-04
  */
 
-import { apiRequest } from './client';
+import apiClient from '@/lib/utils/apiClient';
 
 export interface Notification {
   id: string;
@@ -49,40 +49,41 @@ export async function getNotifications(filters?: {
   if (filters?.limit) params.append('limit', String(filters.limit));
 
   const query = params.toString();
-  const url = `/notifications${query ? `?${query}` : ''}`;
+  const url = `/api/v1/notifications${query ? `?${query}` : ''}`;
 
-  return apiRequest(url, { method: 'GET' });
+  const response = await apiClient.get(url);
+  return response.data;
 }
 
 /**
  * Get unread notification count
  */
 export async function getUnreadCount(): Promise<number> {
-  const data = await apiRequest('/notifications/unread-count', { method: 'GET' });
-  return data.count || 0;
+  const response = await apiClient.get('/api/v1/notifications/unread-count');
+  return response.data.count || 0;
 }
 
 /**
  * Mark notification as read
  */
 export async function markAsRead(notificationId: string): Promise<void> {
-  await apiRequest(`/notifications/${notificationId}/read`, { method: 'PATCH' });
+  await apiClient.patch(`/api/v1/notifications/${notificationId}/read`);
 }
 
 /**
  * Mark all notifications as read
  */
 export async function markAllAsRead(): Promise<number> {
-  const data = await apiRequest('/notifications/read-all', { method: 'PATCH' });
-  return data.count || 0;
+  const response = await apiClient.patch('/api/v1/notifications/read-all');
+  return response.data.count || 0;
 }
 
 /**
  * Get notification preferences
  */
 export async function getPreferences(): Promise<NotificationPreference[]> {
-  const data = await apiRequest('/notifications/preferences', { method: 'GET' });
-  return data.preferences || [];
+  const response = await apiClient.get('/api/v1/notifications/preferences');
+  return response.data.preferences || [];
 }
 
 /**
@@ -91,11 +92,8 @@ export async function getPreferences(): Promise<NotificationPreference[]> {
 export async function updatePreferences(
   preferences: NotificationPreference[]
 ): Promise<NotificationPreference[]> {
-  const data = await apiRequest('/notifications/preferences', {
-    method: 'PUT',
-    body: JSON.stringify({ preferences })
-  });
-  return data.preferences || [];
+  const response = await apiClient.put('/api/v1/notifications/preferences', { preferences });
+  return response.data.preferences || [];
 }
 
 /**
@@ -106,9 +104,9 @@ export async function updateSinglePreference(
   enabled: boolean,
   emailEnabled: boolean
 ): Promise<NotificationPreference> {
-  const data = await apiRequest(`/notifications/preferences/${type}`, {
-    method: 'PUT',
-    body: JSON.stringify({ enabled, emailEnabled })
+  const response = await apiClient.put(`/api/v1/notifications/preferences/${type}`, {
+    enabled,
+    emailEnabled
   });
-  return data.preference;
+  return response.data.preference;
 }

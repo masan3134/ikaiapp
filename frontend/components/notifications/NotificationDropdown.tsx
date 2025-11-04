@@ -3,7 +3,7 @@
 import { useNotifications } from '@/lib/hooks/useNotifications';
 import NotificationItem from './NotificationItem';
 import Link from 'next/link';
-import { CheckIcon, InboxIcon } from '@heroicons/react/24/outline';
+import { CheckIcon, InboxIcon, XCircleIcon } from '@heroicons/react/24/outline';
 
 /**
  * NotificationDropdown Component
