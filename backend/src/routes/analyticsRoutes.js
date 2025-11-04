@@ -25,17 +25,21 @@ const {
 const { authenticateToken } = require('../middleware/auth');
 const { enforceOrganizationIsolation } = require('../middleware/organizationIsolation');
 const { authorize } = require('../middleware/authorize');
+const { ROLE_GROUPS } = require('../constants/roles');
 
 const router = express.Router();
 
-router.get('/summary', authenticateToken, enforceOrganizationIsolation, getSummary);
+// All analytics routes require ANALYTICS_VIEWERS role (SUPER_ADMIN, ADMIN, MANAGER)
+const analyticsViewers = [authenticateToken, enforceOrganizationIsolation, authorize(ROLE_GROUPS.ANALYTICS_VIEWERS)];
 
-router.get('/time-to-hire', authenticateToken, enforceOrganizationIsolation, authorize(['ADMIN', 'MANAGER', 'SUPER_ADMIN']), getTimeToHire);
+router.get('/summary', ...analyticsViewers, getSummary);
 
-router.get('/funnel', authenticateToken, enforceOrganizationIsolation, authorize(['ADMIN', 'MANAGER', 'SUPER_ADMIN']), getFunnel);
+router.get('/time-to-hire', ...analyticsViewers, getTimeToHire);
 
-router.get('/score-distribution', authenticateToken, enforceOrganizationIsolation, getScoreDistribution);
+router.get('/funnel', ...analyticsViewers, getFunnel);
 
-router.get('/top-jobs', authenticateToken, enforceOrganizationIsolation, getTopJobs);
+router.get('/score-distribution', ...analyticsViewers, getScoreDistribution);
+
+router.get('/top-jobs', ...analyticsViewers, getTopJobs);
 
 module.exports = router;
