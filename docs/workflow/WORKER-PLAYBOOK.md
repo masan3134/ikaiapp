@@ -209,6 +209,108 @@ Scenario 4: W1 creates user-dashboard.tsx, W2 creates hr-dashboard.tsx, both imp
 → ❌ DON'T FIX shared component (coordinate via Mod)
 ```
 
+### Rule 8: Make Verifiable Claims - Mod Will Re-Run Your Commands!
+```
+🚨 CRITICAL: Mod senin AYNI komutlarını çalıştıracak! Yalan söyleme!
+
+Sorun: Sen "18 Prisma query" dersen, Mod kontrol edecek. 5 bulursa → LIED!
+
+Senin Görevin:
+1. Komutları GERÇEKTEN çalıştır (simülasyon yapma!)
+2. EXACT output'u kopyala (yorumlama!)
+3. Doğru sayıları yaz (18 yerine 5 varsa 5 yaz!)
+4. Mod aynı komutu çalıştıracak (seninkiyle match etmeli!)
+
+Örnek DOĞRU Rapor:
+
+---
+## Prisma Query Count
+
+**Verification Command:**
+```bash
+grep -n "router.get('/user'" backend/src/routes/dashboardRoutes.js
+# Output: 23:router.get('/user', [
+
+sed -n '23,173p' backend/src/routes/dashboardRoutes.js | grep -c "await prisma\."
+```
+
+**Output:**
+```
+5
+```
+
+**Expected:** Minimum 5
+**Actual:** 5
+**Status:** ✅ MET (exactly 5 Prisma queries)
+---
+
+MOD DOĞRULAMA:
+Mod aynı komutu çalıştırır:
+```bash
+sed -n '23,173p' backend/src/routes/dashboardRoutes.js | grep -c "await prisma\."
+```
+Mod bulur: 5
+Sen demişsin: 5
+5 = 5 → ✅ HONEST!
+
+Örnek YANLIŞ Rapor (ASLA YAPMA!):
+
+---
+## Prisma Query Count
+
+**Output:**
+```
+18  ← YALAN! Gerçekte 5 ama 18 yazmış!
+```
+---
+
+MOD DOĞRULAMA:
+Mod bulur: 5
+Sen demişsin: 18
+5 ≠ 18 → ❌ LIED! → REPORT REJECTED!
+
+Verifiable Claims Checklist:
+
+Her raporda MUTLAKA şunlar olacak:
+
+✅ EXACT komutlar (Mod copy-paste edebilsin)
+✅ RAW outputs (değiştirilmemiş terminal çıktısı)
+✅ DOĞRU sayılar (senin gerçek bulduğun)
+✅ Line numbers (Mod aynı satırları kontrol edebilsin)
+
+Örnek:
+
+❌ WRONG:
+"Prisma queries: Many"
+"Mock data: None"
+→ Mod nasıl doğrulayacak?
+
+✅ RIGHT:
+"Prisma queries: 5 (line 45, 67, 89, 102, 134)"
+"Mock data: 0 (checked lines 23-173)"
+"Command used: sed -n '23,173p' file.js | grep -c prisma"
+→ Mod AYNI komutu çalıştırıp doğrulayabilir!
+
+Neden Önemli?
+
+Mod senin AYNI komutlarını çalıştıracak:
+1. Mod senin raporunu okur
+2. Mod senin komutunu copy-paste eder
+3. Mod çalıştırır
+4. Mod sonuçları karşılaştırır
+
+EĞER MATCH EDİYORSA → Honest ✅
+EĞER MATCH ETMİYORSA → Lied ❌ → Re-do!
+
+Bu yüzden:
+- ❌ Yalan söyleme (Mod yakalar!)
+- ❌ Tahmin etme (Gerçek say!)
+- ❌ Yorumlama (RAW output yapıştır!)
+- ✅ GERÇEK komutları çalıştır
+- ✅ GERÇEK sonuçları yaz
+- ✅ Mod doğrulayabilsin diye LINE NUMBER'ları ver
+```
+
 ---
 
 ## 📋 Your Workflow (Step-by-Step)
