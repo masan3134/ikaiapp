@@ -3037,6 +3037,1648 @@
           }
         }
       }
+    },
+    "/api/v1/super-admin/organizations": {
+      "get": {
+        "tags": [
+          "Super Admin"
+        ],
+        "summary": "Get all organizations (system-wide)",
+        "description": "List all organizations with pagination, search, and filters. SUPER_ADMIN only.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roles": [
+            "SUPER_ADMIN"
+          ],
+          "description": "SUPER_ADMIN exclusive"
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "default": 10
+            }
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Search name/slug"
+          },
+          {
+            "in": "query",
+            "name": "plan",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "FREE",
+                "PRO",
+                "ENTERPRISE"
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "isActive",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of all organizations"
+          },
+          "403": {
+            "description": "Forbidden (not SUPER_ADMIN)"
+          }
+        }
+      }
+    },
+    "/api/v1/super-admin/stats": {
+      "get": {
+        "tags": [
+          "Super Admin"
+        ],
+        "summary": "Get system-wide statistics",
+        "description": "Platform analytics (total orgs, users, plan breakdown, monthly analyses). SUPER_ADMIN only.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roles": [
+            "SUPER_ADMIN"
+          ]
+        },
+        "responses": {
+          "200": {
+            "description": "System statistics",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "totalOrganizations": {
+                      "type": "integer"
+                    },
+                    "activeOrganizations": {
+                      "type": "integer"
+                    },
+                    "totalUsers": {
+                      "type": "integer"
+                    },
+                    "planBreakdown": {
+                      "type": "object",
+                      "properties": {
+                        "FREE": {
+                          "type": "integer"
+                        },
+                        "PRO": {
+                          "type": "integer"
+                        },
+                        "ENTERPRISE": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "monthlyAnalyses": {
+                      "type": "integer"
+                    },
+                    "todayRegistrations": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/super-admin/{id}/toggle": {
+      "patch": {
+        "tags": [
+          "Super Admin"
+        ],
+        "summary": "Toggle organization active status",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roles": [
+            "SUPER_ADMIN"
+          ]
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Status toggled"
+          },
+          "404": {
+            "description": "Organization not found"
+          }
+        }
+      }
+    },
+    "/api/v1/super-admin/{id}/plan": {
+      "patch": {
+        "tags": [
+          "Super Admin"
+        ],
+        "summary": "Change organization plan",
+        "description": "Update subscription plan (FREE/PRO/ENTERPRISE) and limits",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roles": [
+            "SUPER_ADMIN"
+          ]
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "plan"
+                ],
+                "properties": {
+                  "plan": {
+                    "type": "string",
+                    "enum": [
+                      "FREE",
+                      "PRO",
+                      "ENTERPRISE"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Plan updated"
+          },
+          "400": {
+            "description": "Invalid plan"
+          },
+          "404": {
+            "description": "Organization not found"
+          }
+        }
+      }
+    },
+    "/api/v1/super-admin/{id}": {
+      "delete": {
+        "tags": [
+          "Super Admin"
+        ],
+        "summary": "Deactivate organization",
+        "description": "Soft delete organization (sets isActive to false)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roles": [
+            "SUPER_ADMIN"
+          ]
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Organization deactivated"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      }
+    },
+    "/api/v1/queue/stats": {
+      "get": {
+        "tags": [
+          "Queue"
+        ],
+        "summary": "Get queue statistics",
+        "description": "BullMQ queue stats (waiting, active, completed, failed jobs). Admin only.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roles": [
+            "ADMIN",
+            "SUPER_ADMIN"
+          ]
+        },
+        "responses": {
+          "200": {
+            "description": "Queue statistics"
+          }
+        }
+      }
+    },
+    "/api/v1/queue/health": {
+      "get": {
+        "tags": [
+          "Queue"
+        ],
+        "summary": "Get system health",
+        "description": "Comprehensive health check (Redis, DB, queues). Admin only.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roles": [
+            "ADMIN",
+            "SUPER_ADMIN"
+          ]
+        },
+        "responses": {
+          "200": {
+            "description": "System health status"
+          }
+        }
+      }
+    },
+    "/api/v1/queue/cleanup": {
+      "post": {
+        "tags": [
+          "Queue"
+        ],
+        "summary": "Cleanup old queue jobs",
+        "description": "Remove old completed/failed jobs from queues. Admin only.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roles": [
+            "ADMIN",
+            "SUPER_ADMIN"
+          ]
+        },
+        "responses": {
+          "200": {
+            "description": "Cleanup completed"
+          }
+        }
+      }
+    },
+    "/api/v1/onboarding/status": {
+      "get": {
+        "tags": [
+          "Onboarding"
+        ],
+        "summary": "Get onboarding status",
+        "description": "Current onboarding step and completion status",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Onboarding status"
+          }
+        }
+      }
+    },
+    "/api/v1/onboarding/update-step": {
+      "post": {
+        "tags": [
+          "Onboarding"
+        ],
+        "summary": "Update onboarding step",
+        "description": "Progress to next onboarding step",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "step"
+                ],
+                "properties": {
+                  "step": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 5
+                  },
+                  "data": {
+                    "type": "object",
+                    "description": "Step-specific data"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Step updated"
+          },
+          "400": {
+            "description": "Invalid step"
+          }
+        }
+      }
+    },
+    "/api/v1/onboarding/complete": {
+      "post": {
+        "tags": [
+          "Onboarding"
+        ],
+        "summary": "Complete onboarding",
+        "description": "Mark onboarding as finished",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Onboarding completed"
+          }
+        }
+      }
+    },
+    "/api/v1/templates": {
+      "get": {
+        "tags": [
+          "Templates"
+        ],
+        "summary": "Get all templates",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
+        "responses": {
+          "200": {
+            "description": "List of templates"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Templates"
+        ],
+        "summary": "Create template",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roles": [
+            "ADMIN",
+            "SUPER_ADMIN"
+          ]
+        },
+        "responses": {
+          "201": {
+            "description": "Template created"
+          }
+        }
+      }
+    },
+    "/api/v1/templates/{id}": {
+      "get": {
+        "tags": [
+          "Templates"
+        ],
+        "summary": "Get template by ID",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Template details"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Templates"
+        ],
+        "summary": "Update template",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roles": [
+            "ADMIN",
+            "SUPER_ADMIN"
+          ]
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Templates"
+        ],
+        "summary": "Delete template",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roles": [
+            "ADMIN",
+            "SUPER_ADMIN"
+          ]
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted"
+          }
+        }
+      }
+    },
+    "/api/v1/categories": {
+      "get": {
+        "tags": [
+          "Categories"
+        ],
+        "summary": "Get all categories",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of categories"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Categories"
+        ],
+        "summary": "Create category",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roles": [
+            "ADMIN",
+            "SUPER_ADMIN"
+          ]
+        },
+        "responses": {
+          "201": {
+            "description": "Category created"
+          }
+        }
+      }
+    },
+    "/api/v1/categories/{id}": {
+      "get": {
+        "tags": [
+          "Categories"
+        ],
+        "summary": "Get category by ID",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Category"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Categories"
+        ],
+        "summary": "Update category",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Categories"
+        ],
+        "summary": "Delete category",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted"
+          }
+        }
+      }
+    },
+    "/api/v1/analytics": {
+      "get": {
+        "tags": [
+          "Analytics"
+        ],
+        "summary": "Get analytics data",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
+        "responses": {
+          "200": {
+            "description": "Analytics data"
+          }
+        }
+      }
+    },
+    "/api/v1/analytics/dashboard": {
+      "get": {
+        "tags": [
+          "Analytics"
+        ],
+        "summary": "Get dashboard analytics",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dashboard analytics"
+          }
+        }
+      }
+    },
+    "/api/v1/attachments": {
+      "get": {
+        "tags": [
+          "Attachments"
+        ],
+        "summary": "Get all attachments",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of attachments"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Attachments"
+        ],
+        "summary": "Upload attachment",
+        "description": "Upload file attachment",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Attachment uploaded"
+          }
+        }
+      }
+    },
+    "/api/v1/attachments/{id}": {
+      "delete": {
+        "tags": [
+          "Attachments"
+        ],
+        "summary": "Delete attachment",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted"
+          }
+        }
+      }
+    },
+    "/api/v1/negotiations": {
+      "get": {
+        "tags": [
+          "Negotiations"
+        ],
+        "summary": "Get all negotiations",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
+        "responses": {
+          "200": {
+            "description": "List of negotiations"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Negotiations"
+        ],
+        "summary": "Create negotiation",
+        "description": "Start salary negotiation",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
+        "responses": {
+          "201": {
+            "description": "Negotiation created"
+          }
+        }
+      }
+    },
+    "/api/v1/negotiations/{id}": {
+      "get": {
+        "tags": [
+          "Negotiations"
+        ],
+        "summary": "Get negotiation by ID",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Negotiation details"
+          }
+        }
+      }
+    },
+    "/api/v1/smart-search": {
+      "post": {
+        "tags": [
+          "Smart Search"
+        ],
+        "summary": "Semantic search",
+        "description": "AI-powered semantic search with Milvus",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "query": {
+                    "type": "string"
+                  },
+                  "limit": {
+                    "type": "integer",
+                    "default": 10
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Search results"
+          }
+        }
+      }
+    },
+    "/api/v1/smart-search/candidates": {
+      "post": {
+        "tags": [
+          "Smart Search"
+        ],
+        "summary": "Search candidates semantically",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Matching candidates"
+          }
+        }
+      }
+    },
+    "/api/v1/test/email": {
+      "post": {
+        "tags": [
+          "Testing"
+        ],
+        "summary": "Test email sending",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roles": [
+            "ADMIN",
+            "SUPER_ADMIN"
+          ]
+        },
+        "responses": {
+          "200": {
+            "description": "Email sent"
+          }
+        }
+      }
+    },
+    "/api/v1/test/analysis": {
+      "post": {
+        "tags": [
+          "Testing"
+        ],
+        "summary": "Test analysis workflow",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roles": [
+            "ADMIN",
+            "SUPER_ADMIN"
+          ]
+        },
+        "responses": {
+          "200": {
+            "description": "Test completed"
+          }
+        }
+      }
+    },
+    "/api/v1/test/queue": {
+      "get": {
+        "tags": [
+          "Testing"
+        ],
+        "summary": "Test queue system",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roles": [
+            "ADMIN",
+            "SUPER_ADMIN"
+          ]
+        },
+        "responses": {
+          "200": {
+            "description": "Queue test results"
+          }
+        }
+      }
+    },
+    "/api/v1/public-offers/{token}": {
+      "get": {
+        "tags": [
+          "Public Offers"
+        ],
+        "summary": "View public offer",
+        "description": "Public offer page (no auth required)",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Offer details"
+          },
+          "404": {
+            "description": "Offer not found or expired"
+          }
+        }
+      }
+    },
+    "/api/v1/public-offers/{token}/accept": {
+      "post": {
+        "tags": [
+          "Public Offers"
+        ],
+        "summary": "Accept offer (public)",
+        "description": "Candidate accepts offer via public link",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Offer accepted"
+          }
+        }
+      }
+    },
+    "/api/v1/public-offers/{token}/reject": {
+      "post": {
+        "tags": [
+          "Public Offers"
+        ],
+        "summary": "Reject offer (public)",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Offer rejected"
+          }
+        }
+      }
+    },
+    "/api/v1/milvus-sync/sync": {
+      "post": {
+        "tags": [
+          "Milvus"
+        ],
+        "summary": "Sync data to Milvus",
+        "description": "Sync candidates to vector database",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roles": [
+            "ADMIN",
+            "SUPER_ADMIN"
+          ]
+        },
+        "responses": {
+          "200": {
+            "description": "Sync started"
+          }
+        }
+      }
+    },
+    "/api/v1/milvus-sync/status": {
+      "get": {
+        "tags": [
+          "Milvus"
+        ],
+        "summary": "Get sync status",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roles": [
+            "ADMIN",
+            "SUPER_ADMIN"
+          ]
+        },
+        "responses": {
+          "200": {
+            "description": "Sync status"
+          }
+        }
+      }
+    },
+    "/api/v1/analytics/offers": {
+      "get": {
+        "tags": [
+          "Analytics"
+        ],
+        "summary": "Get offer analytics",
+        "description": "Analytics for job offers",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
+        "responses": {
+          "200": {
+            "description": "Offer analytics"
+          }
+        }
+      }
+    },
+    "/api/v1/analytics/offers/conversion": {
+      "get": {
+        "tags": [
+          "Analytics"
+        ],
+        "summary": "Get offer conversion rates",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
+        "responses": {
+          "200": {
+            "description": "Conversion rates"
+          }
+        }
+      }
+    },
+    "/api/v1/analytics/offers/timeline": {
+      "get": {
+        "tags": [
+          "Analytics"
+        ],
+        "summary": "Get offer timeline data",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
+        "responses": {
+          "200": {
+            "description": "Timeline data"
+          }
+        }
+      }
+    },
+    "/api/v1/cache": {
+      "get": {
+        "tags": [
+          "Cache"
+        ],
+        "summary": "Get cache stats",
+        "description": "Redis cache statistics",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roles": [
+            "ADMIN",
+            "SUPER_ADMIN"
+          ]
+        },
+        "responses": {
+          "200": {
+            "description": "Cache stats"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Cache"
+        ],
+        "summary": "Clear cache",
+        "description": "Clear all Redis cache",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roles": [
+            "ADMIN",
+            "SUPER_ADMIN"
+          ]
+        },
+        "responses": {
+          "200": {
+            "description": "Cache cleared"
+          }
+        }
+      }
+    },
+    "/api/v1/cache/{key}": {
+      "delete": {
+        "tags": [
+          "Cache"
+        ],
+        "summary": "Clear specific cache key",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roles": [
+            "ADMIN",
+            "SUPER_ADMIN"
+          ]
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Key cleared"
+          }
+        }
+      }
+    },
+    "/api/v1/error-logs": {
+      "get": {
+        "tags": [
+          "Error Logging"
+        ],
+        "summary": "Get error logs",
+        "description": "System error logs for debugging",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roles": [
+            "ADMIN",
+            "SUPER_ADMIN"
+          ]
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "default": 50
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Error logs"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Error Logging"
+        ],
+        "summary": "Log error",
+        "description": "Create error log entry",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Error logged"
+          }
+        }
+      }
+    },
+    "/api/v1/error-logs/{id}": {
+      "get": {
+        "tags": [
+          "Error Logging"
+        ],
+        "summary": "Get error log by ID",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roles": [
+            "ADMIN",
+            "SUPER_ADMIN"
+          ]
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Error details"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Error Logging"
+        ],
+        "summary": "Delete error log",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roles": [
+            "ADMIN",
+            "SUPER_ADMIN"
+          ]
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted"
+          }
+        }
+      }
+    },
+    "/api/v1/metrics": {
+      "get": {
+        "tags": [
+          "Metrics"
+        ],
+        "summary": "Get system metrics",
+        "description": "Performance and usage metrics",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roles": [
+            "ADMIN",
+            "SUPER_ADMIN"
+          ]
+        },
+        "responses": {
+          "200": {
+            "description": "System metrics"
+          }
+        }
+      }
+    },
+    "/api/v1/revisions/{resourceId}": {
+      "get": {
+        "tags": [
+          "Revisions"
+        ],
+        "summary": "Get resource revision history",
+        "description": "Get change history for a resource",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "resourceId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Revision history"
+          }
+        }
+      }
+    },
+    "/api/v1/analyses/{id}/chat": {
+      "post": {
+        "tags": [
+          "Analyses"
+        ],
+        "summary": "Chat about analysis",
+        "description": "AI chat to ask questions about analysis results",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "AI response"
+          }
+        }
+      }
+    },
+    "/api/v1/analyses/{id}/chat-history": {
+      "get": {
+        "tags": [
+          "Analyses"
+        ],
+        "summary": "Get chat history",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Chat history"
+          }
+        }
+      }
+    },
+    "/api/v1/job-postings/export/xlsx": {
+      "get": {
+        "tags": [
+          "Job Postings"
+        ],
+        "summary": "Export job postings to Excel",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
+        "responses": {
+          "200": {
+            "description": "XLSX file",
+            "content": {
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/job-postings/export/csv": {
+      "get": {
+        "tags": [
+          "Job Postings"
+        ],
+        "summary": "Export job postings to CSV",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
+        "responses": {
+          "200": {
+            "description": "CSV file",
+            "content": {
+              "text/csv": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/interviews/candidates/recent": {
+      "get": {
+        "tags": [
+          "Interviews"
+        ],
+        "summary": "Get recent candidates",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
+        "responses": {
+          "200": {
+            "description": "Recent candidates"
+          }
+        }
+      }
+    },
+    "/api/v1/interviews/check-conflicts": {
+      "post": {
+        "tags": [
+          "Interviews"
+        ],
+        "summary": "Check scheduling conflicts",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-rbac": {
+          "roleGroup": "HR_MANAGERS"
+        },
+        "responses": {
+          "200": {
+            "description": "Conflict check"
+          }
+        }
+      }
     }
   },
   "tags": [
@@ -3083,6 +4725,66 @@
     {
       "name": "Super Admin",
       "description": "System-wide management (SUPER_ADMIN only)"
+    },
+    {
+      "name": "Queue",
+      "description": "Queue monitoring and management (Admin only)"
+    },
+    {
+      "name": "Onboarding",
+      "description": "User onboarding wizard"
+    },
+    {
+      "name": "Templates",
+      "description": "Email and document templates"
+    },
+    {
+      "name": "Categories",
+      "description": "Job and skill categories"
+    },
+    {
+      "name": "Analytics",
+      "description": "Advanced analytics and reporting"
+    },
+    {
+      "name": "Attachments",
+      "description": "File attachments for offers"
+    },
+    {
+      "name": "Negotiations",
+      "description": "Salary negotiations"
+    },
+    {
+      "name": "Smart Search",
+      "description": "AI-powered semantic search"
+    },
+    {
+      "name": "Testing",
+      "description": "Testing utilities (development/admin)"
+    },
+    {
+      "name": "Public Offers",
+      "description": "Public offer pages (no auth required)"
+    },
+    {
+      "name": "Milvus",
+      "description": "Vector database synchronization"
+    },
+    {
+      "name": "Cache",
+      "description": "Cache management"
+    },
+    {
+      "name": "Error Logging",
+      "description": "Error tracking"
+    },
+    {
+      "name": "Metrics",
+      "description": "System metrics"
+    },
+    {
+      "name": "Revisions",
+      "description": "Resource revisions"
     }
   ],
   "x-rbac-matrix": {
