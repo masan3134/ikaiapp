@@ -1,4 +1,5 @@
 const axios = require('axios');
+const mammoth = require('mammoth');
 const geminiRateLimiter = require('../utils/geminiRateLimiter');
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
@@ -53,23 +54,59 @@ async function batchAnalyzeCVs(analysisId, jobPosting, candidatesData) {
       { text: systemPrompt }
     ];
 
-    // Add each CV as inline data
+    // Add each CV as inline data (format-aware: PDF/DOCX/TXT)
     for (let i = 0; i < candidatesData.length; i++) {
       const candidate = candidatesData[i];
+      const fileExt = candidate.fileName.toLowerCase().split('.').pop();
 
+      // CV header
       parts.push({
-        text: `\n\n--- CV ${i + 1} (Candidate ID: ${candidate.id}) ---`
+        text: `\n\n--- CV ${i + 1} (Candidate ID: ${candidate.id}, Format: ${fileExt.toUpperCase()}) ---\n`
       });
 
-      // Convert buffer to base64 for Gemini API
-      const base64PDF = candidate.cvBuffer.toString('base64');
+      // Format-specific processing
+      if (fileExt === 'txt') {
+        // TXT: Direct text (fastest & most reliable)
+        const cvText = candidate.cvBuffer.toString('utf-8');
+        parts.push({
+          text: cvText
+        });
+        console.log(`  📄 CV ${i + 1}: TXT (${cvText.length} chars)`);
 
-      parts.push({
-        inline_data: {
-          mime_type: 'application/pdf',
-          data: base64PDF
+      } else if (fileExt === 'docx') {
+        // DOCX: Extract text using mammoth
+        try {
+          const result = await mammoth.extractRawText({ buffer: candidate.cvBuffer });
+          parts.push({
+            text: result.value
+          });
+          console.log(`  📄 CV ${i + 1}: DOCX (extracted ${result.value.length} chars)`);
+        } catch (docxError) {
+          console.error(`  ❌ CV ${i + 1}: DOCX extraction failed:`, docxError.message);
+          parts.push({
+            text: '[DOCX extraction failed - unable to analyze this CV]'
+          });
         }
-      });
+
+      } else if (fileExt === 'pdf') {
+        // PDF: Use Gemini File API (supports complex layouts)
+        const base64PDF = candidate.cvBuffer.toString('base64');
+        parts.push({
+          inline_data: {
+            mime_type: 'application/pdf',
+            data: base64PDF
+          }
+        });
+        console.log(`  📄 CV ${i + 1}: PDF (${Math.round(base64PDF.length / 1024)} KB)`);
+
+      } else {
+        // Unsupported format - try as text fallback
+        console.warn(`  ⚠️  CV ${i + 1}: Unknown format '${fileExt}', trying as text`);
+        const cvText = candidate.cvBuffer.toString('utf-8');
+        parts.push({
+          text: cvText
+        });
+      }
     }
 
     parts.push({
