@@ -283,7 +283,7 @@ router.get('/hr-specialist', [
       where: {
         organizationId,
         createdAt: { gte: weekStart },
-        status: 'ACCEPTED'
+        status: 'accepted'
       }
     });
 
@@ -376,7 +376,7 @@ router.get('/hr-specialist', [
     });
 
     const thisMonthHires = await prisma.jobOffer.count({
-      where: { organizationId, createdAt: { gte: thirtyDaysAgo }, status: 'ACCEPTED' }
+      where: { organizationId, createdAt: { gte: thirtyDaysAgo }, status: 'accepted' }
     });
 
     // Last month counts (30-60 days ago)
@@ -397,7 +397,7 @@ router.get('/hr-specialist', [
     });
 
     const lastMonthHires = await prisma.jobOffer.count({
-      where: { organizationId, createdAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo }, status: 'ACCEPTED' }
+      where: { organizationId, createdAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo }, status: 'accepted' }
     });
 
     // Calculate percentage changes
