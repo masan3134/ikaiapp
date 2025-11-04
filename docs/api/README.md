@@ -10,10 +10,45 @@
 
 ## 📚 Quick Links
 
-- **[OpenAPI Specification](openapi.json)** - Machine-readable API spec (Swagger compatible)
-- **[Postman Collection](postman-collection.json)** - Importable collection with auto-token
+### Core Documentation
+- **[OpenAPI Specification](openapi.json)** - Machine-readable API spec (46 endpoints documented)
+- **[Swagger UI](swagger-ui.html)** - 🆕 Interactive API explorer (open in browser!)
+- **[Postman Collection](postman-collection.json)** - Importable collection with auto-token + test assertions
 - **[Endpoint Inventory](endpoint-inventory.md)** - Complete list of all 141 endpoints
 - **[Test Data Reference](../test-tasks/COMPLETE-TEST-DATA-REFERENCE.md)** - Test accounts and data
+
+### Advanced Resources
+- **[SDK Generation Guide](SDK-GENERATION-GUIDE.md)** - 🆕 Generate clients for 7 languages (TypeScript, Python, Java, C#, Go, PHP, Ruby)
+- **[API Changelog](CHANGELOG.md)** - 🆕 Version history and roadmap
+- **[RBAC Strategy](../architecture/RBAC-COMPLETE-STRATEGY.md)** - Role-based access control details
+
+---
+
+## 🆕 What's New (v1.0.0 - 2025-11-04)
+
+### Enhanced Documentation
+- ✅ **46 endpoints** now fully documented in OpenAPI (up from 10)
+- ✅ **Interactive Swagger UI** - Try endpoints directly in browser!
+- ✅ **Test Assertions** - Postman collection now validates responses automatically
+- ✅ **SDK Generation** - Generate type-safe clients for your language
+- ✅ **API Changelog** - Track breaking changes and new features
+
+### Coverage Expansion
+- ✅ **Candidates** (7 endpoints) - CV upload, duplicate detection, export
+- ✅ **Analyses** (10 endpoints) - AI-powered CV analysis, export, feedback
+- ✅ **Offers** (15 endpoints) - Wizard, PDF generation, approval workflow
+- ✅ **Interviews** (4 endpoints) - Scheduling, conflict detection
+- ✅ **Team** (3 endpoints) - Member management, invitations
+- ✅ **Organizations** (2 endpoints) - Settings, usage stats
+- ✅ **Users** (3 endpoints) - Profile management
+- ✅ **Dashboard** (1 endpoint) - Analytics
+
+### Developer Experience
+- 🎨 Custom-branded Swagger UI
+- 📝 Comprehensive request/response examples
+- ✅ Automated testing with assertions
+- 🔧 SDK generation commands for 7 languages
+- 📊 Usage statistics and limits documented
 
 ---
 
