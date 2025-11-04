@@ -190,7 +190,7 @@ services:
     container_name: ikai-frontend
     restart: unless-stopped
     ports:
-      - "8104:3000"  # IKAI unique: 8104 → 3000 inside (changed from 8103 to force cache clear)
+      - "8103:3000"  # IKAI unique: 8103 → 3000 inside
     environment:
       - NODE_ENV=development
       - NEXT_PUBLIC_API_URL=http://localhost:8102
