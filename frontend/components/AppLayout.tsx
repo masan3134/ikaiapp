@@ -19,12 +19,23 @@ import {
   Plus,
   BarChart3,
   Layers,
-  Settings
+  Settings,
+  Calendar
 } from 'lucide-react';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { useAuthStore } from '@/lib/store/authStore';
 import { useHasRole } from '@/lib/hooks/useHasRole';
 import { RoleGroups, UserRole } from '@/lib/constants/roles';
+import {
+  canViewJobPostings,
+  canViewCandidates,
+  canViewAnalyses,
+  canViewOffers,
+  canViewInterviews,
+  canViewTeam,
+  canViewAnalytics,
+  isSuperAdmin
+} from '@/lib/utils/rbac';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -37,27 +48,101 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isOffersExpanded, setIsOffersExpanded] = useState(true); // Always expanded by default
 
-  // Role-based access control
-  const canManageHR = useHasRole(RoleGroups.HR_MANAGERS);
-  const canViewAnalytics = useHasRole(RoleGroups.ANALYTICS_VIEWERS);
-  const isAdmin = useHasRole(RoleGroups.ADMINS);
-  const isSuperAdmin = useHasRole([UserRole.SUPER_ADMIN]);
+  // Get user role for RBAC checks
+  const userRole = user?.role;
 
-  // Sidebar menü itemları - Dashboard visible to all
-  const allMenuItems = [
-    { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
+  // Define all menu items with role requirements
+  const menuItems = [
+    {
+      name: 'Dashboard',
+      path: '/dashboard',
+      icon: LayoutDashboard,
+      show: true // All roles can see dashboard
+    },
+    {
+      name: 'Analiz Sihirbazı',
+      path: '/wizard',
+      icon: Wand2,
+      show: canViewAnalyses(userRole)
+    },
+    {
+      name: 'İş İlanları',
+      path: '/job-postings',
+      icon: Briefcase,
+      show: canViewJobPostings(userRole)
+    },
+    {
+      name: 'Adaylar',
+      path: '/candidates',
+      icon: Users,
+      show: canViewCandidates(userRole)
+    },
+    {
+      name: 'Geçmiş Analizlerim',
+      path: '/analyses',
+      icon: Clock,
+      show: canViewAnalyses(userRole)
+    },
+    {
+      name: 'Teklifler',
+      path: '/offers',
+      icon: FileText,
+      show: canViewOffers(userRole),
+      submenu: [
+        {
+          name: 'Yeni Teklif',
+          path: '/offers/wizard',
+          icon: Plus,
+          show: canViewOffers(userRole)
+        },
+        {
+          name: 'Tüm Teklifler',
+          path: '/offers',
+          icon: FileText,
+          show: canViewOffers(userRole)
+        },
+        {
+          name: 'Şablonlar',
+          path: '/offer-templates',
+          icon: Layers,
+          show: canViewAnalytics(userRole)
+        },
+        {
+          name: 'Analytics',
+          path: '/offers/analytics',
+          icon: BarChart3,
+          show: canViewAnalytics(userRole)
+        }
+      ]
+    },
+    {
+      name: 'Mülakatlar',
+      path: '/interviews',
+      icon: Calendar,
+      show: canViewInterviews(userRole)
+    },
+    {
+      name: 'Takım',
+      path: '/team',
+      icon: Users,
+      show: canViewTeam(userRole)
+    },
+    {
+      name: 'Analitik',
+      path: '/analytics',
+      icon: BarChart3,
+      show: canViewAnalytics(userRole)
+    },
+    {
+      name: 'Ayarlar',
+      path: '/settings/organization',
+      icon: Settings,
+      show: true // All roles can access settings (but tabs differ)
+    }
   ];
 
-  // Offer submenu items - split by role
-  const hrManagerOfferItems = [
-    { name: 'Yeni Teklif', path: '/offers/wizard', icon: Plus },
-    { name: 'Tüm Teklifler', path: '/offers', icon: FileText },
-  ];
-
-  const analyticsOfferItems = [
-    { name: 'Şablonlar', path: '/offer-templates', icon: Layers },
-    { name: 'Analytics', path: '/offers/analytics', icon: BarChart3 },
-  ];
+  // Filter visible menu items
+  const visibleMenuItems = menuItems.filter(item => item.show);
 
   const handleLogout = async () => {
     await logout();
@@ -95,11 +180,69 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
             {/* Navigation */}
             <nav className="p-4 space-y-1">
-              {/* Dashboard - visible to all */}
-              {allMenuItems.map((item) => {
+              {visibleMenuItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = pathname === item.path;
 
+                // Handle items with submenu (like Offers)
+                if (item.submenu) {
+                  const visibleSubmenuItems = item.submenu.filter((subItem: any) => subItem.show);
+
+                  return (
+                    <div key={item.path}>
+                      <button
+                        onClick={() => setIsOffersExpanded(!isOffersExpanded)}
+                        className={`
+                          w-full flex items-center justify-between gap-3 px-4 py-3 rounded-lg
+                          transition-colors duration-150
+                          ${
+                            pathname.startsWith('/offers') || pathname.startsWith('/offer-templates')
+                              ? 'bg-blue-50 text-blue-600 font-medium'
+                              : 'text-gray-700 hover:bg-gray-50'
+                          }
+                        `}
+                      >
+                        <div className="flex items-center gap-3">
+                          <Icon size={20} />
+                          <span>{item.name}</span>
+                        </div>
+                        {isOffersExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+                      </button>
+
+                      {/* Submenu */}
+                      {isOffersExpanded && (
+                        <div className="mt-1 ml-4 space-y-1">
+                          {visibleSubmenuItems.map((subItem: any) => {
+                            const SubIcon = subItem.icon;
+                            const isSubActive = pathname === subItem.path;
+
+                            return (
+                              <Link
+                                key={subItem.path}
+                                href={subItem.path}
+                                onClick={() => setIsSidebarOpen(false)}
+                                className={`
+                                  flex items-center gap-3 px-4 py-2 rounded-lg text-sm
+                                  transition-colors duration-150
+                                  ${
+                                    isSubActive
+                                      ? 'bg-blue-50 text-blue-600 font-medium'
+                                      : 'text-gray-600 hover:bg-gray-50'
+                                  }
+                                `}
+                              >
+                                <SubIcon size={18} />
+                                <span>{subItem.name}</span>
+                              </Link>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  );
+                }
+
+                // Regular menu item (no submenu)
                 return (
                   <Link
                     key={item.path}
@@ -121,201 +264,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 );
               })}
 
-              {/* HR Manager menu items */}
-              {canManageHR && (
-                <>
-                  <Link
-                    href="/wizard"
-                    onClick={() => setIsSidebarOpen(false)}
-                    className={`
-                      flex items-center gap-3 px-4 py-3 rounded-lg
-                      transition-colors duration-150
-                      ${
-                        pathname === '/wizard'
-                          ? 'bg-blue-50 text-blue-600 font-medium'
-                          : 'text-gray-700 hover:bg-gray-50'
-                      }
-                    `}
-                  >
-                    <Wand2 size={20} />
-                    <span>Analiz Sihirbazı</span>
-                  </Link>
-
-                  <Link
-                    href="/job-postings"
-                    onClick={() => setIsSidebarOpen(false)}
-                    className={`
-                      flex items-center gap-3 px-4 py-3 rounded-lg
-                      transition-colors duration-150
-                      ${
-                        pathname === '/job-postings'
-                          ? 'bg-blue-50 text-blue-600 font-medium'
-                          : 'text-gray-700 hover:bg-gray-50'
-                      }
-                    `}
-                  >
-                    <Briefcase size={20} />
-                    <span>İş İlanları</span>
-                  </Link>
-
-                  <Link
-                    href="/candidates"
-                    onClick={() => setIsSidebarOpen(false)}
-                    className={`
-                      flex items-center gap-3 px-4 py-3 rounded-lg
-                      transition-colors duration-150
-                      ${
-                        pathname === '/candidates'
-                          ? 'bg-blue-50 text-blue-600 font-medium'
-                          : 'text-gray-700 hover:bg-gray-50'
-                      }
-                    `}
-                  >
-                    <Users size={20} />
-                    <span>Adaylar</span>
-                  </Link>
-
-                  <Link
-                    href="/analyses"
-                    onClick={() => setIsSidebarOpen(false)}
-                    className={`
-                      flex items-center gap-3 px-4 py-3 rounded-lg
-                      transition-colors duration-150
-                      ${
-                        pathname === '/analyses'
-                          ? 'bg-blue-50 text-blue-600 font-medium'
-                          : 'text-gray-700 hover:bg-gray-50'
-                      }
-                    `}
-                  >
-                    <Clock size={20} />
-                    <span>Geçmiş Analizlerim</span>
-                  </Link>
-                </>
-              )}
-
-              {/* Offers collapsible menu - HR_MANAGERS */}
-              {canManageHR && (
-                <div>
-                  <button
-                    onClick={() => setIsOffersExpanded(!isOffersExpanded)}
-                    className={`
-                      w-full flex items-center justify-between gap-3 px-4 py-3 rounded-lg
-                      transition-colors duration-150
-                      ${
-                        pathname.startsWith('/offers') || pathname.startsWith('/offer-templates')
-                          ? 'bg-blue-50 text-blue-600 font-medium'
-                          : 'text-gray-700 hover:bg-gray-50'
-                      }
-                    `}
-                  >
-                    <div className="flex items-center gap-3">
-                      <FileText size={20} />
-                      <span>Teklifler</span>
-                    </div>
-                    {isOffersExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
-                  </button>
-
-                  {/* Submenu */}
-                  {isOffersExpanded && (
-                    <div className="mt-1 ml-4 space-y-1">
-                      {/* HR_MANAGERS: Yeni Teklif, Tüm Teklifler */}
-                      {hrManagerOfferItems.map((item) => {
-                        const Icon = item.icon;
-                        const isActive = pathname === item.path;
-
-                        return (
-                          <Link
-                            key={item.path}
-                            href={item.path}
-                            onClick={() => setIsSidebarOpen(false)}
-                            className={`
-                              flex items-center gap-3 px-4 py-2 rounded-lg text-sm
-                              transition-colors duration-150
-                              ${
-                                isActive
-                                  ? 'bg-blue-50 text-blue-600 font-medium'
-                                  : 'text-gray-600 hover:bg-gray-50'
-                              }
-                            `}
-                          >
-                            <Icon size={18} />
-                            <span>{item.name}</span>
-                          </Link>
-                        );
-                      })}
-
-                      {/* ANALYTICS_VIEWERS: Şablonlar, Analytics */}
-                      {canViewAnalytics && analyticsOfferItems.map((item) => {
-                        const Icon = item.icon;
-                        const isActive = pathname === item.path;
-
-                        return (
-                          <Link
-                            key={item.path}
-                            href={item.path}
-                            onClick={() => setIsSidebarOpen(false)}
-                            className={`
-                              flex items-center gap-3 px-4 py-2 rounded-lg text-sm
-                              transition-colors duration-150
-                              ${
-                                isActive
-                                  ? 'bg-blue-50 text-blue-600 font-medium'
-                                  : 'text-gray-600 hover:bg-gray-50'
-                              }
-                            `}
-                          >
-                            <Icon size={18} />
-                            <span>{item.name}</span>
-                          </Link>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* Admin-only menu items */}
-              {isAdmin && (
-                <>
-                  <Link
-                    href="/team"
-                    onClick={() => setIsSidebarOpen(false)}
-                    className={`
-                      flex items-center gap-3 px-4 py-3 rounded-lg
-                      transition-colors duration-150
-                      ${
-                        pathname === '/team'
-                          ? 'bg-blue-50 text-blue-600 font-medium'
-                          : 'text-gray-700 hover:bg-gray-50'
-                      }
-                    `}
-                  >
-                    <Users size={20} />
-                    <span>Team</span>
-                  </Link>
-
-                  <Link
-                    href="/settings/organization"
-                    onClick={() => setIsSidebarOpen(false)}
-                    className={`
-                      flex items-center gap-3 px-4 py-3 rounded-lg
-                      transition-colors duration-150
-                      ${
-                        pathname === '/settings/organization'
-                          ? 'bg-blue-50 text-blue-600 font-medium'
-                          : 'text-gray-700 hover:bg-gray-50'
-                      }
-                    `}
-                  >
-                    <Settings size={20} />
-                    <span>Settings</span>
-                  </Link>
-                </>
-              )}
-
               {/* Super Admin only */}
-              {isSuperAdmin && (
+              {isSuperAdmin(userRole) && (
                 <Link
                   href="/super-admin"
                   onClick={() => setIsSidebarOpen(false)}
