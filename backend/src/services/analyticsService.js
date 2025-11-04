@@ -16,12 +16,17 @@ const prisma = new PrismaClient();
  * Calculate summary analytics
  * @param {string} userId
  * @param {string} userRole
+ * @param {string} organizationId
  * @returns {Promise<object>}
  */
-async function calculateSummary(userId, userRole) {
+async function calculateSummary(userId, userRole, organizationId) {
   try {
-    // Build where clause based on role
-    const whereClause = ['ADMIN', 'MANAGER'].includes(userRole) ? {} : { userId };
+    // Build where clause based on role with organization isolation
+    const whereClause = userRole === 'SUPER_ADMIN'
+      ? {} // SUPER_ADMIN sees all
+      : ['ADMIN', 'MANAGER', 'HR_SPECIALIST'].includes(userRole)
+        ? { organizationId } // Org-level roles see org data
+        : { userId, organizationId }; // USER sees only their data
 
     // Parallel queries for performance
     const [
@@ -106,12 +111,17 @@ async function calculateSummary(userId, userRole) {
  * Calculate time-to-hire metrics
  * @param {string} userId
  * @param {string} userRole
- * @param {object} filters
+ * @param {object} filters - includes organizationId, startDate, endDate, department
  * @returns {Promise<object>}
  */
 async function calculateTimeToHire(userId, userRole, filters = {}) {
   try {
-    const whereClause = ['ADMIN', 'MANAGER'].includes(userRole) ? {} : { userId };
+    // Build where clause with organization isolation
+    const whereClause = userRole === 'SUPER_ADMIN'
+      ? {} // SUPER_ADMIN sees all
+      : ['ADMIN', 'MANAGER', 'HR_SPECIALIST'].includes(userRole)
+        ? { organizationId: filters.organizationId } // Org-level roles
+        : { userId, organizationId: filters.organizationId }; // USER
 
     // Add date filters
     if (filters.startDate || filters.endDate) {
@@ -200,12 +210,17 @@ async function calculateTimeToHire(userId, userRole, filters = {}) {
  * Generate candidate funnel data
  * @param {string} userId
  * @param {string} userRole
- * @param {object} filters
+ * @param {object} filters - includes organizationId, startDate, endDate
  * @returns {Promise<object>}
  */
 async function generateFunnelData(userId, userRole, filters = {}) {
   try {
-    const whereClause = ['ADMIN', 'MANAGER'].includes(userRole) ? {} : { userId };
+    // Build where clause with organization isolation
+    const whereClause = userRole === 'SUPER_ADMIN'
+      ? {} // SUPER_ADMIN sees all
+      : ['ADMIN', 'MANAGER', 'HR_SPECIALIST'].includes(userRole)
+        ? { organizationId: filters.organizationId } // Org-level roles
+        : { userId, organizationId: filters.organizationId }; // USER
 
     // Add date filters
     if (filters.startDate || filters.endDate) {
@@ -298,13 +313,19 @@ async function generateFunnelData(userId, userRole, filters = {}) {
  * Get score distribution (histogram)
  * @param {string} userId
  * @param {string} userRole
+ * @param {string} organizationId
  * @param {string} jobPostingId - Optional filter
  * @returns {Promise<object>}
  */
-async function getScoreStats(userId, userRole, jobPostingId = null) {
+async function getScoreStats(userId, userRole, organizationId, jobPostingId = null) {
   try {
+    // Build where clause with organization isolation
     const whereClause = {
-      analysis: ['ADMIN', 'MANAGER'].includes(userRole) ? {} : { userId }
+      analysis: userRole === 'SUPER_ADMIN'
+        ? {} // SUPER_ADMIN sees all
+        : ['ADMIN', 'MANAGER', 'HR_SPECIALIST'].includes(userRole)
+          ? { organizationId } // Org-level roles
+          : { userId, organizationId } // USER
     };
 
     if (jobPostingId) {
@@ -376,12 +397,18 @@ async function getScoreStats(userId, userRole, jobPostingId = null) {
  * Get top performing job postings
  * @param {string} userId
  * @param {string} userRole
+ * @param {string} organizationId
  * @param {number} limit
  * @returns {Promise<Array>}
  */
-async function getTopPerformingJobs(userId, userRole, limit = 10) {
+async function getTopPerformingJobs(userId, userRole, organizationId, limit = 10) {
   try {
-    const whereClause = ['ADMIN', 'MANAGER'].includes(userRole) ? {} : { userId };
+    // Build where clause with organization isolation
+    const whereClause = userRole === 'SUPER_ADMIN'
+      ? {} // SUPER_ADMIN sees all
+      : ['ADMIN', 'MANAGER', 'HR_SPECIALIST'].includes(userRole)
+        ? { organizationId } // Org-level roles
+        : { userId, organizationId }; // USER
 
     // Get job postings with analysis count and avg score
     const jobs = await prisma.jobPosting.findMany({

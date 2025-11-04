@@ -110,7 +110,7 @@ async function getScoreDistribution(req, res) {
 
     logger.logRequest(req, 'Score distribution requested', { jobPostingId });
 
-    const distribution = await analyticsService.getScoreStats(userId, userRole, jobPostingId, organizationId);
+    const distribution = await analyticsService.getScoreStats(userId, userRole, organizationId, jobPostingId);
 
     res.json(distribution);
   } catch (error) {
@@ -135,7 +135,7 @@ async function getTopJobs(req, res) {
 
     logger.logRequest(req, 'Top jobs requested', { limit });
 
-    const topJobs = await analyticsService.getTopPerformingJobs(userId, userRole, limit, organizationId);
+    const topJobs = await analyticsService.getTopPerformingJobs(userId, userRole, organizationId, limit);
 
     res.json(topJobs);
   } catch (error) {
