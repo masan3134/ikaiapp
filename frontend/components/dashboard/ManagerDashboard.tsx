@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useAuthStore } from "@/lib/store/authStore";
+import { apiClient } from "@/lib/utils/apiClient";
 import LoadingSkeleton from "@/components/ui/LoadingSkeleton";
 
 // Manager Widgets
@@ -27,11 +28,7 @@ export const ManagerDashboard = () => {
   const loadManagerDashboard = async () => {
     try {
       setLoading(true);
-      const response = await fetch("/api/v1/dashboard/manager", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const response = await apiClient.get("/api/v1/dashboard/manager");
 
       if (!response.ok) {
         throw new Error("Failed to load dashboard");

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useAuthStore } from "@/lib/store/authStore";
+import { apiClient } from "@/lib/utils/apiClient";
 
 // HR Specialist Widgets
 import { HRWelcomeHeader } from "./hr-specialist/HRWelcomeHeader";
@@ -27,11 +28,7 @@ export const HRDashboard = () => {
   const loadHRDashboard = async () => {
     try {
       setLoading(true);
-      const response = await fetch("/api/v1/dashboard/hr-specialist", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const response = await apiClient.get("/api/v1/dashboard/hr-specialist");
 
       if (!response.ok) {
         throw new Error("Failed to load dashboard");
