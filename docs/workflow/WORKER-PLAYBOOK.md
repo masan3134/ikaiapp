@@ -125,6 +125,90 @@ Read(file_path: "frontend/app/(authenticated)/job-postings/page.tsx")
 Edit(file_path: "frontend/app/(authenticated)/job-postings/page.tsx", ...)
 ```
 
+### Rule 6: Log Reading Protocol (MANDATORY!)
+```
+🚨 AFTER EVERY TASK: Check logs for YOUR errors!
+
+Step-by-step:
+1. Complete your task (create file, edit code, etc.)
+2. Commit immediately
+3. Check logs:
+   ```bash
+   # Frontend logs (if you touched frontend)
+   docker logs ikai-frontend --tail 50 2>&1 | grep -i "error\|fail"
+
+   # Backend logs (if you touched backend)
+   docker logs ikai-backend --tail 50 2>&1 | grep -i "error\|fail"
+   ```
+4. Analyze errors:
+   - Is error in YOUR file? → Fix immediately!
+   - Is error in OTHER worker's file? → Report to Mod, DO NOT touch!
+   - Is error unrelated? → Ignore (infrastructure error)
+5. If YOUR error found:
+   - Read error message carefully
+   - Fix the issue
+   - Commit fix
+   - Re-check logs (repeat until clean)
+
+Example Error Handling:
+
+❌ WRONG (fixing other worker's code):
+```
+Error in admin-dashboard.tsx
+W1 (USER dashboard worker): "I'll fix admin-dashboard.tsx"
+→ NO! That's W4's file!
+```
+
+✅ RIGHT (staying in scope):
+```
+Error in user-dashboard.tsx
+W1 (USER dashboard worker): "This is my file, I'll fix it"
+→ YES! Fix your own code.
+
+Error in admin-dashboard.tsx
+W1 (USER dashboard worker): "Report to Mod: admin-dashboard.tsx has error"
+→ YES! Report, don't touch.
+```
+```
+
+### Rule 7: Scope Awareness - Know Your Boundaries
+```
+🚨 YOU ARE RESPONSIBLE FOR:
+✅ Files YOU created
+✅ Files YOU modified
+✅ Errors caused by YOUR changes
+
+🚨 YOU ARE NOT RESPONSIBLE FOR:
+❌ Files OTHER workers created
+❌ Errors in OTHER workers' code
+❌ Infrastructure errors (Docker, database, etc.)
+
+Scope Decision Tree:
+
+Q: "Is this file in my task JSON?"
+├─ YES → You can modify it ✅
+└─ NO → DO NOT touch! ❌
+
+Q: "I see an error in logs, should I fix?"
+├─ Error in MY file? → YES, fix immediately ✅
+├─ Error in OTHER worker's file? → NO, report to Mod ❌
+└─ Infrastructure error? → Report to Mod, don't fix ❌
+
+Example Scenarios:
+
+Scenario 1: W1 creates user-dashboard.tsx, sees error in user-dashboard.tsx
+→ ✅ FIX IT (your file, your responsibility)
+
+Scenario 2: W1 creates user-dashboard.tsx, sees error in admin-dashboard.tsx
+→ ❌ DON'T TOUCH (W4's file, report to Mod)
+
+Scenario 3: W1 creates user-dashboard.tsx, sees "PostgreSQL connection failed"
+→ ❌ DON'T TOUCH (infrastructure issue, report to Mod)
+
+Scenario 4: W1 creates user-dashboard.tsx, W2 creates hr-dashboard.tsx, both import same broken component
+→ ❌ DON'T FIX shared component (coordinate via Mod)
+```
+
 ---
 
 ## 📋 Your Workflow (Step-by-Step)
