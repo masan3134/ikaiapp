@@ -525,7 +525,85 @@ ASLA YAPMA:
 ❌ Buton ekle ama onClick boş bırak
 ```
 
-### Rule 9: Make Verifiable Claims - Mod Will Re-Run Your Commands!
+### Rule 9: API Testing Standard - Use Token Helper!
+```
+🚨 UZUN CURL KOMUTU YASAK! Token helper kullan!
+
+❌ YANLIŞ (Karmaşık):
+```bash
+TOKEN=$(curl -s -X POST http://localhost:8102/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test-user@test-org-1.com","password":"TestPass123!"}' | \
+  jq -r '.token')
+
+curl -s http://localhost:8102/api/v1/dashboard/user \
+  -H "Authorization: Bearer $TOKEN" | jq .
+```
+
+✅ DOĞRU (Kolay):
+```bash
+# Token al (tek satır!)
+TOKEN=$(./scripts/get-token.sh USER)
+
+# API test et
+curl -s http://localhost:8102/api/v1/dashboard/user \
+  -H "Authorization: Bearer $TOKEN" | jq .
+```
+
+Token Helper Kullanımı:
+
+Roller:
+- USER → ./scripts/get-token.sh USER
+- HR_SPECIALIST → ./scripts/get-token.sh HR_SPECIALIST
+- MANAGER → ./scripts/get-token.sh MANAGER
+- ADMIN → ./scripts/get-token.sh ADMIN
+- SUPER_ADMIN → ./scripts/get-token.sh SUPER_ADMIN
+
+Örnekler:
+
+Test 1: USER dashboard
+```bash
+TOKEN=$(./scripts/get-token.sh USER)
+curl http://localhost:8102/api/v1/dashboard/user -H "Authorization: Bearer $TOKEN" | jq .
+```
+
+Test 2: HR_SPECIALIST dashboard
+```bash
+TOKEN=$(./scripts/get-token.sh HR_SPECIALIST)
+curl http://localhost:8102/api/v1/dashboard/hr-specialist -H "Authorization: Bearer $TOKEN" | jq .
+```
+
+Test 3: SUPER_ADMIN (cross-org test)
+```bash
+TOKEN=$(./scripts/get-token.sh SUPER_ADMIN)
+curl http://localhost:8102/api/v1/dashboard/super-admin -H "Authorization: Bearer $TOKEN" | jq '.data.organizations.total'
+# Expected: 3 (all orgs!)
+```
+
+Neden Token Helper?
+
+1. ✅ Kolay (1 satır vs 5 satır)
+2. ✅ Hata riski az (email typo yapmazsın)
+3. ✅ Hızlı (kopyala-yapıştır)
+4. ✅ Standart (herkes aynı yöntemi kullanır)
+5. ✅ Mod verification kolay (aynı script'i kullanır)
+
+Alternative: Python Test Helper
+
+Python tercih ediyorsan:
+```python
+from test_helper import IKAITestHelper, TEST_USERS
+
+helper = IKAITestHelper()
+helper.login_as('USER')
+result = helper.get('/dashboard/user')
+print(result)
+```
+
+Her iki yöntem de kabul edilir, ama Bash helper ÖNERİLİR (daha universal, Python dependency yok).
+```
+
+### Rule 10: Make Verifiable Claims - Mod Will Re-Run Your Commands!
 ```
 🚨 CRITICAL: Mod senin AYNI komutlarını çalıştıracak! Yalan söyleme!
 
