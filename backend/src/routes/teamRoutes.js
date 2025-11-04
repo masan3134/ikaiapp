@@ -10,7 +10,9 @@ const {
   updateTeamMember,
   toggleTeamMember,
   deleteTeamMember,
-  acceptInvitation
+  acceptInvitation,
+  getTeamStats,
+  getTeamHierarchy
 } = require('../controllers/teamController');
 
 // Read operations (MANAGER can view team)
@@ -24,6 +26,12 @@ router.post('/accept-invitation', acceptInvitation);
 
 // GET /api/v1/team - List all team members (MANAGER can view)
 router.get('/', ...teamViewers, getTeamMembers);
+
+// GET /api/v1/team/stats - Get team statistics (MANAGER can view)
+router.get('/stats', ...teamViewers, getTeamStats);
+
+// GET /api/v1/team/hierarchy - Get team hierarchy (MANAGER can view)
+router.get('/hierarchy', ...teamViewers, getTeamHierarchy);
 
 // GET /api/v1/team/:id - Get single team member (MANAGER can view)
 router.get('/:id', ...teamViewers, getTeamMember);

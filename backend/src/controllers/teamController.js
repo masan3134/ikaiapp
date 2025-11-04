@@ -501,3 +501,134 @@ exports.acceptInvitation = async (req, res) => {
     });
   }
 };
+
+/**
+ * GET /api/v1/team/stats
+ * Get team statistics
+ */
+exports.getTeamStats = async (req, res) => {
+  try {
+    const organizationId = req.organizationId;
+
+    // Get role distribution
+    const roleStats = await prisma.user.groupBy({
+      by: ['role'],
+      where: {
+        organizationId,
+        role: { not: 'SUPER_ADMIN' }
+      },
+      _count: { id: true }
+    });
+
+    // Get active/inactive counts
+    const activeCount = await prisma.user.count({
+      where: {
+        organizationId,
+        isActive: true,
+        role: { not: 'SUPER_ADMIN' }
+      }
+    });
+
+    const inactiveCount = await prisma.user.count({
+      where: {
+        organizationId,
+        isActive: false,
+        role: { not: 'SUPER_ADMIN' }
+      }
+    });
+
+    // Get onboarding status
+    const onboardedCount = await prisma.user.count({
+      where: {
+        organizationId,
+        isOnboarded: true,
+        role: { not: 'SUPER_ADMIN' }
+      }
+    });
+
+    const pendingOnboardingCount = await prisma.user.count({
+      where: {
+        organizationId,
+        isOnboarded: false,
+        role: { not: 'SUPER_ADMIN' }
+      }
+    });
+
+    const totalMembers = activeCount + inactiveCount;
+
+    res.json({
+      success: true,
+      data: {
+        totalMembers,
+        activeMembers: activeCount,
+        inactiveMembers: inactiveCount,
+        onboardedMembers: onboardedCount,
+        pendingOnboarding: pendingOnboardingCount,
+        roleDistribution: roleStats.map(stat => ({
+          role: stat.role,
+          count: stat._count.id
+        }))
+      }
+    });
+  } catch (error) {
+    console.error('Get team stats error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Takım istatistikleri alınırken hata oluştu'
+    });
+  }
+};
+
+/**
+ * GET /api/v1/team/hierarchy
+ * Get team hierarchy (role-based)
+ */
+exports.getTeamHierarchy = async (req, res) => {
+  try {
+    const organizationId = req.organizationId;
+
+    // Define role hierarchy
+    const roleOrder = ['ADMIN', 'MANAGER', 'HR_SPECIALIST', 'USER'];
+
+    const hierarchy = [];
+
+    for (const role of roleOrder) {
+      const users = await prisma.user.findMany({
+        where: {
+          organizationId,
+          role,
+          isActive: true
+        },
+        select: {
+          id: true,
+          email: true,
+          firstName: true,
+          lastName: true,
+          role: true,
+          isOnboarded: true,
+          createdAt: true
+        },
+        orderBy: { createdAt: 'asc' }
+      });
+
+      if (users.length > 0) {
+        hierarchy.push({
+          role,
+          count: users.length,
+          members: users
+        });
+      }
+    }
+
+    res.json({
+      success: true,
+      data: { hierarchy }
+    });
+  } catch (error) {
+    console.error('Get team hierarchy error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Takım hiyerarşisi alınırken hata oluştu'
+    });
+  }
+};
