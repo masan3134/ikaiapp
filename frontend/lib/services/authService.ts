@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { UserRole } from '@/lib/constants/roles';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 if (!API_URL) {
@@ -58,7 +59,13 @@ apiClient.interceptors.response.use(
 export interface User {
   id: string;
   email: string;
-  role: 'USER' | 'ADMIN';
+  name?: string;
+  role: UserRole;
+  organization?: {
+    id: string;
+    name: string;
+    plan: string;
+  };
   createdAt: string;
 }
 
