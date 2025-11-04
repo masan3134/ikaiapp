@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useOfferWizardStore } from "@/lib/store/offerWizardStore";
 import apiClient from "@/lib/utils/apiClient";
+import { useIsAdmin } from "@/lib/hooks/useHasRole";
 
 export default function Step3_Summary() {
   const router = useRouter();
@@ -20,6 +21,7 @@ export default function Step3_Summary() {
   } = useOfferWizardStore();
 
   const [submitting, setSubmitting] = useState(false);
+  const isAdmin = useIsAdmin();
 
   async function handleSubmit() {
     if (!selectedCandidate) {
@@ -27,10 +29,15 @@ export default function Step3_Summary() {
       return;
     }
 
+    // RBAC Check: Direct send only for ADMIN
+    if (sendMode === "direct" && !isAdmin) {
+      setError("Direkt gönderim için ADMIN yetkisi gereklidir");
+      return;
+    }
+
     try {
       setSubmitting(true);
       setLoading(true);
-      const token = getAuthToken();
 
       const payload = {
         candidateId: selectedCandidate.id,
@@ -40,22 +47,8 @@ export default function Step3_Summary() {
         ...formData,
       };
 
-      const response = await fetch(`${API_URL}/api/v1/offers/wizard`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || "Teklif oluşturulamadı");
-      }
-
-      const result = await response.json();
-      const offer = result.data;
+      const response = await apiClient.post("/api/v1/offers/wizard", payload);
+      const offer = response.data;
 
       resetWizard();
       router.push(
@@ -164,13 +157,20 @@ export default function Step3_Summary() {
             </div>
           </label>
 
-          <label className="flex items-start p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-green-400">
+          <label
+            className={`flex items-start p-4 border-2 rounded-lg ${
+              isAdmin
+                ? "border-gray-200 cursor-pointer hover:border-green-400"
+                : "border-gray-100 cursor-not-allowed opacity-50 bg-gray-50"
+            }`}
+          >
             <input
               type="radio"
               name="sendMode"
               value="direct"
               checked={sendMode === "direct"}
-              onChange={(e) => setSendMode("direct")}
+              onChange={(e) => isAdmin && setSendMode("direct")}
+              disabled={!isAdmin}
               className="mt-1 mr-3"
             />
             <div>
@@ -178,7 +178,9 @@ export default function Step3_Summary() {
                 Direkt Gönder (Sadece ADMIN)
               </p>
               <p className="text-sm text-gray-600">
-                Hemen adaya email ile gönderilir
+                {isAdmin
+                  ? "Hemen adaya email ile gönderilir"
+                  : "⚠️ Bu özellik sadece ADMIN yetkisi ile kullanılabilir"}
               </p>
             </div>
           </label>
