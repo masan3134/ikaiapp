@@ -25,9 +25,17 @@ import { useModal } from '@/lib/hooks/useModal';
 import { useToast } from '@/lib/hooks/useToast';
 import { withRoleProtection } from '@/lib/hoc/withRoleProtection';
 import { RoleGroups } from '@/lib/constants/roles';
+import { useAuthStore } from '@/lib/store/authStore';
+import {
+  canCreateJobPosting,
+  canEditJobPosting,
+  canDeleteJobPosting
+} from '@/lib/utils/rbac';
 
 function JobPostingsPage() {
   const toast = useToast();
+  const { user } = useAuthStore();
+  const userRole = user?.role;
   const [jobPostings, setJobPostings] = useState<JobPosting[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -261,13 +269,15 @@ function JobPostingsPage() {
                   İş ilanlarınızı yönetin ve yeni pozisyonlar ekleyin
                 </p>
               </div>
-              <button
-                onClick={createModal.open}
-                className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-all duration-200 flex items-center gap-2 shadow-sm hover:shadow-md"
-              >
-                <Plus className="w-5 h-5" />
-                Yeni İlan Ekle
-              </button>
+              {canCreateJobPosting(userRole) && (
+                <button
+                  onClick={createModal.open}
+                  className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-all duration-200 flex items-center gap-2 shadow-sm hover:shadow-md"
+                >
+                  <Plus className="w-5 h-5" />
+                  Yeni İlan Ekle
+                </button>
+              )}
             </div>
           </div>
 
@@ -302,7 +312,7 @@ function JobPostingsPage() {
                 </button>
 
                 {/* Bulk Delete Button */}
-                {selectedIds.length > 0 && (
+                {selectedIds.length > 0 && canDeleteJobPosting(userRole) && (
                   <button
                     onClick={bulkDeleteDialog.open}
                     className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
@@ -321,10 +331,10 @@ function JobPostingsPage() {
               icon={<Briefcase className="w-16 h-16" />}
               title="Henüz iş ilanı eklemediniz"
               description="İlk iş ilanınızı oluşturmak için yukarıdaki butona tıklayın"
-              action={{
+              action={canCreateJobPosting(userRole) ? {
                 label: 'İlan Oluştur',
                 onClick: createModal.open
-              }}
+              } : undefined}
             />
           )}
 
