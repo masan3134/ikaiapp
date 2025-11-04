@@ -14,12 +14,8 @@ interface MonthlyKPIsWidgetProps {
 }
 
 export function MonthlyKPIsWidget({ data }: MonthlyKPIsWidgetProps) {
-  const kpis = data?.kpis || [
-    { name: 'İşe Alım Hedefi', current: 0, target: 10, percentage: 0 },
-    { name: 'Mülakat Sayısı', current: 0, target: 20, percentage: 0 },
-    { name: 'Pozisyon Doldurma', current: 0, target: 8, percentage: 0 },
-    { name: 'Adayların Kalitesi', current: 0, target: 100, percentage: 0 }
-  ];
+  // Use real KPIs from backend API - no fallback mock data!
+  const kpis = data?.kpis || [];
 
   return (
     <div className="bg-gradient-to-br from-blue-50 to-white shadow-sm rounded-xl">
