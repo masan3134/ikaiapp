@@ -306,7 +306,7 @@ async function _determineWizardStatus(sendMode, userId) {
   if (sendMode === 'direct') {
     const user = await prisma.user.findUnique({ where: { id: userId } });
     if (!user) throw new NotFoundError('Kullanıcı bulunamadı');
-    if (user.role !== 'ADMIN') {
+    if (user.role !== 'ADMIN' && user.role !== 'SUPER_ADMIN') {
       throw new AuthorizationError('Direkt gönderim için ADMIN yetkisi gereklidir');
     }
     status = OfferStatus.sent;
