@@ -9,6 +9,9 @@ const { ROLE_GROUPS } = require('../constants/roles');
 // HR Managers middleware (HR operations)
 const hrManagers = [authenticateToken, enforceOrganizationIsolation, authorize(ROLE_GROUPS.HR_MANAGERS)];
 
+// Manager+ middleware (for delete operations)
+const managerPlus = [authenticateToken, enforceOrganizationIsolation, authorize(ROLE_GROUPS.MANAGERS_PLUS)];
+
 // ============================================
 // WIZARD ENDPOINTS
 // ============================================
@@ -39,6 +42,6 @@ router.post('/', hrManagers, interviewController.createInterview);
 router.patch('/:id/status', hrManagers, interviewController.updateStatus);
 
 // Delete interview
-router.delete('/:id', hrManagers, interviewController.deleteInterview);
+router.delete('/:id', managerPlus, interviewController.deleteInterview);
 
 module.exports = router;
