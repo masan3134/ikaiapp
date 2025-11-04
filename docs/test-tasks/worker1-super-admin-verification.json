@@ -1,0 +1,416 @@
+{
+  "taskId": "worker1-super-admin-verification",
+  "title": "SUPER_ADMIN Cross-Organization Access Verification",
+  "assignedTo": "Worker #1",
+  "createdBy": "Master Claude (Mod)",
+  "createdAt": "2025-11-04T05:30:00Z",
+  "priority": "HIGH",
+  "estimatedTime": "45-60 minutes",
+  "objective": "Verify SUPER_ADMIN (info@gaiai.ai) can see ALL organizations' data without organizationId filtering issues. Test middleware, token handling, and cross-org access.",
+
+  "background": {
+    "context": "RBAC Layer 2 was fixed in commit 00397af. SUPER_ADMIN should now bypass organizationId filters and see data from all 3 test organizations.",
+    "previousWork": [
+      "5 controllers fixed (candidate, jobPosting, analysis, offer, interview)",
+      "2 services fixed (offerService, interviewService)",
+      "organizationIsolation middleware updated (req.userRole extraction)",
+      "Test data created: 3 orgs, 12 users, 6 job postings, 30 CVs"
+    ],
+    "testEnvironment": {
+      "backend": "http://localhost:8102",
+      "frontend": "http://localhost:8103",
+      "database": "PostgreSQL (ikai-postgres container)",
+      "testHelper": "scripts/test-helper.py"
+    }
+  },
+
+  "testAccounts": {
+    "superAdmin": {
+      "email": "info@gaiai.ai",
+      "password": "23235656",
+      "expectedBehavior": "See ALL data from all 3 organizations"
+    },
+    "org1Admin": {
+      "email": "test-admin@test-org-1.com",
+      "password": "TestPass123!",
+      "expectedBehavior": "See ONLY Org 1 data (2 job postings)"
+    },
+    "org2Admin": {
+      "email": "test-admin@test-org-2.com",
+      "password": "TestPass123!",
+      "expectedBehavior": "See ONLY Org 2 data (2 job postings)"
+    }
+  },
+
+  "tasks": [
+    {
+      "id": "1",
+      "name": "Backend Health Check",
+      "description": "Verify backend is running and accessible",
+      "commands": [
+        {
+          "command": "curl -s http://localhost:8102/health | jq",
+          "expectedOutput": "{\"status\":\"ok\"}",
+          "tool": "Bash"
+        },
+        {
+          "command": "docker ps --filter name=ikai-backend --format '{{.Status}}'",
+          "expectedOutput": "Up X minutes/hours",
+          "tool": "Bash"
+        }
+      ],
+      "verification": "Backend must be healthy before testing"
+    },
+
+    {
+      "id": "2",
+      "name": "SUPER_ADMIN Login & Token Extraction",
+      "description": "Login as SUPER_ADMIN and verify token structure",
+      "commands": [
+        {
+          "command": "curl -s -X POST http://localhost:8102/api/v1/auth/login -H 'Content-Type: application/json' -d '{\"email\":\"info@gaiai.ai\",\"password\":\"23235656\"}' | jq",
+          "expectedOutput": "JWT token with userId, role: SUPER_ADMIN",
+          "tool": "Bash",
+          "note": "Save token to variable for next tests"
+        }
+      ],
+      "verification": [
+        "Token exists",
+        "Role is SUPER_ADMIN",
+        "userId matches info@gaiai.ai user"
+      ],
+      "criticalCheck": "Decode JWT (jwt.io or base64) and verify 'role' field = 'SUPER_ADMIN'"
+    },
+
+    {
+      "id": "3",
+      "name": "Job Postings - Cross-Org Access",
+      "description": "SUPER_ADMIN should see ALL 6 job postings (2 from each org)",
+      "pythonScript": {
+        "file": "scripts/test-helper.py",
+        "commands": [
+          "python3 -i scripts/test-helper.py",
+          "helper = IKAITestHelper()",
+          "helper.login('info@gaiai.ai', '23235656')",
+          "response = helper.get('/api/v1/job-postings')",
+          "print(f'Total job postings: {len(response)}')",
+          "for jp in response: print(f'  - {jp[\"title\"]} (Org: {jp[\"organizationId\"][:8]}...)')"
+        ]
+      },
+      "expectedResults": {
+        "totalCount": 6,
+        "organizations": [
+          "Org 1 (test-org-free): 2 job postings",
+          "Org 2 (test-org-pro): 2 job postings",
+          "Org 3 (test-org-enterprise): 2 job postings"
+        ],
+        "uniqueOrgIds": 3
+      },
+      "verification": [
+        "Count = 6 (not 0, not 2)",
+        "At least 3 different organizationId values",
+        "No 403 error",
+        "No organizationId filter applied"
+      ],
+      "failureScenarios": {
+        "count0": "organizationIsolation middleware blocking (req.userRole not set)",
+        "count2": "SUPER_ADMIN treated as normal user (only seeing one org)",
+        "error403": "authorize middleware blocking (missing SUPER_ADMIN in allowed roles)"
+      }
+    },
+
+    {
+      "id": "4",
+      "name": "Candidates - Cross-Org Access",
+      "description": "SUPER_ADMIN should see ALL candidates from all orgs",
+      "pythonScript": {
+        "commands": [
+          "response = helper.get('/api/v1/candidates')",
+          "print(f'Total candidates: {len(response)}')",
+          "org_ids = set(c['organizationId'] for c in response)",
+          "print(f'Unique organizations: {len(org_ids)}')",
+          "for org_id in org_ids: print(f'  - Org {org_id[:8]}...: {sum(1 for c in response if c[\"organizationId\"] == org_id)} candidates')"
+        ]
+      },
+      "expectedResults": {
+        "totalCount": ">= 30",
+        "note": "Exact count may vary (test data might have more/less)",
+        "uniqueOrgIds": 3,
+        "distribution": "Candidates from all 3 test organizations"
+      },
+      "verification": [
+        "Total > 0",
+        "Unique org IDs >= 3",
+        "No single-org filtering"
+      ]
+    },
+
+    {
+      "id": "5",
+      "name": "Analyses - Cross-Org Access",
+      "description": "SUPER_ADMIN should see ALL analyses from all orgs",
+      "pythonScript": {
+        "commands": [
+          "response = helper.get('/api/v1/analyses')",
+          "print(f'Total analyses: {len(response)}')",
+          "if len(response) > 0:",
+          "    org_ids = set(a['organizationId'] for a in response if 'organizationId' in a)",
+          "    print(f'Unique organizations: {len(org_ids)}')",
+          "else:",
+          "    print('No analyses found (this is OK if no analyses created yet)')"
+        ]
+      },
+      "expectedResults": {
+        "totalCount": ">= 0 (may be empty if no analyses run)",
+        "uniqueOrgIds": ">= 1 (if analyses exist)",
+        "noFilter": "Should NOT filter by organizationId"
+      },
+      "verification": [
+        "No 403 error",
+        "If analyses exist, multiple org IDs visible",
+        "Query should NOT include WHERE organizationId = X"
+      ]
+    },
+
+    {
+      "id": "6",
+      "name": "Offers - Cross-Org Access",
+      "description": "SUPER_ADMIN should see ALL offers from all orgs",
+      "pythonScript": {
+        "commands": [
+          "response = helper.get('/api/v1/offers')",
+          "print(f'Total offers: {len(response)}')",
+          "if len(response) > 0:",
+          "    org_ids = set(o.get('organizationId') or o.get('candidate', {}).get('organizationId') for o in response)",
+          "    print(f'Unique organizations: {len(org_ids)}')"
+        ]
+      },
+      "expectedResults": {
+        "totalCount": ">= 0",
+        "uniqueOrgIds": ">= 1 (if offers exist)",
+        "noFilter": "Should NOT filter by organizationId in offerService.js"
+      }
+    },
+
+    {
+      "id": "7",
+      "name": "Interviews - Cross-Org Access",
+      "description": "SUPER_ADMIN should see ALL interviews from all orgs",
+      "pythonScript": {
+        "commands": [
+          "response = helper.get('/api/v1/interviews')",
+          "print(f'Total interviews: {len(response)}')",
+          "if len(response) > 0:",
+          "    org_ids = set(i.get('organizationId') or i.get('candidate', {}).get('organizationId') for i in response)",
+          "    print(f'Unique organizations: {len(org_ids)}')"
+        ]
+      },
+      "expectedResults": {
+        "totalCount": ">= 0",
+        "uniqueOrgIds": ">= 1 (if interviews exist)"
+      }
+    },
+
+    {
+      "id": "8",
+      "name": "Compare with Org Admin (Isolation Check)",
+      "description": "Verify org admin ONLY sees their org's data (not cross-org)",
+      "pythonScript": {
+        "commands": [
+          "# Login as Org 1 Admin",
+          "helper.login('test-admin@test-org-1.com', 'TestPass123!')",
+          "org1_jobs = helper.get('/api/v1/job-postings')",
+          "print(f'Org 1 Admin sees {len(org1_jobs)} job postings')",
+          "org1_org_ids = set(j['organizationId'] for j in org1_jobs)",
+          "print(f'Unique org IDs: {len(org1_org_ids)}')",
+          "",
+          "# Login as Org 2 Admin",
+          "helper.login('test-admin@test-org-2.com', 'TestPass123!')",
+          "org2_jobs = helper.get('/api/v1/job-postings')",
+          "print(f'Org 2 Admin sees {len(org2_jobs)} job postings')",
+          "org2_org_ids = set(j['organizationId'] for j in org2_jobs)",
+          "print(f'Unique org IDs: {len(org2_org_ids)}')",
+          "",
+          "# Login back as SUPER_ADMIN",
+          "helper.login('info@gaiai.ai', '23235656')",
+          "super_jobs = helper.get('/api/v1/job-postings')",
+          "print(f'SUPER_ADMIN sees {len(super_jobs)} job postings')",
+          "super_org_ids = set(j['organizationId'] for j in super_jobs)",
+          "print(f'Unique org IDs: {len(super_org_ids)}')"
+        ]
+      },
+      "expectedResults": {
+        "org1Admin": {
+          "count": 2,
+          "uniqueOrgIds": 1,
+          "note": "Should ONLY see Org 1's 2 job postings"
+        },
+        "org2Admin": {
+          "count": 2,
+          "uniqueOrgIds": 1,
+          "note": "Should ONLY see Org 2's 2 job postings"
+        },
+        "superAdmin": {
+          "count": 6,
+          "uniqueOrgIds": 3,
+          "note": "Should see ALL 6 job postings from 3 orgs"
+        }
+      },
+      "verification": [
+        "Org admins isolated (count=2, uniqueOrgIds=1)",
+        "SUPER_ADMIN cross-org (count=6, uniqueOrgIds=3)",
+        "No data leakage between orgs"
+      ]
+    },
+
+    {
+      "id": "9",
+      "name": "Middleware Token Inspection",
+      "description": "Check if organizationIsolation middleware correctly extracts userRole from token",
+      "commands": [
+        {
+          "command": "grep -A 10 'req.userRole' backend/src/middleware/organizationIsolation.js",
+          "expectedOutput": "Should see req.userRole = req.user?.role extraction",
+          "tool": "Bash"
+        },
+        {
+          "command": "grep -B 5 -A 15 'SUPER_ADMIN' backend/src/middleware/organizationIsolation.js",
+          "expectedOutput": "Should see if (req.userRole === 'SUPER_ADMIN') return next();",
+          "tool": "Bash"
+        }
+      ],
+      "verification": [
+        "req.userRole is extracted from req.user.role",
+        "SUPER_ADMIN check exists BEFORE organizationId filter",
+        "return next() called for SUPER_ADMIN (no filter applied)"
+      ]
+    },
+
+    {
+      "id": "10",
+      "name": "Controller SUPER_ADMIN Checks",
+      "description": "Verify all 5 controllers have SUPER_ADMIN bypass logic",
+      "commands": [
+        {
+          "command": "grep -c \"req.user.role === 'SUPER_ADMIN'\" backend/src/controllers/candidateController.js",
+          "expectedOutput": "4 (one per function: getAll, getById, update, delete)",
+          "tool": "Bash"
+        },
+        {
+          "command": "grep -c \"req.user.role === 'SUPER_ADMIN'\" backend/src/controllers/jobPostingController.js",
+          "expectedOutput": "4",
+          "tool": "Bash"
+        },
+        {
+          "command": "grep -c \"req.user.role === 'SUPER_ADMIN'\" backend/src/controllers/analysisController.js",
+          "expectedOutput": "3 (getAll, getById, delete)",
+          "tool": "Bash"
+        },
+        {
+          "command": "grep -c \"userRole === 'SUPER_ADMIN'\" backend/src/services/offerService.js",
+          "expectedOutput": "4",
+          "tool": "Bash"
+        },
+        {
+          "command": "grep -c \"userRole === 'SUPER_ADMIN'\" backend/src/services/interviewService.js",
+          "expectedOutput": "2",
+          "tool": "Bash"
+        }
+      ],
+      "verification": [
+        "All 5 controllers/services have SUPER_ADMIN checks",
+        "Total checks: 4+4+3+4+2 = 17"
+      ]
+    },
+
+    {
+      "id": "11",
+      "name": "Database Query Inspection (Optional)",
+      "description": "Check actual SQL queries sent to Prisma (if needed)",
+      "note": "Only run if issues found in previous tests",
+      "commands": [
+        {
+          "command": "docker logs ikai-backend --tail 100 | grep -i 'prisma:query' || echo 'Query logging not enabled'",
+          "expectedOutput": "Queries should NOT have organizationId filter for SUPER_ADMIN",
+          "tool": "Bash"
+        }
+      ]
+    }
+  ],
+
+  "deliverables": [
+    {
+      "type": "Verification Report",
+      "filename": "docs/reports/worker1-super-admin-verification-report.md",
+      "requiredSections": [
+        "Executive Summary (Pass/Fail per endpoint)",
+        "Test Results (RAW terminal outputs)",
+        "Issues Found (if any)",
+        "Middleware Verification",
+        "Controller Checks",
+        "Comparison Table (SUPER_ADMIN vs Org Admin)",
+        "Recommendations (if issues exist)"
+      ]
+    },
+    {
+      "type": "Screenshots (Optional)",
+      "description": "Python test helper output showing cross-org access"
+    }
+  ],
+
+  "successCriteria": {
+    "critical": [
+      "✅ SUPER_ADMIN sees 6 job postings (not 0, not 2)",
+      "✅ SUPER_ADMIN sees candidates from 3 different orgs",
+      "✅ Org admins isolated (only see their org's data)",
+      "✅ No 403 errors for SUPER_ADMIN",
+      "✅ organizationIsolation middleware has req.userRole extraction"
+    ],
+    "optional": [
+      "Analyses/offers/interviews cross-org (if data exists)",
+      "All 17 SUPER_ADMIN checks found in code"
+    ]
+  },
+
+  "failureScenarios": {
+    "scenario1": {
+      "symptom": "SUPER_ADMIN sees 0 job postings",
+      "likelyCause": "organizationIsolation middleware blocking (req.userRole not set or checked)",
+      "fix": "Check if req.userRole = req.user?.role exists in organizationIsolation.js"
+    },
+    "scenario2": {
+      "symptom": "SUPER_ADMIN sees 2 job postings (same as org admin)",
+      "likelyCause": "SUPER_ADMIN treated as normal user (organizationId filter applied)",
+      "fix": "Check if (req.userRole === 'SUPER_ADMIN') return next(); exists BEFORE filter"
+    },
+    "scenario3": {
+      "symptom": "403 Forbidden error",
+      "likelyCause": "authorize middleware doesn't allow SUPER_ADMIN on route",
+      "fix": "Add SUPER_ADMIN to allowed roles in route definition"
+    },
+    "scenario4": {
+      "symptom": "Token doesn't have 'role' field",
+      "likelyCause": "JWT generation missing role field",
+      "fix": "Check backend/src/controllers/authController.js login function"
+    }
+  },
+
+  "estimatedIssues": 0,
+  "confidence": "HIGH (fixes already applied in commit 00397af)",
+
+  "notes": [
+    "Use Python test helper for easier testing (scripts/test-helper.py)",
+    "Save all terminal outputs (RAW, no interpretation)",
+    "If count != 6 for SUPER_ADMIN job postings, investigate immediately",
+    "Compare SUPER_ADMIN output with Org Admin output (isolation check)",
+    "Check both middleware (organizationIsolation) and controllers"
+  ],
+
+  "asanmodMetadata": {
+    "strictMode": true,
+    "requireRawOutputs": true,
+    "noSimulation": true,
+    "verificationRequired": true,
+    "parallelExecution": false
+  }
+}
