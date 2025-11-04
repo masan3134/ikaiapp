@@ -92,18 +92,10 @@ export const ManagerDashboard = () => {
         <ApprovalQueueWidget data={stats?.approvalQueue} />
       </div>
 
-      {/* Bottom Row: Interview Schedule, Monthly KPIs, Budget Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {/* Bottom Row: Interview Schedule, Monthly KPIs */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <InterviewScheduleWidget data={stats?.interviews} />
         <MonthlyKPIsWidget data={stats?.kpis} />
-        <div className="bg-white rounded-xl shadow-sm p-6">
-          <h3 className="text-lg font-semibold text-slate-800 flex items-center gap-2 mb-4">
-            💰 Bütçe Özeti
-          </h3>
-          <div className="text-center py-8">
-            <p className="text-sm text-slate-500">Bütçe takibi yakında eklenecek</p>
-          </div>
-        </div>
       </div>
     </div>
   );
