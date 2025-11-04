@@ -498,4 +498,96 @@ router.get('/system-health', superAdminOnly, async (req, res) => {
   }
 });
 
+/**
+ * GET /security-logs
+ * Get system-wide security logs (user logins, activities)
+ */
+router.get('/security-logs', superAdminOnly, async (req, res) => {
+  try {
+    const { limit = 50 } = req.query;
+
+    // Get recent user activities (cross-org)
+    const recentUsers = await prisma.user.findMany({
+      take: parseInt(limit),
+      orderBy: { lastLogin: 'desc' },
+      select: {
+        id: true,
+        email: true,
+        role: true,
+        lastLogin: true,
+        createdAt: true,
+        organization: {
+          select: {
+            name: true
+          }
+        }
+      }
+    });
+
+    // Get login statistics
+    const [
+      totalUsers,
+      activeToday,
+      activeThisWeek,
+      newToday
+    ] = await Promise.all([
+      prisma.user.count(),
+      prisma.user.count({
+        where: {
+          lastLogin: {
+            gte: new Date(new Date().setHours(0, 0, 0, 0))
+          }
+        }
+      }),
+      prisma.user.count({
+        where: {
+          lastLogin: {
+            gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+          }
+        }
+      }),
+      prisma.user.count({
+        where: {
+          createdAt: {
+            gte: new Date(new Date().setHours(0, 0, 0, 0))
+          }
+        }
+      })
+    ]);
+
+    // Format security events
+    const securityEvents = recentUsers.map(user => ({
+      id: user.id,
+      event: 'User Login',
+      type: 'success',
+      user: user.email,
+      role: user.role,
+      organization: user.organization?.name || 'N/A',
+      timestamp: user.lastLogin || user.createdAt,
+      ip: '***',  // IP tracking not implemented yet
+    }));
+
+    return res.json({
+      success: true,
+      data: {
+        stats: {
+          totalUsers,
+          activeToday,
+          activeThisWeek,
+          newToday,
+          suspiciousActivity: 0,  // Not tracked yet
+          failedLogins: 0  // Not tracked yet
+        },
+        events: securityEvents
+      }
+    });
+  } catch (error) {
+    console.error('[SuperAdmin] Error fetching security logs:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Güvenlik logları alınırken hata oluştu'
+    });
+  }
+});
+
 module.exports = router;
