@@ -1,10 +1,22 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Briefcase, Loader2, DollarSign, Calendar, CheckCircle, XCircle, Clock, Send, Gift, FileText, TrendingUp } from 'lucide-react';
-import { formatDate } from '@/lib/utils/dateFormat';
-import offerService from '@/lib/services/offerService';
-import type { JobOffer } from '../../types';
+import { useState, useEffect } from "react";
+import {
+  Briefcase,
+  Loader2,
+  DollarSign,
+  Calendar,
+  CheckCircle,
+  XCircle,
+  Clock,
+  Send,
+  Gift,
+  FileText,
+  TrendingUp,
+} from "lucide-react";
+import { formatDate } from "@/lib/utils/dateFormat";
+import offerService from "@/lib/services/offerService";
+import type { JobOffer } from "../../types";
 
 interface OffersTabProps {
   candidateId: string;
@@ -25,31 +37,74 @@ export default function OffersTab({ candidateId }: OffersTabProps) {
       const offersList = data?.data || data?.offers || [];
       setOffers(offersList);
     } catch (error) {
-      console.error('Offers load error:', error);
+      console.error("Offers load error:", error);
     } finally {
       setLoading(false);
     }
   }
 
-  function getStatusBadge(status: JobOffer['status']) {
-    const badges: Record<string, { icon: any; colors: string; text: string }> = {
-      draft: { icon: FileText, colors: 'bg-gray-100 text-gray-700 border-gray-200', text: 'Taslak' },
-      pending_approval: { icon: Clock, colors: 'bg-yellow-100 text-yellow-700 border-yellow-200', text: 'Onay Bekliyor' },
-      approved: { icon: CheckCircle, colors: 'bg-blue-100 text-blue-700 border-blue-200', text: 'Onaylandı' },
-      sent: { icon: Send, colors: 'bg-purple-100 text-purple-700 border-purple-200', text: 'Gönderildi' },
-      accepted: { icon: CheckCircle, colors: 'bg-green-100 text-green-700 border-green-200', text: 'Kabul Edildi' },
-      rejected: { icon: XCircle, colors: 'bg-red-100 text-red-700 border-red-200', text: 'Reddedildi' },
-      negotiating: { icon: TrendingUp, colors: 'bg-orange-100 text-orange-700 border-orange-200', text: 'Müzakere' },
-      withdrawn: { icon: XCircle, colors: 'bg-orange-100 text-orange-700 border-orange-200', text: 'Geri Çekildi' },
-      expired: { icon: Clock, colors: 'bg-red-100 text-red-700 border-red-200', text: 'Süresi Doldu' },
-      cancelled: { icon: XCircle, colors: 'bg-gray-100 text-gray-700 border-gray-200', text: 'İptal Edildi' },
-    };
-    const statusLower = status?.toLowerCase() || 'draft';
+  function getStatusBadge(status: JobOffer["status"]) {
+    const badges: Record<string, { icon: any; colors: string; text: string }> =
+      {
+        draft: {
+          icon: FileText,
+          colors: "bg-gray-100 text-gray-700 border-gray-200",
+          text: "Taslak",
+        },
+        pending_approval: {
+          icon: Clock,
+          colors: "bg-yellow-100 text-yellow-700 border-yellow-200",
+          text: "Onay Bekliyor",
+        },
+        approved: {
+          icon: CheckCircle,
+          colors: "bg-blue-100 text-blue-700 border-blue-200",
+          text: "Onaylandı",
+        },
+        sent: {
+          icon: Send,
+          colors: "bg-purple-100 text-purple-700 border-purple-200",
+          text: "Gönderildi",
+        },
+        accepted: {
+          icon: CheckCircle,
+          colors: "bg-green-100 text-green-700 border-green-200",
+          text: "Kabul Edildi",
+        },
+        rejected: {
+          icon: XCircle,
+          colors: "bg-red-100 text-red-700 border-red-200",
+          text: "Reddedildi",
+        },
+        negotiating: {
+          icon: TrendingUp,
+          colors: "bg-orange-100 text-orange-700 border-orange-200",
+          text: "Müzakere",
+        },
+        withdrawn: {
+          icon: XCircle,
+          colors: "bg-orange-100 text-orange-700 border-orange-200",
+          text: "Geri Çekildi",
+        },
+        expired: {
+          icon: Clock,
+          colors: "bg-red-100 text-red-700 border-red-200",
+          text: "Süresi Doldu",
+        },
+        cancelled: {
+          icon: XCircle,
+          colors: "bg-gray-100 text-gray-700 border-gray-200",
+          text: "İptal Edildi",
+        },
+      };
+    const statusLower = status?.toLowerCase() || "draft";
     const badge = badges[statusLower] || badges.draft;
     const Icon = badge.icon;
 
     return (
-      <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 ${badge.colors} border rounded-full text-xs font-semibold`}>
+      <span
+        className={`inline-flex items-center gap-1.5 px-3 py-1.5 ${badge.colors} border rounded-full text-xs font-semibold`}
+      >
         <Icon className="w-3.5 h-3.5" />
         {badge.text}
       </span>
@@ -76,8 +131,12 @@ export default function OffersTab({ candidateId }: OffersTabProps) {
               {/* Header */}
               <div className="flex items-start justify-between mb-5">
                 <div className="flex-1">
-                  <h4 className="text-lg font-bold text-gray-900 mb-1">{offer.position}</h4>
-                  <p className="text-sm text-gray-600 font-medium">{offer.department}</p>
+                  <h4 className="text-lg font-bold text-gray-900 mb-1">
+                    {offer.position}
+                  </h4>
+                  <p className="text-sm text-gray-600 font-medium">
+                    {offer.department}
+                  </p>
                 </div>
                 {getStatusBadge(offer.status)}
               </div>
@@ -106,8 +165,12 @@ export default function OffersTab({ candidateId }: OffersTabProps) {
                     <Calendar className="w-5 h-5 text-blue-600" />
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500 font-medium">Başlangıç Tarihi</p>
-                    <p className="text-sm font-bold text-gray-900">{formatDate(offer.startDate)}</p>
+                    <p className="text-xs text-gray-500 font-medium">
+                      Başlangıç Tarihi
+                    </p>
+                    <p className="text-sm font-bold text-gray-900">
+                      {formatDate(offer.startDate)}
+                    </p>
                   </div>
                 </div>
 
@@ -117,8 +180,12 @@ export default function OffersTab({ candidateId }: OffersTabProps) {
                       <Send className="w-5 h-5 text-purple-600" />
                     </div>
                     <div>
-                      <p className="text-xs text-gray-500 font-medium">Gönderilme</p>
-                      <p className="text-sm font-bold text-gray-900">{formatDate(offer.sentAt)}</p>
+                      <p className="text-xs text-gray-500 font-medium">
+                        Gönderilme
+                      </p>
+                      <p className="text-sm font-bold text-gray-900">
+                        {formatDate(offer.sentAt)}
+                      </p>
                     </div>
                   </div>
                 )}
@@ -135,7 +202,10 @@ export default function OffersTab({ candidateId }: OffersTabProps) {
                   </div>
                   <ul className="space-y-2">
                     {offer.benefits.map((benefit, idx) => (
-                      <li key={idx} className="flex items-start gap-2 text-sm text-gray-800">
+                      <li
+                        key={idx}
+                        className="flex items-start gap-2 text-sm text-gray-800"
+                      >
                         <CheckCircle className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
                         <span>{benefit}</span>
                       </li>
@@ -155,7 +225,10 @@ export default function OffersTab({ candidateId }: OffersTabProps) {
                   </div>
                   <ul className="space-y-2">
                     {offer.conditions.map((condition, idx) => (
-                      <li key={idx} className="flex items-start gap-2 text-sm text-gray-700">
+                      <li
+                        key={idx}
+                        className="flex items-start gap-2 text-sm text-gray-700"
+                      >
                         <span className="w-1.5 h-1.5 rounded-full bg-gray-400 mt-1.5 flex-shrink-0"></span>
                         <span>{condition}</span>
                       </li>
@@ -168,14 +241,22 @@ export default function OffersTab({ candidateId }: OffersTabProps) {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {offer.respondedAt && (
                   <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-                    <p className="text-xs text-green-700 font-semibold mb-1">Yanıtlanma</p>
-                    <p className="text-sm font-bold text-gray-900">{formatDate(offer.respondedAt)}</p>
+                    <p className="text-xs text-green-700 font-semibold mb-1">
+                      Yanıtlanma
+                    </p>
+                    <p className="text-sm font-bold text-gray-900">
+                      {formatDate(offer.respondedAt)}
+                    </p>
                   </div>
                 )}
                 {offer.expiresAt && (
                   <div className="bg-orange-50 border border-orange-200 rounded-lg p-3">
-                    <p className="text-xs text-orange-700 font-semibold mb-1">Son Geçerlilik</p>
-                    <p className="text-sm font-bold text-gray-900">{formatDate(offer.expiresAt)}</p>
+                    <p className="text-xs text-orange-700 font-semibold mb-1">
+                      Son Geçerlilik
+                    </p>
+                    <p className="text-sm font-bold text-gray-900">
+                      {formatDate(offer.expiresAt)}
+                    </p>
                   </div>
                 )}
               </div>

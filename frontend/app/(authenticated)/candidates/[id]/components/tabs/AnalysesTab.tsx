@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { FileText, Loader2, CheckCircle, XCircle, Clock } from 'lucide-react';
-import { getAnalysesByCandidate } from '@/lib/services/analysisService';
-import { formatDate } from '@/lib/utils/dateFormat';
-import AnalysisDetailModal from '../modals/AnalysisDetailModal';
-import type { Analysis } from '../../types';
+import { useState, useEffect } from "react";
+import { FileText, Loader2, CheckCircle, XCircle, Clock } from "lucide-react";
+import { getAnalysesByCandidate } from "@/lib/services/analysisService";
+import { formatDate } from "@/lib/utils/dateFormat";
+import AnalysisDetailModal from "../modals/AnalysisDetailModal";
+import type { Analysis } from "../../types";
 
 interface AnalysesTabProps {
   candidateId: string;
@@ -14,7 +14,9 @@ interface AnalysesTabProps {
 export default function AnalysesTab({ candidateId }: AnalysesTabProps) {
   const [analyses, setAnalyses] = useState<Analysis[]>([]);
   const [loading, setLoading] = useState(false);
-  const [selectedAnalysis, setSelectedAnalysis] = useState<Analysis | null>(null);
+  const [selectedAnalysis, setSelectedAnalysis] = useState<Analysis | null>(
+    null
+  );
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
@@ -29,7 +31,7 @@ export default function AnalysesTab({ candidateId }: AnalysesTabProps) {
         setAnalyses(result.analyses);
       }
     } catch (error) {
-      console.error('Analyses load error:', error);
+      console.error("Analyses load error:", error);
     } finally {
       setLoading(false);
     }
@@ -106,17 +108,17 @@ export default function AnalysesTab({ candidateId }: AnalysesTabProps) {
                       {formatDate(analysis.createdAt)}
                     </td>
                     <td className="px-4 py-3 text-sm">
-                      {analysis.status === 'COMPLETED' ? (
+                      {analysis.status === "COMPLETED" ? (
                         <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-100 text-green-700 rounded text-xs">
                           <CheckCircle className="w-3 h-3" />
                           Tamamlandı
                         </span>
-                      ) : analysis.status === 'FAILED' ? (
+                      ) : analysis.status === "FAILED" ? (
                         <span className="inline-flex items-center gap-1 px-2 py-1 bg-red-100 text-red-700 rounded text-xs">
                           <XCircle className="w-3 h-3" />
                           Başarısız
                         </span>
-                      ) : analysis.status === 'PROCESSING' ? (
+                      ) : analysis.status === "PROCESSING" ? (
                         <span className="inline-flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs">
                           <Clock className="w-3 h-3" />
                           İşleniyor
@@ -141,11 +143,11 @@ export default function AnalysesTab({ candidateId }: AnalysesTabProps) {
                       {result?.matchLabel ? (
                         <span
                           className={`inline-block px-2 py-1 rounded text-xs ${
-                            result.matchLabel === 'Güçlü Eşleşme'
-                              ? 'bg-green-100 text-green-700'
-                              : result.matchLabel === 'İyi Eşleşme'
-                              ? 'bg-blue-100 text-blue-700'
-                              : 'bg-orange-100 text-orange-700'
+                            result.matchLabel === "Güçlü Eşleşme"
+                              ? "bg-green-100 text-green-700"
+                              : result.matchLabel === "İyi Eşleşme"
+                                ? "bg-blue-100 text-blue-700"
+                                : "bg-orange-100 text-orange-700"
                           }`}
                         >
                           {result.matchLabel}

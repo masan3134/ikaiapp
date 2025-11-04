@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useOrganization } from '@/contexts/OrganizationContext';
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useOrganization } from "@/contexts/OrganizationContext";
 
 export default function OnboardingWizard() {
   const router = useRouter();
@@ -11,53 +11,59 @@ export default function OnboardingWizard() {
   const [loading, setLoading] = useState(false);
 
   // Form state
-  const [companyName, setCompanyName] = useState('');
-  const [industry, setIndustry] = useState('');
-  const [companySize, setCompanySize] = useState('');
-  const [jobTitle, setJobTitle] = useState('');
-  const [jobDepartment, setJobDepartment] = useState('');
+  const [companyName, setCompanyName] = useState("");
+  const [industry, setIndustry] = useState("");
+  const [companySize, setCompanySize] = useState("");
+  const [jobTitle, setJobTitle] = useState("");
+  const [jobDepartment, setJobDepartment] = useState("");
   const [useDemoCVs, setUseDemoCVs] = useState(false);
 
   // Load from localStorage on mount
   useEffect(() => {
-    const saved = localStorage.getItem('onboarding-progress');
+    const saved = localStorage.getItem("onboarding-progress");
     if (saved) {
       const data = JSON.parse(saved);
       setCurrentStep(data.step || 0);
-      setCompanyName(data.companyName || '');
-      setIndustry(data.industry || '');
-      setCompanySize(data.companySize || '');
+      setCompanyName(data.companyName || "");
+      setIndustry(data.industry || "");
+      setCompanySize(data.companySize || "");
     }
   }, []);
 
   // Save to localStorage on change
   useEffect(() => {
-    localStorage.setItem('onboarding-progress', JSON.stringify({
-      step: currentStep,
-      companyName,
-      industry,
-      companySize
-    }));
+    localStorage.setItem(
+      "onboarding-progress",
+      JSON.stringify({
+        step: currentStep,
+        companyName,
+        industry,
+        companySize,
+      })
+    );
   }, [currentStep, companyName, industry, companySize]);
 
   const updateStep = async (step: number, data?: any) => {
     setLoading(true);
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:8102/api/v1/onboarding/update-step', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ step, data })
-      });
+      const token = localStorage.getItem("token");
+      const res = await fetch(
+        "http://localhost:8102/api/v1/onboarding/update-step",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ step, data }),
+        }
+      );
 
       if (res.ok) {
         setCurrentStep(step);
       }
     } catch (error) {
-      console.error('Update step error:', error);
+      console.error("Update step error:", error);
     } finally {
       setLoading(false);
     }
@@ -66,22 +72,25 @@ export default function OnboardingWizard() {
   const completeOnboarding = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:8102/api/v1/onboarding/complete', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+      const token = localStorage.getItem("token");
+      const res = await fetch(
+        "http://localhost:8102/api/v1/onboarding/complete",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         }
-      });
+      );
 
       if (res.ok) {
-        localStorage.removeItem('onboarding-progress');
+        localStorage.removeItem("onboarding-progress");
         await refreshOrganization();
-        router.push('/dashboard');
+        router.push("/dashboard");
       }
     } catch (error) {
-      console.error('Complete onboarding error:', error);
+      console.error("Complete onboarding error:", error);
     } finally {
       setLoading(false);
     }
@@ -114,8 +123,8 @@ export default function OnboardingWizard() {
                 key={step}
                 className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all ${
                   step <= currentStep
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-200 text-gray-500'
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-200 text-gray-500"
                 }`}
               >
                 {step + 1}
@@ -136,7 +145,8 @@ export default function OnboardingWizard() {
             <div className="text-6xl mb-4">👋</div>
             <h1 className="text-3xl font-bold mb-4">IKAI'ye Hoş Geldiniz!</h1>
             <p className="text-gray-600 mb-8 text-lg">
-              Yapay zeka destekli işe alım platformunuza hoş geldiniz.<br />
+              Yapay zeka destekli işe alım platformunuza hoş geldiniz.
+              <br />
               Hadi hemen başlayalım!
             </p>
             <button
@@ -154,7 +164,9 @@ export default function OnboardingWizard() {
             <h2 className="text-2xl font-bold mb-6">Şirket Bilgileriniz</h2>
 
             <div className="mb-4">
-              <label className="block text-sm font-medium mb-2">Şirket Adı *</label>
+              <label className="block text-sm font-medium mb-2">
+                Şirket Adı *
+              </label>
               <input
                 type="text"
                 value={companyName}
@@ -183,7 +195,9 @@ export default function OnboardingWizard() {
             </div>
 
             <div className="mb-6">
-              <label className="block text-sm font-medium mb-2">Şirket Büyüklüğü *</label>
+              <label className="block text-sm font-medium mb-2">
+                Şirket Büyüklüğü *
+              </label>
               <select
                 value={companySize}
                 onChange={(e) => setCompanySize(e.target.value)}
@@ -203,7 +217,7 @@ export default function OnboardingWizard() {
               disabled={!companyName || !industry || !companySize || loading}
               className="bg-blue-600 text-white px-6 py-3 rounded-lg w-full font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Kaydediliyor...' : 'Devam Et →'}
+              {loading ? "Kaydediliyor..." : "Devam Et →"}
             </button>
           </div>
         )}
@@ -211,9 +225,12 @@ export default function OnboardingWizard() {
         {/* Step 2: First Job Posting */}
         {currentStep === 2 && (
           <div>
-            <h2 className="text-2xl font-bold mb-6">İlk İş İlanınız (İsteğe Bağlı)</h2>
+            <h2 className="text-2xl font-bold mb-6">
+              İlk İş İlanınız (İsteğe Bağlı)
+            </h2>
             <p className="text-gray-600 mb-6">
-              Daha sonra ekleyebilirsiniz. Şimdi atlamak isterseniz "Atla" butonuna tıklayın.
+              Daha sonra ekleyebilirsiniz. Şimdi atlamak isterseniz "Atla"
+              butonuna tıklayın.
             </p>
 
             <div className="mb-4">
@@ -228,7 +245,9 @@ export default function OnboardingWizard() {
             </div>
 
             <div className="mb-6">
-              <label className="block text-sm font-medium mb-2">Departman</label>
+              <label className="block text-sm font-medium mb-2">
+                Departman
+              </label>
               <input
                 type="text"
                 value={jobDepartment}
@@ -302,7 +321,7 @@ export default function OnboardingWizard() {
               disabled={loading}
               className="bg-blue-600 text-white px-8 py-3 rounded-lg font-medium text-lg hover:bg-blue-700 disabled:opacity-50"
             >
-              {loading ? 'Tamamlanıyor...' : "Dashboard'a Git →"}
+              {loading ? "Tamamlanıyor..." : "Dashboard'a Git →"}
             </button>
           </div>
         )}

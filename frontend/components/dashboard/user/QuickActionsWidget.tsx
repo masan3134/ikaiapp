@@ -1,32 +1,39 @@
-'use client';
+"use client";
 
-import { Zap, User, Settings, Bell, ChevronRight, HelpCircle } from 'lucide-react';
-import Link from 'next/link';
+import {
+  Zap,
+  User,
+  Settings,
+  Bell,
+  ChevronRight,
+  HelpCircle,
+} from "lucide-react";
+import Link from "next/link";
 
 const quickActions = [
   {
-    name: 'Profilim',
-    description: 'Profil bilgilerini görüntüle',
-    path: '/settings/profile',
-    icon: <User className="w-5 h-5 text-slate-600" />
+    name: "Profilim",
+    description: "Profil bilgilerini görüntüle",
+    path: "/settings/profile",
+    icon: <User className="w-5 h-5 text-slate-600" />,
   },
   {
-    name: 'Ayarlar',
-    description: 'Hesap ayarlarını düzenle',
-    path: '/settings',
-    icon: <Settings className="w-5 h-5 text-slate-600" />
+    name: "Ayarlar",
+    description: "Hesap ayarlarını düzenle",
+    path: "/settings",
+    icon: <Settings className="w-5 h-5 text-slate-600" />,
   },
   {
-    name: 'Bildirimler',
-    description: 'Tüm bildirimleri gör',
-    path: '/notifications',
-    icon: <Bell className="w-5 h-5 text-slate-600" />
+    name: "Bildirimler",
+    description: "Tüm bildirimleri gör",
+    path: "/notifications",
+    icon: <Bell className="w-5 h-5 text-slate-600" />,
   },
   {
-    name: 'Yardım',
-    description: 'Yardım merkezine git',
-    path: '/help',
-    icon: <HelpCircle className="w-5 h-5 text-slate-600" />
+    name: "Yardım",
+    description: "Yardım merkezine git",
+    path: "/help",
+    icon: <HelpCircle className="w-5 h-5 text-slate-600" />,
   },
 ];
 
@@ -39,7 +46,7 @@ export function QuickActionsWidget() {
       </h3>
 
       <div className="space-y-2">
-        {quickActions.map(action => (
+        {quickActions.map((action) => (
           <Link
             key={action.path}
             href={action.path}
@@ -49,8 +56,12 @@ export function QuickActionsWidget() {
               {action.icon}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-slate-800">{action.name}</p>
-              <p className="text-xs text-slate-500 truncate">{action.description}</p>
+              <p className="text-sm font-medium text-slate-800">
+                {action.name}
+              </p>
+              <p className="text-xs text-slate-500 truncate">
+                {action.description}
+              </p>
             </div>
             <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-slate-600 flex-shrink-0 transition-colors" />
           </Link>

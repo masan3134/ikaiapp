@@ -1,8 +1,12 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { fetchOffers, bulkSendOffers, bulkDeleteOffers } from '@/services/offerService';
-import { Offer } from '@/lib/types/offer';
+import { useEffect, useState } from "react";
+import {
+  fetchOffers,
+  bulkSendOffers,
+  bulkDeleteOffers,
+} from "@/services/offerService";
+import { Offer } from "@/lib/types/offer";
 import {
   Table,
   TableBody,
@@ -10,19 +14,15 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import Badge from '@/components/ui/Badge';
-import Button from '@/components/ui/Button';
-import { Eye, Plus, Send, Trash2, CheckSquare, Square } from 'lucide-react';
-import Link from 'next/link';
-import { withRoleProtection } from '@/lib/hoc/withRoleProtection';
-import { RoleGroups } from '@/lib/constants/roles';
-import { useAuthStore } from '@/lib/store/authStore';
-import {
-  canCreateOffer,
-  canEditOffer,
-  canDeleteOffer
-} from '@/lib/utils/rbac';
+} from "@/components/ui/table";
+import Badge from "@/components/ui/Badge";
+import Button from "@/components/ui/Button";
+import { Eye, Plus, Send, Trash2, CheckSquare, Square } from "lucide-react";
+import Link from "next/link";
+import { withRoleProtection } from "@/lib/hoc/withRoleProtection";
+import { RoleGroups } from "@/lib/constants/roles";
+import { useAuthStore } from "@/lib/store/authStore";
+import { canCreateOffer, canEditOffer, canDeleteOffer } from "@/lib/utils/rbac";
 
 function OffersPage() {
   const { user } = useAuthStore();
@@ -44,26 +44,28 @@ function OffersPage() {
       setOffers(response.data);
       setError(null);
     } catch (err) {
-      setError('Teklifler yüklenirken bir hata oluştu.');
+      setError("Teklifler yüklenirken bir hata oluştu.");
       console.error(err);
     } finally {
       setLoading(false);
     }
   };
 
-  const getStatusVariant = (status: string): 'success' | 'error' | 'info' | 'neutral' => {
+  const getStatusVariant = (
+    status: string
+  ): "success" | "error" | "info" | "neutral" => {
     switch (status) {
-      case 'accepted':
-        return 'success';
-      case 'rejected':
-      case 'expired':
-        return 'error';
-      case 'sent':
-        return 'info';
-      case 'pending_approval':
-      case 'draft':
+      case "accepted":
+        return "success";
+      case "rejected":
+      case "expired":
+        return "error";
+      case "sent":
+        return "info";
+      case "pending_approval":
+      case "draft":
       default:
-        return 'neutral';
+        return "neutral";
     }
   };
 
@@ -71,7 +73,7 @@ function OffersPage() {
     if (selectedOffers.size === offers.length) {
       setSelectedOffers(new Set());
     } else {
-      setSelectedOffers(new Set(offers.map(o => o.id)));
+      setSelectedOffers(new Set(offers.map((o) => o.id)));
     }
   };
 
@@ -87,22 +89,26 @@ function OffersPage() {
 
   const handleBulkSend = async () => {
     if (selectedOffers.size === 0) {
-      alert('Lütfen en az bir teklif seçin');
+      alert("Lütfen en az bir teklif seçin");
       return;
     }
 
-    if (!confirm(`${selectedOffers.size} teklifi toplu olarak göndermek istediğinize emin misiniz?`)) {
+    if (
+      !confirm(
+        `${selectedOffers.size} teklifi toplu olarak göndermek istediğinize emin misiniz?`
+      )
+    ) {
       return;
     }
 
     try {
       setBulkActionLoading(true);
       await bulkSendOffers(Array.from(selectedOffers));
-      alert('Teklifler başarıyla gönderildi');
+      alert("Teklifler başarıyla gönderildi");
       setSelectedOffers(new Set());
       await loadOffers();
     } catch (err: any) {
-      alert(err.message || 'Toplu gönderme başarısız');
+      alert(err.message || "Toplu gönderme başarısız");
     } finally {
       setBulkActionLoading(false);
     }
@@ -110,22 +116,26 @@ function OffersPage() {
 
   const handleBulkDelete = async () => {
     if (selectedOffers.size === 0) {
-      alert('Lütfen en az bir teklif seçin');
+      alert("Lütfen en az bir teklif seçin");
       return;
     }
 
-    if (!confirm(`${selectedOffers.size} teklifi kalıcı olarak silmek istediğinize emin misiniz? Bu işlem geri alınamaz.`)) {
+    if (
+      !confirm(
+        `${selectedOffers.size} teklifi kalıcı olarak silmek istediğinize emin misiniz? Bu işlem geri alınamaz.`
+      )
+    ) {
       return;
     }
 
     try {
       setBulkActionLoading(true);
       await bulkDeleteOffers(Array.from(selectedOffers));
-      alert('Teklifler başarıyla silindi');
+      alert("Teklifler başarıyla silindi");
       setSelectedOffers(new Set());
       await loadOffers();
     } catch (err: any) {
-      alert(err.message || 'Toplu silme başarısız');
+      alert(err.message || "Toplu silme başarısız");
     } finally {
       setBulkActionLoading(false);
     }
@@ -187,7 +197,9 @@ function OffersPage() {
       )}
 
       {loading && <p className="text-gray-600">Yükleniyor...</p>}
-      {error && <p className="text-red-600 bg-red-50 p-4 rounded-lg">{error}</p>}
+      {error && (
+        <p className="text-red-600 bg-red-50 p-4 rounded-lg">{error}</p>
+      )}
 
       {!loading && !error && offers.length === 0 && (
         <div className="bg-white p-12 rounded-lg shadow-md text-center">
@@ -207,7 +219,11 @@ function OffersPage() {
                   <button
                     onClick={toggleSelectAll}
                     className="text-gray-700 hover:text-gray-900 transition"
-                    title={selectedOffers.size === offers.length ? 'Tümünü Kaldır' : 'Tümünü Seç'}
+                    title={
+                      selectedOffers.size === offers.length
+                        ? "Tümünü Kaldır"
+                        : "Tümünü Seç"
+                    }
                   >
                     {selectedOffers.size === offers.length ? (
                       <CheckSquare className="h-5 w-5 text-blue-600" />
@@ -216,12 +232,24 @@ function OffersPage() {
                     )}
                   </button>
                 </TableHead>
-                <TableHead className="text-gray-700 font-semibold">Aday</TableHead>
-                <TableHead className="text-gray-700 font-semibold">Pozisyon</TableHead>
-                <TableHead className="text-gray-700 font-semibold">Maaş</TableHead>
-                <TableHead className="text-gray-700 font-semibold">Durum</TableHead>
-                <TableHead className="text-gray-700 font-semibold">Gönderim Tarihi</TableHead>
-                <TableHead className="text-gray-700 font-semibold">İşlemler</TableHead>
+                <TableHead className="text-gray-700 font-semibold">
+                  Aday
+                </TableHead>
+                <TableHead className="text-gray-700 font-semibold">
+                  Pozisyon
+                </TableHead>
+                <TableHead className="text-gray-700 font-semibold">
+                  Maaş
+                </TableHead>
+                <TableHead className="text-gray-700 font-semibold">
+                  Durum
+                </TableHead>
+                <TableHead className="text-gray-700 font-semibold">
+                  Gönderim Tarihi
+                </TableHead>
+                <TableHead className="text-gray-700 font-semibold">
+                  İşlemler
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -229,7 +257,7 @@ function OffersPage() {
                 <TableRow
                   key={offer.id}
                   className={`border-b border-gray-100 hover:bg-gray-50 transition ${
-                    selectedOffers.has(offer.id) ? 'bg-blue-50' : ''
+                    selectedOffers.has(offer.id) ? "bg-blue-50" : ""
                   }`}
                 >
                   <TableCell>
@@ -247,7 +275,9 @@ function OffersPage() {
                   <TableCell className="text-gray-900 font-medium">
                     {offer.candidate?.firstName} {offer.candidate?.lastName}
                   </TableCell>
-                  <TableCell className="text-gray-700">{offer.position}</TableCell>
+                  <TableCell className="text-gray-700">
+                    {offer.position}
+                  </TableCell>
                   <TableCell className="text-gray-900 font-semibold">
                     {offer.salary.toLocaleString()} {offer.currency}
                   </TableCell>
@@ -257,7 +287,9 @@ function OffersPage() {
                     </Badge>
                   </TableCell>
                   <TableCell className="text-gray-600">
-                    {offer.sentAt ? new Date(offer.sentAt).toLocaleDateString('tr-TR') : '-'}
+                    {offer.sentAt
+                      ? new Date(offer.sentAt).toLocaleDateString("tr-TR")
+                      : "-"}
                   </TableCell>
                   <TableCell>
                     <Link href={`/offers/${offer.id}`}>
@@ -278,5 +310,5 @@ function OffersPage() {
 }
 
 export default withRoleProtection(OffersPage, {
-  allowedRoles: RoleGroups.HR_MANAGERS
+  allowedRoles: RoleGroups.HR_MANAGERS,
 });

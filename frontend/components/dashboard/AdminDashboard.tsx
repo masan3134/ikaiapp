@@ -1,20 +1,20 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useAuthStore } from '@/lib/store/authStore';
-import { useOrganization } from '@/contexts/OrganizationContext';
-import DashboardSkeleton from './DashboardSkeleton';
+import { useState, useEffect } from "react";
+import { useAuthStore } from "@/lib/store/authStore";
+import { useOrganization } from "@/contexts/OrganizationContext";
+import DashboardSkeleton from "./DashboardSkeleton";
 
 // Import admin widgets
-import AdminWelcomeHeader from './admin/AdminWelcomeHeader';
-import OrganizationStatsWidget from './admin/OrganizationStatsWidget';
-import UserManagementWidget from './admin/UserManagementWidget';
-import BillingOverviewWidget from './admin/BillingOverviewWidget';
-import UsageMetricsChart from './admin/UsageMetricsChart';
-import QuickSettingsWidget from './admin/QuickSettingsWidget';
-import TeamActivityWidget from './admin/TeamActivityWidget';
-import SecurityOverviewWidget from './admin/SecurityOverviewWidget';
-import OrganizationHealthWidget from './admin/OrganizationHealthWidget';
+import AdminWelcomeHeader from "./admin/AdminWelcomeHeader";
+import OrganizationStatsWidget from "./admin/OrganizationStatsWidget";
+import UserManagementWidget from "./admin/UserManagementWidget";
+import BillingOverviewWidget from "./admin/BillingOverviewWidget";
+import UsageMetricsChart from "./admin/UsageMetricsChart";
+import QuickSettingsWidget from "./admin/QuickSettingsWidget";
+import TeamActivityWidget from "./admin/TeamActivityWidget";
+import SecurityOverviewWidget from "./admin/SecurityOverviewWidget";
+import OrganizationHealthWidget from "./admin/OrganizationHealthWidget";
 
 interface AdminDashboardStats {
   orgStats: {
@@ -57,7 +57,7 @@ interface AdminDashboardStats {
     factors: Array<{
       name: string;
       score: number;
-      status: 'good' | 'warning' | 'critical';
+      status: "good" | "warning" | "critical";
     }>;
   };
 }
@@ -74,11 +74,11 @@ export function AdminDashboard() {
 
   const loadAdminDashboard = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('/api/v1/dashboard/admin', {
+      const token = localStorage.getItem("token");
+      const response = await fetch("/api/v1/dashboard/admin", {
         headers: {
-          'Authorization': `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
       const data = await response.json();
 
@@ -86,7 +86,7 @@ export function AdminDashboard() {
         setStats(data.data);
       }
     } catch (error) {
-      console.error('[ADMIN DASHBOARD] Load error:', error);
+      console.error("[ADMIN DASHBOARD] Load error:", error);
     } finally {
       setLoading(false);
     }
@@ -108,59 +108,64 @@ export function AdminDashboard() {
       {/* Top Row: Org Stats, User Management, Billing */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         <OrganizationStatsWidget
-          data={stats?.orgStats || {
-            totalUsers: organization.totalUsers || 0,
-            activeToday: 0,
-            plan: organization.plan || 'FREE'
-          }}
+          data={
+            stats?.orgStats || {
+              totalUsers: organization.totalUsers || 0,
+              activeToday: 0,
+              plan: organization.plan || "FREE",
+            }
+          }
           organization={organization}
         />
         <UserManagementWidget
-          data={stats?.userManagement || {
-            totalUsers: organization.totalUsers || 0,
-            activeToday: 0
-          }}
+          data={
+            stats?.userManagement || {
+              totalUsers: organization.totalUsers || 0,
+              activeToday: 0,
+            }
+          }
         />
         <BillingOverviewWidget
           organization={organization}
           usage={usage}
-          billing={stats?.billing || {
-            monthlyAmount: 0,
-            nextBillingDate: new Date().toISOString()
-          }}
+          billing={
+            stats?.billing || {
+              monthlyAmount: 0,
+              nextBillingDate: new Date().toISOString(),
+            }
+          }
         />
       </div>
 
       {/* Middle Row: Usage Chart + Quick Settings */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
         <div className="lg:col-span-2">
-          <UsageMetricsChart
-            data={stats?.usageTrend || []}
-            usage={usage}
-          />
+          <UsageMetricsChart data={stats?.usageTrend || []} usage={usage} />
         </div>
         <QuickSettingsWidget />
       </div>
 
       {/* Bottom Row: Team Activity, Security, Org Health */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <TeamActivityWidget
-          data={stats?.teamActivity || []}
-        />
+        <TeamActivityWidget data={stats?.teamActivity || []} />
         <SecurityOverviewWidget
-          data={stats?.security || {
-            twoFactorUsers: 0,
-            activeSessions: 0,
-            lastSecurityEvent: null,
-            complianceScore: 0
-          }}
+          data={
+            stats?.security || {
+              twoFactorUsers: 0,
+              activeSessions: 0,
+              lastSecurityEvent: null,
+              complianceScore: 0,
+            }
+          }
           organization={organization}
         />
         <OrganizationHealthWidget
-          data={stats?.health || {
-            score: 0,
-            factors: []
-          }}
+          data={
+            stats?.health || {
+              score: 0,
+              factors: [],
+            }
+          }
         />
       </div>
     </div>

@@ -1,20 +1,31 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Users, UserPlus, Search, Filter, Edit, Trash2, CheckCircle, XCircle } from 'lucide-react';
-import { useAuthStore } from '@/lib/store/authStore';
-import { getTeamMembers, toggleTeamMember, deleteTeamMember, TeamMember } from '@/lib/services/teamService';
-import { useToast } from '@/lib/hooks/useToast';
-import InviteUserModal from '@/components/team/InviteUserModal';
-import EditUserModal from '@/components/team/EditUserModal';
-import ConfirmDialog from '@/components/ui/ConfirmDialog';
-import LoadingSkeleton from '@/components/ui/LoadingSkeleton';
-import { withRoleProtection } from '@/lib/hoc/withRoleProtection';
-import { RoleGroups } from '@/lib/constants/roles';
+import { useState, useEffect } from "react";
 import {
-  canInviteUsers,
-  canManageTeam
-} from '@/lib/utils/rbac';
+  Users,
+  UserPlus,
+  Search,
+  Filter,
+  Edit,
+  Trash2,
+  CheckCircle,
+  XCircle,
+} from "lucide-react";
+import { useAuthStore } from "@/lib/store/authStore";
+import {
+  getTeamMembers,
+  toggleTeamMember,
+  deleteTeamMember,
+  TeamMember,
+} from "@/lib/services/teamService";
+import { useToast } from "@/lib/hooks/useToast";
+import InviteUserModal from "@/components/team/InviteUserModal";
+import EditUserModal from "@/components/team/EditUserModal";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
+import LoadingSkeleton from "@/components/ui/LoadingSkeleton";
+import { withRoleProtection } from "@/lib/hoc/withRoleProtection";
+import { RoleGroups } from "@/lib/constants/roles";
+import { canInviteUsers, canManageTeam } from "@/lib/utils/rbac";
 
 function TeamManagementPage() {
   const { user } = useAuthStore();
@@ -25,8 +36,8 @@ function TeamManagementPage() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [search, setSearch] = useState('');
-  const [roleFilter, setRoleFilter] = useState('');
+  const [search, setSearch] = useState("");
+  const [roleFilter, setRoleFilter] = useState("");
 
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -34,7 +45,7 @@ function TeamManagementPage() {
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
 
   // Check if user has admin access
-  const hasAccess = user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN';
+  const hasAccess = user?.role === "ADMIN" || user?.role === "SUPER_ADMIN";
 
   // Fetch team members
   const fetchMembers = async () => {
@@ -44,7 +55,7 @@ function TeamManagementPage() {
       setMembers(response.data.users);
       setTotalPages(response.data.pagination.pages);
     } catch (error: any) {
-      toast.error(error.message || 'Takım üyeleri yüklenemedi');
+      toast.error(error.message || "Takım üyeleri yüklenemedi");
     } finally {
       setLoading(false);
     }
@@ -60,10 +71,12 @@ function TeamManagementPage() {
   const handleToggle = async (member: TeamMember) => {
     try {
       await toggleTeamMember(member.id);
-      toast.success(`${member.name} ${!member.isActive ? 'aktif' : 'pasif'} edildi`);
+      toast.success(
+        `${member.name} ${!member.isActive ? "aktif" : "pasif"} edildi`
+      );
       fetchMembers();
     } catch (error: any) {
-      toast.error(error.message || 'Durum değiştirilemedi');
+      toast.error(error.message || "Durum değiştirilemedi");
     }
   };
 
@@ -72,11 +85,11 @@ function TeamManagementPage() {
     if (!selectedMember) return;
     try {
       await deleteTeamMember(selectedMember.id);
-      toast.success('Kullanıcı silindi');
+      toast.success("Kullanıcı silindi");
       setDeleteDialogOpen(false);
       fetchMembers();
     } catch (error: any) {
-      toast.error(error.message || 'Kullanıcı silinemedi');
+      toast.error(error.message || "Kullanıcı silinemedi");
     }
   };
 
@@ -86,27 +99,31 @@ function TeamManagementPage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8 text-center">
           <XCircle size={48} className="text-red-600 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Erişim Engellendi</h2>
-          <p className="text-gray-600">Bu sayfaya erişmek için ADMIN yetkisi gerekiyor.</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            Erişim Engellendi
+          </h2>
+          <p className="text-gray-600">
+            Bu sayfaya erişmek için ADMIN yetkisi gerekiyor.
+          </p>
         </div>
       </div>
     );
   }
 
   const roleLabels: Record<string, string> = {
-    ADMIN: 'Yönetici',
-    MANAGER: 'Müdür',
-    HR_SPECIALIST: 'İK Uzmanı',
-    USER: 'Kullanıcı',
-    SUPER_ADMIN: 'Süper Admin'
+    ADMIN: "Yönetici",
+    MANAGER: "Müdür",
+    HR_SPECIALIST: "İK Uzmanı",
+    USER: "Kullanıcı",
+    SUPER_ADMIN: "Süper Admin",
   };
 
   const roleBadgeColors: Record<string, string> = {
-    ADMIN: 'bg-purple-100 text-purple-800',
-    MANAGER: 'bg-blue-100 text-blue-800',
-    HR_SPECIALIST: 'bg-green-100 text-green-800',
-    USER: 'bg-gray-100 text-gray-800',
-    SUPER_ADMIN: 'bg-red-100 text-red-800'
+    ADMIN: "bg-purple-100 text-purple-800",
+    MANAGER: "bg-blue-100 text-blue-800",
+    HR_SPECIALIST: "bg-green-100 text-green-800",
+    USER: "bg-gray-100 text-gray-800",
+    SUPER_ADMIN: "bg-red-100 text-red-800",
   };
 
   return (
@@ -120,7 +137,9 @@ function TeamManagementPage() {
                 <Users size={32} />
                 Takım Yönetimi
               </h1>
-              <p className="text-gray-600 mt-1">Organizasyon üyelerini yönetin</p>
+              <p className="text-gray-600 mt-1">
+                Organizasyon üyelerini yönetin
+              </p>
             </div>
             {canInviteUsers(userRole) && (
               <button
@@ -138,7 +157,10 @@ function TeamManagementPage() {
         <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
           <div className="flex gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+              <Search
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                size={20}
+              />
               <input
                 type="text"
                 placeholder="İsim veya email ile ara..."
@@ -169,11 +191,21 @@ function TeamManagementPage() {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Kullanıcı</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Rol</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Durum</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Kayıt Tarihi</th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">İşlemler</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    Kullanıcı
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    Rol
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    Durum
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    Kayıt Tarihi
+                  </th>
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                    İşlemler
+                  </th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
@@ -181,12 +213,18 @@ function TeamManagementPage() {
                   <tr key={member.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div>
-                        <div className="text-sm font-medium text-gray-900">{member.name}</div>
-                        <div className="text-sm text-gray-500">{member.email}</div>
+                        <div className="text-sm font-medium text-gray-900">
+                          {member.name}
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          {member.email}
+                        </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 py-1 text-xs font-semibold rounded-full ${roleBadgeColors[member.role]}`}>
+                      <span
+                        className={`px-2 py-1 text-xs font-semibold rounded-full ${roleBadgeColors[member.role]}`}
+                      >
                         {roleLabels[member.role]}
                       </span>
                     </td>
@@ -202,27 +240,43 @@ function TeamManagementPage() {
                       )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {new Date(member.createdAt).toLocaleDateString('tr-TR')}
+                      {new Date(member.createdAt).toLocaleDateString("tr-TR")}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <button
-                        onClick={() => { setSelectedMember(member); setEditModalOpen(true); }}
+                        onClick={() => {
+                          setSelectedMember(member);
+                          setEditModalOpen(true);
+                        }}
                         className="text-blue-600 hover:text-blue-900 mr-3"
-                        disabled={member.role === 'SUPER_ADMIN'}
+                        disabled={member.role === "SUPER_ADMIN"}
                       >
                         <Edit size={18} />
                       </button>
                       <button
                         onClick={() => handleToggle(member)}
                         className="text-yellow-600 hover:text-yellow-900 mr-3"
-                        disabled={member.role === 'SUPER_ADMIN' || member.id === user?.id}
+                        disabled={
+                          member.role === "SUPER_ADMIN" ||
+                          member.id === user?.id
+                        }
                       >
-                        {member.isActive ? <XCircle size={18} /> : <CheckCircle size={18} />}
+                        {member.isActive ? (
+                          <XCircle size={18} />
+                        ) : (
+                          <CheckCircle size={18} />
+                        )}
                       </button>
                       <button
-                        onClick={() => { setSelectedMember(member); setDeleteDialogOpen(true); }}
+                        onClick={() => {
+                          setSelectedMember(member);
+                          setDeleteDialogOpen(true);
+                        }}
                         className="text-red-600 hover:text-red-900"
-                        disabled={member.role === 'SUPER_ADMIN' || member.id === user?.id}
+                        disabled={
+                          member.role === "SUPER_ADMIN" ||
+                          member.id === user?.id
+                        }
                       >
                         <Trash2 size={18} />
                       </button>
@@ -236,7 +290,7 @@ function TeamManagementPage() {
             {totalPages > 1 && (
               <div className="px-6 py-4 flex items-center justify-between border-t border-gray-200">
                 <button
-                  onClick={() => setPage(p => Math.max(1, p - 1))}
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page === 1}
                   className="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-50"
                 >
@@ -246,7 +300,7 @@ function TeamManagementPage() {
                   Sayfa {page} / {totalPages}
                 </span>
                 <button
-                  onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   disabled={page === totalPages}
                   className="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-50"
                 >
@@ -267,14 +321,20 @@ function TeamManagementPage() {
 
       <EditUserModal
         isOpen={editModalOpen}
-        onClose={() => { setEditModalOpen(false); setSelectedMember(null); }}
+        onClose={() => {
+          setEditModalOpen(false);
+          setSelectedMember(null);
+        }}
         member={selectedMember}
         onSuccess={fetchMembers}
       />
 
       <ConfirmDialog
         isOpen={deleteDialogOpen}
-        onCancel={() => { setDeleteDialogOpen(false); setSelectedMember(null); }}
+        onCancel={() => {
+          setDeleteDialogOpen(false);
+          setSelectedMember(null);
+        }}
         onConfirm={handleDelete}
         title="Kullanıcıyı Sil"
         message={`${selectedMember?.name} adlı kullanıcıyı silmek istediğinize emin misiniz?`}
@@ -286,6 +346,6 @@ function TeamManagementPage() {
 }
 
 export default withRoleProtection(TeamManagementPage, {
-  allowedRoles: RoleGroups.TEAM_VIEWERS,  // MANAGER can view team (read-only)
-  redirectTo: '/dashboard'
+  allowedRoles: RoleGroups.TEAM_VIEWERS, // MANAGER can view team (read-only)
+  redirectTo: "/dashboard",
 });

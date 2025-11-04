@@ -8,11 +8,11 @@
  * Status: MANDATORY - Wraps entire app
  */
 
-'use client';
+"use client";
 
-import React from 'react';
-import { errorLoggingService } from '@/lib/services/errorLoggingService';
-import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
+import React from "react";
+import { errorLoggingService } from "@/lib/services/errorLoggingService";
+import { AlertTriangle, RefreshCw, Home } from "lucide-react";
 
 interface Props {
   children: React.ReactNode;
@@ -30,7 +30,7 @@ export class GlobalErrorBoundary extends React.Component<Props, State> {
     this.state = {
       hasError: false,
       error: null,
-      errorId: null
+      errorId: null,
     };
   }
 
@@ -38,7 +38,7 @@ export class GlobalErrorBoundary extends React.Component<Props, State> {
     return {
       hasError: true,
       error,
-      errorId: `ERR-${Date.now()}`
+      errorId: `ERR-${Date.now()}`,
     };
   }
 
@@ -46,10 +46,10 @@ export class GlobalErrorBoundary extends React.Component<Props, State> {
     // MANDATORY: Log to centralized system
     errorLoggingService.logReactError(error, errorInfo);
 
-    console.error('[GlobalErrorBoundary] Error caught:', {
+    console.error("[GlobalErrorBoundary] Error caught:", {
       error,
       errorInfo,
-      errorId: this.state.errorId
+      errorId: this.state.errorId,
     });
   }
 
@@ -57,7 +57,7 @@ export class GlobalErrorBoundary extends React.Component<Props, State> {
     this.setState({
       hasError: false,
       error: null,
-      errorId: null
+      errorId: null,
     });
   };
 
@@ -75,7 +75,8 @@ export class GlobalErrorBoundary extends React.Component<Props, State> {
             </h1>
 
             <p className="text-gray-600 mb-6">
-              Üzgünüz, bir şeyler yanlış gitti. Hata otomatik olarak kaydedildi ve ekibimiz bilgilendirildi.
+              Üzgünüz, bir şeyler yanlış gitti. Hata otomatik olarak kaydedildi
+              ve ekibimiz bilgilendirildi.
             </p>
 
             {/* Error ID for support */}
@@ -87,9 +88,11 @@ export class GlobalErrorBoundary extends React.Component<Props, State> {
             </div>
 
             {/* Error message (dev only) */}
-            {process.env.NODE_ENV === 'development' && this.state.error && (
+            {process.env.NODE_ENV === "development" && this.state.error && (
               <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6 text-left">
-                <p className="text-xs font-semibold text-red-900 mb-2">Debug Info:</p>
+                <p className="text-xs font-semibold text-red-900 mb-2">
+                  Debug Info:
+                </p>
                 <p className="text-xs text-red-700 font-mono break-all">
                   {this.state.error.message}
                 </p>
@@ -106,7 +109,7 @@ export class GlobalErrorBoundary extends React.Component<Props, State> {
                 Tekrar Dene
               </button>
               <button
-                onClick={() => window.location.href = '/dashboard'}
+                onClick={() => (window.location.href = "/dashboard")}
                 className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 flex items-center justify-center gap-2"
               >
                 <Home className="w-4 h-4" />

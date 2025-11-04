@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useAuthStore } from '@/lib/store/authStore';
-import { DashboardSkeleton } from '@/components/dashboard/DashboardSkeleton';
+import { useState, useEffect } from "react";
+import { useAuthStore } from "@/lib/store/authStore";
+import { DashboardSkeleton } from "@/components/dashboard/DashboardSkeleton";
 import {
   WelcomeHeader,
   ProfileCompletionWidget,
@@ -11,8 +11,8 @@ import {
   RecentNotificationsWidget,
   QuickActionsWidget,
   ActivityTimelineChart,
-  SystemStatusWidget
-} from '@/components/dashboard/user';
+  SystemStatusWidget,
+} from "@/components/dashboard/user";
 
 interface DashboardStats {
   profile: {
@@ -47,15 +47,15 @@ export default function UserDashboard() {
       setLoading(true);
       setError(null);
 
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8102';
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8102";
       const response = await fetch(`${apiUrl}/api/v1/dashboard/user`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       });
 
       if (!response.ok) {
-        throw new Error('Dashboard verileri yüklenemedi');
+        throw new Error("Dashboard verileri yüklenemedi");
       }
 
       const data = await response.json();
@@ -63,11 +63,11 @@ export default function UserDashboard() {
       if (data.success) {
         setStats(data.data);
       } else {
-        throw new Error(data.message || 'Veri alınamadı');
+        throw new Error(data.message || "Veri alınamadı");
       }
     } catch (error) {
-      console.error('[USER DASHBOARD] Load error:', error);
-      setError(error instanceof Error ? error.message : 'Bir hata oluştu');
+      console.error("[USER DASHBOARD] Load error:", error);
+      setError(error instanceof Error ? error.message : "Bir hata oluştu");
     } finally {
       setLoading(false);
     }

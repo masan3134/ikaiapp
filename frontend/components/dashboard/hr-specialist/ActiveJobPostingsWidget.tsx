@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { Briefcase, ArrowUp, ChevronRight } from 'lucide-react';
-import Link from 'next/link';
+import { Briefcase, ArrowUp, ChevronRight } from "lucide-react";
+import Link from "next/link";
 
 interface ActiveJobPostingsWidgetProps {
   data: {
@@ -10,7 +10,9 @@ interface ActiveJobPostingsWidgetProps {
   } | null;
 }
 
-export function ActiveJobPostingsWidget({ data }: ActiveJobPostingsWidgetProps) {
+export function ActiveJobPostingsWidget({
+  data,
+}: ActiveJobPostingsWidgetProps) {
   return (
     <div className="bg-white shadow-sm rounded-xl hover:shadow-md transition-all group cursor-pointer">
       <div className="p-6 relative overflow-hidden">
@@ -30,9 +32,7 @@ export function ActiveJobPostingsWidget({ data }: ActiveJobPostingsWidgetProps) 
           <h3 className="text-3xl font-bold text-slate-800 mb-1">
             {data?.activePostings || 0}
           </h3>
-          <p className="text-sm text-slate-600 mb-3">
-            Aktif İş İlanı
-          </p>
+          <p className="text-sm text-slate-600 mb-3">Aktif İş İlanı</p>
 
           <div className="flex items-center gap-2 text-xs text-slate-500">
             <ArrowUp className="w-3 h-3 text-green-500" />

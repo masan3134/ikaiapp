@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Users, Calendar, Clock, Video, MapPin, Mail } from 'lucide-react';
-import interviewService from '@/lib/services/interviewService';
+import { useState } from "react";
+import { Users, Calendar, Clock, Video, MapPin, Mail } from "lucide-react";
+import interviewService from "@/lib/services/interviewService";
 
 interface Step5Props {
   data: any;
@@ -11,18 +11,18 @@ interface Step5Props {
 
 export default function Step5_Summary({ data, onSuccess }: Step5Props) {
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const typeLabels = {
-    phone: '📞 Telefon',
-    online: '🎥 Online (Google Meet)',
-    'in-person': '🏢 Yüz Yüze'
+    phone: "📞 Telefon",
+    online: "🎥 Online (Google Meet)",
+    "in-person": "🏢 Yüz Yüze",
   };
 
   const handleSubmit = async () => {
     try {
       setSubmitting(true);
-      setError('');
+      setError("");
 
       const formData = {
         candidateIds: data.step1.selectedIds,
@@ -32,13 +32,13 @@ export default function Step5_Summary({ data, onSuccess }: Step5Props) {
         duration: data.step2.duration || 60,
         location: data.step2.location,
         meetingTitle: data.step3.meetingTitle,
-        notes: data.step4.additionalNotes
+        notes: data.step4.additionalNotes,
       };
 
       await interviewService.createInterview(formData);
       onSuccess();
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Bir hata oluştu');
+      setError(err.response?.data?.error || "Bir hata oluştu");
     } finally {
       setSubmitting(false);
     }
@@ -54,7 +54,9 @@ export default function Step5_Summary({ data, onSuccess }: Step5Props) {
             <Users size={18} />
             Seçilen Adaylar
           </h4>
-          <p className="text-sm text-gray-600">{data.step1.selectedIds.length} aday</p>
+          <p className="text-sm text-gray-600">
+            {data.step1.selectedIds.length} aday
+          </p>
         </div>
 
         <div>
@@ -80,7 +82,9 @@ export default function Step5_Summary({ data, onSuccess }: Step5Props) {
               <Mail size={18} />
               Ek Notlar
             </h4>
-            <p className="text-sm text-gray-600">{data.step4.additionalNotes}</p>
+            <p className="text-sm text-gray-600">
+              {data.step4.additionalNotes}
+            </p>
           </div>
         )}
       </div>
@@ -96,7 +100,7 @@ export default function Step5_Summary({ data, onSuccess }: Step5Props) {
         disabled={submitting}
         className="w-full py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
       >
-        {submitting ? 'Oluşturuluyor...' : '💾 Kaydet & Gönder'}
+        {submitting ? "Oluşturuluyor..." : "💾 Kaydet & Gönder"}
       </button>
     </div>
   );

@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import Link from "next/link";
 
 interface PricingCardProps {
   plan: string;
@@ -23,8 +23,8 @@ export default function PricingCard({
     <div
       className={`bg-white rounded-xl p-8 ${
         highlighted
-          ? 'border-2 border-indigo-600 shadow-xl scale-105'
-          : 'border border-gray-200 shadow-lg'
+          ? "border-2 border-indigo-600 shadow-xl scale-105"
+          : "border border-gray-200 shadow-lg"
       } hover:shadow-2xl transition-all duration-300`}
     >
       {highlighted && (
@@ -61,8 +61,8 @@ export default function PricingCard({
         href={ctaLink}
         className={`block text-center py-3 px-6 rounded-lg font-medium transition-colors ${
           highlighted
-            ? 'bg-indigo-600 hover:bg-indigo-700 text-white'
-            : 'bg-gray-100 hover:bg-gray-200 text-gray-900'
+            ? "bg-indigo-600 hover:bg-indigo-700 text-white"
+            : "bg-gray-100 hover:bg-gray-200 text-gray-900"
         }`}
       >
         {ctaText}

@@ -1,30 +1,30 @@
-import { UserRole } from '@/lib/constants/roles'
-import { ROLE_COLORS } from '@/lib/constants/roleColors'
+import { UserRole } from "@/lib/constants/roles";
+import { ROLE_COLORS } from "@/lib/constants/roleColors";
 
 interface RoleBadgeProps {
-  role?: UserRole
-  size?: 'sm' | 'md' | 'lg'
+  role?: UserRole;
+  size?: "sm" | "md" | "lg";
 }
 
-export const RoleBadge: React.FC<RoleBadgeProps> = ({ role, size = 'md' }) => {
-  if (!role) return null
+export const RoleBadge: React.FC<RoleBadgeProps> = ({ role, size = "md" }) => {
+  if (!role) return null;
 
-  const colors = ROLE_COLORS[role as keyof typeof ROLE_COLORS]
-  if (!colors) return null
+  const colors = ROLE_COLORS[role as keyof typeof ROLE_COLORS];
+  if (!colors) return null;
 
   const sizeClasses = {
-    sm: 'text-xs px-2 py-1',
-    md: 'text-sm px-3 py-1.5',
-    lg: 'text-base px-4 py-2'
-  }
+    sm: "text-xs px-2 py-1",
+    md: "text-sm px-3 py-1.5",
+    lg: "text-base px-4 py-2",
+  };
 
   const roleLabels: Record<string, string> = {
-    SUPER_ADMIN: 'Super Admin',
-    ADMIN: 'Admin',
-    MANAGER: 'Manager',
-    HR_SPECIALIST: 'HR Specialist',
-    USER: 'User'
-  }
+    SUPER_ADMIN: "Super Admin",
+    ADMIN: "Admin",
+    MANAGER: "Manager",
+    HR_SPECIALIST: "HR Specialist",
+    USER: "User",
+  };
 
   return (
     <span
@@ -36,11 +36,11 @@ export const RoleBadge: React.FC<RoleBadgeProps> = ({ role, size = 'md' }) => {
       style={{
         backgroundColor: colors.light,
         color: colors.dark,
-        border: `2px solid ${colors.primary}`
+        border: `2px solid ${colors.primary}`,
       }}
     >
       <span>{colors.emoji}</span>
       <span>{roleLabels[role] || role}</span>
     </span>
-  )
-}
+  );
+};

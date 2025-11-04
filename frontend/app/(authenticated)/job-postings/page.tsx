@@ -1,7 +1,13 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { Plus, Briefcase, Trash2, FileSpreadsheet, Download } from 'lucide-react';
+import { useEffect, useState } from "react";
+import {
+  Plus,
+  Briefcase,
+  Trash2,
+  FileSpreadsheet,
+  Download,
+} from "lucide-react";
 import {
   getJobPostings,
   createJobPosting,
@@ -9,35 +15,35 @@ import {
   deleteJobPosting,
   type JobPosting,
   type CreateJobPostingData,
-  type UpdateJobPostingData
-} from '@/lib/services/jobPostingService';
-import JobPostingTable from '@/components/job-postings/JobPostingTable';
-import JobPostingForm from '@/components/job-postings/JobPostingForm';
-import JobPostingDetailModal from '@/components/job-postings/JobPostingDetailModal';
-import Modal from '@/components/ui/Modal';
-import EmptyState from '@/components/ui/EmptyState';
-import LoadingSkeleton from '@/components/ui/LoadingSkeleton';
-import SearchBar from '@/components/ui/SearchBar';
-import ConfirmDialog from '@/components/ui/ConfirmDialog';
-import { parseApiError } from '@/lib/utils/errorHandler';
-import { useAsync } from '@/lib/hooks/useAsync';
-import { useModal } from '@/lib/hooks/useModal';
-import { useToast } from '@/lib/hooks/useToast';
-import { withRoleProtection } from '@/lib/hoc/withRoleProtection';
-import { RoleGroups } from '@/lib/constants/roles';
-import { useAuthStore } from '@/lib/store/authStore';
+  type UpdateJobPostingData,
+} from "@/lib/services/jobPostingService";
+import JobPostingTable from "@/components/job-postings/JobPostingTable";
+import JobPostingForm from "@/components/job-postings/JobPostingForm";
+import JobPostingDetailModal from "@/components/job-postings/JobPostingDetailModal";
+import Modal from "@/components/ui/Modal";
+import EmptyState from "@/components/ui/EmptyState";
+import LoadingSkeleton from "@/components/ui/LoadingSkeleton";
+import SearchBar from "@/components/ui/SearchBar";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
+import { parseApiError } from "@/lib/utils/errorHandler";
+import { useAsync } from "@/lib/hooks/useAsync";
+import { useModal } from "@/lib/hooks/useModal";
+import { useToast } from "@/lib/hooks/useToast";
+import { withRoleProtection } from "@/lib/hoc/withRoleProtection";
+import { RoleGroups } from "@/lib/constants/roles";
+import { useAuthStore } from "@/lib/store/authStore";
 import {
   canCreateJobPosting,
   canEditJobPosting,
-  canDeleteJobPosting
-} from '@/lib/utils/rbac';
+  canDeleteJobPosting,
+} from "@/lib/utils/rbac";
 
 function JobPostingsPage() {
   const toast = useToast();
   const { user } = useAuthStore();
   const userRole = user?.role;
   const [jobPostings, setJobPostings] = useState<JobPosting[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Modals using custom hook
   const createModal = useModal();
@@ -47,7 +53,8 @@ function JobPostingsPage() {
   const bulkDeleteDialog = useModal();
 
   // Selected item
-  const [selectedJobPosting, setSelectedJobPosting] = useState<JobPosting | null>(null);
+  const [selectedJobPosting, setSelectedJobPosting] =
+    useState<JobPosting | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   // Data fetching with useAsync
@@ -58,21 +65,24 @@ function JobPostingsPage() {
   });
 
   // CRUD operations with useAsync
-  const { loading: formLoading, execute: executeCreate } = useAsync(createJobPosting);
-  const { loading: updateLoading, execute: executeUpdate } = useAsync(updateJobPosting);
-  const { loading: deleteLoading, execute: executeDelete } = useAsync(deleteJobPosting);
+  const { loading: formLoading, execute: executeCreate } =
+    useAsync(createJobPosting);
+  const { loading: updateLoading, execute: executeUpdate } =
+    useAsync(updateJobPosting);
+  const { loading: deleteLoading, execute: executeDelete } =
+    useAsync(deleteJobPosting);
 
   useEffect(() => {
-    loadJobPostings().catch(error => {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Load job postings error:', error);
+    loadJobPostings().catch((error) => {
+      if (process.env.NODE_ENV === "development") {
+        console.error("Load job postings error:", error);
       }
       toast.error(parseApiError(error));
     });
   }, []);
 
   // Filter job postings
-  const filteredJobPostings = jobPostings.filter(posting => {
+  const filteredJobPostings = jobPostings.filter((posting) => {
     if (!searchQuery) return true;
     const query = searchQuery.toLowerCase();
     return (
@@ -86,13 +96,13 @@ function JobPostingsPage() {
     try {
       const response = await executeCreate(data);
       if (response) {
-        setJobPostings(prev => [response.jobPosting, ...prev]);
-        toast.success(response.message || 'İş ilanı oluşturuldu');
+        setJobPostings((prev) => [response.jobPosting, ...prev]);
+        toast.success(response.message || "İş ilanı oluşturuldu");
         createModal.close();
       }
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Create error:', error);
+      if (process.env.NODE_ENV === "development") {
+        console.error("Create error:", error);
       }
       toast.error(parseApiError(error));
     }
@@ -105,16 +115,18 @@ function JobPostingsPage() {
     try {
       const response = await executeUpdate(selectedJobPosting.id, data);
       if (response) {
-        setJobPostings(prev =>
-          prev.map(jp => jp.id === selectedJobPosting.id ? response.jobPosting : jp)
+        setJobPostings((prev) =>
+          prev.map((jp) =>
+            jp.id === selectedJobPosting.id ? response.jobPosting : jp
+          )
         );
-        toast.success(response.message || 'İş ilanı güncellendi');
+        toast.success(response.message || "İş ilanı güncellendi");
         editModal.close();
         setSelectedJobPosting(null);
       }
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Update error:', error);
+      if (process.env.NODE_ENV === "development") {
+        console.error("Update error:", error);
       }
       toast.error(parseApiError(error));
     }
@@ -127,14 +139,16 @@ function JobPostingsPage() {
     try {
       const response = await executeDelete(selectedJobPosting.id);
       if (response) {
-        setJobPostings(prev => prev.filter(jp => jp.id !== selectedJobPosting.id));
-        toast.success(response.message || 'İş ilanı silindi');
+        setJobPostings((prev) =>
+          prev.filter((jp) => jp.id !== selectedJobPosting.id)
+        );
+        toast.success(response.message || "İş ilanı silindi");
         deleteDialog.close();
         setSelectedJobPosting(null);
       }
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Delete error:', error);
+      if (process.env.NODE_ENV === "development") {
+        console.error("Delete error:", error);
       }
       toast.error(parseApiError(error));
     }
@@ -171,41 +185,41 @@ function JobPostingsPage() {
     if (selectedIds.length === filteredJobPostings.length) {
       setSelectedIds([]);
     } else {
-      setSelectedIds(filteredJobPostings.map(jp => jp.id));
+      setSelectedIds(filteredJobPostings.map((jp) => jp.id));
     }
   }
 
   function toggleSelect(id: string) {
-    setSelectedIds(prev =>
-      prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
     );
   }
 
   // Export handler
-  async function handleExport(format: 'xlsx' | 'csv') {
+  async function handleExport(format: "xlsx" | "csv") {
     try {
       const API_BASE = process.env.NEXT_PUBLIC_API_URL;
       if (!API_BASE) {
-        throw new Error('NEXT_PUBLIC_API_URL environment variable is not set');
+        throw new Error("NEXT_PUBLIC_API_URL environment variable is not set");
       }
-      const token = localStorage.getItem('auth_token');
+      const token = localStorage.getItem("auth_token");
 
       let url = `${API_BASE}/api/v1/job-postings/export/${format}`;
       if (selectedIds.length > 0) {
-        url += `?ids=${selectedIds.join(',')}`;
+        url += `?ids=${selectedIds.join(",")}`;
       }
 
       const response = await fetch(url, {
         headers: {
-          'Authorization': `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
 
-      if (!response.ok) throw new Error('Export failed');
+      if (!response.ok) throw new Error("Export failed");
 
       const blob = await response.blob();
       const downloadUrl = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = downloadUrl;
       a.download = `is-ilanlari-${Date.now()}.${format}`;
       document.body.appendChild(a);
@@ -213,30 +227,35 @@ function JobPostingsPage() {
       window.URL.revokeObjectURL(downloadUrl);
       document.body.removeChild(a);
 
-      const count = selectedIds.length > 0 ? selectedIds.length : jobPostings.length;
-      toast.success(`${count} iş ilanı ${format.toUpperCase()} olarak indirildi`);
+      const count =
+        selectedIds.length > 0 ? selectedIds.length : jobPostings.length;
+      toast.success(
+        `${count} iş ilanı ${format.toUpperCase()} olarak indirildi`
+      );
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Export error:', error);
+      if (process.env.NODE_ENV === "development") {
+        console.error("Export error:", error);
       }
-      toast.error('Export sırasında hata oluştu');
+      toast.error("Export sırasında hata oluştu");
     }
   }
 
   async function handleBulkDeleteConfirm() {
     try {
       // Delete all selected job postings
-      await Promise.all(selectedIds.map(id => deleteJobPosting(id)));
+      await Promise.all(selectedIds.map((id) => deleteJobPosting(id)));
 
-      setJobPostings(prev => prev.filter(jp => !selectedIds.includes(jp.id)));
+      setJobPostings((prev) =>
+        prev.filter((jp) => !selectedIds.includes(jp.id))
+      );
       toast.success(`${selectedIds.length} iş ilanı silindi`);
       setSelectedIds([]);
       bulkDeleteDialog.close();
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Bulk delete error:', error);
+      if (process.env.NODE_ENV === "development") {
+        console.error("Bulk delete error:", error);
       }
-      toast.error('Toplu silme işlemi başarısız');
+      toast.error("Toplu silme işlemi başarısız");
     }
   }
 
@@ -264,7 +283,9 @@ function JobPostingsPage() {
           <div className="mb-8">
             <div className="flex items-center justify-between flex-wrap gap-4">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">İş İlanları</h1>
+                <h1 className="text-3xl font-bold text-gray-900">
+                  İş İlanları
+                </h1>
                 <p className="text-gray-600 mt-1">
                   İş ilanlarınızı yönetin ve yeni pozisyonlar ekleyin
                 </p>
@@ -295,17 +316,25 @@ function JobPostingsPage() {
               <div className="flex gap-2">
                 {/* Export Buttons */}
                 <button
-                  onClick={() => handleExport('xlsx')}
+                  onClick={() => handleExport("xlsx")}
                   className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
-                  title={selectedIds.length > 0 ? `${selectedIds.length} seçili ilanı indir` : 'Tüm ilanları indir'}
+                  title={
+                    selectedIds.length > 0
+                      ? `${selectedIds.length} seçili ilanı indir`
+                      : "Tüm ilanları indir"
+                  }
                 >
                   <FileSpreadsheet className="w-4 h-4" />
                   Excel {selectedIds.length > 0 && `(${selectedIds.length})`}
                 </button>
                 <button
-                  onClick={() => handleExport('csv')}
+                  onClick={() => handleExport("csv")}
                   className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
-                  title={selectedIds.length > 0 ? `${selectedIds.length} seçili ilanı indir` : 'Tüm ilanları indir'}
+                  title={
+                    selectedIds.length > 0
+                      ? `${selectedIds.length} seçili ilanı indir`
+                      : "Tüm ilanları indir"
+                  }
                 >
                   <Download className="w-4 h-4" />
                   CSV {selectedIds.length > 0 && `(${selectedIds.length})`}
@@ -331,10 +360,14 @@ function JobPostingsPage() {
               icon={<Briefcase className="w-16 h-16" />}
               title="Henüz iş ilanı eklemediniz"
               description="İlk iş ilanınızı oluşturmak için yukarıdaki butona tıklayın"
-              action={canCreateJobPosting(userRole) ? {
-                label: 'İlan Oluştur',
-                onClick: createModal.open
-              } : undefined}
+              action={
+                canCreateJobPosting(userRole)
+                  ? {
+                      label: "İlan Oluştur",
+                      onClick: createModal.open,
+                    }
+                  : undefined
+              }
             />
           )}
 
@@ -345,8 +378,8 @@ function JobPostingsPage() {
               title="Sonuç bulunamadı"
               description="Arama kriterlerinize uygun iş ilanı bulunamadı"
               action={{
-                label: 'Aramayı Temizle',
-                onClick: () => setSearchQuery('')
+                label: "Aramayı Temizle",
+                onClick: () => setSearchQuery(""),
               }}
             />
           )}
@@ -368,12 +401,11 @@ function JobPostingsPage() {
               <div className="mt-6 text-sm text-gray-600 text-center">
                 {searchQuery ? (
                   <span>
-                    {filteredJobPostings.length} / {jobPostings.length} iş ilanı gösteriliyor
+                    {filteredJobPostings.length} / {jobPostings.length} iş ilanı
+                    gösteriliyor
                   </span>
                 ) : (
-                  <span>
-                    Toplam {jobPostings.length} iş ilanı
-                  </span>
+                  <span>Toplam {jobPostings.length} iş ilanı</span>
                 )}
               </div>
             </>
@@ -445,9 +477,10 @@ function JobPostingsPage() {
           onConfirm={handleDeleteConfirm}
           title="İş İlanını Sil"
           message={`"${selectedJobPosting.title}" ilanını silmek istediğinizden emin misiniz?${
-            selectedJobPosting._count?.analyses && selectedJobPosting._count.analyses > 0
+            selectedJobPosting._count?.analyses &&
+            selectedJobPosting._count.analyses > 0
               ? ` Bu iş ilanı ${selectedJobPosting._count.analyses} adet analizde kullanılmış.`
-              : ''
+              : ""
           }`}
           confirmText="Sil"
           cancelText="İptal"
@@ -476,5 +509,5 @@ function JobPostingsPage() {
 
 export default withRoleProtection(JobPostingsPage, {
   allowedRoles: RoleGroups.HR_MANAGERS,
-  redirectTo: '/dashboard'
+  redirectTo: "/dashboard",
 });

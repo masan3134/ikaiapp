@@ -3,11 +3,11 @@
  * Opens analysis-specific AI chat modal
  */
 
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { MessageSquare } from 'lucide-react';
-import AIChatModal from './AIChatModal';
+import { useState } from "react";
+import { MessageSquare } from "lucide-react";
+import AIChatModal from "./AIChatModal";
 
 interface AIChatButtonProps {
   analysisId: string;
@@ -15,7 +15,11 @@ interface AIChatButtonProps {
   candidateCount: number;
 }
 
-export default function AIChatButton({ analysisId, analysisTitle, candidateCount }: AIChatButtonProps) {
+export default function AIChatButton({
+  analysisId,
+  analysisTitle,
+  candidateCount,
+}: AIChatButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (

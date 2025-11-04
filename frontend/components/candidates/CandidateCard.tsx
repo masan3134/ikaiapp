@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { memo } from 'react';
-import { Eye, Download, Trash2, Calendar, Mail, Phone } from 'lucide-react';
-import type { Candidate } from '@/lib/services/candidateService';
-import CandidateAvatar from './CandidateAvatar';
-import Badge from '@/components/ui/Badge';
-import { formatDate } from '@/lib/utils/dateFormat';
-import { getFullName, fixFileNameEncoding } from '@/lib/utils/stringUtils';
+import { memo } from "react";
+import { Eye, Download, Trash2, Calendar, Mail, Phone } from "lucide-react";
+import type { Candidate } from "@/lib/services/candidateService";
+import CandidateAvatar from "./CandidateAvatar";
+import Badge from "@/components/ui/Badge";
+import { formatDate } from "@/lib/utils/dateFormat";
+import { getFullName, fixFileNameEncoding } from "@/lib/utils/stringUtils";
 
 export interface CandidateCardProps {
   candidate: Candidate;
@@ -23,7 +23,7 @@ const CandidateCard = memo(function CandidateCard({
   candidate,
   onView,
   onDelete,
-  onDownload
+  onDownload,
 }: CandidateCardProps) {
   return (
     <div
@@ -65,7 +65,10 @@ const CandidateCard = memo(function CandidateCard({
 
       {/* File & Date */}
       <div className="flex items-center justify-between text-xs text-gray-500 mb-3 pt-3 border-t border-gray-100">
-        <span className="truncate" title={fixFileNameEncoding(candidate.sourceFileName)}>
+        <span
+          className="truncate"
+          title={fixFileNameEncoding(candidate.sourceFileName)}
+        >
           {fixFileNameEncoding(candidate.sourceFileName)}
         </span>
         <div className="flex items-center gap-1 flex-shrink-0 ml-2">

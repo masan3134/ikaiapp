@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { DollarSign, TrendingUp } from 'lucide-react';
+import { DollarSign, TrendingUp } from "lucide-react";
 
 interface RevenueOverviewWidgetProps {
   data: {
@@ -12,7 +12,9 @@ interface RevenueOverviewWidgetProps {
   };
 }
 
-export default function RevenueOverviewWidget({ data }: RevenueOverviewWidgetProps) {
+export default function RevenueOverviewWidget({
+  data,
+}: RevenueOverviewWidgetProps) {
   return (
     <div className="bg-gradient-to-br from-green-50 to-white shadow-sm hover:shadow-lg transition-all rounded-lg">
       <div className="p-6 border-b border-slate-200">
@@ -26,7 +28,9 @@ export default function RevenueOverviewWidget({ data }: RevenueOverviewWidgetPro
           <div className="bg-gradient-to-r from-green-500 to-emerald-600 rounded-lg p-4 text-white mb-3">
             <p className="text-xs mb-1 opacity-90">Aylık Yinelenen Gelir</p>
             <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-bold">₺{data.mrr?.toLocaleString() || 0}</span>
+              <span className="text-3xl font-bold">
+                ₺{data.mrr?.toLocaleString() || 0}
+              </span>
               <span className="text-sm opacity-90">/ay</span>
             </div>
             <div className="flex items-center gap-1 mt-2 text-xs">
@@ -54,10 +58,14 @@ export default function RevenueOverviewWidget({ data }: RevenueOverviewWidgetPro
         <div className="space-y-2 pt-3 border-t border-slate-200">
           <p className="text-xs text-slate-600 mb-2">Plan Bazlı Gelir</p>
           {[
-            { plan: 'ENTERPRISE', amount: data.enterprise || 0, color: 'purple' },
-            { plan: 'PRO', amount: data.pro || 0, color: 'blue' },
-            { plan: 'FREE', amount: 0, color: 'slate' }
-          ].map(item => (
+            {
+              plan: "ENTERPRISE",
+              amount: data.enterprise || 0,
+              color: "purple",
+            },
+            { plan: "PRO", amount: data.pro || 0, color: "blue" },
+            { plan: "FREE", amount: 0, color: "slate" },
+          ].map((item) => (
             <div key={item.plan} className="flex items-center justify-between">
               <span className="text-sm text-slate-700">{item.plan}</span>
               <span className={`text-sm font-bold text-${item.color}-600`}>

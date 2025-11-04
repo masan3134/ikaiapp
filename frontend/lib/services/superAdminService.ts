@@ -1,16 +1,16 @@
-import axios from 'axios';
+import axios from "axios";
 
 // Get API URL with browser-side override for Docker internal hostnames
 const getAPIURL = () => {
   const envURL = process.env.NEXT_PUBLIC_API_URL;
 
   // If running in browser and env URL uses Docker internal hostname, use localhost
-  if (typeof window !== 'undefined' && envURL?.includes('ikai-backend')) {
-    return 'http://localhost:8102';
+  if (typeof window !== "undefined" && envURL?.includes("ikai-backend")) {
+    return "http://localhost:8102";
   }
 
   // Otherwise use env URL or fallback to localhost
-  return envURL || 'http://localhost:8102';
+  return envURL || "http://localhost:8102";
 };
 
 const API_URL = getAPIURL();
@@ -19,7 +19,7 @@ const API_URL = getAPIURL();
 const apiClient = axios.create({
   baseURL: API_URL,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
   withCredentials: true,
 });
@@ -27,7 +27,7 @@ const apiClient = axios.create({
 // Request interceptor to add token
 apiClient.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('auth_token');
+    const token = localStorage.getItem("auth_token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -43,15 +43,18 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('auth_token');
-      localStorage.removeItem('auth_user');
-      if (typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
-        window.location.href = '/login';
+      localStorage.removeItem("auth_token");
+      localStorage.removeItem("auth_user");
+      if (
+        typeof window !== "undefined" &&
+        !window.location.pathname.includes("/login")
+      ) {
+        window.location.href = "/login";
       }
     } else if (error.response?.status === 403) {
       // Forbidden - redirect to dashboard
-      if (typeof window !== 'undefined') {
-        window.location.href = '/dashboard';
+      if (typeof window !== "undefined") {
+        window.location.href = "/dashboard";
       }
     }
     return Promise.reject(error);
@@ -75,7 +78,7 @@ export interface Organization {
   id: string;
   name: string;
   slug: string;
-  plan: 'FREE' | 'PRO' | 'ENTERPRISE';
+  plan: "FREE" | "PRO" | "ENTERPRISE";
   isActive: boolean;
   userCount: number;
   monthlyAnalysisCount: number;
@@ -97,7 +100,7 @@ export interface OrganizationsResponse {
  * Get system-wide statistics
  */
 export async function getStats(): Promise<SystemStats> {
-  const response = await apiClient.get('/api/v1/super-admin/stats');
+  const response = await apiClient.get("/api/v1/super-admin/stats");
   return response.data.data;
 }
 
@@ -107,11 +110,11 @@ export async function getStats(): Promise<SystemStats> {
 export async function getOrganizations(
   page: number = 1,
   limit: number = 10,
-  search: string = '',
-  plan?: 'FREE' | 'PRO' | 'ENTERPRISE',
+  search: string = "",
+  plan?: "FREE" | "PRO" | "ENTERPRISE",
   isActive?: boolean,
-  sortBy: string = 'createdAt',
-  sortOrder: 'asc' | 'desc' = 'desc'
+  sortBy: string = "createdAt",
+  sortOrder: "asc" | "desc" = "desc"
 ): Promise<OrganizationsResponse> {
   const params = new URLSearchParams({
     page: page.toString(),
@@ -120,11 +123,13 @@ export async function getOrganizations(
     sortOrder,
   });
 
-  if (search) params.append('search', search);
-  if (plan) params.append('plan', plan);
-  if (isActive !== undefined) params.append('isActive', isActive.toString());
+  if (search) params.append("search", search);
+  if (plan) params.append("plan", plan);
+  if (isActive !== undefined) params.append("isActive", isActive.toString());
 
-  const response = await apiClient.get(`/api/v1/super-admin/organizations?${params.toString()}`);
+  const response = await apiClient.get(
+    `/api/v1/super-admin/organizations?${params.toString()}`
+  );
   return response.data;
 }
 
@@ -139,8 +144,13 @@ export async function toggleOrganization(id: string): Promise<Organization> {
 /**
  * Update organization subscription plan
  */
-export async function updatePlan(id: string, plan: 'FREE' | 'PRO' | 'ENTERPRISE'): Promise<Organization> {
-  const response = await apiClient.patch(`/api/v1/super-admin/${id}/plan`, { plan });
+export async function updatePlan(
+  id: string,
+  plan: "FREE" | "PRO" | "ENTERPRISE"
+): Promise<Organization> {
+  const response = await apiClient.patch(`/api/v1/super-admin/${id}/plan`, {
+    plan,
+  });
   return response.data.data;
 }
 

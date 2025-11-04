@@ -1,4 +1,4 @@
-import apiClient from '@/lib/utils/apiClient';
+import apiClient from "@/lib/utils/apiClient";
 
 export interface JobOffer {
   id: string;
@@ -11,7 +11,14 @@ export interface JobOffer {
   salary: number;
   currency: string;
   startDate: string;
-  status: 'DRAFT' | 'SENT' | 'ACCEPTED' | 'REJECTED' | 'NEGOTIATING' | 'WITHDRAWN' | 'EXPIRED';
+  status:
+    | "DRAFT"
+    | "SENT"
+    | "ACCEPTED"
+    | "REJECTED"
+    | "NEGOTIATING"
+    | "WITHDRAWN"
+    | "EXPIRED";
   benefits?: string[];
   conditions?: string[];
   sentAt?: string;
@@ -27,11 +34,10 @@ export interface JobOffer {
 }
 
 class OfferService {
-
   // Get all offers with optional filters
   async getOffers(filters?: any) {
     const response = await apiClient.get(`/api/v1/offers`, {
-      params: filters
+      params: filters,
     });
     return response.data;
   }
@@ -68,13 +74,17 @@ class OfferService {
 
   // Approve offer
   async approveOffer(id: string, notes?: string) {
-    const response = await apiClient.post(`/api/v1/offers/${id}/approve`, { notes });
+    const response = await apiClient.post(`/api/v1/offers/${id}/approve`, {
+      notes,
+    });
     return response.data;
   }
 
   // Reject offer
   async rejectOffer(id: string, notes?: string) {
-    const response = await apiClient.post(`/api/v1/offers/${id}/reject`, { notes });
+    const response = await apiClient.post(`/api/v1/offers/${id}/reject`, {
+      notes,
+    });
     return response.data;
   }
 }

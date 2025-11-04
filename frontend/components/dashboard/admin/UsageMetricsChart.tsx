@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { TrendingUp } from 'lucide-react';
-import { Card, CardHeader, CardBody } from '@nextui-org/react';
+import { useState } from "react";
+import { TrendingUp } from "lucide-react";
+import { Card, CardHeader, CardBody } from "@nextui-org/react";
 import {
   AreaChart,
   Area,
@@ -11,8 +11,8 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
-  ResponsiveContainer
-} from 'recharts';
+  ResponsiveContainer,
+} from "recharts";
 
 interface UsageMetricsChartProps {
   data: Array<{
@@ -24,16 +24,24 @@ interface UsageMetricsChartProps {
   usage: any;
 }
 
-export default function UsageMetricsChart({ data, usage }: UsageMetricsChartProps) {
-  const [activeMetric, setActiveMetric] = useState<'analyses' | 'cvs' | 'activeUsers'>('analyses');
+export default function UsageMetricsChart({
+  data,
+  usage,
+}: UsageMetricsChartProps) {
+  const [activeMetric, setActiveMetric] = useState<
+    "analyses" | "cvs" | "activeUsers"
+  >("analyses");
 
   // Fallback data if empty
-  const chartData = data.length > 0 ? data : [
-    { date: '1 Kas', analyses: 0, cvs: 0, activeUsers: 0 },
-    { date: '2 Kas', analyses: 0, cvs: 0, activeUsers: 0 },
-    { date: '3 Kas', analyses: 0, cvs: 0, activeUsers: 0 },
-    { date: '4 Kas', analyses: 0, cvs: 0, activeUsers: 0 }
-  ];
+  const chartData =
+    data.length > 0
+      ? data
+      : [
+          { date: "1 Kas", analyses: 0, cvs: 0, activeUsers: 0 },
+          { date: "2 Kas", analyses: 0, cvs: 0, activeUsers: 0 },
+          { date: "3 Kas", analyses: 0, cvs: 0, activeUsers: 0 },
+          { date: "4 Kas", analyses: 0, cvs: 0, activeUsers: 0 },
+        ];
 
   return (
     <Card className="bg-white shadow-sm">
@@ -45,31 +53,31 @@ export default function UsageMetricsChart({ data, usage }: UsageMetricsChartProp
           </h3>
           <div className="flex gap-2">
             <button
-              onClick={() => setActiveMetric('analyses')}
+              onClick={() => setActiveMetric("analyses")}
               className={`text-xs px-3 py-1 rounded font-medium transition-colors ${
-                activeMetric === 'analyses'
-                  ? 'bg-purple-100 text-purple-700'
-                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                activeMetric === "analyses"
+                  ? "bg-purple-100 text-purple-700"
+                  : "bg-slate-100 text-slate-700 hover:bg-slate-200"
               }`}
             >
               Analiz
             </button>
             <button
-              onClick={() => setActiveMetric('cvs')}
+              onClick={() => setActiveMetric("cvs")}
               className={`text-xs px-3 py-1 rounded font-medium transition-colors ${
-                activeMetric === 'cvs'
-                  ? 'bg-purple-100 text-purple-700'
-                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                activeMetric === "cvs"
+                  ? "bg-purple-100 text-purple-700"
+                  : "bg-slate-100 text-slate-700 hover:bg-slate-200"
               }`}
             >
               CV
             </button>
             <button
-              onClick={() => setActiveMetric('activeUsers')}
+              onClick={() => setActiveMetric("activeUsers")}
               className={`text-xs px-3 py-1 rounded font-medium transition-colors ${
-                activeMetric === 'activeUsers'
-                  ? 'bg-purple-100 text-purple-700'
-                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                activeMetric === "activeUsers"
+                  ? "bg-purple-100 text-purple-700"
+                  : "bg-slate-100 text-slate-700 hover:bg-slate-200"
               }`}
             >
               Kullanıcı
@@ -82,33 +90,26 @@ export default function UsageMetricsChart({ data, usage }: UsageMetricsChartProp
           <AreaChart data={chartData}>
             <defs>
               <linearGradient id="analysisGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#a855f7" stopOpacity={0.4}/>
-                <stop offset="100%" stopColor="#a855f7" stopOpacity={0.1}/>
+                <stop offset="0%" stopColor="#a855f7" stopOpacity={0.4} />
+                <stop offset="100%" stopColor="#a855f7" stopOpacity={0.1} />
               </linearGradient>
               <linearGradient id="cvGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.4}/>
-                <stop offset="100%" stopColor="#3b82f6" stopOpacity={0.1}/>
+                <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.4} />
+                <stop offset="100%" stopColor="#3b82f6" stopOpacity={0.1} />
               </linearGradient>
               <linearGradient id="userGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#10b981" stopOpacity={0.4}/>
-                <stop offset="100%" stopColor="#10b981" stopOpacity={0.1}/>
+                <stop offset="0%" stopColor="#10b981" stopOpacity={0.4} />
+                <stop offset="100%" stopColor="#10b981" stopOpacity={0.1} />
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-            <XAxis
-              dataKey="date"
-              stroke="#94a3b8"
-              tick={{ fontSize: 11 }}
-            />
-            <YAxis
-              stroke="#94a3b8"
-              tick={{ fontSize: 11 }}
-            />
+            <XAxis dataKey="date" stroke="#94a3b8" tick={{ fontSize: 11 }} />
+            <YAxis stroke="#94a3b8" tick={{ fontSize: 11 }} />
             <Tooltip
               contentStyle={{
-                backgroundColor: '#fff',
-                border: '1px solid #e9d5ff',
-                borderRadius: '8px'
+                backgroundColor: "#fff",
+                border: "1px solid #e9d5ff",
+                borderRadius: "8px",
               }}
             />
             <Legend />
@@ -140,7 +141,8 @@ export default function UsageMetricsChart({ data, usage }: UsageMetricsChartProp
           <div className="text-center">
             <p className="text-xs text-slate-600 mb-1">Analiz Limiti</p>
             <p className="text-sm font-bold text-purple-600">
-              {usage?.monthlyAnalysisCount || 0}/{usage?.maxAnalysisPerMonth || 0}
+              {usage?.monthlyAnalysisCount || 0}/
+              {usage?.maxAnalysisPerMonth || 0}
             </p>
           </div>
           <div className="text-center">

@@ -1,10 +1,10 @@
-import apiClient from './authService';
+import apiClient from "./authService";
 
 export interface TeamMember {
   id: string;
   email: string;
   name: string;
-  role: 'USER' | 'ADMIN' | 'MANAGER' | 'HR_SPECIALIST' | 'SUPER_ADMIN';
+  role: "USER" | "ADMIN" | "MANAGER" | "HR_SPECIALIST" | "SUPER_ADMIN";
   isActive: boolean;
   isOnboarded: boolean;
   createdAt: string;
@@ -42,14 +42,14 @@ export interface UpdateRequest {
 export async function getTeamMembers(
   page: number = 1,
   limit: number = 10,
-  search: string = '',
-  role: string = ''
+  search: string = "",
+  role: string = ""
 ): Promise<TeamListResponse> {
   const params = new URLSearchParams();
-  params.append('page', page.toString());
-  params.append('limit', limit.toString());
-  if (search) params.append('search', search);
-  if (role) params.append('role', role);
+  params.append("page", page.toString());
+  params.append("limit", limit.toString());
+  if (search) params.append("search", search);
+  if (role) params.append("role", role);
 
   const response = await apiClient.get<TeamListResponse>(
     `/api/v1/team?${params.toString()}`
@@ -70,9 +70,11 @@ export async function getTeamMember(id: string): Promise<TeamMember> {
 /**
  * Invite team member
  */
-export async function inviteTeamMember(data: InviteRequest): Promise<TeamMember> {
+export async function inviteTeamMember(
+  data: InviteRequest
+): Promise<TeamMember> {
   const response = await apiClient.post<{ success: boolean; data: TeamMember }>(
-    '/api/v1/team/invite',
+    "/api/v1/team/invite",
     data
   );
   return response.data.data;
@@ -81,11 +83,14 @@ export async function inviteTeamMember(data: InviteRequest): Promise<TeamMember>
 /**
  * Update team member
  */
-export async function updateTeamMember(id: string, data: UpdateRequest): Promise<TeamMember> {
-  const response = await apiClient.patch<{ success: boolean; data: TeamMember }>(
-    `/api/v1/team/${id}`,
-    data
-  );
+export async function updateTeamMember(
+  id: string,
+  data: UpdateRequest
+): Promise<TeamMember> {
+  const response = await apiClient.patch<{
+    success: boolean;
+    data: TeamMember;
+  }>(`/api/v1/team/${id}`, data);
   return response.data.data;
 }
 
@@ -93,9 +98,10 @@ export async function updateTeamMember(id: string, data: UpdateRequest): Promise
  * Toggle team member active status
  */
 export async function toggleTeamMember(id: string): Promise<TeamMember> {
-  const response = await apiClient.patch<{ success: boolean; data: TeamMember }>(
-    `/api/v1/team/${id}/toggle`
-  );
+  const response = await apiClient.patch<{
+    success: boolean;
+    data: TeamMember;
+  }>(`/api/v1/team/${id}/toggle`);
   return response.data.data;
 }
 

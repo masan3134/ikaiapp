@@ -1,35 +1,47 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useOrganization } from '@/contexts/OrganizationContext';
-import { useToast } from '@/lib/hooks/useToast';
-import { updateOrganization } from '@/lib/services/organizationService';
-import Button from '@/components/ui/Button';
-import { Card } from '@/components/ui/Card';
-import { Building2, Palette, Crown, TrendingUp, Users, BarChart3, CheckCircle2, Save, RefreshCw, Sparkles } from 'lucide-react';
-import { withRoleProtection } from '@/lib/hoc/withRoleProtection';
-import { RoleGroups } from '@/lib/constants/roles';
+import { useState, useEffect } from "react";
+import { useOrganization } from "@/contexts/OrganizationContext";
+import { useToast } from "@/lib/hooks/useToast";
+import { updateOrganization } from "@/lib/services/organizationService";
+import Button from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import {
+  Building2,
+  Palette,
+  Crown,
+  TrendingUp,
+  Users,
+  BarChart3,
+  CheckCircle2,
+  Save,
+  RefreshCw,
+  Sparkles,
+} from "lucide-react";
+import { withRoleProtection } from "@/lib/hoc/withRoleProtection";
+import { RoleGroups } from "@/lib/constants/roles";
 
 function OrganizationSettingsPage() {
-  const { organization, usage, loading, refreshOrganization } = useOrganization();
+  const { organization, usage, loading, refreshOrganization } =
+    useOrganization();
   const toast = useToast();
   const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState({
-    name: '',
-    logo: '',
-    primaryColor: '#3B82F6',
-    industry: '',
-    size: ''
+    name: "",
+    logo: "",
+    primaryColor: "#3B82F6",
+    industry: "",
+    size: "",
   });
 
   useEffect(() => {
     if (organization) {
       setFormData({
-        name: organization.name || '',
-        logo: organization.logo || '',
-        primaryColor: organization.primaryColor || '#3B82F6',
-        industry: organization.industry || '',
-        size: organization.size || ''
+        name: organization.name || "",
+        logo: organization.logo || "",
+        primaryColor: organization.primaryColor || "#3B82F6",
+        industry: organization.industry || "",
+        size: organization.size || "",
       });
     }
   }, [organization]);
@@ -40,11 +52,13 @@ function OrganizationSettingsPage() {
 
     try {
       await updateOrganization(formData);
-      toast.success('✅ Organizasyon bilgileri başarıyla kaydedildi!', { duration: 3000 });
+      toast.success("✅ Organizasyon bilgileri başarıyla kaydedildi!", {
+        duration: 3000,
+      });
       await refreshOrganization();
     } catch (error: any) {
-      console.error('[SETTINGS] Update failed:', error);
-      toast.error(error?.response?.data?.message || '✗ Güncelleme başarısız');
+      console.error("[SETTINGS] Update failed:", error);
+      toast.error(error?.response?.data?.message || "✗ Güncelleme başarısız");
     } finally {
       setSaving(false);
     }
@@ -53,13 +67,13 @@ function OrganizationSettingsPage() {
   const resetForm = () => {
     if (organization) {
       setFormData({
-        name: organization.name || '',
-        logo: organization.logo || '',
-        primaryColor: organization.primaryColor || '#3B82F6',
-        industry: organization.industry || '',
-        size: organization.size || ''
+        name: organization.name || "",
+        logo: organization.logo || "",
+        primaryColor: organization.primaryColor || "#3B82F6",
+        industry: organization.industry || "",
+        size: organization.size || "",
       });
-      toast.success('Form sıfırlandı');
+      toast.success("Form sıfırlandı");
     }
   };
 
@@ -80,15 +94,22 @@ function OrganizationSettingsPage() {
             <Building2 className="text-white" size={24} />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-gray-900">Organizasyon Bilgileri</h2>
-            <p className="text-sm text-gray-600">Şirketinizin temel bilgilerini güncelleyin</p>
+            <h2 className="text-xl font-bold text-gray-900">
+              Organizasyon Bilgileri
+            </h2>
+            <p className="text-sm text-gray-600">
+              Şirketinizin temel bilgilerini güncelleyin
+            </p>
           </div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Name */}
           <div>
-            <label htmlFor="name" className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="name"
+              className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2"
+            >
               <Building2 size={16} className="text-blue-600" />
               Organizasyon Adı *
             </label>
@@ -96,7 +117,9 @@ function OrganizationSettingsPage() {
               type="text"
               id="name"
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
               className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all hover:border-gray-300"
               placeholder="Şirket adınızı girin"
               required
@@ -107,7 +130,10 @@ function OrganizationSettingsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Logo */}
             <div>
-              <label htmlFor="logo" className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="logo"
+                className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2"
+              >
                 <Sparkles size={16} className="text-purple-600" />
                 Logo URL
               </label>
@@ -116,7 +142,9 @@ function OrganizationSettingsPage() {
                   type="url"
                   id="logo"
                   value={formData.logo}
-                  onChange={(e) => setFormData({ ...formData, logo: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, logo: e.target.value })
+                  }
                   placeholder="https://example.com/logo.png"
                   className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all hover:border-gray-300"
                 />
@@ -127,7 +155,7 @@ function OrganizationSettingsPage() {
                       alt="Logo"
                       className="w-full h-full object-cover"
                       onError={(e) => {
-                        e.currentTarget.style.display = 'none';
+                        e.currentTarget.style.display = "none";
                       }}
                     />
                   </div>
@@ -137,7 +165,10 @@ function OrganizationSettingsPage() {
 
             {/* Primary Color */}
             <div>
-              <label htmlFor="primaryColor" className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="primaryColor"
+                className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2"
+              >
                 <Palette size={16} className="text-pink-600" />
                 Ana Renk
               </label>
@@ -146,13 +177,17 @@ function OrganizationSettingsPage() {
                   type="color"
                   id="primaryColor"
                   value={formData.primaryColor}
-                  onChange={(e) => setFormData({ ...formData, primaryColor: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, primaryColor: e.target.value })
+                  }
                   className="h-12 w-16 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition-all"
                 />
                 <input
                   type="text"
                   value={formData.primaryColor}
-                  onChange={(e) => setFormData({ ...formData, primaryColor: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, primaryColor: e.target.value })
+                  }
                   className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-all hover:border-gray-300 font-mono"
                   pattern="^#[0-9A-Fa-f]{6}$"
                   placeholder="#3B82F6"
@@ -169,14 +204,19 @@ function OrganizationSettingsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Industry */}
             <div>
-              <label htmlFor="industry" className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="industry"
+                className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2"
+              >
                 <Building2 size={16} className="text-green-600" />
                 Sektör
               </label>
               <select
                 id="industry"
                 value={formData.industry}
-                onChange={(e) => setFormData({ ...formData, industry: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, industry: e.target.value })
+                }
                 className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all hover:border-gray-300 bg-white"
               >
                 <option value="">Seçiniz</option>
@@ -192,14 +232,19 @@ function OrganizationSettingsPage() {
 
             {/* Size */}
             <div>
-              <label htmlFor="size" className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="size"
+                className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2"
+              >
                 <Users size={16} className="text-orange-600" />
                 Şirket Büyüklüğü
               </label>
               <select
                 id="size"
                 value={formData.size}
-                onChange={(e) => setFormData({ ...formData, size: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, size: e.target.value })
+                }
                 className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all hover:border-gray-300 bg-white"
               >
                 <option value="">Seçiniz</option>
@@ -224,7 +269,9 @@ function OrganizationSettingsPage() {
               Değişiklikleri Geri Al
             </button>
             <Button type="submit" loading={saving} size="lg">
-              {saving ? 'Kaydediliyor...' : (
+              {saving ? (
+                "Kaydediliyor..."
+              ) : (
                 <>
                   <Save size={18} />
                   Değişiklikleri Kaydet
@@ -242,38 +289,63 @@ function OrganizationSettingsPage() {
             <Crown className="text-white" size={24} />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-gray-900">Abonelik ve Kullanım</h2>
-            <p className="text-sm text-gray-600">Planınız ve aylık kullanım durumunuz</p>
+            <h2 className="text-xl font-bold text-gray-900">
+              Abonelik ve Kullanım
+            </h2>
+            <p className="text-sm text-gray-600">
+              Planınız ve aylık kullanım durumunuz
+            </p>
           </div>
         </div>
 
         {/* Current Plan Badge */}
         <div className="flex items-center justify-between p-6 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 rounded-xl border-2 border-purple-200 mb-6">
           <div className="flex items-center gap-4">
-            <div className={`p-4 rounded-full shadow-lg ${
-              organization?.plan === 'FREE' ? 'bg-gray-500' :
-              organization?.plan === 'PRO' ? 'bg-blue-500' : 'bg-purple-500'
-            }`}>
-              {organization?.plan === 'FREE' && <Sparkles className="text-white" size={28} />}
-              {organization?.plan === 'PRO' && <TrendingUp className="text-white" size={28} />}
-              {organization?.plan === 'ENTERPRISE' && <Crown className="text-white" size={28} />}
+            <div
+              className={`p-4 rounded-full shadow-lg ${
+                organization?.plan === "FREE"
+                  ? "bg-gray-500"
+                  : organization?.plan === "PRO"
+                    ? "bg-blue-500"
+                    : "bg-purple-500"
+              }`}
+            >
+              {organization?.plan === "FREE" && (
+                <Sparkles className="text-white" size={28} />
+              )}
+              {organization?.plan === "PRO" && (
+                <TrendingUp className="text-white" size={28} />
+              )}
+              {organization?.plan === "ENTERPRISE" && (
+                <Crown className="text-white" size={28} />
+              )}
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-600 mb-1">Mevcut Plan</p>
-              <h3 className={`text-3xl font-bold ${
-                organization?.plan === 'FREE' ? 'text-gray-800' :
-                organization?.plan === 'PRO' ? 'text-blue-800' : 'text-purple-800'
-              }`}>
-                {organization?.plan || 'FREE'}
+              <p className="text-sm font-medium text-gray-600 mb-1">
+                Mevcut Plan
+              </p>
+              <h3
+                className={`text-3xl font-bold ${
+                  organization?.plan === "FREE"
+                    ? "text-gray-800"
+                    : organization?.plan === "PRO"
+                      ? "text-blue-800"
+                      : "text-purple-800"
+                }`}
+              >
+                {organization?.plan || "FREE"}
               </h3>
               <p className="text-sm text-gray-600 mt-1">
-                {organization?.plan === 'FREE' && 'Ücretsiz plan - Temel özellikler'}
-                {organization?.plan === 'PRO' && 'Profesyonel plan - Sınırsız kullanım'}
-                {organization?.plan === 'ENTERPRISE' && 'Kurumsal plan - Tam özellikler'}
+                {organization?.plan === "FREE" &&
+                  "Ücretsiz plan - Temel özellikler"}
+                {organization?.plan === "PRO" &&
+                  "Profesyonel plan - Sınırsız kullanım"}
+                {organization?.plan === "ENTERPRISE" &&
+                  "Kurumsal plan - Tam özellikler"}
               </p>
             </div>
           </div>
-          {organization?.plan === 'FREE' && (
+          {organization?.plan === "FREE" && (
             <Button variant="primary" size="lg">
               <Crown size={18} />
               PRO'ya Yükselt
@@ -290,16 +362,24 @@ function OrganizationSettingsPage() {
                 <div className="p-2 bg-blue-500 rounded-lg shadow-sm">
                   <BarChart3 className="text-white" size={18} />
                 </div>
-                <p className="text-sm font-medium text-blue-700">Aylık Analizler</p>
+                <p className="text-sm font-medium text-blue-700">
+                  Aylık Analizler
+                </p>
               </div>
               <div className="flex items-baseline gap-2 mb-2">
-                <span className="text-3xl font-bold text-gray-900">{usage.analyses.used}</span>
-                <span className="text-lg text-gray-500">/ {usage.analyses.limit}</span>
+                <span className="text-3xl font-bold text-gray-900">
+                  {usage.analyses.used}
+                </span>
+                <span className="text-lg text-gray-500">
+                  / {usage.analyses.limit}
+                </span>
               </div>
               <div className="w-full bg-blue-100 rounded-full h-3 mb-2 shadow-inner">
                 <div
                   className="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full transition-all shadow-sm"
-                  style={{ width: `${Math.min((usage.analyses.used / usage.analyses.limit) * 100, 100)}%` }}
+                  style={{
+                    width: `${Math.min((usage.analyses.used / usage.analyses.limit) * 100, 100)}%`,
+                  }}
                 />
               </div>
               <p className="text-xs font-medium text-blue-600 flex items-center gap-1">
@@ -314,16 +394,24 @@ function OrganizationSettingsPage() {
                 <div className="p-2 bg-green-500 rounded-lg shadow-sm">
                   <Users className="text-white" size={18} />
                 </div>
-                <p className="text-sm font-medium text-green-700">Aylık CV Yükleme</p>
+                <p className="text-sm font-medium text-green-700">
+                  Aylık CV Yükleme
+                </p>
               </div>
               <div className="flex items-baseline gap-2 mb-2">
-                <span className="text-3xl font-bold text-gray-900">{usage.cvs.used}</span>
-                <span className="text-lg text-gray-500">/ {usage.cvs.limit}</span>
+                <span className="text-3xl font-bold text-gray-900">
+                  {usage.cvs.used}
+                </span>
+                <span className="text-lg text-gray-500">
+                  / {usage.cvs.limit}
+                </span>
               </div>
               <div className="w-full bg-green-100 rounded-full h-3 mb-2 shadow-inner">
                 <div
                   className="bg-gradient-to-r from-green-500 to-green-600 h-3 rounded-full transition-all shadow-sm"
-                  style={{ width: `${Math.min((usage.cvs.used / usage.cvs.limit) * 100, 100)}%` }}
+                  style={{
+                    width: `${Math.min((usage.cvs.used / usage.cvs.limit) * 100, 100)}%`,
+                  }}
                 />
               </div>
               <p className="text-xs font-medium text-green-600 flex items-center gap-1">
@@ -338,16 +426,24 @@ function OrganizationSettingsPage() {
                 <div className="p-2 bg-purple-500 rounded-lg shadow-sm">
                   <Users className="text-white" size={18} />
                 </div>
-                <p className="text-sm font-medium text-purple-700">Kullanıcılar</p>
+                <p className="text-sm font-medium text-purple-700">
+                  Kullanıcılar
+                </p>
               </div>
               <div className="flex items-baseline gap-2 mb-2">
-                <span className="text-3xl font-bold text-gray-900">{usage.users.used}</span>
-                <span className="text-lg text-gray-500">/ {usage.users.limit}</span>
+                <span className="text-3xl font-bold text-gray-900">
+                  {usage.users.used}
+                </span>
+                <span className="text-lg text-gray-500">
+                  / {usage.users.limit}
+                </span>
               </div>
               <div className="w-full bg-purple-100 rounded-full h-3 mb-2 shadow-inner">
                 <div
                   className="bg-gradient-to-r from-purple-500 to-purple-600 h-3 rounded-full transition-all shadow-sm"
-                  style={{ width: `${Math.min((usage.users.used / usage.users.limit) * 100, 100)}%` }}
+                  style={{
+                    width: `${Math.min((usage.users.used / usage.users.limit) * 100, 100)}%`,
+                  }}
                 />
               </div>
               <p className="text-xs font-medium text-purple-600 flex items-center gap-1">
@@ -374,14 +470,19 @@ function OrganizationSettingsPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Industry */}
           <div>
-            <label htmlFor="industry" className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="industry"
+              className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2"
+            >
               <Building2 size={16} className="text-green-600" />
               Sektör
             </label>
             <select
               id="industry"
               value={formData.industry}
-              onChange={(e) => setFormData({ ...formData, industry: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, industry: e.target.value })
+              }
               className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all hover:border-gray-300 bg-white"
             >
               <option value="">Seçiniz</option>
@@ -397,14 +498,19 @@ function OrganizationSettingsPage() {
 
           {/* Size */}
           <div>
-            <label htmlFor="size" className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="size"
+              className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2"
+            >
               <Users size={16} className="text-orange-600" />
               Şirket Büyüklüğü
             </label>
             <select
               id="size"
               value={formData.size}
-              onChange={(e) => setFormData({ ...formData, size: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, size: e.target.value })
+              }
               className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all hover:border-gray-300 bg-white"
             >
               <option value="">Seçiniz</option>
@@ -429,7 +535,9 @@ function OrganizationSettingsPage() {
             Geri Al
           </button>
           <Button onClick={handleSubmit} loading={saving} size="lg">
-            {saving ? 'Kaydediliyor...' : (
+            {saving ? (
+              "Kaydediliyor..."
+            ) : (
               <>
                 <Save size={18} />
                 Kaydet
@@ -444,5 +552,5 @@ function OrganizationSettingsPage() {
 
 export default withRoleProtection(OrganizationSettingsPage, {
   allowedRoles: RoleGroups.ADMINS,
-  redirectTo: '/dashboard'
+  redirectTo: "/dashboard",
 });

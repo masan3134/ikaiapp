@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { Building2, ChevronRight } from 'lucide-react';
-import { Card, CardBody } from '@nextui-org/react';
+import Link from "next/link";
+import { Building2, ChevronRight } from "lucide-react";
+import { Card, CardBody } from "@nextui-org/react";
 
 interface OrganizationStatsWidgetProps {
   data: {
@@ -13,7 +13,10 @@ interface OrganizationStatsWidgetProps {
   organization: any;
 }
 
-export default function OrganizationStatsWidget({ data, organization }: OrganizationStatsWidgetProps) {
+export default function OrganizationStatsWidget({
+  data,
+  organization,
+}: OrganizationStatsWidgetProps) {
   const usagePercent = organization?.maxUsers
     ? (data.totalUsers / organization.maxUsers) * 100
     : 0;
@@ -28,27 +31,33 @@ export default function OrganizationStatsWidget({ data, organization }: Organiza
             <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
               <Building2 className="w-6 h-6 text-purple-600" />
             </div>
-            <span className={`text-xs px-2 py-1 rounded font-medium ${
-              data.plan === 'ENTERPRISE' ? 'bg-purple-100 text-purple-700' :
-              data.plan === 'PRO' ? 'bg-blue-100 text-blue-700' :
-              'bg-slate-100 text-slate-700'
-            }`}>
+            <span
+              className={`text-xs px-2 py-1 rounded font-medium ${
+                data.plan === "ENTERPRISE"
+                  ? "bg-purple-100 text-purple-700"
+                  : data.plan === "PRO"
+                    ? "bg-blue-100 text-blue-700"
+                    : "bg-slate-100 text-slate-700"
+              }`}
+            >
               {data.plan}
             </span>
           </div>
 
           <h3 className="text-2xl font-bold text-slate-800 mb-1">
             {data.totalUsers}
-            <span className="text-lg text-slate-400">/{organization?.maxUsers || 0}</span>
+            <span className="text-lg text-slate-400">
+              /{organization?.maxUsers || 0}
+            </span>
           </h3>
-          <p className="text-sm text-slate-600 mb-3">
-            Toplam Kullanıcı
-          </p>
+          <p className="text-sm text-slate-600 mb-3">Toplam Kullanıcı</p>
 
           <div className="space-y-2">
             <div className="flex items-center justify-between text-xs">
               <span className="text-slate-600">Bugün Aktif</span>
-              <span className="font-semibold text-green-600">{data.activeToday}</span>
+              <span className="font-semibold text-green-600">
+                {data.activeToday}
+              </span>
             </div>
             <div className="w-full bg-slate-200 rounded-full h-2">
               <div

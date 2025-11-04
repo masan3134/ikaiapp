@@ -1,21 +1,21 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useAuthStore } from '@/lib/store/authStore';
-import apiClient from '@/lib/services/authService';
-import LoadingSkeleton from '@/components/ui/LoadingSkeleton';
-import DashboardSkeleton from './DashboardSkeleton';
+import { useState, useEffect } from "react";
+import { useAuthStore } from "@/lib/store/authStore";
+import apiClient from "@/lib/services/authService";
+import LoadingSkeleton from "@/components/ui/LoadingSkeleton";
+import DashboardSkeleton from "./DashboardSkeleton";
 
 // Super Admin widgets
-import SuperAdminHeader from './super-admin/SuperAdminHeader';
-import MultiOrgOverviewWidget from './super-admin/MultiOrgOverviewWidget';
-import RevenueOverviewWidget from './super-admin/RevenueOverviewWidget';
-import PlatformAnalyticsWidget from './super-admin/PlatformAnalyticsWidget';
-import PlatformGrowthChart from './super-admin/PlatformGrowthChart';
-import SystemHealthWidget from './super-admin/SystemHealthWidget';
-import OrganizationListWidget from './super-admin/OrganizationListWidget';
-import QueueManagementWidget from './super-admin/QueueManagementWidget';
-import SecurityMonitoringWidget from './super-admin/SecurityMonitoringWidget';
+import SuperAdminHeader from "./super-admin/SuperAdminHeader";
+import MultiOrgOverviewWidget from "./super-admin/MultiOrgOverviewWidget";
+import RevenueOverviewWidget from "./super-admin/RevenueOverviewWidget";
+import PlatformAnalyticsWidget from "./super-admin/PlatformAnalyticsWidget";
+import PlatformGrowthChart from "./super-admin/PlatformGrowthChart";
+import SystemHealthWidget from "./super-admin/SystemHealthWidget";
+import OrganizationListWidget from "./super-admin/OrganizationListWidget";
+import QueueManagementWidget from "./super-admin/QueueManagementWidget";
+import SecurityMonitoringWidget from "./super-admin/SecurityMonitoringWidget";
 
 export const SuperAdminDashboard = () => {
   const { user } = useAuthStore();
@@ -28,10 +28,10 @@ export const SuperAdminDashboard = () => {
 
   const loadSuperAdminDashboard = async () => {
     try {
-      const response = await apiClient.get('/api/v1/dashboard/super-admin');
+      const response = await apiClient.get("/api/v1/dashboard/super-admin");
       setPlatformStats(response.data.data);
     } catch (error) {
-      console.error('[SUPER ADMIN DASHBOARD] Load error:', error);
+      console.error("[SUPER ADMIN DASHBOARD] Load error:", error);
     } finally {
       setLoading(false);
     }
@@ -71,7 +71,10 @@ export const SuperAdminDashboard = () => {
 
       {/* Bottom Row - 3 Widgets */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <OrganizationListWidget data={platformStats.orgList} total={platformStats.organizations.total} />
+        <OrganizationListWidget
+          data={platformStats.orgList}
+          total={platformStats.organizations.total}
+        />
         <QueueManagementWidget data={platformStats.queues} />
         <SecurityMonitoringWidget data={platformStats.security} />
       </div>

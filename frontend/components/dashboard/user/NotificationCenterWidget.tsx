@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { Bell } from 'lucide-react';
-import Link from 'next/link';
+import { Bell } from "lucide-react";
+import Link from "next/link";
 
 interface NotificationCenterWidgetProps {
   data: {
@@ -14,7 +14,9 @@ interface NotificationCenterWidgetProps {
   };
 }
 
-export function NotificationCenterWidget({ data }: NotificationCenterWidgetProps) {
+export function NotificationCenterWidget({
+  data,
+}: NotificationCenterWidgetProps) {
   const { unread, latest } = data;
 
   return (
@@ -28,9 +30,7 @@ export function NotificationCenterWidget({ data }: NotificationCenterWidgetProps
         <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-3">
           <span className="text-2xl font-bold text-blue-600">{unread}</span>
         </div>
-        <p className="text-sm text-slate-600 mb-3">
-          Okunmamış bildirim
-        </p>
+        <p className="text-sm text-slate-600 mb-3">Okunmamış bildirim</p>
 
         {latest && (
           <p className="text-xs text-slate-500 mb-3 line-clamp-2 px-2">

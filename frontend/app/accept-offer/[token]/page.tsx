@@ -1,16 +1,26 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { getOfferByToken, acceptOffer, rejectOffer } from '@/services/publicOfferService';
-import { JobOffer } from '@/services/offerService';
+import { useEffect, useState } from "react";
+import {
+  getOfferByToken,
+  acceptOffer,
+  rejectOffer,
+} from "@/services/publicOfferService";
+import { JobOffer } from "@/services/offerService";
 
-export default function PublicOfferPage({ params }: { params: { token: string } }) {
+export default function PublicOfferPage({
+  params,
+}: {
+  params: { token: string };
+}) {
   const { token } = params;
   const [offer, setOffer] = useState<JobOffer | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [decision, setDecision] = useState<'accepted' | 'rejected' | 'confirm_reject' | null>(null);
-  const [rejectionReason, setRejectionReason] = useState('');
+  const [decision, setDecision] = useState<
+    "accepted" | "rejected" | "confirm_reject" | null
+  >(null);
+  const [rejectionReason, setRejectionReason] = useState("");
   const [showRejectModal, setShowRejectModal] = useState(false);
 
   useEffect(() => {
@@ -19,7 +29,7 @@ export default function PublicOfferPage({ params }: { params: { token: string } 
         const response = await getOfferByToken(token);
         setOffer(response.data);
       } catch (err: any) {
-        setError(err.message || 'Teklif yüklenirken bir hata oluştu.');
+        setError(err.message || "Teklif yüklenirken bir hata oluştu.");
       } finally {
         setLoading(false);
       }
@@ -33,9 +43,9 @@ export default function PublicOfferPage({ params }: { params: { token: string } 
     try {
       setLoading(true);
       await acceptOffer(token);
-      setDecision('accepted');
+      setDecision("accepted");
     } catch (err: any) {
-      setError(err.message || 'İşlem sırasında bir hata oluştu.');
+      setError(err.message || "İşlem sırasında bir hata oluştu.");
     } finally {
       setLoading(false);
     }
@@ -47,16 +57,16 @@ export default function PublicOfferPage({ params }: { params: { token: string } 
 
   const handleRejectSubmit = async () => {
     if (!rejectionReason.trim()) {
-      alert('Lütfen reddetme nedeninizi belirtin.');
+      alert("Lütfen reddetme nedeninizi belirtin.");
       return;
     }
     try {
       setLoading(true);
       await rejectOffer(token, rejectionReason);
-      setDecision('rejected');
+      setDecision("rejected");
       setShowRejectModal(false);
     } catch (err: any) {
-      setError(err.message || 'İşlem sırasında bir hata oluştu.');
+      setError(err.message || "İşlem sırasında bir hata oluştu.");
     } finally {
       setLoading(false);
     }
@@ -68,9 +78,9 @@ export default function PublicOfferPage({ params }: { params: { token: string } 
 
   const getWorkTypeLabel = (workType: string) => {
     const labels: Record<string, string> = {
-      office: '🏢 Ofis',
-      hybrid: '🏠 Hibrit',
-      remote: '💻 Uzaktan',
+      office: "🏢 Ofis",
+      hybrid: "🏠 Hibrit",
+      remote: "💻 Uzaktan",
     };
     return labels[workType] || workType;
   };
@@ -94,7 +104,9 @@ export default function PublicOfferPage({ params }: { params: { token: string } 
             <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <span className="text-3xl">⚠️</span>
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Hata Oluştu</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              Hata Oluştu
+            </h2>
             <p className="text-red-700">{error}</p>
           </div>
         </div>
@@ -102,7 +114,7 @@ export default function PublicOfferPage({ params }: { params: { token: string } 
     );
   }
 
-  if (decision === 'accepted') {
+  if (decision === "accepted") {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 via-white to-emerald-50 p-6">
         <div className="max-w-2xl w-full bg-white rounded-2xl shadow-2xl p-8 border-2 border-green-200">
@@ -110,14 +122,19 @@ export default function PublicOfferPage({ params }: { params: { token: string } 
             <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce">
               <span className="text-4xl">🎉</span>
             </div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Tebrikler!</h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              Tebrikler!
+            </h2>
             <p className="text-lg text-gray-700 mb-6">
-              Teklifi başarıyla kabul ettiniz. İnsan kaynakları ekibimiz en kısa sürede sizinle iletişime geçecektir.
+              Teklifi başarıyla kabul ettiniz. İnsan kaynakları ekibimiz en kısa
+              sürede sizinle iletişime geçecektir.
             </p>
             <div className="bg-green-50 border-2 border-green-200 rounded-xl p-6">
               <p className="text-green-800 font-medium">
-                ✅ Onay e-postanız gönderildi<br />
-                📧 Gelen kutunuzu kontrol ediniz<br />
+                ✅ Onay e-postanız gönderildi
+                <br />
+                📧 Gelen kutunuzu kontrol ediniz
+                <br />
                 📞 Yakında sizinle iletişime geçeceğiz
               </p>
             </div>
@@ -127,7 +144,7 @@ export default function PublicOfferPage({ params }: { params: { token: string } 
     );
   }
 
-  if (decision === 'rejected') {
+  if (decision === "rejected") {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-slate-50 p-6">
         <div className="max-w-2xl w-full bg-white rounded-2xl shadow-2xl p-8 border-2 border-gray-200">
@@ -135,13 +152,16 @@ export default function PublicOfferPage({ params }: { params: { token: string } 
             <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
               <span className="text-4xl">📝</span>
             </div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Bilgilendirme</h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              Bilgilendirme
+            </h2>
             <p className="text-lg text-gray-700 mb-6">
               Teklifi reddettiniz. Geri bildiriminiz için teşekkür ederiz.
             </p>
             <div className="bg-gray-50 border-2 border-gray-200 rounded-xl p-6">
               <p className="text-gray-800">
-                Sizinle çalışma fırsatı bulamadığımız için üzgünüz.<br />
+                Sizinle çalışma fırsatı bulamadığımız için üzgünüz.
+                <br />
                 Gelecekte başka fırsatlar için bekliyoruz.
               </p>
             </div>
@@ -159,8 +179,12 @@ export default function PublicOfferPage({ params }: { params: { token: string } 
             <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <span className="text-3xl">❓</span>
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Teklif Bulunamadı</h2>
-            <p className="text-gray-600">Geçersiz veya süresi dolmuş teklif linki.</p>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              Teklif Bulunamadı
+            </h2>
+            <p className="text-gray-600">
+              Geçersiz veya süresi dolmuş teklif linki.
+            </p>
           </div>
         </div>
       </div>
@@ -188,11 +212,19 @@ export default function PublicOfferPage({ params }: { params: { token: string } 
               {/* Greeting */}
               <div className="mb-8">
                 <p className="text-xl text-gray-900 mb-4">
-                  Sayın <span className="font-bold text-blue-600">{offer.candidate?.firstName} {offer.candidate?.lastName}</span>,
+                  Sayın{" "}
+                  <span className="font-bold text-blue-600">
+                    {offer.candidate?.firstName} {offer.candidate?.lastName}
+                  </span>
+                  ,
                 </p>
                 <p className="text-gray-700 text-lg leading-relaxed">
-                  Başvurunuz değerlendirilmiş olup, <span className="font-semibold text-gray-900">{offer.position}</span> pozisyonu için
-                  ekibimize katılmanızı büyük bir memnuniyetle bekliyoruz.
+                  Başvurunuz değerlendirilmiş olup,{" "}
+                  <span className="font-semibold text-gray-900">
+                    {offer.position}
+                  </span>{" "}
+                  pozisyonu için ekibimize katılmanızı büyük bir memnuniyetle
+                  bekliyoruz.
                 </p>
               </div>
 
@@ -203,32 +235,51 @@ export default function PublicOfferPage({ params }: { params: { token: string } 
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="bg-white rounded-lg p-4 shadow-sm print:shadow-none print:border print:border-gray-200">
-                    <p className="text-sm text-gray-600 mb-1 font-medium">Pozisyon</p>
-                    <p className="text-lg font-bold text-gray-900">{offer.position}</p>
-                  </div>
-                  <div className="bg-white rounded-lg p-4 shadow-sm print:shadow-none print:border print:border-gray-200">
-                    <p className="text-sm text-gray-600 mb-1 font-medium">Departman</p>
-                    <p className="text-lg font-bold text-gray-900">{offer.department}</p>
-                  </div>
-                  <div className="bg-white rounded-lg p-4 shadow-sm print:shadow-none print:border print:border-gray-200">
-                    <p className="text-sm text-gray-600 mb-1 font-medium">Maaş</p>
-                    <p className="text-2xl font-bold text-green-600">
-                      ₺{offer.salary?.toLocaleString('tr-TR')} <span className="text-base text-gray-600">{offer.currency}</span>
+                    <p className="text-sm text-gray-600 mb-1 font-medium">
+                      Pozisyon
+                    </p>
+                    <p className="text-lg font-bold text-gray-900">
+                      {offer.position}
                     </p>
                   </div>
                   <div className="bg-white rounded-lg p-4 shadow-sm print:shadow-none print:border print:border-gray-200">
-                    <p className="text-sm text-gray-600 mb-1 font-medium">Başlangıç Tarihi</p>
+                    <p className="text-sm text-gray-600 mb-1 font-medium">
+                      Departman
+                    </p>
                     <p className="text-lg font-bold text-gray-900">
-                      {new Date(offer.startDate).toLocaleDateString('tr-TR', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
+                      {offer.department}
+                    </p>
+                  </div>
+                  <div className="bg-white rounded-lg p-4 shadow-sm print:shadow-none print:border print:border-gray-200">
+                    <p className="text-sm text-gray-600 mb-1 font-medium">
+                      Maaş
+                    </p>
+                    <p className="text-2xl font-bold text-green-600">
+                      ₺{offer.salary?.toLocaleString("tr-TR")}{" "}
+                      <span className="text-base text-gray-600">
+                        {offer.currency}
+                      </span>
+                    </p>
+                  </div>
+                  <div className="bg-white rounded-lg p-4 shadow-sm print:shadow-none print:border print:border-gray-200">
+                    <p className="text-sm text-gray-600 mb-1 font-medium">
+                      Başlangıç Tarihi
+                    </p>
+                    <p className="text-lg font-bold text-gray-900">
+                      {new Date(offer.startDate).toLocaleDateString("tr-TR", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
                       })}
                     </p>
                   </div>
                   <div className="bg-white rounded-lg p-4 shadow-sm print:shadow-none print:border print:border-gray-200">
-                    <p className="text-sm text-gray-600 mb-1 font-medium">Çalışma Şekli</p>
-                    <p className="text-lg font-bold text-gray-900">{getWorkTypeLabel(offer.workType)}</p>
+                    <p className="text-sm text-gray-600 mb-1 font-medium">
+                      Çalışma Şekli
+                    </p>
+                    <p className="text-lg font-bold text-gray-900">
+                      {getWorkTypeLabel(offer.workType)}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -243,31 +294,41 @@ export default function PublicOfferPage({ params }: { params: { token: string } 
                     {offer.benefits.insurance && (
                       <div className="flex items-center gap-3 bg-white rounded-lg p-3 shadow-sm print:shadow-none print:border print:border-gray-200">
                         <span className="text-2xl">🏥</span>
-                        <span className="text-gray-900 font-medium">Özel Sağlık Sigortası</span>
+                        <span className="text-gray-900 font-medium">
+                          Özel Sağlık Sigortası
+                        </span>
                       </div>
                     )}
                     {offer.benefits.meal > 0 && (
                       <div className="flex items-center gap-3 bg-white rounded-lg p-3 shadow-sm print:shadow-none print:border print:border-gray-200">
                         <span className="text-2xl">🍽️</span>
-                        <span className="text-gray-900 font-medium">Yemek Kartı ({offer.benefits.meal} TL/ay)</span>
+                        <span className="text-gray-900 font-medium">
+                          Yemek Kartı ({offer.benefits.meal} TL/ay)
+                        </span>
                       </div>
                     )}
                     {offer.benefits.transportation && (
                       <div className="flex items-center gap-3 bg-white rounded-lg p-3 shadow-sm print:shadow-none print:border print:border-gray-200">
                         <span className="text-2xl">🚌</span>
-                        <span className="text-gray-900 font-medium">Ulaşım Desteği</span>
+                        <span className="text-gray-900 font-medium">
+                          Ulaşım Desteği
+                        </span>
                       </div>
                     )}
                     {offer.benefits.gym && (
                       <div className="flex items-center gap-3 bg-white rounded-lg p-3 shadow-sm print:shadow-none print:border print:border-gray-200">
                         <span className="text-2xl">🏋️</span>
-                        <span className="text-gray-900 font-medium">Spor Salonu Üyeliği</span>
+                        <span className="text-gray-900 font-medium">
+                          Spor Salonu Üyeliği
+                        </span>
                       </div>
                     )}
                     {offer.benefits.education && (
                       <div className="flex items-center gap-3 bg-white rounded-lg p-3 shadow-sm print:shadow-none print:border print:border-gray-200">
                         <span className="text-2xl">📚</span>
-                        <span className="text-gray-900 font-medium">Eğitim Desteği</span>
+                        <span className="text-gray-900 font-medium">
+                          Eğitim Desteği
+                        </span>
                       </div>
                     )}
                   </div>
@@ -291,15 +352,19 @@ export default function PublicOfferPage({ params }: { params: { token: string } 
                 <div className="flex items-start gap-3">
                   <span className="text-2xl">⏰</span>
                   <div>
-                    <p className="font-bold text-gray-900 mb-1">Geçerlilik Süresi</p>
+                    <p className="font-bold text-gray-900 mb-1">
+                      Geçerlilik Süresi
+                    </p>
                     <p className="text-gray-800">
-                      Bu teklif <span className="font-bold text-amber-700">
-                        {new Date(offer.expiresAt).toLocaleDateString('tr-TR', {
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric'
+                      Bu teklif{" "}
+                      <span className="font-bold text-amber-700">
+                        {new Date(offer.expiresAt).toLocaleDateString("tr-TR", {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
                         })}
-                      </span> tarihine kadar geçerlidir.
+                      </span>{" "}
+                      tarihine kadar geçerlidir.
                     </p>
                   </div>
                 </div>
@@ -333,7 +398,8 @@ export default function PublicOfferPage({ params }: { params: { token: string } 
             {/* Footer */}
             <div className="bg-gray-50 px-8 py-6 border-t-2 border-gray-200 text-center print:border-t">
               <p className="text-gray-600 text-sm mb-1">
-                Bu teklif IKAI HR Platform tarafından otomatik olarak oluşturulmuştur.
+                Bu teklif IKAI HR Platform tarafından otomatik olarak
+                oluşturulmuştur.
               </p>
               <p className="text-gray-500 text-xs">
                 © 2025 IKAI HR Platform - Tüm hakları saklıdır.
@@ -351,9 +417,12 @@ export default function PublicOfferPage({ params }: { params: { token: string } 
               <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-3xl">⚠️</span>
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">Teklifi Reddet</h3>
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                Teklifi Reddet
+              </h3>
               <p className="text-gray-600">
-                Lütfen reddetme nedeninizi belirtin. Bu bilgi değerlendirmelerimize yardımcı olacaktır.
+                Lütfen reddetme nedeninizi belirtin. Bu bilgi
+                değerlendirmelerimize yardımcı olacaktır.
               </p>
             </div>
             <textarea
@@ -377,7 +446,7 @@ export default function PublicOfferPage({ params }: { params: { token: string } 
                 disabled={loading}
                 className="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? 'Gönderiliyor...' : 'Reddetmeyi Onayla'}
+                {loading ? "Gönderiliyor..." : "Reddetmeyi Onayla"}
               </button>
             </div>
           </div>

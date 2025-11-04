@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { Mail, Phone, MapPin, Briefcase, GraduationCap } from 'lucide-react';
-import type { Candidate } from '../../types';
+import { Mail, Phone, MapPin, Briefcase, GraduationCap } from "lucide-react";
+import type { Candidate } from "../../types";
 
 interface GeneralInfoTabProps {
   candidate: Candidate;
@@ -16,8 +16,12 @@ export default function GeneralInfoTab({ candidate }: GeneralInfoTabProps) {
           <div className="flex gap-3 p-4 bg-gray-50 rounded-lg border border-gray-200">
             <Mail className="w-5 h-5 text-blue-600" />
             <div>
-              <p className="text-xs font-medium text-gray-700 uppercase tracking-wide">Email</p>
-              <p className="text-base font-semibold text-gray-900">{candidate.email}</p>
+              <p className="text-xs font-medium text-gray-700 uppercase tracking-wide">
+                Email
+              </p>
+              <p className="text-base font-semibold text-gray-900">
+                {candidate.email}
+              </p>
             </div>
           </div>
         )}
@@ -25,8 +29,12 @@ export default function GeneralInfoTab({ candidate }: GeneralInfoTabProps) {
           <div className="flex gap-3 p-4 bg-gray-50 rounded-lg border border-gray-200">
             <Phone className="w-5 h-5 text-green-600" />
             <div>
-              <p className="text-xs font-medium text-gray-700 uppercase tracking-wide">Telefon</p>
-              <p className="text-base font-semibold text-gray-900">{candidate.phone}</p>
+              <p className="text-xs font-medium text-gray-700 uppercase tracking-wide">
+                Telefon
+              </p>
+              <p className="text-base font-semibold text-gray-900">
+                {candidate.phone}
+              </p>
             </div>
           </div>
         )}
@@ -37,8 +45,12 @@ export default function GeneralInfoTab({ candidate }: GeneralInfoTabProps) {
         <div className="flex gap-3 p-4 bg-gray-50 rounded-lg border border-gray-200">
           <MapPin className="w-5 h-5 text-orange-600" />
           <div>
-            <p className="text-xs font-medium text-gray-700 uppercase tracking-wide">Adres</p>
-            <p className="text-base font-semibold text-gray-900">{candidate.address}</p>
+            <p className="text-xs font-medium text-gray-700 uppercase tracking-wide">
+              Adres
+            </p>
+            <p className="text-base font-semibold text-gray-900">
+              {candidate.address}
+            </p>
           </div>
         </div>
       )}
@@ -76,7 +88,9 @@ export default function GeneralInfoTab({ candidate }: GeneralInfoTabProps) {
       {/* General Comments */}
       {candidate.generalComment && (
         <div>
-          <h3 className="text-lg font-bold mb-3 text-gray-900">Genel Yorumlar</h3>
+          <h3 className="text-lg font-bold mb-3 text-gray-900">
+            Genel Yorumlar
+          </h3>
           <div className="bg-gray-50 border border-gray-300 p-5 rounded-lg">
             <p className="text-base text-gray-900 whitespace-pre-wrap leading-relaxed">
               {candidate.generalComment}

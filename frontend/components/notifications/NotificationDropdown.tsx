@@ -1,14 +1,28 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { getNotifications, markAsRead as markAsReadAPI, markAllAsRead as markAllAsReadAPI, type Notification } from '@/lib/api/notifications';
-import Link from 'next/link';
-import { formatDistanceToNow } from 'date-fns';
-import { tr } from 'date-fns/locale';
+import { useState, useEffect } from "react";
 import {
-  CheckCheck, Inbox, ArrowRight, Clock, CheckCircle2,
-  AlertCircle, Users, FileText, Calendar, Sparkles, Bell
-} from 'lucide-react';
+  getNotifications,
+  markAsRead as markAsReadAPI,
+  markAllAsRead as markAllAsReadAPI,
+  type Notification,
+} from "@/lib/api/notifications";
+import Link from "next/link";
+import { formatDistanceToNow } from "date-fns";
+import { tr } from "date-fns/locale";
+import {
+  CheckCheck,
+  Inbox,
+  ArrowRight,
+  Clock,
+  CheckCircle2,
+  AlertCircle,
+  Users,
+  FileText,
+  Calendar,
+  Sparkles,
+  Bell,
+} from "lucide-react";
 
 /**
  * NotificationDropdown - System Style
@@ -19,7 +33,9 @@ interface NotificationDropdownProps {
   onClose?: () => void;
 }
 
-export default function NotificationDropdown({ onClose }: NotificationDropdownProps) {
+export default function NotificationDropdown({
+  onClose,
+}: NotificationDropdownProps) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -33,7 +49,7 @@ export default function NotificationDropdown({ onClose }: NotificationDropdownPr
       const data = await getNotifications({ limit: 10 });
       setNotifications(data.notifications || []);
     } catch (err) {
-      console.error('Load error:', err);
+      console.error("Load error:", err);
     } finally {
       setLoading(false);
     }
@@ -44,7 +60,7 @@ export default function NotificationDropdown({ onClose }: NotificationDropdownPr
       await markAsReadAPI(id);
       await loadNotifications();
     } catch (err) {
-      console.error('Mark as read error:', err);
+      console.error("Mark as read error:", err);
     }
   };
 
@@ -54,11 +70,11 @@ export default function NotificationDropdown({ onClose }: NotificationDropdownPr
       await loadNotifications();
       if (onClose) onClose();
     } catch (err) {
-      console.error('Mark all error:', err);
+      console.error("Mark all error:", err);
     }
   };
 
-  const unreadNotifications = notifications.filter(n => !n.read);
+  const unreadNotifications = notifications.filter((n) => !n.read);
 
   const getIcon = (type: string) => {
     const iconMap: Record<string, any> = {
@@ -77,10 +93,10 @@ export default function NotificationDropdown({ onClose }: NotificationDropdownPr
   };
 
   const getColor = (type: string) => {
-    if (type.includes('COMPLETED') || type.includes('ACCEPTED')) return 'green';
-    if (type.includes('FAILED') || type.includes('REJECTED')) return 'red';
-    if (type.includes('STARTED') || type.includes('SCHEDULED')) return 'blue';
-    return 'gray';
+    if (type.includes("COMPLETED") || type.includes("ACCEPTED")) return "green";
+    if (type.includes("FAILED") || type.includes("REJECTED")) return "red";
+    if (type.includes("STARTED") || type.includes("SCHEDULED")) return "blue";
+    return "gray";
   };
 
   return (
@@ -118,48 +134,61 @@ export default function NotificationDropdown({ onClose }: NotificationDropdownPr
               <Inbox size={28} className="text-gray-400" />
             </div>
             <p className="text-sm font-medium text-gray-900">Bildirim Yok</p>
-            <p className="text-xs text-gray-500 mt-1">Yeni bildirimler burada görünecek</p>
+            <p className="text-xs text-gray-500 mt-1">
+              Yeni bildirimler burada görünecek
+            </p>
           </div>
         ) : (
           <div>
             {notifications.map((notification) => {
               const Icon = getIcon(notification.type);
               const color = getColor(notification.type);
-              const timeAgo = formatDistanceToNow(new Date(notification.createdAt), {
-                addSuffix: true,
-                locale: tr
-              });
+              const timeAgo = formatDistanceToNow(
+                new Date(notification.createdAt),
+                {
+                  addSuffix: true,
+                  locale: tr,
+                }
+              );
 
               const bgClasses = {
-                green: 'bg-green-100 text-green-600',
-                red: 'bg-red-100 text-red-600',
-                blue: 'bg-blue-100 text-blue-600',
-                gray: 'bg-gray-100 text-gray-600'
+                green: "bg-green-100 text-green-600",
+                red: "bg-red-100 text-red-600",
+                blue: "bg-blue-100 text-blue-600",
+                gray: "bg-gray-100 text-gray-600",
               }[color];
 
               return (
                 <div
                   key={notification.id}
-                  onClick={() => !notification.read && handleMarkAsRead(notification.id)}
+                  onClick={() =>
+                    !notification.read && handleMarkAsRead(notification.id)
+                  }
                   className={`px-5 py-4 border-b border-gray-100 transition-all cursor-pointer hover:bg-gray-50 ${
-                    !notification.read ? 'bg-blue-50/50' : 'bg-white'
+                    !notification.read ? "bg-blue-50/50" : "bg-white"
                   }`}
                 >
                   <div className="flex gap-3">
-                    <div className={`flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center ${bgClasses}`}>
+                    <div
+                      className={`flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center ${bgClasses}`}
+                    >
                       <Icon size={18} />
                     </div>
 
                     <div className="flex-1 min-w-0">
-                      <h4 className={`text-sm font-medium mb-1 ${
-                        !notification.read ? 'text-gray-900' : 'text-gray-700'
-                      }`}>
+                      <h4
+                        className={`text-sm font-medium mb-1 ${
+                          !notification.read ? "text-gray-900" : "text-gray-700"
+                        }`}
+                      >
                         {notification.title}
                       </h4>
 
-                      <p className={`text-xs mb-2 line-clamp-2 ${
-                        !notification.read ? 'text-gray-700' : 'text-gray-500'
-                      }`}>
+                      <p
+                        className={`text-xs mb-2 line-clamp-2 ${
+                          !notification.read ? "text-gray-700" : "text-gray-500"
+                        }`}
+                      >
                         {notification.message}
                       </p>
 

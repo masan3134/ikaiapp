@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useOfferWizardStore } from '@/lib/store/offerWizardStore';
-import { getAuthToken } from '@/services/auth';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useOfferWizardStore } from "@/lib/store/offerWizardStore";
+import { getAuthToken } from "@/services/auth";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
 export default function Step3_Summary() {
   const router = useRouter();
@@ -25,7 +25,7 @@ export default function Step3_Summary() {
 
   async function handleSubmit() {
     if (!selectedCandidate) {
-      setError('Aday seçimi zorunludur');
+      setError("Aday seçimi zorunludur");
       return;
     }
 
@@ -43,26 +43,28 @@ export default function Step3_Summary() {
       };
 
       const response = await fetch(`${API_URL}/api/v1/offers/wizard`, {
-        method: 'POST',
+        method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(payload),
       });
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || 'Teklif oluşturulamadı');
+        throw new Error(error.error || "Teklif oluşturulamadı");
       }
 
       const result = await response.json();
       const offer = result.data;
 
       resetWizard();
-      router.push(`/offers/${offer.id}?success=${sendMode === 'direct' ? 'sent' : 'created'}`);
+      router.push(
+        `/offers/${offer.id}?success=${sendMode === "direct" ? "sent" : "created"}`
+      );
     } catch (error: any) {
-      setError(error.message || 'Bir hata oluştu');
+      setError(error.message || "Bir hata oluştu");
       setSubmitting(false);
       setLoading(false);
     }
@@ -84,7 +86,8 @@ export default function Step3_Summary() {
           <div>
             <p className="text-sm text-gray-600">Aday</p>
             <p className="font-medium text-gray-900">
-              {selectedCandidate.firstName} {selectedCandidate.lastName} ({selectedCandidate.email})
+              {selectedCandidate.firstName} {selectedCandidate.lastName} (
+              {selectedCandidate.email})
             </p>
           </div>
 
@@ -104,13 +107,19 @@ export default function Step3_Summary() {
 
           <div>
             <p className="text-sm text-gray-600">Başlangıç Tarihi</p>
-            <p className="font-medium text-gray-900">{new Date(formData.startDate).toLocaleDateString('tr-TR')}</p>
+            <p className="font-medium text-gray-900">
+              {new Date(formData.startDate).toLocaleDateString("tr-TR")}
+            </p>
           </div>
 
           <div>
             <p className="text-sm text-gray-600">Çalışma Şekli</p>
             <p className="font-medium text-gray-900">
-              {formData.workType === 'office' ? 'Ofis' : formData.workType === 'hybrid' ? 'Hibrit' : 'Uzaktan'}
+              {formData.workType === "office"
+                ? "Ofis"
+                : formData.workType === "hybrid"
+                  ? "Hibrit"
+                  : "Uzaktan"}
             </p>
           </div>
 
@@ -118,7 +127,12 @@ export default function Step3_Summary() {
             <p className="text-sm text-gray-600">Yan Haklar</p>
             <div className="text-gray-900">
               {formData.benefits.insurance && <p>✅ Özel Sağlık Sigortası</p>}
-              {formData.benefits.meal > 0 && <p>✅ Yemek Kartı ({formData.benefits.meal.toLocaleString()} TRY/ay)</p>}
+              {formData.benefits.meal > 0 && (
+                <p>
+                  ✅ Yemek Kartı ({formData.benefits.meal.toLocaleString()}{" "}
+                  TRY/ay)
+                </p>
+              )}
               {formData.benefits.transportation && <p>✅ Ulaşım Desteği</p>}
               {formData.benefits.gym && <p>✅ Spor Salonu</p>}
               {formData.benefits.education && <p>✅ Eğitim Desteği</p>}
@@ -129,20 +143,26 @@ export default function Step3_Summary() {
 
       {/* Send Mode */}
       <div className="mb-6">
-        <h3 className="font-semibold text-gray-900 mb-4">🚀 Gönderim Seçeneği</h3>
+        <h3 className="font-semibold text-gray-900 mb-4">
+          🚀 Gönderim Seçeneği
+        </h3>
         <div className="space-y-3">
           <label className="flex items-start p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-blue-400">
             <input
               type="radio"
               name="sendMode"
               value="draft"
-              checked={sendMode === 'draft'}
-              onChange={(e) => setSendMode('draft')}
+              checked={sendMode === "draft"}
+              onChange={(e) => setSendMode("draft")}
               className="mt-1 mr-3"
             />
             <div>
-              <p className="font-medium text-gray-900">Taslak Olarak Kaydet (Onaya Gönder)</p>
-              <p className="text-sm text-gray-600">Manager onayından sonra gönderilir</p>
+              <p className="font-medium text-gray-900">
+                Taslak Olarak Kaydet (Onaya Gönder)
+              </p>
+              <p className="text-sm text-gray-600">
+                Manager onayından sonra gönderilir
+              </p>
             </div>
           </label>
 
@@ -151,13 +171,17 @@ export default function Step3_Summary() {
               type="radio"
               name="sendMode"
               value="direct"
-              checked={sendMode === 'direct'}
-              onChange={(e) => setSendMode('direct')}
+              checked={sendMode === "direct"}
+              onChange={(e) => setSendMode("direct")}
               className="mt-1 mr-3"
             />
             <div>
-              <p className="font-medium text-gray-900">Direkt Gönder (Sadece ADMIN)</p>
-              <p className="text-sm text-gray-600">Hemen adaya email ile gönderilir</p>
+              <p className="font-medium text-gray-900">
+                Direkt Gönder (Sadece ADMIN)
+              </p>
+              <p className="text-sm text-gray-600">
+                Hemen adaya email ile gönderilir
+              </p>
             </div>
           </label>
         </div>
@@ -170,7 +194,11 @@ export default function Step3_Summary() {
           disabled={submitting}
           className="px-8 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {submitting ? 'Gönderiliyor...' : sendMode === 'draft' ? '💾 Taslak Kaydet' : '🚀 Gönder'}
+          {submitting
+            ? "Gönderiliyor..."
+            : sendMode === "draft"
+              ? "💾 Taslak Kaydet"
+              : "🚀 Gönder"}
         </button>
       </div>
     </div>

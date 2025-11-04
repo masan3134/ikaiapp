@@ -4,8 +4,8 @@
  * Helps pre-select for faster workflow
  */
 
-const LAST_JOB_POSTING_KEY = 'wizard_last_job_posting_id';
-const WIZARD_PREFERENCES_KEY = 'wizard_preferences';
+const LAST_JOB_POSTING_KEY = "wizard_last_job_posting_id";
+const WIZARD_PREFERENCES_KEY = "wizard_preferences";
 
 interface WizardPreferences {
   lastJobPostingId: string | null;
@@ -19,12 +19,12 @@ export function saveLastJobPosting(jobPostingId: string): void {
   try {
     const preferences: WizardPreferences = {
       lastJobPostingId: jobPostingId,
-      lastUsedTimestamp: Date.now()
+      lastUsedTimestamp: Date.now(),
     };
     localStorage.setItem(WIZARD_PREFERENCES_KEY, JSON.stringify(preferences));
   } catch (error) {
-    if (process.env.NODE_ENV === 'development') {
-      console.warn('Failed to save wizard preferences:', error);
+    if (process.env.NODE_ENV === "development") {
+      console.warn("Failed to save wizard preferences:", error);
     }
   }
 }
@@ -49,8 +49,8 @@ export function getLastJobPosting(): string | null {
 
     return preferences.lastJobPostingId;
   } catch (error) {
-    if (process.env.NODE_ENV === 'development') {
-      console.warn('Failed to load wizard preferences:', error);
+    if (process.env.NODE_ENV === "development") {
+      console.warn("Failed to load wizard preferences:", error);
     }
     return null;
   }
@@ -64,8 +64,8 @@ export function clearWizardPreferences(): void {
     localStorage.removeItem(WIZARD_PREFERENCES_KEY);
     localStorage.removeItem(LAST_JOB_POSTING_KEY); // Legacy key
   } catch (error) {
-    if (process.env.NODE_ENV === 'development') {
-      console.warn('Failed to clear wizard preferences:', error);
+    if (process.env.NODE_ENV === "development") {
+      console.warn("Failed to clear wizard preferences:", error);
     }
   }
 }

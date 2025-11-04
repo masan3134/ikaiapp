@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
 
 export default function PublicNavbar() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navLinks = [
-    { href: '/', label: 'Ana Sayfa' },
-    { href: '/features', label: 'Özellikler' },
-    { href: '/pricing', label: 'Fiyatlandırma' },
+    { href: "/", label: "Ana Sayfa" },
+    { href: "/features", label: "Özellikler" },
+    { href: "/pricing", label: "Fiyatlandırma" },
   ];
 
   const isActive = (href: string) => pathname === href;
@@ -36,8 +36,8 @@ export default function PublicNavbar() {
                 href={link.href}
                 className={`text-sm font-medium transition-colors ${
                   isActive(link.href)
-                    ? 'text-indigo-600'
-                    : 'text-gray-600 hover:text-indigo-600'
+                    ? "text-indigo-600"
+                    : "text-gray-600 hover:text-indigo-600"
                 }`}
               >
                 {link.label}
@@ -102,8 +102,8 @@ export default function PublicNavbar() {
                   href={link.href}
                   className={`text-sm font-medium transition-colors ${
                     isActive(link.href)
-                      ? 'text-indigo-600'
-                      : 'text-gray-600 hover:text-indigo-600'
+                      ? "text-indigo-600"
+                      : "text-gray-600 hover:text-indigo-600"
                   }`}
                   onClick={() => setMobileMenuOpen(false)}
                 >

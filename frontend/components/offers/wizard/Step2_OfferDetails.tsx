@@ -1,17 +1,20 @@
-'use client';
+"use client";
 
-import { useOfferWizardStore } from '@/lib/store/offerWizardStore';
+import { useOfferWizardStore } from "@/lib/store/offerWizardStore";
 
 export default function Step2_OfferDetails() {
   const { selectedTemplate, formData, updateFormData } = useOfferWizardStore();
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-gray-900 mb-2">Teklif Detayları</h2>
+      <h2 className="text-2xl font-bold text-gray-900 mb-2">
+        Teklif Detayları
+      </h2>
       {selectedTemplate && (
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-6">
           <p className="text-sm text-blue-800">
-            ℹ️ "<strong>{selectedTemplate.name}</strong>" şablonundan değerler yüklendi
+            ℹ️ "<strong>{selectedTemplate.name}</strong>" şablonundan değerler
+            yüklendi
           </p>
         </div>
       )}
@@ -57,7 +60,9 @@ export default function Step2_OfferDetails() {
             <input
               type="number"
               value={formData.salary}
-              onChange={(e) => updateFormData({ salary: parseInt(e.target.value) || 0 })}
+              onChange={(e) =>
+                updateFormData({ salary: parseInt(e.target.value) || 0 })
+              }
               className="w-full border border-gray-300 rounded-lg px-4 py-2 text-gray-900"
               placeholder="45000"
               required
@@ -91,7 +96,7 @@ export default function Step2_OfferDetails() {
             onChange={(e) => updateFormData({ startDate: e.target.value })}
             className="w-full border border-gray-300 rounded-lg px-4 py-2 text-gray-900"
             required
-            min={new Date().toISOString().split('T')[0]}
+            min={new Date().toISOString().split("T")[0]}
           />
         </div>
 
@@ -102,17 +107,22 @@ export default function Step2_OfferDetails() {
           </label>
           <div className="flex gap-4">
             {[
-              { value: 'office', label: 'Ofis' },
-              { value: 'hybrid', label: 'Hibrit' },
-              { value: 'remote', label: 'Uzaktan' },
+              { value: "office", label: "Ofis" },
+              { value: "hybrid", label: "Hibrit" },
+              { value: "remote", label: "Uzaktan" },
             ].map((option) => (
-              <label key={option.value} className="flex items-center text-gray-700">
+              <label
+                key={option.value}
+                className="flex items-center text-gray-700"
+              >
                 <input
                   type="radio"
                   name="workType"
                   value={option.value}
                   checked={formData.workType === option.value}
-                  onChange={(e) => updateFormData({ workType: e.target.value as any })}
+                  onChange={(e) =>
+                    updateFormData({ workType: e.target.value as any })
+                  }
                   className="mr-2"
                 />
                 {option.label}
@@ -133,7 +143,10 @@ export default function Step2_OfferDetails() {
                 checked={formData.benefits.insurance}
                 onChange={(e) =>
                   updateFormData({
-                    benefits: { ...formData.benefits, insurance: e.target.checked },
+                    benefits: {
+                      ...formData.benefits,
+                      insurance: e.target.checked,
+                    },
                   })
                 }
                 className="mr-3 h-4 w-4"
@@ -148,7 +161,10 @@ export default function Step2_OfferDetails() {
                   checked={formData.benefits.meal > 0}
                   onChange={(e) =>
                     updateFormData({
-                      benefits: { ...formData.benefits, meal: e.target.checked ? 1500 : 0 },
+                      benefits: {
+                        ...formData.benefits,
+                        meal: e.target.checked ? 1500 : 0,
+                      },
                     })
                   }
                   className="mr-3 h-4 w-4"
@@ -161,7 +177,10 @@ export default function Step2_OfferDetails() {
                   value={formData.benefits.meal}
                   onChange={(e) =>
                     updateFormData({
-                      benefits: { ...formData.benefits, meal: parseInt(e.target.value) || 0 },
+                      benefits: {
+                        ...formData.benefits,
+                        meal: parseInt(e.target.value) || 0,
+                      },
                     })
                   }
                   className="ml-7 border border-gray-300 rounded px-3 py-1 w-32 text-gray-900"
@@ -176,7 +195,10 @@ export default function Step2_OfferDetails() {
                 checked={formData.benefits.transportation}
                 onChange={(e) =>
                   updateFormData({
-                    benefits: { ...formData.benefits, transportation: e.target.checked },
+                    benefits: {
+                      ...formData.benefits,
+                      transportation: e.target.checked,
+                    },
                   })
                 }
                 className="mr-3 h-4 w-4"
@@ -204,7 +226,10 @@ export default function Step2_OfferDetails() {
                 checked={formData.benefits.education}
                 onChange={(e) =>
                   updateFormData({
-                    benefits: { ...formData.benefits, education: e.target.checked },
+                    benefits: {
+                      ...formData.benefits,
+                      education: e.target.checked,
+                    },
                   })
                 }
                 className="mr-3 h-4 w-4"

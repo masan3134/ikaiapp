@@ -1,7 +1,14 @@
-'use client';
+"use client";
 
-import { List as ListIcon, Check, Bell, Info, AlertCircle, CheckCircle } from 'lucide-react';
-import Link from 'next/link';
+import {
+  List as ListIcon,
+  Check,
+  Bell,
+  Info,
+  AlertCircle,
+  CheckCircle,
+} from "lucide-react";
+import Link from "next/link";
 
 interface Notification {
   id: string;
@@ -15,18 +22,20 @@ interface RecentNotificationsWidgetProps {
   data: Notification[];
 }
 
-export function RecentNotificationsWidget({ data }: RecentNotificationsWidgetProps) {
+export function RecentNotificationsWidget({
+  data,
+}: RecentNotificationsWidgetProps) {
   const notifications = data || [];
 
   const getNotificationIcon = (type: string) => {
     switch (type) {
-      case 'SUCCESS':
+      case "SUCCESS":
         return <CheckCircle className="w-5 h-5 text-green-600" />;
-      case 'WARNING':
+      case "WARNING":
         return <AlertCircle className="w-5 h-5 text-yellow-600" />;
-      case 'ERROR':
+      case "ERROR":
         return <AlertCircle className="w-5 h-5 text-red-600" />;
-      case 'INFO':
+      case "INFO":
       default:
         return <Info className="w-5 h-5 text-blue-600" />;
     }
@@ -40,11 +49,11 @@ export function RecentNotificationsWidget({ data }: RecentNotificationsWidgetPro
     const diffInHours = Math.floor(diffInMinutes / 60);
     const diffInDays = Math.floor(diffInHours / 24);
 
-    if (diffInMinutes < 1) return 'Şimdi';
+    if (diffInMinutes < 1) return "Şimdi";
     if (diffInMinutes < 60) return `${diffInMinutes} dakika önce`;
     if (diffInHours < 24) return `${diffInHours} saat önce`;
     if (diffInDays < 7) return `${diffInDays} gün önce`;
-    return date.toLocaleDateString('tr-TR');
+    return date.toLocaleDateString("tr-TR");
   };
 
   return (
@@ -57,11 +66,13 @@ export function RecentNotificationsWidget({ data }: RecentNotificationsWidgetPro
       {notifications.length > 0 ? (
         <>
           <div className="space-y-3">
-            {notifications.slice(0, 5).map(notif => (
+            {notifications.slice(0, 5).map((notif) => (
               <div
                 key={notif.id}
                 className={`flex items-start gap-3 p-3 rounded-lg transition-colors ${
-                  notif.read ? 'bg-slate-50' : 'bg-blue-50 border-l-4 border-blue-500'
+                  notif.read
+                    ? "bg-slate-50"
+                    : "bg-blue-50 border-l-4 border-blue-500"
                 }`}
               >
                 <div className="flex-shrink-0 mt-0.5">

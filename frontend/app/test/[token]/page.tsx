@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import {
   Clock,
   CheckCircle2,
@@ -11,14 +11,24 @@ import {
   Send,
   Info,
   XCircle,
-  Loader2
-} from 'lucide-react';
-import { getPublicTest, submitTest, type TestQuestion } from '@/lib/services/testService';
+  Loader2,
+} from "lucide-react";
+import {
+  getPublicTest,
+  submitTest,
+  type TestQuestion,
+} from "@/lib/services/testService";
 
-type TestStatus = 'loading' | 'start' | 'quiz' | 'submitting' | 'success' | 'error';
+type TestStatus =
+  | "loading"
+  | "start"
+  | "quiz"
+  | "submitting"
+  | "success"
+  | "error";
 
 interface ErrorState {
-  type: 'expired' | 'limit_exceeded' | 'invalid' | 'network' | 'unknown';
+  type: "expired" | "limit_exceeded" | "invalid" | "network" | "unknown";
   message: string;
 }
 
@@ -42,18 +52,18 @@ export default function TestPage() {
   const [testInfo, setTestInfo] = useState<any>(null);
 
   // UI state
-  const [status, setStatus] = useState<TestStatus>('loading');
+  const [status, setStatus] = useState<TestStatus>("loading");
   const [error, setError] = useState<ErrorState | null>(null);
 
   // User info
-  const [candidateEmail, setCandidateEmail] = useState('');
-  const [candidateName, setCandidateName] = useState('');
-  const [emailError, setEmailError] = useState('');
+  const [candidateEmail, setCandidateEmail] = useState("");
+  const [candidateName, setCandidateName] = useState("");
+  const [emailError, setEmailError] = useState("");
 
   // Quiz state
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Record<number, number>>({});
-  const [startedAt, setStartedAt] = useState<string>('');
+  const [startedAt, setStartedAt] = useState<string>("");
   const [timeLeft, setTimeLeft] = useState(30 * 60); // 30 minutes in seconds
 
   // UI flags
@@ -72,7 +82,7 @@ export default function TestPage() {
 
   // Timer effect
   useEffect(() => {
-    if (status !== 'quiz') return;
+    if (status !== "quiz") return;
 
     const interval = setInterval(() => {
       setTimeLeft((prev) => {
@@ -97,13 +107,13 @@ export default function TestPage() {
 
   // Anti-cheat: Tab/Window switch detection
   useEffect(() => {
-    if (status !== 'quiz') return;
+    if (status !== "quiz") return;
 
     function handleVisibilityChange() {
       if (document.hidden) {
-        setTabSwitchCount(prev => {
+        setTabSwitchCount((prev) => {
           const newCount = prev + 1;
-          if (process.env.NODE_ENV === 'development') {
+          if (process.env.NODE_ENV === "development") {
             console.warn(`⚠️ Tab değiştirildi! (${newCount}. kez)`);
           }
           return newCount;
@@ -112,77 +122,77 @@ export default function TestPage() {
     }
 
     function handleBlur() {
-      setTabSwitchCount(prev => {
+      setTabSwitchCount((prev) => {
         const newCount = prev + 1;
-        if (process.env.NODE_ENV === 'development') {
+        if (process.env.NODE_ENV === "development") {
           console.warn(`⚠️ Pencere değiştirildi! (${newCount}. kez)`);
         }
         return newCount;
       });
     }
 
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    window.addEventListener('blur', handleBlur);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("blur", handleBlur);
 
     return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-      window.removeEventListener('blur', handleBlur);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("blur", handleBlur);
     };
   }, [status]);
 
   // Anti-cheat: Copy prevention
   useEffect(() => {
-    if (status !== 'quiz') return;
+    if (status !== "quiz") return;
 
     function handleCopy(e: ClipboardEvent) {
       e.preventDefault();
-      setCopyAttempts(prev => {
+      setCopyAttempts((prev) => {
         const newCount = prev + 1;
-        if (process.env.NODE_ENV === 'development') {
+        if (process.env.NODE_ENV === "development") {
           console.warn(`⚠️ Kopyalama engellendi! (${newCount}. deneme)`);
         }
         return newCount;
       });
     }
 
-    document.addEventListener('copy', handleCopy);
-    return () => document.removeEventListener('copy', handleCopy);
+    document.addEventListener("copy", handleCopy);
+    return () => document.removeEventListener("copy", handleCopy);
   }, [status]);
 
   // Anti-cheat: Paste prevention (NEW)
   useEffect(() => {
-    if (status !== 'quiz') return;
+    if (status !== "quiz") return;
 
     function handlePaste(e: ClipboardEvent) {
       e.preventDefault();
-      setPasteAttempts(prev => {
+      setPasteAttempts((prev) => {
         const newCount = prev + 1;
-        if (process.env.NODE_ENV === 'development') {
+        if (process.env.NODE_ENV === "development") {
           console.warn(`⚠️ Yapıştırma engellendi! (${newCount}. deneme)`);
         }
         return newCount;
       });
     }
 
-    document.addEventListener('paste', handlePaste);
-    return () => document.removeEventListener('paste', handlePaste);
+    document.addEventListener("paste", handlePaste);
+    return () => document.removeEventListener("paste", handlePaste);
   }, [status]);
 
   // Anti-cheat: Screenshot detection (keyboard shortcuts)
   useEffect(() => {
-    if (status !== 'quiz') return;
+    if (status !== "quiz") return;
 
     function handleKeyDown(e: KeyboardEvent) {
       // Detect common screenshot shortcuts
       const isScreenshot =
-        (e.key === 'PrintScreen') ||
-        (e.metaKey && e.shiftKey && (e.key === '3' || e.key === '4')) || // Mac
-        (e.metaKey && e.shiftKey && e.key === 's'); // Windows/Linux
+        e.key === "PrintScreen" ||
+        (e.metaKey && e.shiftKey && (e.key === "3" || e.key === "4")) || // Mac
+        (e.metaKey && e.shiftKey && e.key === "s"); // Windows/Linux
 
       if (isScreenshot) {
-        setScreenshotAttempts(prev => {
+        setScreenshotAttempts((prev) => {
           const newCount = prev + 1;
-          if (process.env.NODE_ENV === 'development') {
+          if (process.env.NODE_ENV === "development") {
             console.warn(`⚠️ Ekran görüntüsü algılandı! (${newCount}. deneme)`);
           }
           return newCount;
@@ -190,19 +200,19 @@ export default function TestPage() {
       }
 
       // Prevent F12, Ctrl+Shift+I (DevTools)
-      if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
+      if (e.key === "F12" || (e.ctrlKey && e.shiftKey && e.key === "I")) {
         e.preventDefault();
       }
     }
 
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, [status]);
 
   // Load test from backend
   async function loadTest() {
     try {
-      setStatus('loading');
+      setStatus("loading");
 
       // Try to restore from localStorage first
       let saved = localStorage.getItem(`test_${token}`);
@@ -211,19 +221,19 @@ export default function TestPage() {
       const response = await getPublicTest(token);
 
       if (!response.success) {
-        throw new Error(response.message || 'Test yüklenemedi');
+        throw new Error(response.message || "Test yüklenemedi");
       }
 
       const { test } = response.data;
 
       // Debug: Log test info
-      if (process.env.NODE_ENV === 'development') {
-        console.log('📋 Test loaded:', {
+      if (process.env.NODE_ENV === "development") {
+        console.log("📋 Test loaded:", {
           id: test.id,
           token: test.token,
           jobPostingId: test.jobPostingId,
           expiresAt: test.expiresAt,
-          maxAttempts: test.maxAttempts
+          maxAttempts: test.maxAttempts,
         });
       }
 
@@ -233,10 +243,11 @@ export default function TestPage() {
       // Check if test is expired
       if (new Date(test.expiresAt) < new Date()) {
         setError({
-          type: 'expired',
-          message: 'Bu testin süresi dolmuş. Lütfen İK departmanı ile iletişime geçin.'
+          type: "expired",
+          message:
+            "Bu testin süresi dolmuş. Lütfen İK departmanı ile iletişime geçin.",
         });
-        setStatus('error');
+        setStatus("error");
         return;
       }
 
@@ -245,26 +256,26 @@ export default function TestPage() {
         try {
           const savedData = JSON.parse(saved);
 
-          if (process.env.NODE_ENV === 'development') {
-            console.log('💾 Found localStorage data:', {
+          if (process.env.NODE_ENV === "development") {
+            console.log("💾 Found localStorage data:", {
               savedTestId: savedData.testId,
               currentTestId: test.id,
               savedEmail: savedData.candidateEmail,
-              match: savedData.testId === test.id
+              match: savedData.testId === test.id,
             });
           }
 
           // Test ID changed (new test created for same job, old test expired)
           if (savedData.testId && savedData.testId !== test.id) {
-            console.log('🔄 Test ID changed, clearing old localStorage data');
+            console.log("🔄 Test ID changed, clearing old localStorage data");
             console.log(`   Old: ${savedData.testId} → New: ${test.id}`);
             localStorage.removeItem(`test_${token}`);
             saved = null; // Clear the saved variable too!
-            setStatus('start');
+            setStatus("start");
             return;
           }
         } catch (e) {
-          console.error('Error parsing saved data:', e);
+          console.error("Error parsing saved data:", e);
           localStorage.removeItem(`test_${token}`);
         }
       }
@@ -274,59 +285,71 @@ export default function TestPage() {
       // Because localStorage might be from a DIFFERENT candidate who used same browser
       const savedEmail = saved ? JSON.parse(saved).candidateEmail : null;
 
-      console.log('🔍 Checking completion status. SavedEmail:', savedEmail || 'none');
+      console.log(
+        "🔍 Checking completion status. SavedEmail:",
+        savedEmail || "none"
+      );
 
       if (savedEmail) {
-        console.log('📧 Found saved email, checking backend completion status...');
+        console.log(
+          "📧 Found saved email, checking backend completion status..."
+        );
         try {
           const API_URL = process.env.NEXT_PUBLIC_API_URL;
           if (!API_URL) {
-            throw new Error('NEXT_PUBLIC_API_URL environment variable is not set');
+            throw new Error(
+              "NEXT_PUBLIC_API_URL environment variable is not set"
+            );
           }
           const checkUrl = `${API_URL}/api/v1/tests/public/${token}/check-attempts`;
 
-          console.log('🌐 Calling:', checkUrl, 'with email:', savedEmail);
+          console.log("🌐 Calling:", checkUrl, "with email:", savedEmail);
 
           const attemptCheck = await fetch(checkUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ candidateEmail: savedEmail })
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ candidateEmail: savedEmail }),
           });
 
           if (attemptCheck.ok) {
             const attemptData = await attemptCheck.json();
 
-            console.log('✅ Backend response:', attemptData);
+            console.log("✅ Backend response:", attemptData);
 
             // This email completed the test
             // BUT: This might be a DIFFERENT user on same browser!
             // Solution: Clear localStorage and let NEW user start fresh
             if (attemptData.completed) {
-              console.log('⚠️  COMPLETED TEST DETECTED for email:', savedEmail);
-              console.log('🧹 CLEARING localStorage - allowing NEW user to start');
+              console.log("⚠️  COMPLETED TEST DETECTED for email:", savedEmail);
+              console.log(
+                "🧹 CLEARING localStorage - allowing NEW user to start"
+              );
               localStorage.removeItem(`test_${token}`);
               saved = null; // CRITICAL: Clear saved variable so restore doesn't run!
               // Let the user start fresh (they'll enter their own email)
-              setStatus('start');
-              console.log('✨ Status set to START - user should see email form now');
+              setStatus("start");
+              console.log(
+                "✨ Status set to START - user should see email form now"
+              );
               return;
             } else {
-              console.log('✓ Test NOT completed, continuing...');
+              console.log("✓ Test NOT completed, continuing...");
             }
 
             if (attemptData.attemptCount >= test.maxAttempts) {
               setError({
-                type: 'limit_exceeded',
-                message: 'Bu teste maksimum deneme sayısına ulaştınız (3 deneme).'
+                type: "limit_exceeded",
+                message:
+                  "Bu teste maksimum deneme sayısına ulaştınız (3 deneme).",
               });
-              setStatus('error');
+              setStatus("error");
               localStorage.removeItem(`test_${token}`);
               return;
             }
           }
         } catch (err) {
-          if (process.env.NODE_ENV === 'development') {
-            console.error('Attempt check error:', err);
+          if (process.env.NODE_ENV === "development") {
+            console.error("Attempt check error:", err);
           }
         }
       }
@@ -337,7 +360,9 @@ export default function TestPage() {
           const progress: SavedProgress = JSON.parse(saved);
 
           // NEW: Check if user has entered test before (prevent re-entry after exit)
-          const hasEntered = localStorage.getItem(`test_entered_${token}_${progress.candidateEmail}`);
+          const hasEntered = localStorage.getItem(
+            `test_entered_${token}_${progress.candidateEmail}`
+          );
 
           if (hasEntered && !progress.completed) {
             // User has entered test but not completed - MUST continue
@@ -347,49 +372,50 @@ export default function TestPage() {
             setAnswers(progress.answers);
             setStartedAt(progress.startedAt);
             setTimeLeft(progress.timeLeft);
-            setStatus('quiz');
+            setStatus("quiz");
           } else {
             // First time or completed - go to start screen
-            setStatus('start');
+            setStatus("start");
           }
         } catch {
           // If restore fails, go to start screen
-          setStatus('start');
+          setStatus("start");
         }
       } else {
-        setStatus('start');
+        setStatus("start");
       }
     } catch (err: any) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Test load error:', err);
+      if (process.env.NODE_ENV === "development") {
+        console.error("Test load error:", err);
       }
 
       if (err.response?.status === 404) {
         setError({
-          type: 'invalid',
-          message: 'Geçersiz test linki. Lütfen linki kontrol edin.'
+          type: "invalid",
+          message: "Geçersiz test linki. Lütfen linki kontrol edin.",
         });
       } else if (err.response?.status === 429) {
         setError({
-          type: 'limit_exceeded',
-          message: 'Bu teste maksimum deneme sayısına ulaşıldı (3 deneme).'
+          type: "limit_exceeded",
+          message: "Bu teste maksimum deneme sayısına ulaşıldı (3 deneme).",
         });
       } else {
         setError({
-          type: 'network',
-          message: 'Bağlantı hatası. Lütfen internet bağlantınızı kontrol edin.'
+          type: "network",
+          message:
+            "Bağlantı hatası. Lütfen internet bağlantınızı kontrol edin.",
         });
       }
 
-      setStatus('error');
+      setStatus("error");
     }
   }
 
   // Start test
   async function handleStartTest() {
     // Validate email
-    if (!candidateEmail || !candidateEmail.includes('@')) {
-      setEmailError('Geçerli bir email adresi girin');
+    if (!candidateEmail || !candidateEmail.includes("@")) {
+      setEmailError("Geçerli bir email adresi girin");
       return;
     }
 
@@ -397,13 +423,13 @@ export default function TestPage() {
     try {
       const API_URL = process.env.NEXT_PUBLIC_API_URL;
       if (!API_URL) {
-        throw new Error('NEXT_PUBLIC_API_URL environment variable is not set');
+        throw new Error("NEXT_PUBLIC_API_URL environment variable is not set");
       }
       const checkUrl = `${API_URL}/api/v1/tests/public/${token}/check-attempts`;
       const attemptCheck = await fetch(checkUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ candidateEmail })
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ candidateEmail }),
       });
 
       if (attemptCheck.ok) {
@@ -411,36 +437,36 @@ export default function TestPage() {
 
         if (attemptData.completed) {
           setError({
-            type: 'limit_exceeded',
-            message: `Bu testi zaten tamamladınız. Skorunuz: ${attemptData.lastScore}/100`
+            type: "limit_exceeded",
+            message: `Bu testi zaten tamamladınız. Skorunuz: ${attemptData.lastScore}/100`,
           });
-          setStatus('error');
+          setStatus("error");
           return;
         }
 
         if (attemptData.attemptCount >= attemptData.maxAttempts) {
           setError({
-            type: 'limit_exceeded',
-            message: 'Bu teste maksimum deneme sayısına ulaştınız (3 deneme).'
+            type: "limit_exceeded",
+            message: "Bu teste maksimum deneme sayısına ulaştınız (3 deneme).",
           });
-          setStatus('error');
+          setStatus("error");
           return;
         }
       }
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Attempt check failed:', error);
+      if (process.env.NODE_ENV === "development") {
+        console.error("Attempt check failed:", error);
       }
       // Continue anyway if check fails
     }
 
-    setEmailError('');
+    setEmailError("");
     setStartedAt(new Date().toISOString());
 
     // NEW: Mark test as entered (prevent re-entry)
-    localStorage.setItem(`test_entered_${token}_${candidateEmail}`, 'true');
+    localStorage.setItem(`test_entered_${token}_${candidateEmail}`, "true");
 
-    setStatus('quiz');
+    setStatus("quiz");
     saveProgress();
   }
 
@@ -453,7 +479,7 @@ export default function TestPage() {
       candidateEmail,
       candidateName,
       timeLeft,
-      testId: testInfo?.id // Save test ID to detect if test changed
+      testId: testInfo?.id, // Save test ID to detect if test changed
     };
 
     localStorage.setItem(`test_${token}`, JSON.stringify(progress));
@@ -463,7 +489,7 @@ export default function TestPage() {
   function handleAnswerSelect(optionIndex: number) {
     setAnswers({
       ...answers,
-      [questions[currentQuestion].id]: optionIndex
+      [questions[currentQuestion].id]: optionIndex,
     });
     saveProgress();
   }
@@ -486,7 +512,7 @@ export default function TestPage() {
 
   // Check if all questions answered
   function isAllAnswered(): boolean {
-    return questions.every(q => answers[q.id] !== undefined);
+    return questions.every((q) => answers[q.id] !== undefined);
   }
 
   // Handle submit request
@@ -507,12 +533,12 @@ export default function TestPage() {
   async function handleSubmit(isAuto = false) {
     try {
       setShowSubmitConfirm(false);
-      setStatus('submitting');
+      setStatus("submitting");
 
       // Format answers for backend
-      const formattedAnswers = questions.map(q => ({
+      const formattedAnswers = questions.map((q) => ({
         questionId: q.id,
-        selectedOption: answers[q.id] ?? -1 // -1 for unanswered
+        selectedOption: answers[q.id] ?? -1, // -1 for unanswered
       }));
 
       const response = await submitTest(token, {
@@ -526,36 +552,36 @@ export default function TestPage() {
           copyAttempts,
           screenshotAttempts,
           pasteAttempts, // NEW
-          autoSubmit: isAuto
-        }
+          autoSubmit: isAuto,
+        },
       });
 
       if (response.success) {
         // Clear localStorage
         localStorage.removeItem(`test_${token}`);
         localStorage.removeItem(`test_entered_${token}_${candidateEmail}`); // NEW: Clear entry flag
-        setStatus('success');
+        setStatus("success");
       } else {
-        throw new Error(response.message || 'Test gönderilemedi');
+        throw new Error(response.message || "Test gönderilemedi");
       }
     } catch (err: any) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Submit error:', err);
+      if (process.env.NODE_ENV === "development") {
+        console.error("Submit error:", err);
       }
 
       if (err.response?.status === 429) {
         setError({
-          type: 'limit_exceeded',
-          message: 'Maksimum deneme sayısına ulaştınız.'
+          type: "limit_exceeded",
+          message: "Maksimum deneme sayısına ulaştınız.",
         });
       } else {
         setError({
-          type: 'network',
-          message: 'Test gönderilemedi. Lütfen tekrar deneyin.'
+          type: "network",
+          message: "Test gönderilemedi. Lütfen tekrar deneyin.",
         });
       }
 
-      setStatus('error');
+      setStatus("error");
     }
   }
 
@@ -563,39 +589,39 @@ export default function TestPage() {
   function formatTime(seconds: number): string {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   }
 
   // Get category badge color
   function getCategoryColor(category: string): string {
     switch (category) {
-      case 'technical':
-        return 'bg-blue-100 text-blue-700';
-      case 'situational':
-        return 'bg-purple-100 text-purple-700';
-      case 'experience':
-        return 'bg-green-100 text-green-700';
+      case "technical":
+        return "bg-blue-100 text-blue-700";
+      case "situational":
+        return "bg-purple-100 text-purple-700";
+      case "experience":
+        return "bg-green-100 text-green-700";
       default:
-        return 'bg-gray-100 text-gray-700';
+        return "bg-gray-100 text-gray-700";
     }
   }
 
   // Get category label
   function getCategoryLabel(category: string): string {
     switch (category) {
-      case 'technical':
-        return 'Teknik';
-      case 'situational':
-        return 'Durumsal';
-      case 'experience':
-        return 'Deneyim';
+      case "technical":
+        return "Teknik";
+      case "situational":
+        return "Durumsal";
+      case "experience":
+        return "Deneyim";
       default:
         return category;
     }
   }
 
   // RENDER: Loading
-  if (status === 'loading') {
+  if (status === "loading") {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center">
         <div className="text-center">
@@ -607,15 +633,19 @@ export default function TestPage() {
   }
 
   // RENDER: Error
-  if (status === 'error' && error) {
+  if (status === "error" && error) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-red-50 to-orange-50 flex items-center justify-center p-4">
         <div className="max-w-md w-full bg-white rounded-xl shadow-xl border-2 border-red-300 p-8 text-center">
           <XCircle className="w-20 h-20 text-red-600 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-gray-900 mb-3">Test Yüklenemedi</h1>
-          <p className="text-base text-gray-800 font-medium mb-6">{error.message}</p>
+          <h1 className="text-2xl font-bold text-gray-900 mb-3">
+            Test Yüklenemedi
+          </h1>
+          <p className="text-base text-gray-800 font-medium mb-6">
+            {error.message}
+          </p>
 
-          {error.type === 'network' && (
+          {error.type === "network" && (
             <button
               onClick={loadTest}
               className="px-6 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition shadow-md"
@@ -629,7 +659,7 @@ export default function TestPage() {
   }
 
   // RENDER: Start Screen
-  if (status === 'start') {
+  if (status === "start") {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center p-4">
         <div className="max-w-2xl w-full bg-white rounded-xl shadow-lg p-8">
@@ -637,7 +667,9 @@ export default function TestPage() {
             <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <CheckCircle2 className="w-10 h-10 text-blue-600" />
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Değerlendirme Testi</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              Değerlendirme Testi
+            </h1>
             <p className="text-gray-600">IKAI HR Platform</p>
           </div>
 
@@ -645,7 +677,8 @@ export default function TestPage() {
           {testInfo?.hasSubmissions && (
             <div className="mb-6 bg-orange-50 border-2 border-orange-300 rounded-lg p-4">
               <p className="text-sm text-orange-900 font-bold text-center">
-                ⚠️ Bu teste daha önce cevap verilmiş. Eğer testi zaten çözdüyseniz, email adresinizi girin ve engelleneceksiniz.
+                ⚠️ Bu teste daha önce cevap verilmiş. Eğer testi zaten
+                çözdüyseniz, email adresinizi girin ve engelleneceksiniz.
               </p>
             </div>
           )}
@@ -659,19 +692,29 @@ export default function TestPage() {
             <ul className="space-y-3 text-base text-gray-900">
               <li className="flex items-center gap-3">
                 <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
-                <span><strong className="font-bold">Soru Sayısı:</strong> 10 soru (Çoktan seçmeli)</span>
+                <span>
+                  <strong className="font-bold">Soru Sayısı:</strong> 10 soru
+                  (Çoktan seçmeli)
+                </span>
               </li>
               <li className="flex items-center gap-3">
                 <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
-                <span><strong className="font-bold">Süre:</strong> 30 dakika</span>
+                <span>
+                  <strong className="font-bold">Süre:</strong> 30 dakika
+                </span>
               </li>
               <li className="flex items-center gap-3">
                 <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
-                <span><strong className="font-bold">Deneme Hakkı:</strong> 3 deneme</span>
+                <span>
+                  <strong className="font-bold">Deneme Hakkı:</strong> 3 deneme
+                </span>
               </li>
               <li className="flex items-center gap-3">
                 <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
-                <span><strong className="font-bold">Kategoriler:</strong> Teknik, Durumsal, Deneyim</span>
+                <span>
+                  <strong className="font-bold">Kategoriler:</strong> Teknik,
+                  Durumsal, Deneyim
+                </span>
               </li>
             </ul>
           </div>
@@ -687,15 +730,17 @@ export default function TestPage() {
                 value={candidateEmail}
                 onChange={(e) => {
                   setCandidateEmail(e.target.value);
-                  setEmailError('');
+                  setEmailError("");
                 }}
                 className={`w-full px-4 py-3 border-2 rounded-lg text-gray-900 font-medium focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                  emailError ? 'border-red-500' : 'border-gray-300'
+                  emailError ? "border-red-500" : "border-gray-300"
                 }`}
                 placeholder="ornek@email.com"
               />
               {emailError && (
-                <p className="text-red-600 text-sm font-semibold mt-1">{emailError}</p>
+                <p className="text-red-600 text-sm font-semibold mt-1">
+                  {emailError}
+                </p>
               )}
             </div>
 
@@ -726,7 +771,8 @@ export default function TestPage() {
 
           {/* Footer */}
           <p className="text-sm text-gray-700 font-medium text-center mt-6 bg-gray-100 p-3 rounded-lg">
-            Teste başladıktan sonra tarayıcıyı kapatırsanız, kaldığınız yerden devam edebilirsiniz.
+            Teste başladıktan sonra tarayıcıyı kapatırsanız, kaldığınız yerden
+            devam edebilirsiniz.
           </p>
         </div>
       </div>
@@ -734,7 +780,7 @@ export default function TestPage() {
   }
 
   // RENDER: Quiz
-  if (status === 'quiz') {
+  if (status === "quiz") {
     const currentQ = questions[currentQuestion];
     const progress = ((currentQuestion + 1) / questions.length) * 100;
     const answeredCount = Object.keys(answers).length;
@@ -744,24 +790,28 @@ export default function TestPage() {
       <div
         className="min-h-screen bg-gray-50 select-none"
         onContextMenu={(e) => e.preventDefault()}
-        style={{ userSelect: 'none', WebkitUserSelect: 'none' }}
+        style={{ userSelect: "none", WebkitUserSelect: "none" }}
       >
         {/* Header with Timer */}
         <div className="bg-white border-b border-gray-200 sticky top-0 z-10 shadow-sm">
           <div className="max-w-4xl mx-auto px-4 py-4">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-xl font-bold text-gray-900">Değerlendirme Testi</h1>
+                <h1 className="text-xl font-bold text-gray-900">
+                  Değerlendirme Testi
+                </h1>
                 <p className="text-sm font-bold text-gray-700">
                   Soru {currentQuestion + 1} / {questions.length}
                 </p>
               </div>
 
-              <div className={`flex items-center gap-2 px-5 py-3 rounded-lg border-2 shadow-md ${
-                timeLeft < 300
-                  ? 'bg-red-100 border-red-400 text-red-800'
-                  : 'bg-blue-100 border-blue-400 text-blue-800'
-              }`}>
+              <div
+                className={`flex items-center gap-2 px-5 py-3 rounded-lg border-2 shadow-md ${
+                  timeLeft < 300
+                    ? "bg-red-100 border-red-400 text-red-800"
+                    : "bg-blue-100 border-blue-400 text-blue-800"
+                }`}
+              >
                 <Clock className="w-6 h-6" />
                 <span className="font-mono font-bold text-xl">
                   {formatTime(timeLeft)}
@@ -773,10 +823,15 @@ export default function TestPage() {
             <div className="mt-4">
               <div className="flex items-center justify-between text-sm font-bold text-gray-900 mb-2">
                 <div className="flex items-center gap-4">
-                  <span>{answeredCount} / {questions.length} cevaplandı</span>
-                  {(tabSwitchCount > 0 || copyAttempts > 0 || screenshotAttempts > 0) && (
+                  <span>
+                    {answeredCount} / {questions.length} cevaplandı
+                  </span>
+                  {(tabSwitchCount > 0 ||
+                    copyAttempts > 0 ||
+                    screenshotAttempts > 0) && (
                     <span className="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded font-bold">
-                      ⚠️ Uyarı: {tabSwitchCount + copyAttempts + screenshotAttempts}
+                      ⚠️ Uyarı:{" "}
+                      {tabSwitchCount + copyAttempts + screenshotAttempts}
                     </span>
                   )}
                 </div>
@@ -797,7 +852,9 @@ export default function TestPage() {
           <div className="bg-white rounded-xl shadow-lg p-8">
             {/* Category Badge */}
             <div className="mb-6">
-              <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${getCategoryColor(currentQ.category)}`}>
+              <span
+                className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${getCategoryColor(currentQ.category)}`}
+              >
                 {getCategoryLabel(currentQ.category)}
               </span>
             </div>
@@ -819,19 +876,23 @@ export default function TestPage() {
                     onClick={() => handleAnswerSelect(index)}
                     className={`w-full text-left p-5 rounded-lg border-2 transition-all ${
                       isSelected
-                        ? 'border-blue-600 bg-blue-50 shadow-md'
-                        : 'border-gray-300 hover:border-blue-400 hover:bg-gray-50 hover:shadow-sm'
+                        ? "border-blue-600 bg-blue-50 shadow-md"
+                        : "border-gray-300 hover:border-blue-400 hover:bg-gray-50 hover:shadow-sm"
                     }`}
                   >
                     <div className="flex items-start gap-4">
-                      <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center font-bold text-base ${
-                        isSelected
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-gray-200 text-gray-900'
-                      }`}>
+                      <div
+                        className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center font-bold text-base ${
+                          isSelected
+                            ? "bg-blue-600 text-white"
+                            : "bg-gray-200 text-gray-900"
+                        }`}
+                      >
                         {optionLabel}
                       </div>
-                      <span className="text-gray-900 pt-2 text-base font-medium leading-relaxed">{option}</span>
+                      <span className="text-gray-900 pt-2 text-base font-medium leading-relaxed">
+                        {option}
+                      </span>
                     </div>
                   </button>
                 );
@@ -879,10 +940,10 @@ export default function TestPage() {
                   onClick={() => setCurrentQuestion(idx)}
                   className={`aspect-square rounded-lg font-bold text-base transition shadow-sm ${
                     idx === currentQuestion
-                      ? 'bg-blue-600 text-white shadow-md'
+                      ? "bg-blue-600 text-white shadow-md"
                       : answers[q.id] !== undefined
-                      ? 'bg-green-500 text-white hover:bg-green-600'
-                      : 'bg-gray-200 text-gray-900 hover:bg-gray-300'
+                        ? "bg-green-500 text-white hover:bg-green-600"
+                        : "bg-gray-200 text-gray-900 hover:bg-gray-300"
                   }`}
                 >
                   {idx + 1}
@@ -903,8 +964,10 @@ export default function TestPage() {
               <p className="text-base text-gray-800 font-medium text-center mb-6">
                 {answeredCount < questions.length && (
                   <>
-                    <strong className="text-orange-600 font-bold">{questions.length - answeredCount} soru</strong> henüz cevaplanmadı.
-                    Yine de testi göndermek istiyor musunuz?
+                    <strong className="text-orange-600 font-bold">
+                      {questions.length - answeredCount} soru
+                    </strong>{" "}
+                    henüz cevaplanmadı. Yine de testi göndermek istiyor musunuz?
                   </>
                 )}
               </p>
@@ -930,19 +993,21 @@ export default function TestPage() {
   }
 
   // RENDER: Submitting
-  if (status === 'submitting') {
+  if (status === "submitting") {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="w-16 h-16 text-blue-600 animate-spin mx-auto mb-4" />
-          <p className="text-xl font-bold text-gray-900">Cevaplarınız gönderiliyor...</p>
+          <p className="text-xl font-bold text-gray-900">
+            Cevaplarınız gönderiliyor...
+          </p>
         </div>
       </div>
     );
   }
 
   // RENDER: Success
-  if (status === 'success') {
+  if (status === "success") {
     return (
       <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 flex items-center justify-center p-4">
         <div className="max-w-md w-full bg-white rounded-xl shadow-xl border-2 border-green-300 p-8 text-center">
@@ -950,15 +1015,17 @@ export default function TestPage() {
             <CheckCircle2 className="w-14 h-14 text-green-600" />
           </div>
 
-          <h1 className="text-3xl font-bold text-gray-900 mb-3">Teşekkürler!</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-3">
+            Teşekkürler!
+          </h1>
           <p className="text-lg text-gray-800 font-medium mb-6">
             Testiniz başarıyla gönderildi. Cevaplarınız değerlendirmeye alındı.
           </p>
 
           <div className="bg-blue-50 border-2 border-blue-300 rounded-lg p-5 mb-6">
             <p className="text-base text-gray-900 font-medium leading-relaxed">
-              İK ekibimiz değerlendirme sonucunu en kısa sürede size bildirecektir.
-              İlginiz için teşekkür ederiz.
+              İK ekibimiz değerlendirme sonucunu en kısa sürede size
+              bildirecektir. İlginiz için teşekkür ederiz.
             </p>
           </div>
 

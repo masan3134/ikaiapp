@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useAuthStore } from '@/lib/store/authStore';
-import { UserRole, isRoleAllowed, AllowedRoles } from '@/lib/constants/roles';
+import { useAuthStore } from "@/lib/store/authStore";
+import { UserRole, isRoleAllowed, AllowedRoles } from "@/lib/constants/roles";
 
 /**
  * Hook to check if current user has required role(s)
@@ -47,7 +47,7 @@ export function useCanManageHR(): boolean {
     UserRole.SUPER_ADMIN,
     UserRole.ADMIN,
     UserRole.MANAGER,
-    UserRole.HR_SPECIALIST
+    UserRole.HR_SPECIALIST,
   ].includes(user.role as UserRole);
 }
 

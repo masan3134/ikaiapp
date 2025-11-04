@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import React, { Component, ReactNode } from 'react';
-import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import React, { Component, ReactNode } from "react";
+import { AlertTriangle, RefreshCw, Home } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface Props {
   children: ReactNode;
@@ -20,7 +20,7 @@ class WizardErrorBoundary extends Component<Props, State> {
     this.state = {
       hasError: false,
       error: null,
-      errorInfo: null
+      errorInfo: null,
     };
   }
 
@@ -28,20 +28,20 @@ class WizardErrorBoundary extends Component<Props, State> {
     return {
       hasError: true,
       error,
-      errorInfo: null
+      errorInfo: null,
     };
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     // Log to console in development
-    if (process.env.NODE_ENV === 'development') {
-      console.error('Wizard Error Boundary caught an error:', error, errorInfo);
+    if (process.env.NODE_ENV === "development") {
+      console.error("Wizard Error Boundary caught an error:", error, errorInfo);
     }
 
     // Update state with error details
     this.setState({
       error,
-      errorInfo
+      errorInfo,
     });
 
     // TODO: Send to error tracking service (Sentry, etc.)
@@ -50,14 +50,14 @@ class WizardErrorBoundary extends Component<Props, State> {
 
   handleReset = () => {
     // Clear wizard store
-    const { useWizardStore } = require('@/lib/store/wizardStore');
+    const { useWizardStore } = require("@/lib/store/wizardStore");
     useWizardStore.getState().resetWizard();
 
     // Reset error boundary state
     this.setState({
       hasError: false,
       error: null,
-      errorInfo: null
+      errorInfo: null,
     });
   };
 
@@ -82,19 +82,24 @@ class WizardErrorBoundary extends Component<Props, State> {
 
               {/* Description */}
               <p className="text-gray-700 text-center mb-6">
-                Analiz sihirbazında beklenmeyen bir hata meydana geldi. Lütfen sayfayı yenileyin veya ana sayfaya dönün.
+                Analiz sihirbazında beklenmeyen bir hata meydana geldi. Lütfen
+                sayfayı yenileyin veya ana sayfaya dönün.
               </p>
 
               {/* Error Details (Development Only) */}
-              {process.env.NODE_ENV === 'development' && this.state.error && (
+              {process.env.NODE_ENV === "development" && this.state.error && (
                 <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-                  <p className="text-sm font-bold text-red-900 mb-2">Hata Detayları (Dev):</p>
+                  <p className="text-sm font-bold text-red-900 mb-2">
+                    Hata Detayları (Dev):
+                  </p>
                   <p className="text-xs text-red-800 font-mono mb-2">
                     {this.state.error.toString()}
                   </p>
                   {this.state.errorInfo && (
                     <details className="text-xs text-red-700">
-                      <summary className="cursor-pointer font-medium mb-1">Stack Trace</summary>
+                      <summary className="cursor-pointer font-medium mb-1">
+                        Stack Trace
+                      </summary>
                       <pre className="whitespace-pre-wrap mt-2 p-2 bg-red-100 rounded overflow-x-auto">
                         {this.state.errorInfo.componentStack}
                       </pre>
@@ -137,7 +142,9 @@ class WizardErrorBoundary extends Component<Props, State> {
                 <li>• Tarayıcı önbelleğini temizlemeyi deneyin</li>
                 <li>• Farklı bir tarayıcı kullanmayı deneyin</li>
                 <li>• Sayfayı yenileyip tekrar deneyin</li>
-                <li>• Dosya boyutlarının 10MB'ın altında olduğundan emin olun</li>
+                <li>
+                  • Dosya boyutlarının 10MB'ın altında olduğundan emin olun
+                </li>
               </ul>
             </div>
           </div>
@@ -150,10 +157,10 @@ class WizardErrorBoundary extends Component<Props, State> {
 }
 
 // Functional wrapper for router access
-export default function WizardErrorBoundaryWrapper({ children }: { children: ReactNode }) {
-  return (
-    <WizardErrorBoundary>
-      {children}
-    </WizardErrorBoundary>
-  );
+export default function WizardErrorBoundaryWrapper({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  return <WizardErrorBoundary>{children}</WizardErrorBoundary>;
 }

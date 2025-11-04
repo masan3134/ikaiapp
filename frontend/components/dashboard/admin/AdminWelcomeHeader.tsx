@@ -1,8 +1,15 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { Crown, Sparkles, Users, BarChart3, FileText, Settings } from 'lucide-react';
-import NotificationBell from '@/components/notifications/NotificationBell';
+import Link from "next/link";
+import {
+  Crown,
+  Sparkles,
+  Users,
+  BarChart3,
+  FileText,
+  Settings,
+} from "lucide-react";
+import NotificationBell from "@/components/notifications/NotificationBell";
 
 interface AdminWelcomeHeaderProps {
   user: any;
@@ -10,7 +17,11 @@ interface AdminWelcomeHeaderProps {
   usage: any;
 }
 
-export default function AdminWelcomeHeader({ user, organization, usage }: AdminWelcomeHeaderProps) {
+export default function AdminWelcomeHeader({
+  user,
+  organization,
+  usage,
+}: AdminWelcomeHeaderProps) {
   return (
     <div className="bg-gradient-to-r from-purple-600 to-purple-800 rounded-xl p-6 mb-6 text-white shadow-lg">
       <div className="flex justify-between items-start">
@@ -20,22 +31,23 @@ export default function AdminWelcomeHeader({ user, organization, usage }: AdminW
               <Crown className="w-7 h-7 text-yellow-300" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold">
-                Admin Dashboard
-              </h1>
+              <h1 className="text-3xl font-bold">Admin Dashboard</h1>
               <p className="text-purple-100 text-sm">
-                {organization?.name || 'Organization'}
+                {organization?.name || "Organization"}
               </p>
             </div>
           </div>
           <div className="flex gap-6 text-sm mt-4 flex-wrap">
             <div className="flex items-center gap-2 bg-purple-700/40 px-3 py-1.5 rounded-lg backdrop-blur">
               <Sparkles className="w-4 h-4" />
-              <span>Plan: {organization?.plan || 'FREE'}</span>
+              <span>Plan: {organization?.plan || "FREE"}</span>
             </div>
             <div className="flex items-center gap-2 bg-purple-700/40 px-3 py-1.5 rounded-lg backdrop-blur">
               <Users className="w-4 h-4" />
-              <span>{organization?.totalUsers || 0}/{organization?.maxUsers || 0} Kullanıcı</span>
+              <span>
+                {organization?.totalUsers || 0}/{organization?.maxUsers || 0}{" "}
+                Kullanıcı
+              </span>
             </div>
             <div className="flex items-center gap-2 bg-purple-700/40 px-3 py-1.5 rounded-lg backdrop-blur">
               <BarChart3 className="w-4 h-4" />

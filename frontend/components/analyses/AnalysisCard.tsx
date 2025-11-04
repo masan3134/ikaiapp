@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { memo } from 'react';
-import { Briefcase, Calendar, Users, Eye, Trash2 } from 'lucide-react';
-import type { Analysis } from '@/lib/services/analysisService';
-import AnalysisStatusBadge from './AnalysisStatusBadge';
-import { formatDateTime } from '@/lib/utils/dateFormat';
+import { memo } from "react";
+import { Briefcase, Calendar, Users, Eye, Trash2 } from "lucide-react";
+import type { Analysis } from "@/lib/services/analysisService";
+import AnalysisStatusBadge from "./AnalysisStatusBadge";
+import { formatDateTime } from "@/lib/utils/dateFormat";
 
 export interface AnalysisCardProps {
   analysis: Analysis;
@@ -15,7 +15,7 @@ export interface AnalysisCardProps {
 const AnalysisCard = memo(function AnalysisCard({
   analysis,
   onView,
-  onDelete
+  onDelete,
 }: AnalysisCardProps) {
   return (
     <div
@@ -53,26 +53,33 @@ const AnalysisCard = memo(function AnalysisCard({
       </div>
 
       {/* Completion Time - Only if fully successful */}
-      {analysis.status === 'COMPLETED' && analysis.completedAt && !analysis.errorMessage && (
-        <div className="mb-4 p-3 bg-green-50 rounded-lg border border-green-200">
-          <p className="text-sm text-green-800">
-            ✓ Tamamlandı: {formatDateTime(analysis.completedAt)}
-          </p>
-        </div>
-      )}
+      {analysis.status === "COMPLETED" &&
+        analysis.completedAt &&
+        !analysis.errorMessage && (
+          <div className="mb-4 p-3 bg-green-50 rounded-lg border border-green-200">
+            <p className="text-sm text-green-800">
+              ✓ Tamamlandı: {formatDateTime(analysis.completedAt)}
+            </p>
+          </div>
+        )}
 
       {/* Partial Success Warning */}
-      {analysis.status === 'COMPLETED' && analysis.errorMessage && (analysis._count?.analysisResults || 0) > 0 && (
-        <div className="mb-4 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
-          <p className="text-sm font-medium text-yellow-900">⚠ Kısmi Başarılı</p>
-          <p className="text-sm text-yellow-700 mt-1">
-            {analysis._count?.analysisResults || 0} aday başarılı, bazı adaylar başarısız oldu.
-          </p>
-        </div>
-      )}
+      {analysis.status === "COMPLETED" &&
+        analysis.errorMessage &&
+        (analysis._count?.analysisResults || 0) > 0 && (
+          <div className="mb-4 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+            <p className="text-sm font-medium text-yellow-900">
+              ⚠ Kısmi Başarılı
+            </p>
+            <p className="text-sm text-yellow-700 mt-1">
+              {analysis._count?.analysisResults || 0} aday başarılı, bazı
+              adaylar başarısız oldu.
+            </p>
+          </div>
+        )}
 
       {/* Full Error Message */}
-      {analysis.status === 'FAILED' && analysis.errorMessage && (
+      {analysis.status === "FAILED" && analysis.errorMessage && (
         <div className="mb-4 p-3 bg-red-50 rounded-lg border border-red-200">
           <p className="text-sm font-medium text-red-900">Hata:</p>
           <p className="text-sm text-red-700 mt-1">{analysis.errorMessage}</p>
@@ -81,7 +88,7 @@ const AnalysisCard = memo(function AnalysisCard({
 
       {/* Actions */}
       <div className="flex items-center gap-2 pt-4 border-t border-gray-100">
-        {analysis.status === 'COMPLETED' && (
+        {analysis.status === "COMPLETED" && (
           <button
             onClick={(e) => {
               e.stopPropagation();

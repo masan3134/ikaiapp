@@ -1,9 +1,9 @@
-import { create } from 'zustand';
+import { create } from "zustand";
 
 // Types
-export type CreationMode = 'template' | 'scratch' | null;
-export type WorkType = 'office' | 'hybrid' | 'remote';
-export type SendMode = 'draft' | 'direct';
+export type CreationMode = "template" | "scratch" | null;
+export type WorkType = "office" | "hybrid" | "remote";
+export type SendMode = "draft" | "direct";
 
 export interface Benefits {
   insurance: boolean;
@@ -113,21 +113,21 @@ const defaultBenefits: Benefits = {
 };
 
 const defaultFormData: OfferFormData = {
-  position: '',
-  department: '',
+  position: "",
+  department: "",
   salary: 0,
-  currency: 'TRY',
-  startDate: '',
-  workType: 'office',
+  currency: "TRY",
+  startDate: "",
+  workType: "office",
   benefits: { ...defaultBenefits },
-  terms: '',
+  terms: "",
 };
 
 export const useOfferWizardStore = create<OfferWizardState>((set, get) => ({
   // Initial state
   currentStep: 1,
   creationMode: null,
-  sendMode: 'draft',
+  sendMode: "draft",
 
   selectedTemplate: null,
   selectedCandidate: null,
@@ -136,26 +136,26 @@ export const useOfferWizardStore = create<OfferWizardState>((set, get) => ({
   formData: { ...defaultFormData },
 
   loading: false,
-  error: '',
+  error: "",
 
   // Navigation actions
   nextStep: () => {
     const { currentStep } = get();
     if (currentStep < 3) {
-      set({ currentStep: currentStep + 1, error: '' });
+      set({ currentStep: currentStep + 1, error: "" });
     }
   },
 
   prevStep: () => {
     const { currentStep } = get();
     if (currentStep > 1) {
-      set({ currentStep: currentStep - 1, error: '' });
+      set({ currentStep: currentStep - 1, error: "" });
     }
   },
 
   goToStep: (step: number) => {
     if (step >= 1 && step <= 3) {
-      set({ currentStep: step, error: '' });
+      set({ currentStep: step, error: "" });
     }
   },
 
@@ -164,7 +164,7 @@ export const useOfferWizardStore = create<OfferWizardState>((set, get) => ({
     set({ creationMode: mode });
 
     // If switching to scratch mode, clear template
-    if (mode === 'scratch') {
+    if (mode === "scratch") {
       set({ selectedTemplate: null });
     }
   },
@@ -191,7 +191,7 @@ export const useOfferWizardStore = create<OfferWizardState>((set, get) => ({
           benefits: { ...template.benefits },
           terms: template.terms,
         },
-        creationMode: 'template',
+        creationMode: "template",
       });
     }
   },
@@ -266,13 +266,13 @@ export const useOfferWizardStore = create<OfferWizardState>((set, get) => ({
     set({
       currentStep: 1,
       creationMode: null,
-      sendMode: 'draft',
+      sendMode: "draft",
       selectedTemplate: null,
       selectedCandidate: null,
       selectedJobPosting: null,
       formData: { ...defaultFormData },
       loading: false,
-      error: '',
+      error: "",
     });
   },
 }));

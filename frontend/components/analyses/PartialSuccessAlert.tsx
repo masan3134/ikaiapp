@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { AlertTriangle, X } from 'lucide-react';
-import { useState } from 'react';
+import { AlertTriangle, X } from "lucide-react";
+import { useState } from "react";
 
 interface AnalysisError {
   candidateId?: string;
@@ -15,7 +15,10 @@ interface PartialSuccessAlertProps {
   successCount: number;
 }
 
-export default function PartialSuccessAlert({ errorMessage, successCount }: PartialSuccessAlertProps) {
+export default function PartialSuccessAlert({
+  errorMessage,
+  successCount,
+}: PartialSuccessAlertProps) {
   const [isVisible, setIsVisible] = useState(true);
 
   if (!errorMessage || !isVisible) return null;
@@ -38,28 +41,33 @@ export default function PartialSuccessAlert({ errorMessage, successCount }: Part
           <AlertTriangle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
           <div className="flex-1">
             <h4 className="font-semibold text-yellow-900 mb-2">
-              Kismi Basari: {successCount} aday basarili, {failedCount} aday islenemedi
+              Kismi Basari: {successCount} aday basarili, {failedCount} aday
+              islenemedi
             </h4>
             <p className="text-sm text-yellow-800 mb-3">
-              Asagidaki adaylar cesitli nedenlerle analiz edilemedi. Lutfen CV dosyalarini kontrol edin.
+              Asagidaki adaylar cesitli nedenlerle analiz edilemedi. Lutfen CV
+              dosyalarini kontrol edin.
             </p>
             <div className="space-y-2">
               {errors.map((err, idx) => (
-                <div key={idx} className="bg-white border border-yellow-200 rounded p-3">
+                <div
+                  key={idx}
+                  className="bg-white border border-yellow-200 rounded p-3"
+                >
                   <div className="flex items-start gap-2">
                     <div className="flex-1">
-                      {err.candidateId && err.candidateId !== 'unknown' && (
+                      {err.candidateId && err.candidateId !== "unknown" && (
                         <p className="text-sm font-medium text-gray-900">
                           Aday ID: {err.candidateId.substring(0, 8)}...
                         </p>
                       )}
-                      {err.fileName && err.fileName !== 'unknown' && (
+                      {err.fileName && err.fileName !== "unknown" && (
                         <p className="text-sm text-gray-700">
                           Dosya: {err.fileName}
                         </p>
                       )}
                       <p className="text-sm text-gray-600 mt-1">
-                        Hata: {err.error || 'Bilinmeyen hata'}
+                        Hata: {err.error || "Bilinmeyen hata"}
                       </p>
                       {err.details && Array.isArray(err.details) && (
                         <ul className="mt-2 ml-4 text-xs text-gray-500 list-disc">

@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   BarChart3,
@@ -10,7 +10,7 @@ import {
   TrendingUp,
   ArrowUp,
   ArrowDown,
-} from 'lucide-react';
+} from "lucide-react";
 
 interface MonthlyStatsWidgetProps {
   data: {
@@ -32,45 +32,45 @@ interface MonthlyStatsWidgetProps {
 export function MonthlyStatsWidget({ data }: MonthlyStatsWidgetProps) {
   const stats = [
     {
-      label: 'Başvurular',
+      label: "Başvurular",
       value: data?.applications || 0,
       icon: <FileText className="w-4 h-4" />,
-      color: 'blue',
+      color: "blue",
       change: data?.applicationsChange || 0,
     },
     {
-      label: 'Analizler',
+      label: "Analizler",
       value: data?.analyses || 0,
       icon: <Wand2 className="w-4 h-4" />,
-      color: 'purple',
+      color: "purple",
       change: data?.analysesChange || 0,
     },
     {
-      label: 'Mülakatlar',
+      label: "Mülakatlar",
       value: data?.interviews || 0,
       icon: <Calendar className="w-4 h-4" />,
-      color: 'orange',
+      color: "orange",
       change: data?.interviewsChange || 0,
     },
     {
-      label: 'Teklifler',
+      label: "Teklifler",
       value: data?.offers || 0,
       icon: <Mail className="w-4 h-4" />,
-      color: 'indigo',
+      color: "indigo",
       change: data?.offersChange || 0,
     },
     {
-      label: 'İşe Alımlar',
+      label: "İşe Alımlar",
       value: data?.hires || 0,
       icon: <UserCheck className="w-4 h-4" />,
-      color: 'green',
+      color: "green",
       change: data?.hiresChange || 0,
     },
     {
-      label: 'Dönüşüm',
+      label: "Dönüşüm",
       value: `${data?.conversionRate || 0}%`,
       icon: <TrendingUp className="w-4 h-4" />,
-      color: 'emerald',
+      color: "emerald",
       change: data?.conversionChange || 0,
     },
   ];
@@ -89,7 +89,9 @@ export function MonthlyStatsWidget({ data }: MonthlyStatsWidgetProps) {
               key={stat.label}
               className="text-center p-3 bg-white rounded-lg border border-slate-100 hover:shadow-md transition-shadow"
             >
-              <div className={`inline-flex items-center justify-center w-8 h-8 bg-${stat.color}-100 rounded-lg mb-2`}>
+              <div
+                className={`inline-flex items-center justify-center w-8 h-8 bg-${stat.color}-100 rounded-lg mb-2`}
+              >
                 <div className={`text-${stat.color}-600`}>{stat.icon}</div>
               </div>
               <p className="text-2xl font-bold text-slate-800">{stat.value}</p>
@@ -97,7 +99,7 @@ export function MonthlyStatsWidget({ data }: MonthlyStatsWidgetProps) {
               {stat.change !== undefined && (
                 <div
                   className={`flex items-center justify-center gap-1 text-xs ${
-                    stat.change >= 0 ? 'text-green-600' : 'text-red-600'
+                    stat.change >= 0 ? "text-green-600" : "text-red-600"
                   }`}
                 >
                   {stat.change >= 0 ? (

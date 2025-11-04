@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { Award } from 'lucide-react';
+import { Award } from "lucide-react";
 
 export interface ScoreBadgeProps {
   score: number;
@@ -23,18 +23,18 @@ export default function ScoreBadge({
   experienceScore,
   educationScore,
   technicalScore,
-  extraScore
+  extraScore,
 }: ScoreBadgeProps) {
   const getScoreColor = (value: number): string => {
-    if (value >= 70) return 'text-green-600';
-    if (value >= 40) return 'text-yellow-600';
-    return 'text-red-600';
+    if (value >= 70) return "text-green-600";
+    if (value >= 40) return "text-yellow-600";
+    return "text-red-600";
   };
 
   const getScoreLabel = (value: number): string => {
-    if (value >= 80) return 'Güçlü Eşleşme';
-    if (value >= 60) return 'İyi Eşleşme';
-    return 'Uyum Düşük';
+    if (value >= 80) return "Güçlü Eşleşme";
+    if (value >= 60) return "İyi Eşleşme";
+    return "Uyum Düşük";
   };
 
   return (
@@ -52,34 +52,35 @@ export default function ScoreBadge({
       </div>
 
       {/* Sub-scores */}
-      {showSubScores && (experienceScore !== undefined || educationScore !== undefined) && (
-        <div className="mt-3 pt-3 border-t border-gray-200 text-xs text-gray-600 space-y-1">
-          {experienceScore !== undefined && (
-            <div className="flex justify-between gap-2">
-              <span>Deneyim:</span>
-              <span className="font-medium">{experienceScore}/40</span>
-            </div>
-          )}
-          {educationScore !== undefined && (
-            <div className="flex justify-between gap-2">
-              <span>Eğitim:</span>
-              <span className="font-medium">{educationScore}/30</span>
-            </div>
-          )}
-          {technicalScore !== undefined && (
-            <div className="flex justify-between gap-2">
-              <span>Teknik:</span>
-              <span className="font-medium">{technicalScore}/20</span>
-            </div>
-          )}
-          {extraScore !== undefined && (
-            <div className="flex justify-between gap-2">
-              <span>Ek:</span>
-              <span className="font-medium">{extraScore}/10</span>
-            </div>
-          )}
-        </div>
-      )}
+      {showSubScores &&
+        (experienceScore !== undefined || educationScore !== undefined) && (
+          <div className="mt-3 pt-3 border-t border-gray-200 text-xs text-gray-600 space-y-1">
+            {experienceScore !== undefined && (
+              <div className="flex justify-between gap-2">
+                <span>Deneyim:</span>
+                <span className="font-medium">{experienceScore}/40</span>
+              </div>
+            )}
+            {educationScore !== undefined && (
+              <div className="flex justify-between gap-2">
+                <span>Eğitim:</span>
+                <span className="font-medium">{educationScore}/30</span>
+              </div>
+            )}
+            {technicalScore !== undefined && (
+              <div className="flex justify-between gap-2">
+                <span>Teknik:</span>
+                <span className="font-medium">{technicalScore}/20</span>
+              </div>
+            )}
+            {extraScore !== undefined && (
+              <div className="flex justify-between gap-2">
+                <span>Ek:</span>
+                <span className="font-medium">{extraScore}/10</span>
+              </div>
+            )}
+          </div>
+        )}
     </div>
   );
 }

@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import * as offerService from '@/services/offerService';
-import * as templateService from '@/services/templateService';
-import { fetchCandidates } from '@/services/candidates';
-import { fetchJobPostings } from '@/services/jobPostings';
-import { withRoleProtection } from '@/lib/hoc/withRoleProtection';
-import { RoleGroups } from '@/lib/constants/roles';
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import * as offerService from "@/services/offerService";
+import * as templateService from "@/services/templateService";
+import { fetchCandidates } from "@/services/candidates";
+import { fetchJobPostings } from "@/services/jobPostings";
+import { withRoleProtection } from "@/lib/hoc/withRoleProtection";
+import { RoleGroups } from "@/lib/constants/roles";
 
 function NewOfferPage() {
   const router = useRouter();
@@ -19,22 +19,22 @@ function NewOfferPage() {
   const [selectedTemplate, setSelectedTemplate] = useState<any>(null);
 
   const [formData, setFormData] = useState({
-    candidateId: '',
-    jobPostingId: '',
-    position: '',
-    department: '',
+    candidateId: "",
+    jobPostingId: "",
+    position: "",
+    department: "",
     salary: 0,
-    currency: 'TRY',
-    startDate: '',
-    workType: 'office',
+    currency: "TRY",
+    startDate: "",
+    workType: "office",
     benefits: {
       insurance: false,
       meal: 0,
       transportation: false,
       gym: false,
-      education: false
+      education: false,
     },
-    terms: ''
+    terms: "",
   });
 
   useEffect(() => {
@@ -44,23 +44,24 @@ function NewOfferPage() {
   async function loadInitialData() {
     try {
       setLoadingData(true);
-      const [candidatesData, jobPostingsData, templatesData] = await Promise.all([
-        fetchCandidates({ page: 1, limit: 100 }),
-        fetchJobPostings({ page: 1, limit: 100 }),
-        templateService.fetchTemplates({ isActive: true })
-      ]);
+      const [candidatesData, jobPostingsData, templatesData] =
+        await Promise.all([
+          fetchCandidates({ page: 1, limit: 100 }),
+          fetchJobPostings({ page: 1, limit: 100 }),
+          templateService.fetchTemplates({ isActive: true }),
+        ]);
       setCandidates(candidatesData.data || []);
       setJobPostings(jobPostingsData.data || []);
       setTemplates(templatesData.data || []);
     } catch (error) {
-      console.error('Error loading data:', error);
+      console.error("Error loading data:", error);
     } finally {
       setLoadingData(false);
     }
   }
 
   function handleTemplateSelect(templateId: string) {
-    const template = templates.find(t => t.id === templateId);
+    const template = templates.find((t) => t.id === templateId);
     if (template) {
       setSelectedTemplate(template);
       // Feature #8: Auto-fill from template
@@ -72,7 +73,7 @@ function NewOfferPage() {
         currency: template.currency,
         workType: template.workType,
         benefits: { ...template.benefits },
-        terms: template.terms
+        terms: template.terms,
       });
     } else {
       setSelectedTemplate(null);
@@ -84,13 +85,13 @@ function NewOfferPage() {
   }
 
   function handleJobPostingChange(jobPostingId: string) {
-    const jobPosting = jobPostings.find(jp => jp.id === jobPostingId);
+    const jobPosting = jobPostings.find((jp) => jp.id === jobPostingId);
     if (jobPosting) {
       setFormData({
         ...formData,
         jobPostingId,
         position: jobPosting.title || formData.position,
-        department: jobPosting.department || formData.department
+        department: jobPosting.department || formData.department,
       });
     } else {
       setFormData({ ...formData, jobPostingId });
@@ -102,8 +103,8 @@ function NewOfferPage() {
       ...formData,
       benefits: {
         ...formData.benefits,
-        [key]: value
-      }
+        [key]: value,
+      },
     });
   }
 
@@ -112,22 +113,22 @@ function NewOfferPage() {
 
     // Validation
     if (!formData.candidateId) {
-      alert('Lütfen aday seçin');
+      alert("Lütfen aday seçin");
       return;
     }
 
     if (!formData.position || !formData.department) {
-      alert('Lütfen pozisyon ve departman girin');
+      alert("Lütfen pozisyon ve departman girin");
       return;
     }
 
     if (formData.salary <= 0) {
-      alert('Lütfen geçerli bir maaş girin');
+      alert("Lütfen geçerli bir maaş girin");
       return;
     }
 
     if (!formData.startDate) {
-      alert('Lütfen başlangıç tarihi seçin');
+      alert("Lütfen başlangıç tarihi seçin");
       return;
     }
 
@@ -137,16 +138,19 @@ function NewOfferPage() {
       // Feature #14: Create from template if selected
       let offer;
       if (selectedTemplate) {
-        offer = await templateService.createOfferFromTemplate(selectedTemplate.id, formData);
+        offer = await templateService.createOfferFromTemplate(
+          selectedTemplate.id,
+          formData
+        );
         offer = offer.data; // Extract from response
       } else {
         offer = await offerService.createOffer(formData);
       }
 
-      alert('Teklif başarıyla oluşturuldu!');
+      alert("Teklif başarıyla oluşturuldu!");
       router.push(`/offers/${offer.id}`);
     } catch (error: any) {
-      alert(error.message || 'Teklif oluşturulurken hata oluştu');
+      alert(error.message || "Teklif oluşturulurken hata oluştu");
     } finally {
       setSubmitting(false);
     }
@@ -170,15 +174,18 @@ function NewOfferPage() {
         >
           ← Geri
         </button>
-        <h1 className="text-2xl font-bold text-gray-900">Yeni Teklif Oluştur</h1>
+        <h1 className="text-2xl font-bold text-gray-900">
+          Yeni Teklif Oluştur
+        </h1>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-
         {/* Section 0: Template Selection (Feature #8) */}
         {templates.length > 0 && (
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-            <h2 className="text-lg font-semibold mb-4 text-gray-900">📋 Şablon Seç (Opsiyonel)</h2>
+            <h2 className="text-lg font-semibold mb-4 text-gray-900">
+              📋 Şablon Seç (Opsiyonel)
+            </h2>
             <select
               onChange={(e) => handleTemplateSelect(e.target.value)}
               className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white"
@@ -186,13 +193,15 @@ function NewOfferPage() {
               <option value="">Şablon kullanmadan oluştur</option>
               {templates.map((t) => (
                 <option key={t.id} value={t.id}>
-                  {t.name} - {t.position} (₺{t.salaryMin.toLocaleString()}-₺{t.salaryMax.toLocaleString()})
+                  {t.name} - {t.position} (₺{t.salaryMin.toLocaleString()}-₺
+                  {t.salaryMax.toLocaleString()})
                 </option>
               ))}
             </select>
             {selectedTemplate && (
               <p className="mt-2 text-sm text-blue-700">
-                ✅ Şablon seçildi: {selectedTemplate.name} - Tüm alanlar otomatik doldu
+                ✅ Şablon seçildi: {selectedTemplate.name} - Tüm alanlar
+                otomatik doldu
               </p>
             )}
           </div>
@@ -200,7 +209,9 @@ function NewOfferPage() {
 
         {/* Section 1: Aday Seçimi */}
         <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-lg font-semibold mb-4 text-gray-900">1. Aday Seçimi</h2>
+          <h2 className="text-lg font-semibold mb-4 text-gray-900">
+            1. Aday Seçimi
+          </h2>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Aday <span className="text-red-500">*</span>
@@ -223,7 +234,9 @@ function NewOfferPage() {
 
         {/* Section 2: İlan Seçimi */}
         <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-lg font-semibold mb-4 text-gray-900">2. İlan Seçimi (Opsiyonel)</h2>
+          <h2 className="text-lg font-semibold mb-4 text-gray-900">
+            2. İlan Seçimi (Opsiyonel)
+          </h2>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               İş İlanı
@@ -248,7 +261,9 @@ function NewOfferPage() {
 
         {/* Section 3: Teklif Detayları */}
         <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-lg font-semibold mb-4 text-gray-900">3. Teklif Detayları</h2>
+          <h2 className="text-lg font-semibold mb-4 text-gray-900">
+            3. Teklif Detayları
+          </h2>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -258,7 +273,9 @@ function NewOfferPage() {
               <input
                 type="text"
                 value={formData.position}
-                onChange={(e) => setFormData({ ...formData, position: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, position: e.target.value })
+                }
                 required
                 className="w-full border border-gray-300 rounded-lg px-4 py-2"
                 placeholder="Örn: Senior Software Developer"
@@ -272,7 +289,9 @@ function NewOfferPage() {
               <input
                 type="text"
                 value={formData.department}
-                onChange={(e) => setFormData({ ...formData, department: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, department: e.target.value })
+                }
                 required
                 className="w-full border border-gray-300 rounded-lg px-4 py-2"
                 placeholder="Örn: Engineering"
@@ -287,7 +306,12 @@ function NewOfferPage() {
                 <input
                   type="number"
                   value={formData.salary}
-                  onChange={(e) => setFormData({ ...formData, salary: parseInt(e.target.value) || 0 })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      salary: parseInt(e.target.value) || 0,
+                    })
+                  }
                   required
                   min="0"
                   className="flex-1 border border-gray-300 rounded-lg px-4 py-2"
@@ -295,7 +319,9 @@ function NewOfferPage() {
                 />
                 <select
                   value={formData.currency}
-                  onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, currency: e.target.value })
+                  }
                   className="border border-gray-300 rounded-lg px-4 py-2"
                 >
                   <option value="TRY">TRY (₺)</option>
@@ -312,9 +338,11 @@ function NewOfferPage() {
               <input
                 type="date"
                 value={formData.startDate}
-                onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, startDate: e.target.value })
+                }
                 required
-                min={new Date().toISOString().split('T')[0]}
+                min={new Date().toISOString().split("T")[0]}
                 className="w-full border border-gray-300 rounded-lg px-4 py-2"
               />
             </div>
@@ -330,8 +358,10 @@ function NewOfferPage() {
                   type="radio"
                   name="workType"
                   value="office"
-                  checked={formData.workType === 'office'}
-                  onChange={(e) => setFormData({ ...formData, workType: e.target.value })}
+                  checked={formData.workType === "office"}
+                  onChange={(e) =>
+                    setFormData({ ...formData, workType: e.target.value })
+                  }
                   className="mr-2"
                 />
                 Ofis
@@ -341,8 +371,10 @@ function NewOfferPage() {
                   type="radio"
                   name="workType"
                   value="hybrid"
-                  checked={formData.workType === 'hybrid'}
-                  onChange={(e) => setFormData({ ...formData, workType: e.target.value })}
+                  checked={formData.workType === "hybrid"}
+                  onChange={(e) =>
+                    setFormData({ ...formData, workType: e.target.value })
+                  }
                   className="mr-2"
                 />
                 Hibrit
@@ -352,8 +384,10 @@ function NewOfferPage() {
                   type="radio"
                   name="workType"
                   value="remote"
-                  checked={formData.workType === 'remote'}
-                  onChange={(e) => setFormData({ ...formData, workType: e.target.value })}
+                  checked={formData.workType === "remote"}
+                  onChange={(e) =>
+                    setFormData({ ...formData, workType: e.target.value })
+                  }
                   className="mr-2"
                 />
                 Uzaktan
@@ -364,17 +398,23 @@ function NewOfferPage() {
 
         {/* Section 4: Yan Haklar */}
         <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-lg font-semibold mb-4 text-gray-900">4. Yan Haklar</h2>
+          <h2 className="text-lg font-semibold mb-4 text-gray-900">
+            4. Yan Haklar
+          </h2>
 
           <div className="space-y-3">
             <label className="flex items-center">
               <input
                 type="checkbox"
                 checked={formData.benefits.insurance}
-                onChange={(e) => handleBenefitChange('insurance', e.target.checked)}
+                onChange={(e) =>
+                  handleBenefitChange("insurance", e.target.checked)
+                }
                 className="mr-3 h-4 w-4"
               />
-              <span className="text-sm text-gray-700">Özel Sağlık Sigortası</span>
+              <span className="text-sm text-gray-700">
+                Özel Sağlık Sigortası
+              </span>
             </label>
 
             <div>
@@ -382,7 +422,9 @@ function NewOfferPage() {
                 <input
                   type="checkbox"
                   checked={formData.benefits.meal > 0}
-                  onChange={(e) => handleBenefitChange('meal', e.target.checked ? 1000 : 0)}
+                  onChange={(e) =>
+                    handleBenefitChange("meal", e.target.checked ? 1000 : 0)
+                  }
                   className="mr-3 h-4 w-4"
                 />
                 <span className="text-sm text-gray-700">Yemek Kartı</span>
@@ -391,7 +433,9 @@ function NewOfferPage() {
                 <input
                   type="number"
                   value={formData.benefits.meal}
-                  onChange={(e) => handleBenefitChange('meal', parseInt(e.target.value) || 0)}
+                  onChange={(e) =>
+                    handleBenefitChange("meal", parseInt(e.target.value) || 0)
+                  }
                   className="ml-7 border border-gray-300 rounded px-3 py-1 w-32"
                   placeholder="₺/ay"
                 />
@@ -402,7 +446,9 @@ function NewOfferPage() {
               <input
                 type="checkbox"
                 checked={formData.benefits.transportation}
-                onChange={(e) => handleBenefitChange('transportation', e.target.checked)}
+                onChange={(e) =>
+                  handleBenefitChange("transportation", e.target.checked)
+                }
                 className="mr-3 h-4 w-4"
               />
               <span className="text-sm text-gray-700">Ulaşım Desteği</span>
@@ -412,7 +458,7 @@ function NewOfferPage() {
               <input
                 type="checkbox"
                 checked={formData.benefits.gym}
-                onChange={(e) => handleBenefitChange('gym', e.target.checked)}
+                onChange={(e) => handleBenefitChange("gym", e.target.checked)}
                 className="mr-3 h-4 w-4"
               />
               <span className="text-sm text-gray-700">Spor Salonu Üyeliği</span>
@@ -422,7 +468,9 @@ function NewOfferPage() {
               <input
                 type="checkbox"
                 checked={formData.benefits.education}
-                onChange={(e) => handleBenefitChange('education', e.target.checked)}
+                onChange={(e) =>
+                  handleBenefitChange("education", e.target.checked)
+                }
                 className="mr-3 h-4 w-4"
               />
               <span className="text-sm text-gray-700">Eğitim Desteği</span>
@@ -432,10 +480,14 @@ function NewOfferPage() {
 
         {/* Section 5: Şartlar */}
         <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-lg font-semibold mb-4 text-gray-900">5. Şartlar ve Koşullar</h2>
+          <h2 className="text-lg font-semibold mb-4 text-gray-900">
+            5. Şartlar ve Koşullar
+          </h2>
           <textarea
             value={formData.terms}
-            onChange={(e) => setFormData({ ...formData, terms: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, terms: e.target.value })
+            }
             rows={6}
             className="w-full border border-gray-300 rounded-lg px-4 py-2"
             placeholder="Örn: Çalışma saatleri 09:00-18:00. Deneme süresi 3 ay. Yıllık izin 14 gün."
@@ -456,7 +508,7 @@ function NewOfferPage() {
             disabled={submitting}
             className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition disabled:opacity-50"
           >
-            {submitting ? 'Oluşturuluyor...' : 'Teklif Oluştur'}
+            {submitting ? "Oluşturuluyor..." : "Teklif Oluştur"}
           </button>
         </div>
       </form>
@@ -465,5 +517,5 @@ function NewOfferPage() {
 }
 
 export default withRoleProtection(NewOfferPage, {
-  allowedRoles: RoleGroups.HR_MANAGERS
+  allowedRoles: RoleGroups.HR_MANAGERS,
 });

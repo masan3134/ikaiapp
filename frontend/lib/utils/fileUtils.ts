@@ -6,29 +6,29 @@
  * Format file size in bytes to human readable format
  */
 export function formatFileSize(bytes: number): string {
-  if (bytes === 0) return '0 Bytes';
+  if (bytes === 0) return "0 Bytes";
 
   const k = 1024;
-  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+  const sizes = ["Bytes", "KB", "MB", "GB"];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
 
-  return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+  return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + " " + sizes[i];
 }
 
 /**
  * Get file extension from filename
  */
 export function getFileExtension(filename: string): string {
-  const parts = filename.split('.');
-  return parts.length > 1 ? parts[parts.length - 1].toLowerCase() : '';
+  const parts = filename.split(".");
+  return parts.length > 1 ? parts[parts.length - 1].toLowerCase() : "";
 }
 
 /**
  * Check if file is valid PDF
  */
 export function isValidPDF(file: File): boolean {
-  const validTypes = ['application/pdf'];
-  const validExtensions = ['pdf'];
+  const validTypes = ["application/pdf"];
+  const validExtensions = ["pdf"];
 
   const ext = getFileExtension(file.name);
   return validTypes.includes(file.type) && validExtensions.includes(ext);
@@ -47,7 +47,7 @@ export function isValidFileType(file: File, allowedTypes: string[]): boolean {
  */
 export function downloadBlob(blob: Blob, filename: string): void {
   const url = window.URL.createObjectURL(blob);
-  const a = document.createElement('a');
+  const a = document.createElement("a");
   a.href = url;
   a.download = filename;
   document.body.appendChild(a);

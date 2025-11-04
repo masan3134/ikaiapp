@@ -1,31 +1,32 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { useAuthStore } from '@/lib/store/authStore';
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { useAuthStore } from "@/lib/store/authStore";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login, isAuthenticated, isLoading, error, clearError } = useAuthStore();
+  const { login, isAuthenticated, isLoading, error, clearError } =
+    useAuthStore();
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [validationError, setValidationError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [validationError, setValidationError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setValidationError('');
+    setValidationError("");
     clearError();
 
     // Client-side validation
     if (!email || !password) {
-      setValidationError('Tüm alanları doldurun');
+      setValidationError("Tüm alanları doldurun");
       return;
     }
 
-    if (!email.includes('@')) {
-      setValidationError('Geçerli bir email adresi girin');
+    if (!email.includes("@")) {
+      setValidationError("Geçerli bir email adresi girin");
       return;
     }
 
@@ -34,11 +35,14 @@ export default function LoginPage() {
       await login(email, password);
 
       // Check onboarding status
-      const token = localStorage.getItem('auth_token');
+      const token = localStorage.getItem("auth_token");
       if (token) {
-        const res = await fetch('http://localhost:8102/api/v1/organizations/me', {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
+        const res = await fetch(
+          "http://localhost:8102/api/v1/organizations/me",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
 
         if (res.ok) {
           const data = await res.json();
@@ -46,19 +50,19 @@ export default function LoginPage() {
 
           // Redirect based on onboarding status
           if (org.onboardingCompleted) {
-            router.push('/dashboard');
+            router.push("/dashboard");
           } else {
-            router.push('/onboarding');
+            router.push("/onboarding");
           }
         } else {
           // Fallback to dashboard if org fetch fails
-          router.push('/dashboard');
+          router.push("/dashboard");
         }
       }
     } catch (err: any) {
       // useAuthStore zaten hata durumunu yönetiyor.
       // Konsola yazdırmak, geliştirme sırasında hata ayıklama için yararlıdır.
-      console.error('Login error:', err);
+      console.error("Login error:", err);
     }
   };
 
@@ -80,7 +84,10 @@ export default function LoginPage() {
           )}
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Email
             </label>
             <input
@@ -95,7 +102,10 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Şifre
             </label>
             <input
@@ -120,22 +130,25 @@ export default function LoginPage() {
                 Giriş yapılıyor...
               </>
             ) : (
-              'Giriş Yap'
+              "Giriş Yap"
             )}
           </button>
         </form>
 
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-600">
-            Hesabınız yok mu?{' '}
-            <Link href="/register" className="text-blue-600 hover:text-blue-700 font-medium">
+            Hesabınız yok mu?{" "}
+            <Link
+              href="/register"
+              className="text-blue-600 hover:text-blue-700 font-medium"
+            >
               Kayıt Ol
             </Link>
           </p>
         </div>
 
         {/* Test credentials hint for development */}
-        {process.env.NODE_ENV === 'development' && (
+        {process.env.NODE_ENV === "development" && (
           <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
             <p className="text-xs text-gray-600 font-medium mb-2">Test için:</p>
             <p className="text-xs text-gray-500">Email: test@example.com</p>

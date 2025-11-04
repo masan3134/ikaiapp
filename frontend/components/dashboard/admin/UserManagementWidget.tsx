@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { UserPlus, Shield, Activity, UserMinus } from 'lucide-react';
-import { Card, CardHeader, CardBody } from '@nextui-org/react';
+import { UserPlus, Shield, Activity, UserMinus } from "lucide-react";
+import { Card, CardHeader, CardBody } from "@nextui-org/react";
 
 interface UserManagementWidgetProps {
   data: {
@@ -10,7 +10,9 @@ interface UserManagementWidgetProps {
   };
 }
 
-export default function UserManagementWidget({ data }: UserManagementWidgetProps) {
+export default function UserManagementWidget({
+  data,
+}: UserManagementWidgetProps) {
   return (
     <Card className="bg-gradient-to-br from-indigo-50 to-white shadow-sm hover:shadow-md transition-shadow">
       <CardHeader>

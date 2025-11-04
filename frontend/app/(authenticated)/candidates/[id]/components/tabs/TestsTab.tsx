@@ -1,11 +1,17 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { ClipboardList, Loader2, CheckCircle, XCircle, Clock } from 'lucide-react';
-import { getTestSubmissionsByEmail } from '@/lib/services/testService';
-import { formatDate } from '@/lib/utils/dateFormat';
-import TestDetailModal from '../modals/TestDetailModal';
-import type { TestSubmission } from '../../types';
+import { useState, useEffect } from "react";
+import {
+  ClipboardList,
+  Loader2,
+  CheckCircle,
+  XCircle,
+  Clock,
+} from "lucide-react";
+import { getTestSubmissionsByEmail } from "@/lib/services/testService";
+import { formatDate } from "@/lib/utils/dateFormat";
+import TestDetailModal from "../modals/TestDetailModal";
+import type { TestSubmission } from "../../types";
 
 interface TestsTabProps {
   candidateEmail: string;
@@ -31,7 +37,7 @@ export default function TestsTab({ candidateEmail }: TestsTabProps) {
         setTests(result.submissions);
       }
     } catch (error) {
-      console.error('Tests load error:', error);
+      console.error("Tests load error:", error);
     } finally {
       setLoading(false);
     }
@@ -60,9 +66,10 @@ export default function TestsTab({ candidateEmail }: TestsTabProps) {
             Test Gönderme Hakkında
           </h3>
           <p className="text-sm text-gray-800 font-medium">
-            Test göndermek için <strong>Analizler</strong> sayfasından bir analiz seçin ve
-            <strong className="text-purple-700"> "Test Gönder"</strong> butonunu kullanın.
-            Toplu olarak birden fazla adaya test gönderebilirsiniz.
+            Test göndermek için <strong>Analizler</strong> sayfasından bir
+            analiz seçin ve
+            <strong className="text-purple-700"> "Test Gönder"</strong> butonunu
+            kullanın. Toplu olarak birden fazla adaya test gönderebilirsiniz.
           </p>
         </div>
 
@@ -95,7 +102,8 @@ export default function TestsTab({ candidateEmail }: TestsTabProps) {
                 <tbody className="divide-y divide-gray-200 bg-white">
                   {tests.map((test) => {
                     const isCompleted = test.score !== null;
-                    const isExpired = new Date(test.test?.expiresAt || '') < new Date();
+                    const isExpired =
+                      new Date(test.test?.expiresAt || "") < new Date();
 
                     return (
                       <tr
@@ -104,7 +112,7 @@ export default function TestsTab({ candidateEmail }: TestsTabProps) {
                         className="hover:bg-blue-50 cursor-pointer transition"
                       >
                         <td className="px-4 py-3 text-sm font-semibold text-gray-900">
-                          {test.test?.jobPosting?.title || 'N/A'}
+                          {test.test?.jobPosting?.title || "N/A"}
                         </td>
                         <td className="px-4 py-3 text-sm font-medium text-gray-900">
                           {formatDate(test.completedAt)}
@@ -137,7 +145,7 @@ export default function TestsTab({ candidateEmail }: TestsTabProps) {
                           )}
                         </td>
                         <td className="px-4 py-3 text-sm font-medium text-gray-900">
-                          {test.attemptNumber || '-'}
+                          {test.attemptNumber || "-"}
                         </td>
                       </tr>
                     );
@@ -160,7 +168,10 @@ export default function TestsTab({ candidateEmail }: TestsTabProps) {
       </div>
 
       {showModal && selectedTest && (
-        <TestDetailModal test={selectedTest} onClose={() => setShowModal(false)} />
+        <TestDetailModal
+          test={selectedTest}
+          onClose={() => setShowModal(false)}
+        />
       )}
     </>
   );

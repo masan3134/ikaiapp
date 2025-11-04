@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { MoreVertical, Trash2, Edit, CheckCircle } from 'lucide-react';
-import { useState } from 'react';
-import InterviewCard from './InterviewCard';
+import { MoreVertical, Trash2, Edit, CheckCircle } from "lucide-react";
+import { useState } from "react";
+import InterviewCard from "./InterviewCard";
 
 interface Interview {
   id: string;
@@ -18,7 +18,7 @@ interface Interview {
       lastName: string;
       email: string;
       desiredPosition?: string;
-    }
+    };
   }>;
   interviewer: {
     email: string;
@@ -32,7 +32,12 @@ interface ListProps {
   onStatusChange?: (id: string, status: string) => void;
 }
 
-export default function InterviewList({ interviews, loading, onDelete, onStatusChange }: ListProps) {
+export default function InterviewList({
+  interviews,
+  loading,
+  onDelete,
+  onStatusChange,
+}: ListProps) {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
 
   if (loading) {
@@ -50,7 +55,9 @@ export default function InterviewList({ interviews, loading, onDelete, onStatusC
         <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
           <CheckCircle size={32} className="text-gray-400" />
         </div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">Henüz mülakat yok</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-2">
+          Henüz mülakat yok
+        </h3>
         <p className="text-gray-600">Yeni mülakat oluşturarak başlayın</p>
       </div>
     );
@@ -59,13 +66,18 @@ export default function InterviewList({ interviews, loading, onDelete, onStatusC
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
       {interviews.map((interview) => {
-        const candidateName = interview.candidates[0] 
+        const candidateName = interview.candidates[0]
           ? `${interview.candidates[0].candidate.firstName} ${interview.candidates[0].candidate.lastName}`
-          : 'Aday Yok';
-        const position = interview.candidates[0]?.candidate.desiredPosition || 'Pozisyon belirtilmemiş';
-        
+          : "Aday Yok";
+        const position =
+          interview.candidates[0]?.candidate.desiredPosition ||
+          "Pozisyon belirtilmemiş";
+
         return (
-          <div key={interview.id} className="border-b last:border-b-0 hover:bg-gray-50 transition-colors">
+          <div
+            key={interview.id}
+            className="border-b last:border-b-0 hover:bg-gray-50 transition-colors"
+          >
             <div className="p-6 flex items-start justify-between">
               <InterviewCard
                 interview={{
@@ -77,13 +89,18 @@ export default function InterviewList({ interviews, loading, onDelete, onStatusC
                   type: interview.type,
                   status: interview.status,
                   interviewer: interview.interviewer.email,
-                  location: interview.location || interview.meetLink || 'Belirtilmemiş'
+                  location:
+                    interview.location || interview.meetLink || "Belirtilmemiş",
                 }}
               />
-              
+
               <div className="relative ml-4">
                 <button
-                  onClick={() => setActiveMenu(activeMenu === interview.id ? null : interview.id)}
+                  onClick={() =>
+                    setActiveMenu(
+                      activeMenu === interview.id ? null : interview.id
+                    )
+                  }
                   className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                 >
                   <MoreVertical size={20} className="text-gray-400" />
@@ -93,17 +110,24 @@ export default function InterviewList({ interviews, loading, onDelete, onStatusC
                   <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
                     <button
                       onClick={() => {
-                        onStatusChange?.(interview.id, interview.status === 'scheduled' ? 'completed' : 'scheduled');
+                        onStatusChange?.(
+                          interview.id,
+                          interview.status === "scheduled"
+                            ? "completed"
+                            : "scheduled"
+                        );
                         setActiveMenu(null);
                       }}
                       className="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center gap-2 text-sm"
                     >
                       <CheckCircle size={16} />
-                      {interview.status === 'scheduled' ? 'Tamamlandı İşaretle' : 'Planlanmış'}
+                      {interview.status === "scheduled"
+                        ? "Tamamlandı İşaretle"
+                        : "Planlanmış"}
                     </button>
                     <button
                       onClick={() => {
-                        onStatusChange?.(interview.id, 'cancelled');
+                        onStatusChange?.(interview.id, "cancelled");
                         setActiveMenu(null);
                       }}
                       className="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center gap-2 text-sm text-orange-600"

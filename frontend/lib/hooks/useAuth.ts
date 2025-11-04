@@ -1,4 +1,4 @@
-import { useAuthStore } from '@/lib/store/authStore';
+import { useAuthStore } from "@/lib/store/authStore";
 
 /**
  * useAuth hook - Access authentication state and actions

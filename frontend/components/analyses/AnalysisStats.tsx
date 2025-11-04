@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { TrendingUp, TrendingDown, BarChart3, Users } from 'lucide-react';
-import type { AnalysisResult } from '@/lib/services/analysisService';
+import { TrendingUp, TrendingDown, BarChart3, Users } from "lucide-react";
+import type { AnalysisResult } from "@/lib/services/analysisService";
 
 export interface AnalysisStatsProps {
   results: AnalysisResult[];
@@ -17,44 +17,54 @@ export default function AnalysisStats({ results }: AnalysisStatsProps) {
   }
 
   // Calculate statistics
-  const scores = results.map(r => r.compatibilityScore);
+  const scores = results.map((r) => r.compatibilityScore);
   const highestScore = Math.max(...scores);
   const lowestScore = Math.min(...scores);
-  const averageScore = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+  const averageScore = Math.round(
+    scores.reduce((a, b) => a + b, 0) / scores.length
+  );
   const candidateCount = results.length;
 
   // Find candidates with highest/lowest scores
-  const topCandidate = results.find(r => r.compatibilityScore === highestScore);
-  const bottomCandidate = results.find(r => r.compatibilityScore === lowestScore);
+  const topCandidate = results.find(
+    (r) => r.compatibilityScore === highestScore
+  );
+  const bottomCandidate = results.find(
+    (r) => r.compatibilityScore === lowestScore
+  );
 
   const stats = [
     {
-      label: 'En Yüksek Puan',
+      label: "En Yüksek Puan",
       value: highestScore,
-      subtext: topCandidate ? `${topCandidate.candidate.firstName} ${topCandidate.candidate.lastName}` : '',
+      subtext: topCandidate
+        ? `${topCandidate.candidate.firstName} ${topCandidate.candidate.lastName}`
+        : "",
       icon: <TrendingUp className="w-5 h-5" />,
-      color: 'text-green-600',
-      bgColor: 'bg-green-50',
-      borderColor: 'border-green-200'
+      color: "text-green-600",
+      bgColor: "bg-green-50",
+      borderColor: "border-green-200",
     },
     {
-      label: 'Ortalama Puan',
+      label: "Ortalama Puan",
       value: averageScore,
       subtext: `${candidateCount} adayın ortalaması`,
       icon: <BarChart3 className="w-5 h-5" />,
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-50',
-      borderColor: 'border-blue-200'
+      color: "text-blue-600",
+      bgColor: "bg-blue-50",
+      borderColor: "border-blue-200",
     },
     {
-      label: 'En Düşük Puan',
+      label: "En Düşük Puan",
       value: lowestScore,
-      subtext: bottomCandidate ? `${bottomCandidate.candidate.firstName} ${bottomCandidate.candidate.lastName}` : '',
+      subtext: bottomCandidate
+        ? `${bottomCandidate.candidate.firstName} ${bottomCandidate.candidate.lastName}`
+        : "",
       icon: <TrendingDown className="w-5 h-5" />,
-      color: 'text-red-600',
-      bgColor: 'bg-red-50',
-      borderColor: 'border-red-200'
-    }
+      color: "text-red-600",
+      bgColor: "bg-red-50",
+      borderColor: "border-red-200",
+    },
   ];
 
   return (
@@ -65,12 +75,17 @@ export default function AnalysisStats({ results }: AnalysisStatsProps) {
           className={`${stat.bgColor} border ${stat.borderColor} rounded-lg p-4`}
         >
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-gray-700">{stat.label}</span>
+            <span className="text-sm font-medium text-gray-700">
+              {stat.label}
+            </span>
             <div className={stat.color}>{stat.icon}</div>
           </div>
           <div className={`text-3xl font-bold ${stat.color}`}>{stat.value}</div>
           {stat.subtext && (
-            <p className="text-xs text-gray-600 mt-1 truncate" title={stat.subtext}>
+            <p
+              className="text-xs text-gray-600 mt-1 truncate"
+              title={stat.subtext}
+            >
               {stat.subtext}
             </p>
           )}

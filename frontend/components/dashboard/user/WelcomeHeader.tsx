@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 interface WelcomeHeaderProps {
   user: {
@@ -19,19 +19,19 @@ export function WelcomeHeader({ user }: WelcomeHeaderProps) {
   }, []);
 
   const formatDate = () => {
-    return currentTime.toLocaleDateString('tr-TR', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
+    return currentTime.toLocaleDateString("tr-TR", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
   };
 
   const formatTime = () => {
-    return currentTime.toLocaleTimeString('tr-TR', {
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit'
+    return currentTime.toLocaleTimeString("tr-TR", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
     });
   };
 
@@ -40,15 +40,13 @@ export function WelcomeHeader({ user }: WelcomeHeaderProps) {
       <div className="flex justify-between items-start">
         <div>
           <h1 className="text-3xl font-bold mb-2">
-            👋 Hoş geldin, {user?.firstName || 'Kullanıcı'}!
+            👋 Hoş geldin, {user?.firstName || "Kullanıcı"}!
           </h1>
           <p className="text-slate-200 text-sm md:text-base">
             {formatDate()} • {formatTime()}
           </p>
           {user?.email && (
-            <p className="text-slate-300 text-xs mt-2">
-              {user.email}
-            </p>
+            <p className="text-slate-300 text-xs mt-2">{user.email}</p>
           )}
         </div>
       </div>

@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { Briefcase, Eye, Edit, Trash2, Calendar } from 'lucide-react';
-import type { JobPosting } from '@/lib/services/jobPostingService';
-import { formatDate } from '@/lib/utils/dateFormat';
-import { truncate } from '@/lib/utils/stringUtils';
-import Badge from '@/components/ui/Badge';
+import { Briefcase, Eye, Edit, Trash2, Calendar } from "lucide-react";
+import type { JobPosting } from "@/lib/services/jobPostingService";
+import { formatDate } from "@/lib/utils/dateFormat";
+import { truncate } from "@/lib/utils/stringUtils";
+import Badge from "@/components/ui/Badge";
 
 export interface JobPostingCardProps {
   jobPosting: JobPosting;
@@ -17,7 +17,7 @@ export default function JobPostingCard({
   jobPosting,
   onView,
   onEdit,
-  onDelete
+  onDelete,
 }: JobPostingCardProps) {
   return (
     <div

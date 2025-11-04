@@ -1,17 +1,17 @@
-import axios from 'axios';
-import { UserRole } from '@/lib/constants/roles';
+import axios from "axios";
+import { UserRole } from "@/lib/constants/roles";
 
 // Get API URL with browser-side override for Docker internal hostnames
 const getAPIURL = () => {
   const envURL = process.env.NEXT_PUBLIC_API_URL;
 
   // If running in browser and env URL uses Docker internal hostname, use localhost
-  if (typeof window !== 'undefined' && envURL?.includes('ikai-backend')) {
-    return 'http://localhost:8102';
+  if (typeof window !== "undefined" && envURL?.includes("ikai-backend")) {
+    return "http://localhost:8102";
   }
 
   // Otherwise use env URL or fallback to localhost
-  return envURL || 'http://localhost:8102';
+  return envURL || "http://localhost:8102";
 };
 
 const API_URL = getAPIURL();
@@ -20,7 +20,7 @@ const API_URL = getAPIURL();
 const apiClient = axios.create({
   baseURL: API_URL,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
   withCredentials: true,
 });
@@ -28,7 +28,7 @@ const apiClient = axios.create({
 // Request interceptor to add token to all requests
 apiClient.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('auth_token');
+    const token = localStorage.getItem("auth_token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -45,17 +45,24 @@ apiClient.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       // Clear token and redirect to login
-      localStorage.removeItem('auth_token');
-      localStorage.removeItem('auth_user');
-      if (typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
-        window.location.href = '/login';
+      localStorage.removeItem("auth_token");
+      localStorage.removeItem("auth_user");
+      if (
+        typeof window !== "undefined" &&
+        !window.location.pathname.includes("/login")
+      ) {
+        window.location.href = "/login";
       }
     }
 
     // Suppress console errors for expected 503 errors on AI Chat endpoints
     if (error.response?.status === 503) {
-      const url = error.config?.url || '';
-      if (url.includes('/chat-stats') || url.includes('/prepare-chat') || url.includes('/chat')) {
+      const url = error.config?.url || "";
+      if (
+        url.includes("/chat-stats") ||
+        url.includes("/prepare-chat") ||
+        url.includes("/chat")
+      ) {
         // This is an expected service unavailable error for AI Chat
         // Suppress the console error but still reject the promise
         error.suppressConsoleError = true;
@@ -94,30 +101,49 @@ export interface ErrorResponse {
 /**
  * Register a new user
  */
-export async function register(email: string, password: string): Promise<AuthResponse> {
+export async function register(
+  email: string,
+  password: string
+): Promise<AuthResponse> {
   try {
-    const response = await apiClient.post<AuthResponse>('/api/v1/auth/register', {
-      email,
-      password,
-    });
+    const response = await apiClient.post<AuthResponse>(
+      "/api/v1/auth/register",
+      {
+        email,
+        password,
+      }
+    );
     return response.data;
   } catch (error: any) {
-    throw error.response?.data || { error: 'Network Error', message: 'Failed to connect to server' };
+    throw (
+      error.response?.data || {
+        error: "Network Error",
+        message: "Failed to connect to server",
+      }
+    );
   }
 }
 
 /**
  * Login user
  */
-export async function login(email: string, password: string): Promise<AuthResponse> {
+export async function login(
+  email: string,
+  password: string
+): Promise<AuthResponse> {
   try {
-    const response = await apiClient.post<AuthResponse>('/api/v1/auth/login', {
+    const response = await apiClient.post<AuthResponse>("/api/v1/auth/login", {
       email,
       password,
     });
     return response.data;
   } catch (error: any) {
-    throw error.response?.data || { error: 'Network Error', message: 'Failed to connect to server' };
+    throw (
+      error.response?.data || {
+        error: "Network Error",
+        message: "Failed to connect to server",
+      }
+    );
   }
 }
 
@@ -126,13 +152,13 @@ export async function login(email: string, password: string): Promise<AuthRespon
  */
 export async function logout(): Promise<void> {
   try {
-    await apiClient.post('/api/v1/auth/logout');
+    await apiClient.post("/api/v1/auth/logout");
   } catch (error) {
-    console.error('Logout error:', error);
+    console.error("Logout error:", error);
   } finally {
     // Always clear local storage on logout
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('auth_user');
+    localStorage.removeItem("auth_token");
+    localStorage.removeItem("auth_user");
   }
 }
 
@@ -141,10 +167,15 @@ export async function logout(): Promise<void> {
  */
 export async function getCurrentUser(): Promise<User> {
   try {
-    const response = await apiClient.get<{ user: User }>('/api/v1/auth/me');
+    const response = await apiClient.get<{ user: User }>("/api/v1/auth/me");
     return response.data.user;
   } catch (error: any) {
-    throw error.response?.data || { error: 'Network Error', message: 'Failed to get user' };
+    throw (
+      error.response?.data || {
+        error: "Network Error",
+        message: "Failed to get user",
+      }
+    );
   }
 }
 
@@ -153,10 +184,17 @@ export async function getCurrentUser(): Promise<User> {
  */
 export async function refreshToken(): Promise<string> {
   try {
-    const response = await apiClient.post<{ token: string }>('/api/v1/auth/refresh');
+    const response = await apiClient.post<{ token: string }>(
+      "/api/v1/auth/refresh"
+    );
     return response.data.token;
   } catch (error: any) {
-    throw error.response?.data || { error: 'Network Error', message: 'Failed to refresh token' };
+    throw (
+      error.response?.data || {
+        error: "Network Error",
+        message: "Failed to refresh token",
+      }
+    );
   }
 }
 

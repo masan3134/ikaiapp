@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { AlertCircle, ChevronRight } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { AlertCircle, ChevronRight } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface ActionItemsWidgetProps {
   data: {
@@ -26,7 +26,9 @@ export function ActionItemsWidget({ data }: ActionItemsWidgetProps) {
           <div className="flex items-center justify-between p-3 bg-white rounded-lg cursor-pointer hover:bg-slate-50 transition-colors">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
-                <span className="text-lg font-bold text-red-600">{data?.urgentCount || 0}</span>
+                <span className="text-lg font-bold text-red-600">
+                  {data?.urgentCount || 0}
+                </span>
               </div>
               <div>
                 <p className="text-sm font-medium text-slate-800">Acil</p>
@@ -39,10 +41,14 @@ export function ActionItemsWidget({ data }: ActionItemsWidgetProps) {
           <div className="flex items-center justify-between p-3 bg-white rounded-lg cursor-pointer hover:bg-slate-50 transition-colors">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
-                <span className="text-lg font-bold text-yellow-600">{data?.approvalCount || 0}</span>
+                <span className="text-lg font-bold text-yellow-600">
+                  {data?.approvalCount || 0}
+                </span>
               </div>
               <div>
-                <p className="text-sm font-medium text-slate-800">Onay Bekliyor</p>
+                <p className="text-sm font-medium text-slate-800">
+                  Onay Bekliyor
+                </p>
                 <p className="text-xs text-slate-500">Teklifler, bütçeler</p>
               </div>
             </div>
@@ -52,11 +58,17 @@ export function ActionItemsWidget({ data }: ActionItemsWidgetProps) {
           <div className="flex items-center justify-between p-3 bg-white rounded-lg cursor-pointer hover:bg-slate-50 transition-colors">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                <span className="text-lg font-bold text-blue-600">{data?.todayTasksCount || 0}</span>
+                <span className="text-lg font-bold text-blue-600">
+                  {data?.todayTasksCount || 0}
+                </span>
               </div>
               <div>
-                <p className="text-sm font-medium text-slate-800">Bugün Biten</p>
-                <p className="text-xs text-slate-500">Görevler ve toplantılar</p>
+                <p className="text-sm font-medium text-slate-800">
+                  Bugün Biten
+                </p>
+                <p className="text-xs text-slate-500">
+                  Görevler ve toplantılar
+                </p>
               </div>
             </div>
             <ChevronRight className="w-4 h-4 text-slate-400" />
@@ -64,7 +76,7 @@ export function ActionItemsWidget({ data }: ActionItemsWidgetProps) {
         </div>
 
         <button
-          onClick={() => router.push('/tasks')}
+          onClick={() => router.push("/tasks")}
           className="w-full mt-4 bg-yellow-600 hover:bg-yellow-700 text-white py-2 rounded-lg font-medium transition-colors"
         >
           Tümünü Görüntüle

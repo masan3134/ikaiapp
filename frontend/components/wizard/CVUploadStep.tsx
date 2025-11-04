@@ -1,24 +1,25 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useDropzone } from 'react-dropzone';
-import { useWizardStore } from '@/lib/store/wizardStore';
-import type { Candidate } from '@/lib/store/wizardStore';
-import axios from 'axios';
-import { Upload, FileText, X, AlertCircle } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { useDropzone } from "react-dropzone";
+import { useWizardStore } from "@/lib/store/wizardStore";
+import type { Candidate } from "@/lib/store/wizardStore";
+import axios from "axios";
+import { Upload, FileText, X, AlertCircle } from "lucide-react";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 if (!API_URL) {
-  throw new Error('NEXT_PUBLIC_API_URL environment variable is not set');
+  throw new Error("NEXT_PUBLIC_API_URL environment variable is not set");
 }
 
 export default function CVUploadStep() {
-  const [activeTab, setActiveTab] = useState<'upload' | 'existing'>('upload');
+  const [activeTab, setActiveTab] = useState<"upload" | "existing">("upload");
   const [candidates, setCandidates] = useState<Candidate[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
   const [showDuplicateModal, setShowDuplicateModal] = useState(false);
-  const [duplicateCandidate, setDuplicateCandidate] = useState<Candidate | null>(null);
+  const [duplicateCandidate, setDuplicateCandidate] =
+    useState<Candidate | null>(null);
 
   const {
     uploadedFiles,
@@ -28,11 +29,11 @@ export default function CVUploadStep() {
     addCandidate,
     removeCandidate,
     error,
-    setError
+    setError,
   } = useWizardStore();
 
   useEffect(() => {
-    if (activeTab === 'existing') {
+    if (activeTab === "existing") {
       fetchCandidates();
     }
   }, [activeTab]);
@@ -40,16 +41,16 @@ export default function CVUploadStep() {
   const fetchCandidates = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem('auth_token');
+      const token = localStorage.getItem("auth_token");
       const response = await axios.get(`${API_URL}/api/v1/candidates`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
       setCandidates(response.data.candidates);
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Fetch candidates error:', error);
+      if (process.env.NODE_ENV === "development") {
+        console.error("Fetch candidates error:", error);
       }
-      setError('Adaylar yüklenemedi');
+      setError("Adaylar yüklenemedi");
     } finally {
       setLoading(false);
     }
@@ -57,7 +58,7 @@ export default function CVUploadStep() {
 
   const checkDuplicate = async (fileName: string): Promise<boolean> => {
     try {
-      const token = localStorage.getItem('auth_token');
+      const token = localStorage.getItem("auth_token");
       const response = await axios.post(
         `${API_URL}/api/v1/candidates/check-duplicate`,
         { fileName },
@@ -71,8 +72,8 @@ export default function CVUploadStep() {
       }
       return false;
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Check duplicate error:', error);
+      if (process.env.NODE_ENV === "development") {
+        console.error("Check duplicate error:", error);
       }
       return false;
     }
@@ -80,29 +81,32 @@ export default function CVUploadStep() {
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: {
-      'application/pdf': ['.pdf'],
-      'application/msword': ['.doc'],
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
-      'text/html': ['.html'],
-      'text/plain': ['.txt'],
-      'text/csv': ['.csv']
+      "application/pdf": [".pdf"],
+      "application/msword": [".doc"],
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+        [".docx"],
+      "text/html": [".html"],
+      "text/plain": [".txt"],
+      "text/csv": [".csv"],
     },
     maxSize: 10 * 1024 * 1024,
     onDrop: async (acceptedFiles, rejectedFiles) => {
       if (rejectedFiles.length > 0) {
         const errors = rejectedFiles.map((f) => {
-          if (f.errors[0]?.code === 'file-too-large') return `${f.file.name}: Dosya çok büyük (max 10MB)`;
-          if (f.errors[0]?.code === 'file-invalid-type') return `${f.file.name}: Geçersiz dosya tipi`;
-          return f.errors[0]?.message || 'Dosya hatası';
+          if (f.errors[0]?.code === "file-too-large")
+            return `${f.file.name}: Dosya çok büyük (max 10MB)`;
+          if (f.errors[0]?.code === "file-invalid-type")
+            return `${f.file.name}: Geçersiz dosya tipi`;
+          return f.errors[0]?.message || "Dosya hatası";
         });
-        setError(errors.join(', '));
+        setError(errors.join(", "));
         return;
       }
 
       for (const file of acceptedFiles) {
         const totalFiles = uploadedFiles.length + selectedCandidates.length;
         if (totalFiles >= 50) {
-          setError('Maksimum 50 CV seçebilirsiniz');
+          setError("Maksimum 50 CV seçebilirsiniz");
           break;
         }
 
@@ -111,13 +115,13 @@ export default function CVUploadStep() {
           addFile(file);
         }
       }
-    }
+    },
   });
 
   const formatFileSize = (bytes: number): string => {
-    if (bytes < 1024) return bytes + ' B';
-    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+    if (bytes < 1024) return bytes + " B";
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
+    return (bytes / (1024 * 1024)).toFixed(1) + " MB";
   };
 
   const handleCandidateToggle = (candidate: Candidate) => {
@@ -127,7 +131,7 @@ export default function CVUploadStep() {
     } else {
       const totalCandidates = uploadedFiles.length + selectedCandidates.length;
       if (totalCandidates >= 50) {
-        setError('Maksimum 50 CV seçebilirsiniz');
+        setError("Maksimum 50 CV seçebilirsiniz");
         return;
       }
       addCandidate(candidate);
@@ -135,7 +139,7 @@ export default function CVUploadStep() {
   };
 
   // Filter candidates based on search term
-  const filteredCandidates = candidates.filter(candidate => {
+  const filteredCandidates = candidates.filter((candidate) => {
     if (!searchTerm) return true;
     const search = searchTerm.toLowerCase();
     return (
@@ -156,27 +160,29 @@ export default function CVUploadStep() {
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-bold text-gray-900">CV Yükleme</h2>
-        <p className="text-gray-600 mt-1">CV dosyalarını yükleyin veya mevcut adaylardan seçin</p>
+        <p className="text-gray-600 mt-1">
+          CV dosyalarını yükleyin veya mevcut adaylardan seçin
+        </p>
       </div>
 
       {/* Tabs */}
       <div className="flex border-b border-gray-200">
         <button
-          onClick={() => setActiveTab('upload')}
+          onClick={() => setActiveTab("upload")}
           className={`px-6 py-3 font-medium transition-colors ${
-            activeTab === 'upload'
-              ? 'border-b-2 border-blue-600 text-blue-600'
-              : 'text-gray-500 hover:text-gray-700'
+            activeTab === "upload"
+              ? "border-b-2 border-blue-600 text-blue-600"
+              : "text-gray-500 hover:text-gray-700"
           }`}
         >
           Dosya Yükle
         </button>
         <button
-          onClick={() => setActiveTab('existing')}
+          onClick={() => setActiveTab("existing")}
           className={`px-6 py-3 font-medium transition-colors ${
-            activeTab === 'existing'
-              ? 'border-b-2 border-blue-600 text-blue-600'
-              : 'text-gray-500 hover:text-gray-700'
+            activeTab === "existing"
+              ? "border-b-2 border-blue-600 text-blue-600"
+              : "text-gray-500 hover:text-gray-700"
           }`}
         >
           Mevcut Adaylardan Seç
@@ -195,19 +201,23 @@ export default function CVUploadStep() {
       )}
 
       {/* Upload Tab */}
-      {activeTab === 'upload' && (
+      {activeTab === "upload" && (
         <div className="space-y-4">
           {/* Dropzone */}
           <div
             {...getRootProps()}
             className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
-              isDragActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-blue-400'
+              isDragActive
+                ? "border-blue-500 bg-blue-50"
+                : "border-gray-300 hover:border-blue-400"
             }`}
           >
             <input {...getInputProps()} />
             <Upload size={48} className="mx-auto text-gray-400 mb-4" />
             {isDragActive ? (
-              <p className="text-blue-600 font-medium">Dosyaları buraya bırakın...</p>
+              <p className="text-blue-600 font-medium">
+                Dosyaları buraya bırakın...
+              </p>
             ) : (
               <>
                 <p className="text-gray-700 font-medium mb-2">
@@ -235,7 +245,9 @@ export default function CVUploadStep() {
                     <FileText size={20} className="text-blue-600" />
                     <div>
                       <p className="font-medium text-gray-900">{file.name}</p>
-                      <p className="text-sm text-gray-500">{formatFileSize(file.size)}</p>
+                      <p className="text-sm text-gray-500">
+                        {formatFileSize(file.size)}
+                      </p>
                     </div>
                   </div>
                   <button
@@ -252,7 +264,7 @@ export default function CVUploadStep() {
       )}
 
       {/* Existing Candidates Tab */}
-      {activeTab === 'existing' && (
+      {activeTab === "existing" && (
         <div className="space-y-4">
           {loading ? (
             <div className="text-center py-12">
@@ -275,10 +287,13 @@ export default function CVUploadStep() {
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 placeholder:text-gray-400"
                 />
-                <FileText className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                <FileText
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                  size={18}
+                />
                 {searchTerm && (
                   <button
-                    onClick={() => setSearchTerm('')}
+                    onClick={() => setSearchTerm("")}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                   >
                     <X size={18} />
@@ -292,20 +307,23 @@ export default function CVUploadStep() {
                 <span>
                   {searchTerm
                     ? `${displayedCandidates.length} aday bulundu`
-                    : `İlk 5 aday gösteriliyor (toplam ${candidates.length})`
-                  }
+                    : `İlk 5 aday gösteriliyor (toplam ${candidates.length})`}
                 </span>
               </div>
 
               <div className="space-y-2">
                 {displayedCandidates.map((candidate) => {
-                  const isSelected = selectedCandidates.find((c) => c.id === candidate.id);
+                  const isSelected = selectedCandidates.find(
+                    (c) => c.id === candidate.id
+                  );
                   return (
                     <div
                       key={candidate.id}
                       onClick={() => handleCandidateToggle(candidate)}
                       className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
-                        isSelected ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-blue-300'
+                        isSelected
+                          ? "border-blue-600 bg-blue-50"
+                          : "border-gray-200 hover:border-blue-300"
                       }`}
                     >
                       <div className="flex items-center justify-between">
@@ -335,7 +353,10 @@ export default function CVUploadStep() {
                               )}
                             </div>
                             <p className="text-xs text-gray-400 mt-1">
-                              {candidate.sourceFileName} • {new Date(candidate.createdAt).toLocaleDateString('tr-TR')}
+                              {candidate.sourceFileName} •{" "}
+                              {new Date(candidate.createdAt).toLocaleDateString(
+                                "tr-TR"
+                              )}
                             </p>
                           </div>
                         </div>
@@ -358,18 +379,25 @@ export default function CVUploadStep() {
                 <AlertCircle size={24} className="text-yellow-600" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">Dosya Zaten Mevcut</h3>
-                <p className="text-sm text-gray-600">Bu dosya daha önce yüklendi</p>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Dosya Zaten Mevcut
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Bu dosya daha önce yüklendi
+                </p>
               </div>
             </div>
 
             <div className="bg-gray-50 rounded-lg p-4 mb-4">
               <p className="text-sm text-gray-700">
-                <span className="font-medium">Dosya Adı:</span> {duplicateCandidate.sourceFileName}
+                <span className="font-medium">Dosya Adı:</span>{" "}
+                {duplicateCandidate.sourceFileName}
               </p>
               <p className="text-sm text-gray-700 mt-2">
-                <span className="font-medium">Yüklenme Tarihi:</span>{' '}
-                {new Date(duplicateCandidate.createdAt).toLocaleDateString('tr-TR')}
+                <span className="font-medium">Yüklenme Tarihi:</span>{" "}
+                {new Date(duplicateCandidate.createdAt).toLocaleDateString(
+                  "tr-TR"
+                )}
               </p>
             </div>
 

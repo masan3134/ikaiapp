@@ -1,28 +1,45 @@
-'use client';
+"use client";
 
-import { useEffect, useState, useMemo } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, Calendar, CheckCircle, XCircle, Users, Briefcase, PlusCircle, ArrowUpDown, Download, FileSpreadsheet, FileText, Mail } from 'lucide-react';
-import { getAnalysisById, type Analysis, type AnalysisResult } from '@/lib/services/analysisService';
-import { downloadCV } from '@/lib/services/candidateService';
-import { useAsync } from '@/lib/hooks/useAsync';
-import { useToast } from '@/lib/hooks/useToast';
-import { withRoleProtection } from '@/lib/hoc/withRoleProtection';
-import { RoleGroups } from '@/lib/constants/roles';
-import LoadingSkeleton from '@/components/ui/LoadingSkeleton';
-import EmptyState from '@/components/ui/EmptyState';
-import AnalysisStatusBadge from '@/components/analyses/AnalysisStatusBadge';
-import AnalysisStats from '@/components/analyses/AnalysisStats';
-import AnalysisResultCard from '@/components/analyses/AnalysisResultCard';
-import AnalysisResultProcessingCard from '@/components/analyses/AnalysisResultProcessingCard';
-import PartialSuccessAlert from '@/components/analyses/PartialSuccessAlert';
-import { parseApiError } from '@/lib/utils/errorHandler';
-import { formatDateTime } from '@/lib/utils/dateFormat';
-import { downloadBlob } from '@/lib/utils/fileUtils';
-import AddCandidatesModal from '@/components/analyses/AddCandidatesModal';
-import EmailExportModal from '@/components/analyses/EmailExportModal';
-import BulkTestSendModal from '@/components/analyses/BulkTestSendModal';
-import AIChatButton from '@/components/analyses/AIChatButton';
+import { useEffect, useState, useMemo } from "react";
+import { useParams, useRouter } from "next/navigation";
+import {
+  ArrowLeft,
+  Calendar,
+  CheckCircle,
+  XCircle,
+  Users,
+  Briefcase,
+  PlusCircle,
+  ArrowUpDown,
+  Download,
+  FileSpreadsheet,
+  FileText,
+  Mail,
+} from "lucide-react";
+import {
+  getAnalysisById,
+  type Analysis,
+  type AnalysisResult,
+} from "@/lib/services/analysisService";
+import { downloadCV } from "@/lib/services/candidateService";
+import { useAsync } from "@/lib/hooks/useAsync";
+import { useToast } from "@/lib/hooks/useToast";
+import { withRoleProtection } from "@/lib/hoc/withRoleProtection";
+import { RoleGroups } from "@/lib/constants/roles";
+import LoadingSkeleton from "@/components/ui/LoadingSkeleton";
+import EmptyState from "@/components/ui/EmptyState";
+import AnalysisStatusBadge from "@/components/analyses/AnalysisStatusBadge";
+import AnalysisStats from "@/components/analyses/AnalysisStats";
+import AnalysisResultCard from "@/components/analyses/AnalysisResultCard";
+import AnalysisResultProcessingCard from "@/components/analyses/AnalysisResultProcessingCard";
+import PartialSuccessAlert from "@/components/analyses/PartialSuccessAlert";
+import { parseApiError } from "@/lib/utils/errorHandler";
+import { formatDateTime } from "@/lib/utils/dateFormat";
+import { downloadBlob } from "@/lib/utils/fileUtils";
+import AddCandidatesModal from "@/components/analyses/AddCandidatesModal";
+import EmailExportModal from "@/components/analyses/EmailExportModal";
+import BulkTestSendModal from "@/components/analyses/BulkTestSendModal";
+import AIChatButton from "@/components/analyses/AIChatButton";
 
 function AnalysisDetailPage() {
   const params = useParams();
@@ -33,22 +50,35 @@ function AnalysisDetailPage() {
   const [isEmailModalOpen, setEmailModalOpen] = useState(false);
   const [isTestModalOpen, setTestModalOpen] = useState(false);
   const [showExportDropdown, setShowExportDropdown] = useState(false);
-  const [processingCandidateIds, setProcessingCandidateIds] = useState<string[]>([]);
+  const [processingCandidateIds, setProcessingCandidateIds] = useState<
+    string[]
+  >([]);
 
   // Sorting state
-  type SortOption = 'score-desc' | 'score-asc' | 'name-asc' | 'name-desc' | 'date-desc' | 'date-asc';
-  const [sortBy, setSortBy] = useState<SortOption>('score-desc');
+  type SortOption =
+    | "score-desc"
+    | "score-asc"
+    | "name-asc"
+    | "name-desc"
+    | "date-desc"
+    | "date-asc";
+  const [sortBy, setSortBy] = useState<SortOption>("score-desc");
 
   // Fetch analysis data with useAsync
-  const { data: analysisData, loading, error, execute: loadAnalysis } = useAsync(async () => {
+  const {
+    data: analysisData,
+    loading,
+    error,
+    execute: loadAnalysis,
+  } = useAsync(async () => {
     return await getAnalysisById(analysisId);
   });
 
   useEffect(() => {
     if (analysisId) {
       loadAnalysis().catch((err) => {
-        if (process.env.NODE_ENV === 'development') {
-          console.error('Failed to load analysis:', err);
+        if (process.env.NODE_ENV === "development") {
+          console.error("Failed to load analysis:", err);
         }
       });
     }
@@ -64,8 +94,8 @@ function AnalysisDetailPage() {
     }
 
     if (showExportDropdown) {
-      document.addEventListener('click', handleClickOutside);
-      return () => document.removeEventListener('click', handleClickOutside);
+      document.addEventListener("click", handleClickOutside);
+      return () => document.removeEventListener("click", handleClickOutside);
     }
   }, [showExportDropdown]);
 
@@ -76,17 +106,17 @@ function AnalysisDetailPage() {
     const analysis = analysisData.analysis;
 
     // Poll if analysis is PROCESSING or if we have candidates being processed
-    if (analysis.status === 'PROCESSING' || processingCandidateIds.length > 0) {
+    if (analysis.status === "PROCESSING" || processingCandidateIds.length > 0) {
       const interval = setInterval(() => {
-        if (process.env.NODE_ENV === 'development') {
-          console.log('Polling for analysis updates...', {
+        if (process.env.NODE_ENV === "development") {
+          console.log("Polling for analysis updates...", {
             status: analysis.status,
-            processingCount: processingCandidateIds.length
+            processingCount: processingCandidateIds.length,
           });
         }
         loadAnalysis().catch((err) => {
-          if (process.env.NODE_ENV === 'development') {
-            console.error('Polling failed:', err);
+          if (process.env.NODE_ENV === "development") {
+            console.error("Polling failed:", err);
           }
         });
       }, 5000); // Poll every 5 seconds
@@ -94,44 +124,48 @@ function AnalysisDetailPage() {
       return () => clearInterval(interval);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [analysisData?.analysis?.status, processingCandidateIds.length, analysisId]);
+  }, [
+    analysisData?.analysis?.status,
+    processingCandidateIds.length,
+    analysisId,
+  ]);
 
   const analysis = analysisData?.analysis;
 
   // Handle add candidates success
   const handleAddCandidatesSuccess = async (addedIds: string[]) => {
-    setProcessingCandidateIds(prev => [...new Set([...prev, ...addedIds])]);
+    setProcessingCandidateIds((prev) => [...new Set([...prev, ...addedIds])]);
     await loadAnalysis();
   };
 
   // Export handlers
-  const handleExport = async (format: 'xlsx' | 'csv' | 'html') => {
+  const handleExport = async (format: "xlsx" | "csv" | "html") => {
     try {
       const API_BASE = process.env.NEXT_PUBLIC_API_URL;
       if (!API_BASE) {
-        throw new Error('NEXT_PUBLIC_API_URL environment variable is not set');
+        throw new Error("NEXT_PUBLIC_API_URL environment variable is not set");
       }
-      const token = localStorage.getItem('auth_token');
+      const token = localStorage.getItem("auth_token");
 
       const url = `${API_BASE}/api/v1/analyses/${analysisId}/export/${format}`;
 
-      if (format === 'html') {
+      if (format === "html") {
         // Open HTML in new tab
-        window.open(url + `?token=${token}`, '_blank');
-        toast.success('HTML raporu yeni sekmede açıldı');
+        window.open(url + `?token=${token}`, "_blank");
+        toast.success("HTML raporu yeni sekmede açıldı");
       } else {
         // Download file
         const response = await fetch(url, {
           headers: {
-            'Authorization': `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         });
 
-        if (!response.ok) throw new Error('Export failed');
+        if (!response.ok) throw new Error("Export failed");
 
         const blob = await response.blob();
         const downloadUrl = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
+        const a = document.createElement("a");
         a.href = downloadUrl;
         a.download = `analiz-${analysisId}.${format}`;
         document.body.appendChild(a);
@@ -142,29 +176,32 @@ function AnalysisDetailPage() {
         toast.success(`${format.toUpperCase()} başarıyla indirildi`);
       }
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Export error:', error);
+      if (process.env.NODE_ENV === "development") {
+        console.error("Export error:", error);
       }
-      toast.error('Export sırasında hata oluştu');
+      toast.error("Export sırasında hata oluştu");
     }
   };
 
   // Calculate which candidates are still processing
   const existingResultIds = useMemo(
-    () => new Set(analysis?.analysisResults?.map(r => r.candidateId) || []),
+    () => new Set(analysis?.analysisResults?.map((r) => r.candidateId) || []),
     [analysis?.analysisResults]
   );
 
   const processingCandidates = useMemo(
-    () => processingCandidateIds.filter(id => !existingResultIds.has(id)),
+    () => processingCandidateIds.filter((id) => !existingResultIds.has(id)),
     [processingCandidateIds, existingResultIds]
   );
 
   // Auto-clear processing IDs when all results have arrived
   useEffect(() => {
-    if (processingCandidateIds.length > 0 && processingCandidates.length === 0) {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('All processing candidates completed, clearing list');
+    if (
+      processingCandidateIds.length > 0 &&
+      processingCandidates.length === 0
+    ) {
+      if (process.env.NODE_ENV === "development") {
+        console.log("All processing candidates completed, clearing list");
       }
       setProcessingCandidateIds([]);
     }
@@ -175,29 +212,39 @@ function AnalysisDetailPage() {
     const results = [...(analysis?.analysisResults || [])];
 
     switch (sortBy) {
-      case 'score-desc':
-        return results.sort((a, b) => b.compatibilityScore - a.compatibilityScore);
-      case 'score-asc':
-        return results.sort((a, b) => a.compatibilityScore - b.compatibilityScore);
-      case 'name-asc':
-        return results.sort((a, b) => {
-          const nameA = `${a.candidate.firstName} ${a.candidate.lastName}`.toLowerCase();
-          const nameB = `${b.candidate.firstName} ${b.candidate.lastName}`.toLowerCase();
-          return nameA.localeCompare(nameB, 'tr');
-        });
-      case 'name-desc':
-        return results.sort((a, b) => {
-          const nameA = `${a.candidate.firstName} ${a.candidate.lastName}`.toLowerCase();
-          const nameB = `${b.candidate.firstName} ${b.candidate.lastName}`.toLowerCase();
-          return nameB.localeCompare(nameA, 'tr');
-        });
-      case 'date-desc':
-        return results.sort((a, b) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      case "score-desc":
+        return results.sort(
+          (a, b) => b.compatibilityScore - a.compatibilityScore
         );
-      case 'date-asc':
-        return results.sort((a, b) =>
-          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      case "score-asc":
+        return results.sort(
+          (a, b) => a.compatibilityScore - b.compatibilityScore
+        );
+      case "name-asc":
+        return results.sort((a, b) => {
+          const nameA =
+            `${a.candidate.firstName} ${a.candidate.lastName}`.toLowerCase();
+          const nameB =
+            `${b.candidate.firstName} ${b.candidate.lastName}`.toLowerCase();
+          return nameA.localeCompare(nameB, "tr");
+        });
+      case "name-desc":
+        return results.sort((a, b) => {
+          const nameA =
+            `${a.candidate.firstName} ${a.candidate.lastName}`.toLowerCase();
+          const nameB =
+            `${b.candidate.firstName} ${b.candidate.lastName}`.toLowerCase();
+          return nameB.localeCompare(nameA, "tr");
+        });
+      case "date-desc":
+        return results.sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+      case "date-asc":
+        return results.sort(
+          (a, b) =>
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
         );
       default:
         return results;
@@ -207,13 +254,13 @@ function AnalysisDetailPage() {
   // Handle CV download
   async function handleDownloadCV(result: AnalysisResult) {
     await toast.promise(
-      downloadCV(result.candidateId).then(blob => {
+      downloadCV(result.candidateId).then((blob) => {
         downloadBlob(blob, result.candidate.sourceFileName);
       }),
       {
-        loading: 'CV indiriliyor...',
-        success: 'CV başarıyla indirildi',
-        error: 'CV indirilemedi'
+        loading: "CV indiriliyor...",
+        success: "CV başarıyla indirildi",
+        error: "CV indirilemedi",
       }
     );
   }
@@ -240,10 +287,14 @@ function AnalysisDetailPage() {
           <EmptyState
             icon={<XCircle className="w-16 h-16 text-red-500" />}
             title="Analiz Bulunamadı"
-            description={error ? parseApiError(error) : 'İstenen analiz bulunamadı veya erişim yetkiniz yok.'}
+            description={
+              error
+                ? parseApiError(error)
+                : "İstenen analiz bulunamadı veya erişim yetkiniz yok."
+            }
             action={{
-              label: 'Analizlere Dön',
-              onClick: () => router.push('/analyses')
+              label: "Analizlere Dön",
+              onClick: () => router.push("/analyses"),
             }}
           />
         </div>
@@ -259,7 +310,7 @@ function AnalysisDetailPage() {
         <div className="max-w-7xl mx-auto px-4 py-8">
           {/* Back Button */}
           <button
-            onClick={() => router.push('/analyses')}
+            onClick={() => router.push("/analyses")}
             className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6 transition-colors"
           >
             <ArrowLeft className="w-5 h-5" />
@@ -281,7 +332,8 @@ function AnalysisDetailPage() {
                   )}
                 </div>
                 <p className="text-gray-600 mb-4">
-                  {analysis.jobPosting.description || 'Detaylı analiz sonuçları'}
+                  {analysis.jobPosting.description ||
+                    "Detaylı analiz sonuçları"}
                 </p>
 
                 {/* Meta Info */}
@@ -294,12 +346,16 @@ function AnalysisDetailPage() {
                   )}
                   <div className="flex items-center gap-2">
                     <Calendar className="w-4 h-4" />
-                    <span>Oluşturulma: {formatDateTime(analysis.createdAt)}</span>
+                    <span>
+                      Oluşturulma: {formatDateTime(analysis.createdAt)}
+                    </span>
                   </div>
                   {analysis.completedAt && (
                     <div className="flex items-center gap-2">
                       <CheckCircle className="w-4 h-4" />
-                      <span>Tamamlanma: {formatDateTime(analysis.completedAt)}</span>
+                      <span>
+                        Tamamlanma: {formatDateTime(analysis.completedAt)}
+                      </span>
                     </div>
                   )}
                   <div className="flex items-center gap-2">
@@ -318,7 +374,7 @@ function AnalysisDetailPage() {
                     hasResults={resultsCount > 0}
                   />
 
-                  {analysis.status === 'COMPLETED' && resultsCount > 0 && (
+                  {analysis.status === "COMPLETED" && resultsCount > 0 && (
                     <div className="flex gap-3">
                       {/* Add Candidate Button (Left) */}
                       <button
@@ -332,7 +388,10 @@ function AnalysisDetailPage() {
                       {/* Export/Send Dropdown */}
                       <div className="relative">
                         <button
-                          onClick={(e) => { e.stopPropagation(); setShowExportDropdown(!showExportDropdown); }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setShowExportDropdown(!showExportDropdown);
+                          }}
                           className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-white bg-green-600 rounded-lg hover:bg-green-700 shadow-md transition-all"
                         >
                           <Download className="w-4 h-4" />
@@ -343,32 +402,48 @@ function AnalysisDetailPage() {
                         {showExportDropdown && (
                           <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border-2 border-gray-200 z-10">
                             <div className="p-2">
-                              <div className="text-xs font-bold text-gray-500 px-3 py-2 uppercase">Dışa Aktar</div>
+                              <div className="text-xs font-bold text-gray-500 px-3 py-2 uppercase">
+                                Dışa Aktar
+                              </div>
                               <button
-                                onClick={() => { handleExport('html'); setShowExportDropdown(false); }}
+                                onClick={() => {
+                                  handleExport("html");
+                                  setShowExportDropdown(false);
+                                }}
                                 className="w-full flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-900 hover:bg-purple-50 rounded transition"
                               >
                                 <FileText className="w-4 h-4 text-purple-600" />
                                 HTML Rapor
                               </button>
                               <button
-                                onClick={() => { handleExport('xlsx'); setShowExportDropdown(false); }}
+                                onClick={() => {
+                                  handleExport("xlsx");
+                                  setShowExportDropdown(false);
+                                }}
                                 className="w-full flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-900 hover:bg-green-50 rounded transition"
                               >
                                 <FileSpreadsheet className="w-4 h-4 text-green-600" />
                                 Excel
                               </button>
                               <button
-                                onClick={() => { handleExport('csv'); setShowExportDropdown(false); }}
+                                onClick={() => {
+                                  handleExport("csv");
+                                  setShowExportDropdown(false);
+                                }}
                                 className="w-full flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-900 hover:bg-blue-50 rounded transition"
                               >
                                 <Download className="w-4 h-4 text-blue-600" />
                                 CSV
                               </button>
                               <div className="border-t border-gray-200 my-2"></div>
-                              <div className="text-xs font-bold text-gray-500 px-3 py-2 uppercase">Gönder</div>
+                              <div className="text-xs font-bold text-gray-500 px-3 py-2 uppercase">
+                                Gönder
+                              </div>
                               <button
-                                onClick={() => { setEmailModalOpen(true); setShowExportDropdown(false); }}
+                                onClick={() => {
+                                  setEmailModalOpen(true);
+                                  setShowExportDropdown(false);
+                                }}
                                 className="w-full flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-900 hover:bg-orange-50 rounded transition"
                               >
                                 <Mail className="w-4 h-4 text-orange-600" />
@@ -401,7 +476,7 @@ function AnalysisDetailPage() {
             </div>
 
             {/* Error Message */}
-            {analysis.status === 'FAILED' && analysis.errorMessage && (
+            {analysis.status === "FAILED" && analysis.errorMessage && (
               <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
                 <p className="text-sm text-red-700">
                   <strong>Hata:</strong> {analysis.errorMessage}
@@ -411,12 +486,14 @@ function AnalysisDetailPage() {
           </div>
 
           {/* Partial Success Alert */}
-          {analysis.status === 'COMPLETED' && analysis.errorMessage && resultsCount > 0 && (
-            <PartialSuccessAlert
-              errorMessage={analysis.errorMessage}
-              successCount={resultsCount}
-            />
-          )}
+          {analysis.status === "COMPLETED" &&
+            analysis.errorMessage &&
+            resultsCount > 0 && (
+              <PartialSuccessAlert
+                errorMessage={analysis.errorMessage}
+                successCount={resultsCount}
+              />
+            )}
 
           {/* Results Section */}
           {resultsCount > 0 || processingCandidates.length > 0 ? (
@@ -433,7 +510,10 @@ function AnalysisDetailPage() {
                 {/* Sort Dropdown */}
                 <div className="flex items-center gap-2">
                   <ArrowUpDown className="w-4 h-4 text-gray-500" />
-                  <label htmlFor="sort-select" className="text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="sort-select"
+                    className="text-sm font-medium text-gray-700"
+                  >
                     Sıralama:
                   </label>
                   <select
@@ -442,19 +522,43 @@ function AnalysisDetailPage() {
                     onChange={(e) => setSortBy(e.target.value as SortOption)}
                     className="px-3 py-2 text-sm font-medium text-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white shadow-sm cursor-pointer hover:border-gray-400 transition-colors"
                   >
-                    <option value="score-desc" className="text-gray-900 bg-white">Skor (Yüksek → Düşük)</option>
-                    <option value="score-asc" className="text-gray-900 bg-white">Skor (Düşük → Yüksek)</option>
-                    <option value="name-asc" className="text-gray-900 bg-white">İsim (A → Z)</option>
-                    <option value="name-desc" className="text-gray-900 bg-white">İsim (Z → A)</option>
-                    <option value="date-desc" className="text-gray-900 bg-white">Tarih (En Yeni)</option>
-                    <option value="date-asc" className="text-gray-900 bg-white">Tarih (En Eski)</option>
+                    <option
+                      value="score-desc"
+                      className="text-gray-900 bg-white"
+                    >
+                      Skor (Yüksek → Düşük)
+                    </option>
+                    <option
+                      value="score-asc"
+                      className="text-gray-900 bg-white"
+                    >
+                      Skor (Düşük → Yüksek)
+                    </option>
+                    <option value="name-asc" className="text-gray-900 bg-white">
+                      İsim (A → Z)
+                    </option>
+                    <option
+                      value="name-desc"
+                      className="text-gray-900 bg-white"
+                    >
+                      İsim (Z → A)
+                    </option>
+                    <option
+                      value="date-desc"
+                      className="text-gray-900 bg-white"
+                    >
+                      Tarih (En Yeni)
+                    </option>
+                    <option value="date-asc" className="text-gray-900 bg-white">
+                      Tarih (En Eski)
+                    </option>
                   </select>
                 </div>
               </div>
 
               {/* Results List */}
               <div className="space-y-4">
-                {processingCandidates.map(id => (
+                {processingCandidates.map((id) => (
                   <AnalysisResultProcessingCard key={`proc-${id}`} />
                 ))}
                 {sortedResults.map((result, index) => (
@@ -474,8 +578,8 @@ function AnalysisDetailPage() {
               title="Henüz Sonuç Yok"
               description="Bu analiz için henüz sonuç bulunmuyor."
               action={{
-                label: 'Analizlere Dön',
-                onClick: () => router.push('/analyses')
+                label: "Analizlere Dön",
+                onClick: () => router.push("/analyses"),
               }}
             />
           )}
@@ -495,7 +599,7 @@ function AnalysisDetailPage() {
             isOpen={isEmailModalOpen}
             onClose={() => setEmailModalOpen(false)}
             analysisId={analysisId}
-            onSuccess={() => toast.success('Email gönderimi başlatıldı')}
+            onSuccess={() => toast.success("Email gönderimi başlatıldı")}
           />
 
           <BulkTestSendModal
@@ -513,5 +617,5 @@ function AnalysisDetailPage() {
 }
 
 export default withRoleProtection(AnalysisDetailPage, {
-  allowedRoles: RoleGroups.HR_MANAGERS
+  allowedRoles: RoleGroups.HR_MANAGERS,
 });

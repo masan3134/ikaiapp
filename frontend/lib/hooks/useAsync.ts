@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback } from "react";
 
 export interface UseAsyncReturn<T, Args extends any[]> {
   execute: (...args: Args) => Promise<void>;

@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { RoleGuard } from '@/components/guards/RoleGuard';
-import { AllowedRoles } from '@/lib/constants/roles';
+import React from "react";
+import { RoleGuard } from "@/components/guards/RoleGuard";
+import { AllowedRoles } from "@/lib/constants/roles";
 
 interface WithRoleProtectionOptions {
   allowedRoles: AllowedRoles;
@@ -40,7 +40,7 @@ export function withRoleProtection<P extends object>(
     );
   };
 
-  ProtectedComponent.displayName = `withRoleProtection(${Component.displayName || Component.name || 'Component'})`;
+  ProtectedComponent.displayName = `withRoleProtection(${Component.displayName || Component.name || "Component"})`;
 
   return ProtectedComponent;
 }

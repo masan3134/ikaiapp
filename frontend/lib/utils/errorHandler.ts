@@ -9,7 +9,7 @@ export class ApiError extends Error {
     public errorType?: string
   ) {
     super(message);
-    this.name = 'ApiError';
+    this.name = "ApiError";
   }
 }
 
@@ -19,7 +19,7 @@ export class ApiError extends Error {
 export function parseApiError(error: any): string {
   // Network error
   if (!error.response) {
-    return 'Bağlantı hatası. İnternet bağlantınızı kontrol edin.';
+    return "Bağlantı hatası. İnternet bağlantınızı kontrol edin.";
   }
 
   // API error with message
@@ -29,14 +29,14 @@ export function parseApiError(error: any): string {
 
   // HTTP status code messages
   const statusMessages: Record<number, string> = {
-    400: 'Geçersiz istek',
-    401: 'Oturum süreniz doldu. Lütfen tekrar giriş yapın.',
-    403: 'Bu işlem için yetkiniz yok',
-    404: 'Kayıt bulunamadı',
-    409: 'Bu kayıt zaten mevcut',
-    422: 'Gönderilen veriler geçersiz',
-    500: 'Sunucu hatası. Lütfen daha sonra tekrar deneyin.',
-    503: 'Servis şu anda kullanılamıyor'
+    400: "Geçersiz istek",
+    401: "Oturum süreniz doldu. Lütfen tekrar giriş yapın.",
+    403: "Bu işlem için yetkiniz yok",
+    404: "Kayıt bulunamadı",
+    409: "Bu kayıt zaten mevcut",
+    422: "Gönderilen veriler geçersiz",
+    500: "Sunucu hatası. Lütfen daha sonra tekrar deneyin.",
+    503: "Servis şu anda kullanılamıyor",
   };
 
   const status = error.response?.status;
@@ -45,7 +45,7 @@ export function parseApiError(error: any): string {
   }
 
   // Default error message
-  return 'Bir hata oluştu. Lütfen tekrar deneyin.';
+  return "Bir hata oluştu. Lütfen tekrar deneyin.";
 }
 
 /**
@@ -59,7 +59,11 @@ export function isAuthError(error: any): boolean {
  * Check if error is network error
  */
 export function isNetworkError(error: any): boolean {
-  return !error.response || error.code === 'ECONNABORTED' || error.code === 'ERR_NETWORK';
+  return (
+    !error.response ||
+    error.code === "ECONNABORTED" ||
+    error.code === "ERR_NETWORK"
+  );
 }
 
 /**
@@ -75,7 +79,10 @@ export function isValidationError(error: any): boolean {
 export function getValidationErrors(error: any): Record<string, string> {
   const errors: Record<string, string> = {};
 
-  if (error.response?.data?.details && Array.isArray(error.response.data.details)) {
+  if (
+    error.response?.data?.details &&
+    Array.isArray(error.response.data.details)
+  ) {
     error.response.data.details.forEach((detail: any) => {
       if (detail.field && detail.message) {
         errors[detail.field] = detail.message;

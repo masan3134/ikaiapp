@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { Eye, Edit, Trash2, Calendar, Users, Briefcase } from 'lucide-react';
-import type { JobPosting } from '@/lib/services/jobPostingService';
-import Badge from '@/components/ui/Badge';
-import { formatDate } from '@/lib/utils/dateFormat';
+import { Eye, Edit, Trash2, Calendar, Users, Briefcase } from "lucide-react";
+import type { JobPosting } from "@/lib/services/jobPostingService";
+import Badge from "@/components/ui/Badge";
+import { formatDate } from "@/lib/utils/dateFormat";
 
 export interface JobPostingTableProps {
   jobPostings: JobPosting[];
@@ -22,10 +22,12 @@ export default function JobPostingTable({
   onDelete,
   selectedIds = [],
   onToggleSelect,
-  onToggleSelectAll
+  onToggleSelectAll,
 }: JobPostingTableProps) {
-  const allSelected = selectedIds.length === jobPostings.length && jobPostings.length > 0;
-  const someSelected = selectedIds.length > 0 && selectedIds.length < jobPostings.length;
+  const allSelected =
+    selectedIds.length === jobPostings.length && jobPostings.length > 0;
+  const someSelected =
+    selectedIds.length > 0 && selectedIds.length < jobPostings.length;
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
@@ -39,7 +41,7 @@ export default function JobPostingTable({
                   <input
                     type="checkbox"
                     checked={allSelected}
-                    ref={input => {
+                    ref={(input) => {
                       if (input) input.indeterminate = someSelected;
                     }}
                     onChange={onToggleSelectAll}
@@ -71,13 +73,16 @@ export default function JobPostingTable({
                 <tr
                   key={jobPosting.id}
                   className={`hover:bg-gray-50 transition-colors cursor-pointer ${
-                    isSelected ? 'bg-blue-50' : ''
+                    isSelected ? "bg-blue-50" : ""
                   }`}
                   onClick={() => onView(jobPosting)}
                 >
                   {/* Checkbox Cell */}
                   {onToggleSelect && (
-                    <td className="px-6 py-4 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
+                    <td
+                      className="px-6 py-4 whitespace-nowrap"
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       <input
                         type="checkbox"
                         checked={isSelected}
@@ -99,7 +104,9 @@ export default function JobPostingTable({
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{jobPosting.department}</div>
+                    <div className="text-sm text-gray-900">
+                      {jobPosting.department}
+                    </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center text-sm text-gray-500">

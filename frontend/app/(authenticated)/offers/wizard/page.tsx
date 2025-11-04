@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
-import { useOfferWizardStore } from '@/lib/store/offerWizardStore';
-import Step1_TemplateOrScratch from '@/components/offers/wizard/Step1_TemplateOrScratch';
-import Step2_OfferDetails from '@/components/offers/wizard/Step2_OfferDetails';
-import Step3_Summary from '@/components/offers/wizard/Step3_Summary';
-import { ChevronLeft, ChevronRight, FileText } from 'lucide-react';
-import { withRoleProtection } from '@/lib/hoc/withRoleProtection';
-import { RoleGroups } from '@/lib/constants/roles';
+import { useRouter } from "next/navigation";
+import { useOfferWizardStore } from "@/lib/store/offerWizardStore";
+import Step1_TemplateOrScratch from "@/components/offers/wizard/Step1_TemplateOrScratch";
+import Step2_OfferDetails from "@/components/offers/wizard/Step2_OfferDetails";
+import Step3_Summary from "@/components/offers/wizard/Step3_Summary";
+import { ChevronLeft, ChevronRight, FileText } from "lucide-react";
+import { withRoleProtection } from "@/lib/hoc/withRoleProtection";
+import { RoleGroups } from "@/lib/constants/roles";
 
 function OfferWizardPage() {
   const router = useRouter();
@@ -22,9 +22,9 @@ function OfferWizardPage() {
   } = useOfferWizardStore();
 
   const steps = [
-    { number: 1, title: 'Başlangıç', component: Step1_TemplateOrScratch },
-    { number: 2, title: 'Detaylar', component: Step2_OfferDetails },
-    { number: 3, title: 'Özet & Gönder', component: Step3_Summary },
+    { number: 1, title: "Başlangıç", component: Step1_TemplateOrScratch },
+    { number: 2, title: "Detaylar", component: Step2_OfferDetails },
+    { number: 3, title: "Özet & Gönder", component: Step3_Summary },
   ];
 
   const CurrentStepComponent = steps[currentStep - 1].component;
@@ -45,9 +45,13 @@ function OfferWizardPage() {
   };
 
   const handleCancel = () => {
-    if (confirm('Wizard\'dan çıkmak istediğinize emin misiniz? Tüm değişiklikler kaybedilecek.')) {
+    if (
+      confirm(
+        "Wizard'dan çıkmak istediğinize emin misiniz? Tüm değişiklikler kaybedilecek."
+      )
+    ) {
       resetWizard();
-      router.push('/offers');
+      router.push("/offers");
     }
   };
 
@@ -68,8 +72,12 @@ function OfferWizardPage() {
               <FileText className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Yeni Teklif Oluştur</h1>
-              <p className="text-gray-600">Adım {currentStep}/3: {steps[currentStep - 1].title}</p>
+              <h1 className="text-3xl font-bold text-gray-900">
+                Yeni Teklif Oluştur
+              </h1>
+              <p className="text-gray-600">
+                Adım {currentStep}/3: {steps[currentStep - 1].title}
+              </p>
             </div>
           </div>
         </div>
@@ -87,19 +95,19 @@ function OfferWizardPage() {
                       transition-all duration-200
                       ${
                         currentStep > step.number
-                          ? 'bg-green-500 text-white'
+                          ? "bg-green-500 text-white"
                           : currentStep === step.number
-                          ? 'bg-blue-600 text-white ring-4 ring-blue-100'
-                          : 'bg-gray-200 text-gray-500'
+                            ? "bg-blue-600 text-white ring-4 ring-blue-100"
+                            : "bg-gray-200 text-gray-500"
                       }
                     `}
                   >
-                    {currentStep > step.number ? '✓' : step.number}
+                    {currentStep > step.number ? "✓" : step.number}
                   </div>
                   <span
                     className={`
                       mt-2 text-sm font-medium
-                      ${currentStep >= step.number ? 'text-gray-900' : 'text-gray-500'}
+                      ${currentStep >= step.number ? "text-gray-900" : "text-gray-500"}
                     `}
                   >
                     {step.title}
@@ -111,7 +119,7 @@ function OfferWizardPage() {
                   <div
                     className={`
                       h-1 flex-1 mx-2 transition-all duration-200
-                      ${currentStep > step.number ? 'bg-green-500' : 'bg-gray-200'}
+                      ${currentStep > step.number ? "bg-green-500" : "bg-gray-200"}
                     `}
                   />
                 )}
@@ -172,8 +180,10 @@ function OfferWizardPage() {
         {!canProceed() && currentStep < 3 && (
           <div className="mt-4 text-center">
             <p className="text-sm text-gray-600">
-              {currentStep === 1 && 'Devam etmek için aday seçimi ve oluşturma modu zorunludur'}
-              {currentStep === 2 && 'Devam etmek için tüm zorunlu alanları doldurun'}
+              {currentStep === 1 &&
+                "Devam etmek için aday seçimi ve oluşturma modu zorunludur"}
+              {currentStep === 2 &&
+                "Devam etmek için tüm zorunlu alanları doldurun"}
             </p>
           </div>
         )}
@@ -183,5 +193,5 @@ function OfferWizardPage() {
 }
 
 export default withRoleProtection(OfferWizardPage, {
-  allowedRoles: RoleGroups.HR_MANAGERS
+  allowedRoles: RoleGroups.HR_MANAGERS,
 });

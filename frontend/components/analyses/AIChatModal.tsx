@@ -3,18 +3,18 @@
  * Analysis-specific AI chatbot interface
  */
 
-'use client';
+"use client";
 
-import { useState, useEffect, useRef } from 'react';
-import { X, Send, Loader2, Sparkles, AlertCircle } from 'lucide-react';
-import AIChatMessage from './AIChatMessage';
+import { useState, useEffect, useRef } from "react";
+import { X, Send, Loader2, Sparkles, AlertCircle } from "lucide-react";
+import AIChatMessage from "./AIChatMessage";
 import {
   sendChatMessage,
   getChatStats,
   prepareChatContext,
-  type ChatMessage
-} from '@/lib/services/analysisChatService';
-import { useToast } from '@/lib/hooks/useToast';
+  type ChatMessage,
+} from "@/lib/services/analysisChatService";
+import { useToast } from "@/lib/hooks/useToast";
 
 interface AIChatModalProps {
   analysisId: string;
@@ -27,20 +27,20 @@ export default function AIChatModal({
   analysisId,
   analysisTitle,
   candidateCount,
-  onClose
+  onClose,
 }: AIChatModalProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [contextLoading, setContextLoading] = useState(true);
   const [contextLoaded, setContextLoaded] = useState(false);
-  const [analysisVersion, setAnalysisVersion] = useState<number | null>(null);  // Version tracking
+  const [analysisVersion, setAnalysisVersion] = useState<number | null>(null); // Version tracking
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const toast = useToast();
 
   // Auto-scroll to bottom
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   useEffect(() => {
@@ -61,11 +61,13 @@ export default function AIChatModal({
         setContextLoading(false);
 
         // Welcome message
-        setMessages([{
-          role: 'assistant',
-          content: `Merhaba! Bu analizde ${candidateCount} aday değerlendirildi.\n\n**${analysisTitle}** pozisyonu için analiz hakkında size nasıl yardımcı olabilirim?\n\n**Örnek sorular:**\n• En iyi 3 adayı karşılaştır\n• [Aday adı]'nın güçlü yönleri neler?\n• Hangi adaylar Node.js biliyor?\n• Genel değerlendirmen nedir?`,
-          timestamp: new Date().toISOString()
-        }]);
+        setMessages([
+          {
+            role: "assistant",
+            content: `Merhaba! Bu analizde ${candidateCount} aday değerlendirildi.\n\n**${analysisTitle}** pozisyonu için analiz hakkında size nasıl yardımcı olabilirim?\n\n**Örnek sorular:**\n• En iyi 3 adayı karşılaştır\n• [Aday adı]'nın güçlü yönleri neler?\n• Hangi adaylar Node.js biliyor?\n• Genel değerlendirmen nedir?`,
+            timestamp: new Date().toISOString(),
+          },
+        ]);
       } else {
         // Context yüklü değil, hazırla
         await prepareContext();
@@ -74,20 +76,23 @@ export default function AIChatModal({
       // Check if service is unavailable (503) - handle first, don't log
       if (error?.response?.status === 503) {
         setContextLoading(false);
-        setMessages([{
-          role: 'assistant',
-          content: '⚠️ AI Chat özelliği şu anda kullanılamıyor.\n\nBu özellik geçici olarak devre dışı bırakılmıştır. Diğer analiz özellikleri normal şekilde çalışmaya devam etmektedir.\n\nDestek için lütfen sistem yöneticisiyle iletişime geçin.',
-          timestamp: new Date().toISOString()
-        }]);
+        setMessages([
+          {
+            role: "assistant",
+            content:
+              "⚠️ AI Chat özelliği şu anda kullanılamıyor.\n\nBu özellik geçici olarak devre dışı bırakılmıştır. Diğer analiz özellikleri normal şekilde çalışmaya devam etmektedir.\n\nDestek için lütfen sistem yöneticisiyle iletişime geçin.",
+            timestamp: new Date().toISOString(),
+          },
+        ]);
         return; // Early return to skip logging
       }
 
       // Log other unexpected errors
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Context check error:', error);
+      if (process.env.NODE_ENV === "development") {
+        console.error("Context check error:", error);
       }
       setContextLoading(false);
-      toast.error('Context kontrol edilemedi');
+      toast.error("Context kontrol edilemedi");
     }
   };
 
@@ -97,35 +102,43 @@ export default function AIChatModal({
       await prepareChatContext(analysisId);
       setContextLoaded(true);
 
-      setMessages([{
-        role: 'assistant',
-        content: `Context hazırlandı! ${candidateCount} aday hakkında konuşabiliriz.\n\nNe öğrenmek istersiniz?`,
-        timestamp: new Date().toISOString()
-      }]);
+      setMessages([
+        {
+          role: "assistant",
+          content: `Context hazırlandı! ${candidateCount} aday hakkında konuşabiliriz.\n\nNe öğrenmek istersiniz?`,
+          timestamp: new Date().toISOString(),
+        },
+      ]);
 
-      toast.success('AI asistan hazır!');
+      toast.success("AI asistan hazır!");
     } catch (error: any) {
       // Check if service is unavailable (503) - handle first, don't log
       if (error?.response?.status === 503) {
-        setMessages([{
-          role: 'assistant',
-          content: '⚠️ AI Chat özelliği şu anda kullanılamıyor.\n\nBu özellik geçici olarak devre dışı bırakılmıştır. Diğer analiz özellikleri normal şekilde çalışmaya devam etmektedir.\n\nDestek için lütfen sistem yöneticisiyle iletişime geçin.',
-          timestamp: new Date().toISOString()
-        }]);
+        setMessages([
+          {
+            role: "assistant",
+            content:
+              "⚠️ AI Chat özelliği şu anda kullanılamıyor.\n\nBu özellik geçici olarak devre dışı bırakılmıştır. Diğer analiz özellikleri normal şekilde çalışmaya devam etmektedir.\n\nDestek için lütfen sistem yöneticisiyle iletişime geçin.",
+            timestamp: new Date().toISOString(),
+          },
+        ]);
         return; // Early return to skip logging
       }
 
       // Log other unexpected errors
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Prepare context error:', error);
+      if (process.env.NODE_ENV === "development") {
+        console.error("Prepare context error:", error);
       }
-      toast.error('Context hazırlanamadı');
+      toast.error("Context hazırlanamadı");
 
-      setMessages([{
-        role: 'assistant',
-        content: 'Üzgünüm, analiz verilerini yükleyemedim. Lütfen tekrar deneyin.',
-        timestamp: new Date().toISOString()
-      }]);
+      setMessages([
+        {
+          role: "assistant",
+          content:
+            "Üzgünüm, analiz verilerini yükleyemedim. Lütfen tekrar deneyin.",
+          timestamp: new Date().toISOString(),
+        },
+      ]);
     } finally {
       setContextLoading(false);
     }
@@ -135,14 +148,14 @@ export default function AIChatModal({
     if (!input.trim() || loading) return;
 
     const userMessage: ChatMessage = {
-      role: 'user',
+      role: "user",
       content: input.trim(),
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     // Add user message
-    setMessages(prev => [...prev, userMessage]);
-    setInput('');
+    setMessages((prev) => [...prev, userMessage]);
+    setInput("");
     setLoading(true);
 
     try {
@@ -151,82 +164,84 @@ export default function AIChatModal({
         analysisId,
         userMessage.content,
         messages,
-        analysisVersion  // Current client version
+        analysisVersion // Current client version
       );
 
       // Version change detection
       if (response.version) {
         if (analysisVersion && response.version !== analysisVersion) {
           // Version değişti - conversation reset
-          toast.info('Analiz güncellendi! Sohbet yenilendi.');
-          setMessages([]);  // Clear old messages
+          toast.info("Analiz güncellendi! Sohbet yenilendi.");
+          setMessages([]); // Clear old messages
         }
-        setAnalysisVersion(response.version);  // Update version
+        setAnalysisVersion(response.version); // Update version
       }
 
       // Version changed notification
       if (response.versionChanged) {
         const systemNotice: ChatMessage = {
-          role: 'assistant',
+          role: "assistant",
           content: `ℹ️ **Analiz Güncellendi**\n\nYeni versiyon: ${response.version}\nGüncel aday sayısı: ${response.facts?.candidateCount}\n\nÖnceki sohbet temizlendi, güncel verilerle devam ediyoruz.`,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
         setMessages([systemNotice]);
       }
 
       // Add AI response
       const aiMessage: ChatMessage = {
-        role: 'assistant',
+        role: "assistant",
         content: response.reply,
-        timestamp: response.timestamp
+        timestamp: response.timestamp,
       };
 
-      setMessages(prev => [...prev, aiMessage]);
+      setMessages((prev) => [...prev, aiMessage]);
     } catch (error: any) {
       // Check if service is unavailable (503) - handle first, don't log
       if (error?.response?.status === 503) {
         const unavailableMessage: ChatMessage = {
-          role: 'assistant',
-          content: '⚠️ AI Chat özelliği şu anda kullanılamıyor.\n\nBu özellik geçici olarak devre dışı bırakılmıştır.',
-          timestamp: new Date().toISOString()
+          role: "assistant",
+          content:
+            "⚠️ AI Chat özelliği şu anda kullanılamıyor.\n\nBu özellik geçici olarak devre dışı bırakılmıştır.",
+          timestamp: new Date().toISOString(),
         };
-        setMessages(prev => [...prev, unavailableMessage]);
-        toast.error('AI Chat kullanılamıyor');
+        setMessages((prev) => [...prev, unavailableMessage]);
+        toast.error("AI Chat kullanılamıyor");
         return; // Early return to skip logging
       }
 
       // Log other unexpected errors
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Chat error:', error);
+      if (process.env.NODE_ENV === "development") {
+        console.error("Chat error:", error);
       }
 
       // Error message for unexpected errors
       const errorMessage: ChatMessage = {
-        role: 'assistant',
-        content: 'Üzgünüm, bir hata oluştu. Lütfen tekrar deneyin.\n\n' +
-                 (error.response?.data?.details || error.message),
-        timestamp: new Date().toISOString()
+        role: "assistant",
+        content:
+          "Üzgünüm, bir hata oluştu. Lütfen tekrar deneyin.\n\n" +
+          (error.response?.data?.details || error.message),
+        timestamp: new Date().toISOString(),
       };
 
-      setMessages(prev => [...prev, errorMessage]);
-      toast.error('Mesaj gönderilemedi');
+      setMessages((prev) => [...prev, errorMessage]);
+      toast.error("Mesaj gönderilemedi");
     } finally {
       setLoading(false);
     }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSend();
     }
   };
 
   const exampleQuestions = [
-    'En iyi 3 adayı karşılaştır',
-    'Hangi adayların teknik skorları yüksek?',
-    'Genel değerlendirmen nedir?',
-    'İşe alım için önerilerin neler?'
+    "En iyi 3 adayı karşılaştır",
+    "Hangi adayların teknik skorları yüksek?",
+    "Genel değerlendirmen nedir?",
+    "İşe alım için önerilerin neler?",
   ];
 
   return (
@@ -289,7 +304,9 @@ export default function AIChatModal({
                   <div className="bg-gray-100 rounded-lg px-4 py-3 border border-gray-200">
                     <div className="flex items-center gap-2">
                       <Loader2 className="w-4 h-4 animate-spin text-purple-600" />
-                      <span className="text-sm text-gray-600">Düşünüyor...</span>
+                      <span className="text-sm text-gray-600">
+                        Düşünüyor...
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -345,7 +362,8 @@ export default function AIChatModal({
           </div>
 
           <p className="text-xs text-gray-500 mt-2">
-            Bu sohbet sadece bu analiz hakkındadır. Gemini 2.0 Flash ile desteklenmektedir.
+            Bu sohbet sadece bu analiz hakkındadır. Gemini 2.0 Flash ile
+            desteklenmektedir.
           </p>
         </div>
       </div>
@@ -354,4 +372,4 @@ export default function AIChatModal({
 }
 
 // Import Bot icon
-import { Bot } from 'lucide-react';
+import { Bot } from "lucide-react";

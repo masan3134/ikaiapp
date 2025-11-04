@@ -1,10 +1,15 @@
-'use client';
+"use client";
 
-import { TrendingUp } from 'lucide-react';
+import { TrendingUp } from "lucide-react";
 import {
-  AreaChart, Area, XAxis, YAxis, CartesianGrid,
-  Tooltip, ResponsiveContainer
-} from 'recharts';
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 
 interface ActivityTimelineChartProps {
   data: Array<{
@@ -27,8 +32,8 @@ export function ActivityTimelineChart({ data }: ActivityTimelineChartProps) {
         <AreaChart data={activityData}>
           <defs>
             <linearGradient id="colorActivity" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#64748b" stopOpacity={0.3}/>
-              <stop offset="95%" stopColor="#64748b" stopOpacity={0}/>
+              <stop offset="5%" stopColor="#64748b" stopOpacity={0.3} />
+              <stop offset="95%" stopColor="#64748b" stopOpacity={0} />
             </linearGradient>
           </defs>
           <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
@@ -36,22 +41,27 @@ export function ActivityTimelineChart({ data }: ActivityTimelineChartProps) {
             dataKey="date"
             stroke="#94a3b8"
             tick={{ fontSize: 12 }}
-            tickLine={{ stroke: '#cbd5e1' }}
+            tickLine={{ stroke: "#cbd5e1" }}
           />
           <YAxis
             stroke="#94a3b8"
             tick={{ fontSize: 12 }}
-            tickLine={{ stroke: '#cbd5e1' }}
-            label={{ value: 'Aktivite', angle: -90, position: 'insideLeft', style: { fontSize: 12, fill: '#64748b' } }}
+            tickLine={{ stroke: "#cbd5e1" }}
+            label={{
+              value: "Aktivite",
+              angle: -90,
+              position: "insideLeft",
+              style: { fontSize: 12, fill: "#64748b" },
+            }}
           />
           <Tooltip
             contentStyle={{
-              backgroundColor: '#fff',
-              border: '1px solid #e2e8f0',
-              borderRadius: '8px',
-              fontSize: '12px'
+              backgroundColor: "#fff",
+              border: "1px solid #e2e8f0",
+              borderRadius: "8px",
+              fontSize: "12px",
             }}
-            labelStyle={{ color: '#334155', fontWeight: 600 }}
+            labelStyle={{ color: "#334155", fontWeight: 600 }}
           />
           <Area
             type="monotone"
@@ -67,7 +77,10 @@ export function ActivityTimelineChart({ data }: ActivityTimelineChartProps) {
       {activityData.length > 0 && (
         <div className="mt-4 flex items-center justify-between text-xs text-slate-500">
           <span>Son 7 gün</span>
-          <span>Toplam aktivite: {activityData.reduce((sum, item) => sum + item.count, 0)}</span>
+          <span>
+            Toplam aktivite:{" "}
+            {activityData.reduce((sum, item) => sum + item.count, 0)}
+          </span>
         </div>
       )}
     </div>

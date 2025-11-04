@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
 export interface SkeletonProps {
-  variant: 'table' | 'card' | 'grid' | 'text';
+  variant: "table" | "card" | "grid" | "text";
   rows?: number;
   columns?: number;
 }
@@ -9,9 +9,9 @@ export interface SkeletonProps {
 export default function LoadingSkeleton({
   variant,
   rows = 5,
-  columns = 3
+  columns = 3,
 }: SkeletonProps) {
-  if (variant === 'table') {
+  if (variant === "table") {
     return (
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
         <div className="animate-pulse">
@@ -30,7 +30,10 @@ export default function LoadingSkeleton({
               <div className="flex gap-4 items-center">
                 <div className="h-10 w-10 bg-gray-200 rounded-full flex-shrink-0" />
                 {Array.from({ length: 4 }).map((_, colIdx) => (
-                  <div key={colIdx} className="h-4 bg-gray-200 rounded flex-1" />
+                  <div
+                    key={colIdx}
+                    className="h-4 bg-gray-200 rounded flex-1"
+                  />
                 ))}
                 <div className="h-4 w-20 bg-gray-200 rounded" />
               </div>
@@ -41,7 +44,7 @@ export default function LoadingSkeleton({
     );
   }
 
-  if (variant === 'card') {
+  if (variant === "card") {
     return (
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
         <div className="animate-pulse space-y-4">
@@ -61,11 +64,16 @@ export default function LoadingSkeleton({
     );
   }
 
-  if (variant === 'grid') {
+  if (variant === "grid") {
     return (
-      <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-${columns} gap-6`}>
+      <div
+        className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-${columns} gap-6`}
+      >
         {Array.from({ length: rows * columns }).map((_, idx) => (
-          <div key={idx} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div
+            key={idx}
+            className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
+          >
             <div className="animate-pulse space-y-4">
               <div className="h-6 bg-gray-200 rounded w-3/4" />
               <div className="h-4 bg-gray-200 rounded w-1/2" />
@@ -80,7 +88,7 @@ export default function LoadingSkeleton({
     );
   }
 
-  if (variant === 'text') {
+  if (variant === "text") {
     return (
       <div className="animate-pulse space-y-3">
         {Array.from({ length: rows }).map((_, idx) => (

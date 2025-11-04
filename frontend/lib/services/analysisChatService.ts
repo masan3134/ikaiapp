@@ -3,10 +3,10 @@
  * API client for analysis-specific AI chat
  */
 
-import apiClient from './authService';
+import apiClient from "./authService";
 
 export interface ChatMessage {
-  role: 'user' | 'assistant';
+  role: "user" | "assistant";
   content: string;
   timestamp?: string;
 }
@@ -61,7 +61,7 @@ export async function sendChatMessage(
       {
         message,
         conversationHistory,
-        clientVersion  // Version tracking
+        clientVersion, // Version tracking
       }
     );
     return response.data;
@@ -82,7 +82,7 @@ export async function prepareChatContext(analysisId: string): Promise<any> {
   try {
     // Just check if chat is ready (getChatStats does the actual check)
     const stats = await getChatStats(analysisId);
-    return { success: true, message: 'Chat service ready', stats };
+    return { success: true, message: "Chat service ready", stats };
   } catch (error: any) {
     // Mark 503 errors as expected (Milvus not available)
     if (error.response?.status === 503) {

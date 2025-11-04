@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from "react";
 import {
   getNotifications,
   getUnreadCount,
   markAsRead,
   markAllAsRead,
-  type Notification
-} from '../api/notifications';
+  type Notification,
+} from "../api/notifications";
 
 /**
  * useNotifications Hook
@@ -38,7 +38,7 @@ export function useNotifications(options: UseNotificationsOptions = {}) {
   const {
     autoRefresh = true,
     refreshInterval = 30000, // 30 seconds
-    filters = {}
+    filters = {},
   } = options;
 
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -58,10 +58,9 @@ export function useNotifications(options: UseNotificationsOptions = {}) {
       const data = await getNotifications(filters);
       setNotifications(data.notifications || []);
       setPagination(data.pagination);
-
     } catch (err: any) {
-      setError(err.message || 'Bildirimler yüklenemedi');
-      console.error('Notification fetch error:', err);
+      setError(err.message || "Bildirimler yüklenemedi");
+      console.error("Notification fetch error:", err);
     } finally {
       setLoading(false);
     }
@@ -76,7 +75,7 @@ export function useNotifications(options: UseNotificationsOptions = {}) {
       const count = await getUnreadCount();
       setUnreadCount(count);
     } catch (err: any) {
-      console.error('Unread count fetch error:', err);
+      console.error("Unread count fetch error:", err);
     }
   }, []);
 
@@ -88,8 +87,8 @@ export function useNotifications(options: UseNotificationsOptions = {}) {
       await markAsRead(notificationId);
 
       // Update local state
-      setNotifications(prev =>
-        prev.map(n =>
+      setNotifications((prev) =>
+        prev.map((n) =>
           n.id === notificationId
             ? { ...n, read: true, readAt: new Date().toISOString() }
             : n
@@ -97,10 +96,9 @@ export function useNotifications(options: UseNotificationsOptions = {}) {
       );
 
       // Decrease unread count
-      setUnreadCount(prev => Math.max(0, prev - 1));
-
+      setUnreadCount((prev) => Math.max(0, prev - 1));
     } catch (err: any) {
-      console.error('Mark as read error:', err);
+      console.error("Mark as read error:", err);
       throw err;
     }
   }, []);
@@ -113,8 +111,12 @@ export function useNotifications(options: UseNotificationsOptions = {}) {
       const count = await markAllAsRead();
 
       // Update local state
-      setNotifications(prev =>
-        prev.map(n => ({ ...n, read: true, readAt: new Date().toISOString() }))
+      setNotifications((prev) =>
+        prev.map((n) => ({
+          ...n,
+          read: true,
+          readAt: new Date().toISOString(),
+        }))
       );
 
       // Reset unread count
@@ -122,7 +124,7 @@ export function useNotifications(options: UseNotificationsOptions = {}) {
 
       return count;
     } catch (err: any) {
-      console.error('Mark all as read error:', err);
+      console.error("Mark all as read error:", err);
       throw err;
     }
   }, []);
@@ -131,10 +133,7 @@ export function useNotifications(options: UseNotificationsOptions = {}) {
    * Refresh both notifications and unread count
    */
   const refresh = useCallback(async () => {
-    await Promise.all([
-      fetchNotifications(),
-      fetchUnreadCount()
-    ]);
+    await Promise.all([fetchNotifications(), fetchUnreadCount()]);
   }, [fetchNotifications, fetchUnreadCount]);
 
   // Initial fetch (only on mount)
@@ -165,7 +164,7 @@ export function useNotifications(options: UseNotificationsOptions = {}) {
     markAllAsRead: markAllNotificationsAsRead,
     refresh,
     fetchNotifications,
-    fetchUnreadCount
+    fetchUnreadCount,
   };
 }
 
@@ -183,7 +182,7 @@ export function useUnreadCount(autoRefresh = true, refreshInterval = 30000) {
       const unreadCount = await getUnreadCount();
       setCount(unreadCount);
     } catch (err) {
-      console.error('Unread count error:', err);
+      console.error("Unread count error:", err);
     } finally {
       setLoading(false);
     }

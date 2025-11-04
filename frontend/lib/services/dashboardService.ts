@@ -1,4 +1,4 @@
-import apiClient from './authService';
+import apiClient from "./authService";
 
 export interface DashboardStats {
   overview: {
@@ -35,9 +35,16 @@ export interface DashboardStats {
  */
 export async function getDashboardStats(): Promise<DashboardStats> {
   try {
-    const response = await apiClient.get<DashboardStats>('/api/v1/dashboard/stats');
+    const response = await apiClient.get<DashboardStats>(
+      "/api/v1/dashboard/stats"
+    );
     return response.data;
   } catch (error: any) {
-    throw error.response?.data || { error: 'Network Error', message: 'Failed to fetch dashboard stats' };
+    throw (
+      error.response?.data || {
+        error: "Network Error",
+        message: "Failed to fetch dashboard stats",
+      }
+    );
   }
 }

@@ -1,9 +1,16 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { BarChart3, TrendingUp, Users, Briefcase, Clock, Target } from 'lucide-react';
-import { withRoleProtection } from '@/lib/hoc/withRoleProtection';
-import { RoleGroups } from '@/lib/constants/roles';
+import { useState, useEffect } from "react";
+import {
+  BarChart3,
+  TrendingUp,
+  Users,
+  Briefcase,
+  Clock,
+  Target,
+} from "lucide-react";
+import { withRoleProtection } from "@/lib/hoc/withRoleProtection";
+import { RoleGroups } from "@/lib/constants/roles";
 
 interface AnalyticsData {
   totalAnalyses: number;
@@ -24,13 +31,13 @@ function AnalyticsPage() {
 
   const loadAnalytics = async () => {
     try {
-      const res = await fetch('/api/v1/analytics/summary');
+      const res = await fetch("/api/v1/analytics/summary");
       const data = await res.json();
       if (data.success) {
         setAnalytics(data.data);
       }
     } catch (error) {
-      console.error('[ANALYTICS] Load error:', error);
+      console.error("[ANALYTICS] Load error:", error);
     } finally {
       setLoading(false);
     }
@@ -42,7 +49,7 @@ function AnalyticsPage() {
         <div className="animate-pulse space-y-6">
           <div className="h-8 bg-slate-200 rounded w-64"></div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[1, 2, 3, 4].map(i => (
+            {[1, 2, 3, 4].map((i) => (
               <div key={i} className="h-32 bg-slate-200 rounded-xl"></div>
             ))}
           </div>
@@ -59,7 +66,8 @@ function AnalyticsPage() {
           Organizasyon Analitikleri
         </h1>
         <p className="text-slate-600 mt-2">
-          Organizasyonunuzun işe alım süreç metrikleri ve performans göstergeleri
+          Organizasyonunuzun işe alım süreç metrikleri ve performans
+          göstergeleri
         </p>
       </div>
 
@@ -71,13 +79,18 @@ function AnalyticsPage() {
               <TrendingUp className="w-6 h-6 text-blue-600" />
             </div>
           </div>
-          <h3 className="text-sm font-medium text-slate-600 mb-1">Toplam Analiz</h3>
+          <h3 className="text-sm font-medium text-slate-600 mb-1">
+            Toplam Analiz
+          </h3>
           <p className="text-2xl font-bold text-slate-800">
             {analytics?.totalAnalyses || 0}
           </p>
           {analytics && analytics.analysesGrowth !== 0 && (
-            <p className={`text-xs mt-1 ${analytics.analysesGrowth > 0 ? 'text-green-600' : 'text-red-600'}`}>
-              {analytics.analysesGrowth > 0 ? '+' : ''}{analytics.analysesGrowth}% bu ay
+            <p
+              className={`text-xs mt-1 ${analytics.analysesGrowth > 0 ? "text-green-600" : "text-red-600"}`}
+            >
+              {analytics.analysesGrowth > 0 ? "+" : ""}
+              {analytics.analysesGrowth}% bu ay
             </p>
           )}
         </div>
@@ -89,13 +102,18 @@ function AnalyticsPage() {
               <Users className="w-6 h-6 text-emerald-600" />
             </div>
           </div>
-          <h3 className="text-sm font-medium text-slate-600 mb-1">Aktif Adaylar</h3>
+          <h3 className="text-sm font-medium text-slate-600 mb-1">
+            Aktif Adaylar
+          </h3>
           <p className="text-2xl font-bold text-slate-800">
             {analytics?.activeCandidates || 0}
           </p>
           {analytics && analytics.candidatesGrowth !== 0 && (
-            <p className={`text-xs mt-1 ${analytics.candidatesGrowth > 0 ? 'text-emerald-600' : 'text-red-600'}`}>
-              {analytics.candidatesGrowth > 0 ? '+' : ''}{analytics.candidatesGrowth}% bu hafta
+            <p
+              className={`text-xs mt-1 ${analytics.candidatesGrowth > 0 ? "text-emerald-600" : "text-red-600"}`}
+            >
+              {analytics.candidatesGrowth > 0 ? "+" : ""}
+              {analytics.candidatesGrowth}% bu hafta
             </p>
           )}
         </div>
@@ -107,7 +125,9 @@ function AnalyticsPage() {
               <Briefcase className="w-6 h-6 text-purple-600" />
             </div>
           </div>
-          <h3 className="text-sm font-medium text-slate-600 mb-1">Aktif İlan</h3>
+          <h3 className="text-sm font-medium text-slate-600 mb-1">
+            Aktif İlan
+          </h3>
           <p className="text-2xl font-bold text-slate-800">
             {analytics?.activeJobPostings || 0}
           </p>
@@ -121,7 +141,9 @@ function AnalyticsPage() {
               <Clock className="w-6 h-6 text-orange-600" />
             </div>
           </div>
-          <h3 className="text-sm font-medium text-slate-600 mb-1">Ortalama Süre</h3>
+          <h3 className="text-sm font-medium text-slate-600 mb-1">
+            Ortalama Süre
+          </h3>
           <p className="text-2xl font-bold text-slate-800">
             {analytics?.avgProcessDays || 0} gün
           </p>
@@ -139,16 +161,24 @@ function AnalyticsPage() {
           </h2>
           <div className="space-y-3">
             <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-              <span className="text-sm text-slate-600">Bu Ay Yapılan Analiz</span>
-              <span className="font-semibold text-slate-800">{analytics?.totalAnalyses || 0}</span>
+              <span className="text-sm text-slate-600">
+                Bu Ay Yapılan Analiz
+              </span>
+              <span className="font-semibold text-slate-800">
+                {analytics?.totalAnalyses || 0}
+              </span>
             </div>
             <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
               <span className="text-sm text-slate-600">Aktif Aday Havuzu</span>
-              <span className="font-semibold text-slate-800">{analytics?.activeCandidates || 0}</span>
+              <span className="font-semibold text-slate-800">
+                {analytics?.activeCandidates || 0}
+              </span>
             </div>
             <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
               <span className="text-sm text-slate-600">Açık Pozisyon</span>
-              <span className="font-semibold text-slate-800">{analytics?.activeJobPostings || 0}</span>
+              <span className="font-semibold text-slate-800">
+                {analytics?.activeJobPostings || 0}
+              </span>
             </div>
           </div>
         </div>
@@ -162,23 +192,37 @@ function AnalyticsPage() {
           <div className="space-y-3">
             <div className="flex items-center justify-between p-3 bg-emerald-50 rounded-lg">
               <span className="text-sm text-slate-600">Analiz Büyümesi</span>
-              <span className={`font-semibold ${
-                (analytics?.analysesGrowth || 0) > 0 ? 'text-emerald-600' : 'text-slate-600'
-              }`}>
-                {analytics?.analysesGrowth || 0 > 0 ? '+' : ''}{analytics?.analysesGrowth || 0}%
+              <span
+                className={`font-semibold ${
+                  (analytics?.analysesGrowth || 0) > 0
+                    ? "text-emerald-600"
+                    : "text-slate-600"
+                }`}
+              >
+                {analytics?.analysesGrowth || 0 > 0 ? "+" : ""}
+                {analytics?.analysesGrowth || 0}%
               </span>
             </div>
             <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
               <span className="text-sm text-slate-600">Aday Büyümesi</span>
-              <span className={`font-semibold ${
-                (analytics?.candidatesGrowth || 0) > 0 ? 'text-blue-600' : 'text-slate-600'
-              }`}>
-                {analytics?.candidatesGrowth || 0 > 0 ? '+' : ''}{analytics?.candidatesGrowth || 0}%
+              <span
+                className={`font-semibold ${
+                  (analytics?.candidatesGrowth || 0) > 0
+                    ? "text-blue-600"
+                    : "text-slate-600"
+                }`}
+              >
+                {analytics?.candidatesGrowth || 0 > 0 ? "+" : ""}
+                {analytics?.candidatesGrowth || 0}%
               </span>
             </div>
             <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
-              <span className="text-sm text-slate-600">Ortalama İşlem Süresi</span>
-              <span className="font-semibold text-purple-600">{analytics?.avgProcessDays || 0} gün</span>
+              <span className="text-sm text-slate-600">
+                Ortalama İşlem Süresi
+              </span>
+              <span className="font-semibold text-purple-600">
+                {analytics?.avgProcessDays || 0} gün
+              </span>
             </div>
           </div>
         </div>
@@ -188,5 +232,5 @@ function AnalyticsPage() {
 }
 
 export default withRoleProtection(AnalyticsPage, {
-  allowedRoles: RoleGroups.ADMINS // ADMIN + SUPER_ADMIN only
+  allowedRoles: RoleGroups.ADMINS, // ADMIN + SUPER_ADMIN only
 });

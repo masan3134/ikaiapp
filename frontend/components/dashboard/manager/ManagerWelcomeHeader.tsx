@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { Users, Briefcase, TrendingUp, DollarSign, Bell } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { Users, Briefcase, TrendingUp, DollarSign, Bell } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface ManagerWelcomeHeaderProps {
   user: any;
@@ -13,18 +13,20 @@ interface ManagerWelcomeHeaderProps {
   } | null;
 }
 
-export function ManagerWelcomeHeader({ user, stats }: ManagerWelcomeHeaderProps) {
+export function ManagerWelcomeHeader({
+  user,
+  stats,
+}: ManagerWelcomeHeaderProps) {
   const router = useRouter();
 
   return (
     <div className="bg-gradient-to-r from-blue-600 to-blue-800 rounded-xl p-6 mb-6 text-white shadow-lg">
       <div className="flex justify-between items-start">
         <div>
-          <h1 className="text-3xl font-bold mb-2">
-            📊 Manager Dashboard
-          </h1>
+          <h1 className="text-3xl font-bold mb-2">📊 Manager Dashboard</h1>
           <p className="text-blue-100 text-lg mb-3">
-            Hoş geldin, {user?.firstName || 'Manager'}! Takımını yönet ve performansı izle.
+            Hoş geldin, {user?.firstName || "Manager"}! Takımını yönet ve
+            performansı izle.
           </p>
           <div className="flex gap-6 text-sm flex-wrap">
             <div className="flex items-center gap-2 bg-blue-700/30 px-3 py-1 rounded-lg">
@@ -47,7 +49,7 @@ export function ManagerWelcomeHeader({ user, stats }: ManagerWelcomeHeaderProps)
         </div>
         <div className="flex items-center gap-3">
           <button
-            onClick={() => router.push('/notifications')}
+            onClick={() => router.push("/notifications")}
             className="relative p-2 hover:bg-blue-700 rounded-lg transition-colors"
             aria-label="Bildirimler"
           >

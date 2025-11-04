@@ -1,13 +1,22 @@
-'use client';
+"use client";
 
-import { Mail, Phone, MapPin, Briefcase, GraduationCap, FileText, Calendar, Download } from 'lucide-react';
-import type { Candidate } from '@/lib/services/candidateService';
-import Modal from '@/components/ui/Modal';
-import Badge from '@/components/ui/Badge';
-import Button from '@/components/ui/Button';
-import CandidateAvatar from './CandidateAvatar';
-import { formatDate } from '@/lib/utils/dateFormat';
-import { getFullName } from '@/lib/utils/stringUtils';
+import {
+  Mail,
+  Phone,
+  MapPin,
+  Briefcase,
+  GraduationCap,
+  FileText,
+  Calendar,
+  Download,
+} from "lucide-react";
+import type { Candidate } from "@/lib/services/candidateService";
+import Modal from "@/components/ui/Modal";
+import Badge from "@/components/ui/Badge";
+import Button from "@/components/ui/Button";
+import CandidateAvatar from "./CandidateAvatar";
+import { formatDate } from "@/lib/utils/dateFormat";
+import { getFullName } from "@/lib/utils/stringUtils";
 
 export interface CandidateDetailModalProps {
   candidate: Candidate;
@@ -22,7 +31,7 @@ export default function CandidateDetailModal({
   isOpen,
   onClose,
   onDelete,
-  onDownload
+  onDownload,
 }: CandidateDetailModalProps) {
   return (
     <Modal
@@ -42,10 +51,7 @@ export default function CandidateDetailModal({
             </Button>
           )}
           {onDelete && (
-            <Button
-              variant="danger"
-              onClick={() => onDelete(candidate)}
-            >
+            <Button variant="danger" onClick={() => onDelete(candidate)}>
               Sil
             </Button>
           )}

@@ -1,32 +1,32 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { User, Upload, Trash2, FileSpreadsheet, Download } from 'lucide-react';
-import { Toaster, toast } from 'react-hot-toast';
-import { useRouter } from 'next/navigation';
+import { useEffect, useState } from "react";
+import { User, Upload, Trash2, FileSpreadsheet, Download } from "lucide-react";
+import { Toaster, toast } from "react-hot-toast";
+import { useRouter } from "next/navigation";
 import {
   getCandidates,
   deleteCandidate,
   downloadCV,
-  type Candidate
-} from '@/lib/services/candidateService';
-import CandidateTable from '@/components/candidates/CandidateTable';
-import CandidateCard from '@/components/candidates/CandidateCard';
-import CandidateDetailModal from '@/components/candidates/CandidateDetailModal';
-import EmptyState from '@/components/ui/EmptyState';
-import LoadingSkeleton from '@/components/ui/LoadingSkeleton';
-import SearchBar from '@/components/ui/SearchBar';
-import ConfirmDialog from '@/components/ui/ConfirmDialog';
-import { parseApiError } from '@/lib/utils/errorHandler';
-import { downloadBlob } from '@/lib/utils/fileUtils';
-import { withRoleProtection } from '@/lib/hoc/withRoleProtection';
-import { RoleGroups } from '@/lib/constants/roles';
-import { useAuthStore } from '@/lib/store/authStore';
+  type Candidate,
+} from "@/lib/services/candidateService";
+import CandidateTable from "@/components/candidates/CandidateTable";
+import CandidateCard from "@/components/candidates/CandidateCard";
+import CandidateDetailModal from "@/components/candidates/CandidateDetailModal";
+import EmptyState from "@/components/ui/EmptyState";
+import LoadingSkeleton from "@/components/ui/LoadingSkeleton";
+import SearchBar from "@/components/ui/SearchBar";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
+import { parseApiError } from "@/lib/utils/errorHandler";
+import { downloadBlob } from "@/lib/utils/fileUtils";
+import { withRoleProtection } from "@/lib/hoc/withRoleProtection";
+import { RoleGroups } from "@/lib/constants/roles";
+import { useAuthStore } from "@/lib/store/authStore";
 import {
   canCreateCandidate,
   canEditCandidate,
-  canDeleteCandidate
-} from '@/lib/utils/rbac';
+  canDeleteCandidate,
+} from "@/lib/utils/rbac";
 
 function CandidatesPage() {
   const router = useRouter();
@@ -34,7 +34,7 @@ function CandidatesPage() {
   const userRole = user?.role;
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Modals
   const [showDetailModal, setShowDetailModal] = useState(false);
@@ -42,7 +42,9 @@ function CandidatesPage() {
   const [showBulkDeleteDialog, setShowBulkDeleteDialog] = useState(false);
 
   // Selected item
-  const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
+  const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(
+    null
+  );
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   function handleViewCandidate(candidate: Candidate) {
@@ -61,8 +63,8 @@ function CandidatesPage() {
       const data = await getCandidates();
       setCandidates(data.candidates || []);
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Load candidates error:', error);
+      if (process.env.NODE_ENV === "development") {
+        console.error("Load candidates error:", error);
       }
       toast.error(parseApiError(error));
     } finally {
@@ -75,7 +77,7 @@ function CandidatesPage() {
   }, []);
 
   // Filter candidates
-  const filteredCandidates = candidates.filter(candidate => {
+  const filteredCandidates = candidates.filter((candidate) => {
     if (!searchQuery) return true;
     const query = searchQuery.toLowerCase();
     return (
@@ -103,12 +105,12 @@ function CandidatesPage() {
       setDownloadLoading(true);
       const blob = await downloadCV(candidate.id);
       downloadBlob(blob, candidate.sourceFileName);
-      toast.success('CV indirildi');
+      toast.success("CV indirildi");
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Download error:', error);
+      if (process.env.NODE_ENV === "development") {
+        console.error("Download error:", error);
       }
-      toast.error('CV indirilemedi');
+      toast.error("CV indirilemedi");
     } finally {
       setDownloadLoading(false);
     }
@@ -120,13 +122,15 @@ function CandidatesPage() {
     try {
       setDeleteLoading(true);
       const response = await deleteCandidate(selectedCandidate.id);
-      setCandidates(prev => prev.filter(c => c.id !== selectedCandidate.id));
-      toast.success(response.message || 'Aday silindi');
+      setCandidates((prev) =>
+        prev.filter((c) => c.id !== selectedCandidate.id)
+      );
+      toast.success(response.message || "Aday silindi");
       setShowDeleteDialog(false);
       setSelectedCandidate(null);
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Delete error:', error);
+      if (process.env.NODE_ENV === "development") {
+        console.error("Delete error:", error);
       }
       toast.error(parseApiError(error));
     } finally {
@@ -139,13 +143,13 @@ function CandidatesPage() {
     if (selectedIds.length === filteredCandidates.length) {
       setSelectedIds([]);
     } else {
-      setSelectedIds(filteredCandidates.map(c => c.id));
+      setSelectedIds(filteredCandidates.map((c) => c.id));
     }
   }
 
   function toggleSelect(id: string) {
-    setSelectedIds(prev =>
-      prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
     );
   }
 
@@ -154,52 +158,52 @@ function CandidatesPage() {
       setBulkDeleteLoading(true);
 
       // Delete all selected candidates
-      await Promise.all(selectedIds.map(id => deleteCandidate(id)));
+      await Promise.all(selectedIds.map((id) => deleteCandidate(id)));
 
-      setCandidates(prev => prev.filter(c => !selectedIds.includes(c.id)));
+      setCandidates((prev) => prev.filter((c) => !selectedIds.includes(c.id)));
       toast.success(`${selectedIds.length} aday silindi`);
       setSelectedIds([]);
       setShowBulkDeleteDialog(false);
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Bulk delete error:', error);
+      if (process.env.NODE_ENV === "development") {
+        console.error("Bulk delete error:", error);
       }
-      toast.error('Toplu silme işlemi başarısız');
+      toast.error("Toplu silme işlemi başarısız");
     } finally {
       setBulkDeleteLoading(false);
     }
   }
 
   function handleUploadClick() {
-    router.push('/wizard');
+    router.push("/wizard");
   }
 
   // Export handler
-  async function handleExport(format: 'xlsx' | 'csv') {
+  async function handleExport(format: "xlsx" | "csv") {
     try {
       const API_BASE = process.env.NEXT_PUBLIC_API_URL;
       if (!API_BASE) {
-        throw new Error('NEXT_PUBLIC_API_URL environment variable is not set');
+        throw new Error("NEXT_PUBLIC_API_URL environment variable is not set");
       }
-      const token = localStorage.getItem('auth_token');
+      const token = localStorage.getItem("auth_token");
 
       // Build URL with optional IDs
       let url = `${API_BASE}/api/v1/candidates/export/${format}`;
       if (selectedIds.length > 0) {
-        url += `?ids=${selectedIds.join(',')}`;
+        url += `?ids=${selectedIds.join(",")}`;
       }
 
       const response = await fetch(url, {
         headers: {
-          'Authorization': `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
 
-      if (!response.ok) throw new Error('Export failed');
+      if (!response.ok) throw new Error("Export failed");
 
       const blob = await response.blob();
       const downloadUrl = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = downloadUrl;
       a.download = `adaylar-${Date.now()}.${format}`;
       document.body.appendChild(a);
@@ -207,27 +211,28 @@ function CandidatesPage() {
       window.URL.revokeObjectURL(downloadUrl);
       document.body.removeChild(a);
 
-      const count = selectedIds.length > 0 ? selectedIds.length : candidates.length;
+      const count =
+        selectedIds.length > 0 ? selectedIds.length : candidates.length;
       toast.success(`${count} aday ${format.toUpperCase()} olarak indirildi`);
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Export error:', error);
+      if (process.env.NODE_ENV === "development") {
+        console.error("Export error:", error);
       }
-      toast.error('Export sırasında hata oluştu');
+      toast.error("Export sırasında hata oluştu");
     }
   }
 
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50">
-          <div className="max-w-7xl mx-auto px-4 py-8">
-            <div className="mb-8">
-              <h1 className="text-3xl font-bold text-gray-900">Adaylar</h1>
-              <p className="text-gray-600 mt-1">Tüm adaylarınızı yönetin</p>
-            </div>
-            <LoadingSkeleton variant="table" rows={5} />
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-gray-900">Adaylar</h1>
+            <p className="text-gray-600 mt-1">Tüm adaylarınızı yönetin</p>
           </div>
+          <LoadingSkeleton variant="table" rows={5} />
         </div>
+      </div>
     );
   }
 
@@ -239,14 +244,14 @@ function CandidatesPage() {
           duration: 4000,
           success: {
             style: {
-              background: '#10B981',
-              color: '#fff',
+              background: "#10B981",
+              color: "#fff",
             },
           },
           error: {
             style: {
-              background: '#EF4444',
-              color: '#fff',
+              background: "#EF4444",
+              color: "#fff",
             },
           },
         }}
@@ -289,17 +294,25 @@ function CandidatesPage() {
               <div className="flex gap-2">
                 {/* Export Buttons */}
                 <button
-                  onClick={() => handleExport('xlsx')}
+                  onClick={() => handleExport("xlsx")}
                   className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
-                  title={selectedIds.length > 0 ? `${selectedIds.length} seçili adayı indir` : 'Tüm adayları indir'}
+                  title={
+                    selectedIds.length > 0
+                      ? `${selectedIds.length} seçili adayı indir`
+                      : "Tüm adayları indir"
+                  }
                 >
                   <FileSpreadsheet className="w-4 h-4" />
                   Excel {selectedIds.length > 0 && `(${selectedIds.length})`}
                 </button>
                 <button
-                  onClick={() => handleExport('csv')}
+                  onClick={() => handleExport("csv")}
                   className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
-                  title={selectedIds.length > 0 ? `${selectedIds.length} seçili adayı indir` : 'Tüm adayları indir'}
+                  title={
+                    selectedIds.length > 0
+                      ? `${selectedIds.length} seçili adayı indir`
+                      : "Tüm adayları indir"
+                  }
                 >
                   <Download className="w-4 h-4" />
                   CSV {selectedIds.length > 0 && `(${selectedIds.length})`}
@@ -325,10 +338,14 @@ function CandidatesPage() {
               icon={<User className="w-16 h-16" />}
               title="Henüz aday eklemediniz"
               description="İlk adayınızı eklemek için analiz sihirbazını kullanın"
-              action={canCreateCandidate(userRole) ? {
-                label: 'Analiz Başlat',
-                onClick: handleUploadClick
-              } : undefined}
+              action={
+                canCreateCandidate(userRole)
+                  ? {
+                      label: "Analiz Başlat",
+                      onClick: handleUploadClick,
+                    }
+                  : undefined
+              }
             />
           )}
 
@@ -339,8 +356,8 @@ function CandidatesPage() {
               title="Sonuç bulunamadı"
               description="Arama kriterlerinize uygun aday bulunamadı"
               action={{
-                label: 'Aramayı Temizle',
-                onClick: () => setSearchQuery('')
+                label: "Aramayı Temizle",
+                onClick: () => setSearchQuery(""),
               }}
             />
           )}
@@ -378,12 +395,11 @@ function CandidatesPage() {
               <div className="mt-4 text-sm text-gray-600">
                 {searchQuery ? (
                   <span>
-                    {filteredCandidates.length} / {candidates.length} aday gösteriliyor
+                    {filteredCandidates.length} / {candidates.length} aday
+                    gösteriliyor
                   </span>
                 ) : (
-                  <span>
-                    Toplam {candidates.length} aday
-                  </span>
+                  <span>Toplam {candidates.length} aday</span>
                 )}
               </div>
             </>
@@ -416,9 +432,10 @@ function CandidatesPage() {
           onConfirm={confirmDelete}
           title="Adayı Sil"
           message={`"${selectedCandidate.firstName} ${selectedCandidate.lastName}" adayını silmek istediğinizden emin misiniz?${
-            selectedCandidate._count?.analysisResults && selectedCandidate._count.analysisResults > 0
+            selectedCandidate._count?.analysisResults &&
+            selectedCandidate._count.analysisResults > 0
               ? ` Bu aday ${selectedCandidate._count.analysisResults} adet analizde kullanılmış.`
-              : ''
+              : ""
           }`}
           confirmText="Sil"
           cancelText="İptal"
@@ -448,5 +465,5 @@ function CandidatesPage() {
 }
 
 export default withRoleProtection(CandidatesPage, {
-  allowedRoles: RoleGroups.HR_MANAGERS
+  allowedRoles: RoleGroups.HR_MANAGERS,
 });

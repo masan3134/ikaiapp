@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { Briefcase, Calendar, User, FileText } from 'lucide-react';
-import type { JobPosting } from '@/lib/services/jobPostingService';
-import Modal from '@/components/ui/Modal';
-import Badge from '@/components/ui/Badge';
-import Button from '@/components/ui/Button';
-import { formatDate } from '@/lib/utils/dateFormat';
+import { Briefcase, Calendar, User, FileText } from "lucide-react";
+import type { JobPosting } from "@/lib/services/jobPostingService";
+import Modal from "@/components/ui/Modal";
+import Badge from "@/components/ui/Badge";
+import Button from "@/components/ui/Button";
+import { formatDate } from "@/lib/utils/dateFormat";
 
 export interface JobPostingDetailModalProps {
   jobPosting: JobPosting;
@@ -20,7 +20,7 @@ export default function JobPostingDetailModal({
   isOpen,
   onClose,
   onEdit,
-  onDelete
+  onDelete,
 }: JobPostingDetailModalProps) {
   return (
     <Modal
@@ -83,9 +83,7 @@ export default function JobPostingDetailModal({
         {/* Notes */}
         {jobPosting.notes && (
           <div>
-            <h4 className="text-sm font-semibold text-gray-700 mb-2">
-              Notlar
-            </h4>
+            <h4 className="text-sm font-semibold text-gray-700 mb-2">Notlar</h4>
             <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
               <p className="text-sm text-gray-700 whitespace-pre-wrap">
                 {jobPosting.notes}

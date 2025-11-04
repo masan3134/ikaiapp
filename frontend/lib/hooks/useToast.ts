@@ -1,5 +1,5 @@
-import { useCallback } from 'react';
-import toast, { Toaster } from 'react-hot-toast';
+import { useCallback } from "react";
+import toast, { Toaster } from "react-hot-toast";
 
 export interface ToastMessages {
   loading: string;
@@ -43,34 +43,34 @@ export function useToast(): UseToastReturn {
   const success = useCallback((message: string) => {
     toast.success(message, {
       duration: 3000,
-      position: 'top-right'
+      position: "top-right",
     });
   }, []);
 
   const error = useCallback((message: string) => {
     toast.error(message, {
       duration: 4000,
-      position: 'top-right'
+      position: "top-right",
     });
   }, []);
 
   const loading = useCallback((message: string) => {
     return toast.loading(message, {
-      position: 'top-right'
+      position: "top-right",
     });
   }, []);
 
   const promiseWrapper = useCallback(
-    <T,>(promise: Promise<T>, messages: ToastMessages): Promise<T> => {
+    <T>(promise: Promise<T>, messages: ToastMessages): Promise<T> => {
       return toast.promise(
         promise,
         {
           loading: messages.loading,
           success: messages.success,
-          error: messages.error
+          error: messages.error,
         },
         {
-          position: 'top-right'
+          position: "top-right",
         }
       );
     },
@@ -91,6 +91,6 @@ export function useToast(): UseToastReturn {
     loading,
     promise: promiseWrapper,
     dismiss,
-    Toaster
+    Toaster,
   };
 }

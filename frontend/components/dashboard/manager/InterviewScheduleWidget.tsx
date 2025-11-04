@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { Calendar } from 'lucide-react';
-import Link from 'next/link';
+import { Calendar } from "lucide-react";
+import Link from "next/link";
 
 interface InterviewScheduleWidgetProps {
   data: {
@@ -18,21 +18,36 @@ interface InterviewScheduleWidgetProps {
   } | null;
 }
 
-export function InterviewScheduleWidget({ data }: InterviewScheduleWidgetProps) {
+export function InterviewScheduleWidget({
+  data,
+}: InterviewScheduleWidgetProps) {
   const upcomingInterviews = data?.upcomingInterviews || [];
 
   const formatDate = (dateStr: string) => {
     try {
       const date = new Date(dateStr);
-      const months = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'];
+      const months = [
+        "Oca",
+        "Şub",
+        "Mar",
+        "Nis",
+        "May",
+        "Haz",
+        "Tem",
+        "Ağu",
+        "Eyl",
+        "Eki",
+        "Kas",
+        "Ara",
+      ];
       const month = months[date.getMonth()];
-      const day = date.getDate().toString().padStart(2, '0');
-      const hours = date.getHours().toString().padStart(2, '0');
-      const minutes = date.getMinutes().toString().padStart(2, '0');
+      const day = date.getDate().toString().padStart(2, "0");
+      const hours = date.getHours().toString().padStart(2, "0");
+      const minutes = date.getMinutes().toString().padStart(2, "0");
 
       return { month, day, time: `${hours}:${minutes}` };
     } catch {
-      return { month: '---', day: '--', time: '--:--' };
+      return { month: "---", day: "--", time: "--:--" };
     }
   };
 
@@ -48,10 +63,12 @@ export function InterviewScheduleWidget({ data }: InterviewScheduleWidgetProps) 
           {upcomingInterviews.length === 0 ? (
             <div className="text-center py-8">
               <Calendar className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-              <p className="text-sm text-slate-500">Yakın zamanda mülakat yok</p>
+              <p className="text-sm text-slate-500">
+                Yakın zamanda mülakat yok
+              </p>
             </div>
           ) : (
-            upcomingInterviews.slice(0, 4).map(interview => {
+            upcomingInterviews.slice(0, 4).map((interview) => {
               const dateInfo = formatDate(interview.scheduledAt);
               return (
                 <div
@@ -70,10 +87,10 @@ export function InterviewScheduleWidget({ data }: InterviewScheduleWidgetProps) 
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-slate-800 truncate">
-                      {interview.candidate?.name || 'Aday'}
+                      {interview.candidate?.name || "Aday"}
                     </p>
                     <p className="text-xs text-slate-500 truncate">
-                      {interview.jobPosting?.title || 'Pozisyon'}
+                      {interview.jobPosting?.title || "Pozisyon"}
                     </p>
                     <p className="text-xs text-blue-600 mt-1">
                       {dateInfo.time}

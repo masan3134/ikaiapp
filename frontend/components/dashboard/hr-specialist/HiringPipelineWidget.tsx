@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { TrendingUp } from 'lucide-react';
+import { TrendingUp } from "lucide-react";
 import {
   BarChart,
   Bar,
@@ -10,7 +10,7 @@ import {
   Tooltip,
   ResponsiveContainer,
   LabelList,
-} from 'recharts';
+} from "recharts";
 
 interface HiringPipelineWidgetProps {
   data: Array<{
@@ -22,18 +22,18 @@ interface HiringPipelineWidgetProps {
 
 export function HiringPipelineWidget({ data }: HiringPipelineWidgetProps) {
   const pipelineData = data || [
-    { stage: 'Başvurular', count: 0, percentage: 100 },
-    { stage: 'Eleme', count: 0, percentage: 0 },
-    { stage: 'Mülakat', count: 0, percentage: 0 },
-    { stage: 'Teklif', count: 0, percentage: 0 },
-    { stage: 'İşe Alım', count: 0, percentage: 0 },
+    { stage: "Başvurular", count: 0, percentage: 100 },
+    { stage: "Eleme", count: 0, percentage: 0 },
+    { stage: "Mülakat", count: 0, percentage: 0 },
+    { stage: "Teklif", count: 0, percentage: 0 },
+    { stage: "İşe Alım", count: 0, percentage: 0 },
   ];
 
   const conversionRates = [
-    { label: 'Eleme → Mülakat', value: 65 },
-    { label: 'Mülakat → Teklif', value: 45 },
-    { label: 'Teklif → İşe Alım', value: 85 },
-    { label: 'Toplam Dönüşüm', value: 25 },
+    { label: "Eleme → Mülakat", value: 65 },
+    { label: "Mülakat → Teklif", value: 45 },
+    { label: "Teklif → İşe Alım", value: 85 },
+    { label: "Toplam Dönüşüm", value: 25 },
   ];
 
   return (
@@ -56,19 +56,23 @@ export function HiringPipelineWidget({ data }: HiringPipelineWidgetProps) {
                 <stop offset="100%" stopColor="#059669" />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#e2e8f0" />
+            <CartesianGrid
+              strokeDasharray="3 3"
+              horizontal={false}
+              stroke="#e2e8f0"
+            />
             <XAxis type="number" stroke="#64748b" style={{ fontSize: 12 }} />
             <YAxis
               type="category"
               dataKey="stage"
-              tick={{ fontSize: 12, fill: '#475569' }}
+              tick={{ fontSize: 12, fill: "#475569" }}
               stroke="#64748b"
             />
             <Tooltip
               contentStyle={{
-                backgroundColor: '#fff',
-                border: '1px solid #d1fae5',
-                borderRadius: '8px',
+                backgroundColor: "#fff",
+                border: "1px solid #d1fae5",
+                borderRadius: "8px",
                 fontSize: 12,
               }}
               formatter={(value: any, name: any, props: any) => [
@@ -85,7 +89,7 @@ export function HiringPipelineWidget({ data }: HiringPipelineWidgetProps) {
                 dataKey="count"
                 position="right"
                 formatter={(value: number) => `${value}`}
-                style={{ fontSize: 12, fontWeight: 600, fill: '#059669' }}
+                style={{ fontSize: 12, fontWeight: 600, fill: "#059669" }}
               />
             </Bar>
           </BarChart>
@@ -96,7 +100,9 @@ export function HiringPipelineWidget({ data }: HiringPipelineWidgetProps) {
           {conversionRates.map((rate, idx) => (
             <div key={idx} className="text-center p-3 bg-emerald-50 rounded-lg">
               <p className="text-xs text-slate-600 mb-1">{rate.label}</p>
-              <p className="text-sm font-bold text-emerald-600">{rate.value}%</p>
+              <p className="text-sm font-bold text-emerald-600">
+                {rate.value}%
+              </p>
             </div>
           ))}
         </div>

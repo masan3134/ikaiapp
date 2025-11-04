@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { Target, CheckCircle } from 'lucide-react';
+import { Target, CheckCircle } from "lucide-react";
 
 interface MonthlyKPIsWidgetProps {
   data: {
@@ -26,7 +26,7 @@ export function MonthlyKPIsWidget({ data }: MonthlyKPIsWidgetProps) {
         </h3>
 
         <div className="space-y-4">
-          {kpis.map(kpi => (
+          {kpis.map((kpi) => (
             <div key={kpi.name}>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm text-slate-700">{kpi.name}</span>
@@ -37,19 +37,29 @@ export function MonthlyKPIsWidget({ data }: MonthlyKPIsWidgetProps) {
               <div className="relative w-full bg-slate-200 rounded-full h-2">
                 <div
                   className={`absolute top-0 left-0 h-2 rounded-full transition-all ${
-                    kpi.percentage >= 100 ? 'bg-green-500' :
-                    kpi.percentage >= 75 ? 'bg-blue-500' :
-                    kpi.percentage >= 50 ? 'bg-yellow-500' : 'bg-red-500'
+                    kpi.percentage >= 100
+                      ? "bg-green-500"
+                      : kpi.percentage >= 75
+                        ? "bg-blue-500"
+                        : kpi.percentage >= 50
+                          ? "bg-yellow-500"
+                          : "bg-red-500"
                   }`}
                   style={{ width: `${Math.min(kpi.percentage, 100)}%` }}
                 />
               </div>
               <div className="flex items-center justify-between mt-1">
-                <span className={`text-xs font-medium ${
-                  kpi.percentage >= 100 ? 'text-green-600' :
-                  kpi.percentage >= 75 ? 'text-blue-600' :
-                  kpi.percentage >= 50 ? 'text-yellow-600' : 'text-red-600'
-                }`}>
+                <span
+                  className={`text-xs font-medium ${
+                    kpi.percentage >= 100
+                      ? "text-green-600"
+                      : kpi.percentage >= 75
+                        ? "text-blue-600"
+                        : kpi.percentage >= 50
+                          ? "text-yellow-600"
+                          : "text-red-600"
+                  }`}
+                >
                   {kpi.percentage}%
                 </span>
                 {kpi.percentage >= 100 && (

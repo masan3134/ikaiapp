@@ -1,4 +1,4 @@
-import apiClient from '@/lib/utils/apiClient';
+import apiClient from "@/lib/utils/apiClient";
 
 export interface QueueStats {
   name: string;
@@ -28,7 +28,7 @@ export interface SystemHealth {
     availableSlots: number;
   };
   health: {
-    status: 'healthy' | 'degraded';
+    status: "healthy" | "degraded";
     activeJobs: number;
     pendingJobs: number;
     failedJobs: number;
@@ -36,16 +36,16 @@ export interface SystemHealth {
 }
 
 export async function getQueueStats(): Promise<{ stats: QueueStats[] }> {
-  const response = await apiClient.get('/queue/stats');
+  const response = await apiClient.get("/queue/stats");
   return response.data;
 }
 
 export async function getSystemHealth(): Promise<SystemHealth> {
-  const response = await apiClient.get('/queue/health');
+  const response = await apiClient.get("/queue/health");
   return response.data;
 }
 
 export async function cleanupOldJobs(): Promise<{ results: any[] }> {
-  const response = await apiClient.post('/queue/cleanup');
+  const response = await apiClient.post("/queue/cleanup");
   return response.data;
 }

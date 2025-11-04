@@ -1,55 +1,91 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { HelpCircle, Book, MessageCircle, Mail, ExternalLink, Search } from 'lucide-react';
+import { useState } from "react";
+import {
+  HelpCircle,
+  Book,
+  MessageCircle,
+  Mail,
+  ExternalLink,
+  Search,
+} from "lucide-react";
 
 export default function HelpPage() {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [chatOpen, setChatOpen] = useState(false);
 
   const helpCategories = [
     {
-      title: 'Başlangıç Rehberi',
-      description: 'Platforma ilk adımlarınızı atmak için',
+      title: "Başlangıç Rehberi",
+      description: "Platforma ilk adımlarınızı atmak için",
       icon: <Book className="w-6 h-6 text-blue-600" />,
       articles: [
-        { title: 'Platform Nasıl Kullanılır?', link: '/help/articles/platform-kullanimi' },
-        { title: 'İlk İlan Oluşturma', link: '/help/articles/ilan-olusturma' },
-        { title: 'CV Analizi Başlatma', link: '/help/articles/cv-analizi' },
-        { title: 'Adayları Değerlendirme', link: '/help/articles/aday-degerlendirme' }
-      ]
+        {
+          title: "Platform Nasıl Kullanılır?",
+          link: "/help/articles/platform-kullanimi",
+        },
+        { title: "İlk İlan Oluşturma", link: "/help/articles/ilan-olusturma" },
+        { title: "CV Analizi Başlatma", link: "/help/articles/cv-analizi" },
+        {
+          title: "Adayları Değerlendirme",
+          link: "/help/articles/aday-degerlendirme",
+        },
+      ],
     },
     {
-      title: 'Sık Sorulan Sorular',
-      description: 'En çok merak edilen konular',
+      title: "Sık Sorulan Sorular",
+      description: "En çok merak edilen konular",
       icon: <HelpCircle className="w-6 h-6 text-purple-600" />,
       articles: [
-        { title: 'Hangi dosya formatları destekleniyor?', link: '/help/articles/dosya-formatlari' },
-        { title: 'AI analiz süresi ne kadar?', link: '/help/articles/analiz-suresi' },
-        { title: 'Ekip üyesi nasıl eklenir?', link: '/help/articles/ekip-ekleme' },
-        { title: 'Plan nasıl yükseltilir?', link: '/help/articles/plan-yukseltme' }
-      ]
+        {
+          title: "Hangi dosya formatları destekleniyor?",
+          link: "/help/articles/dosya-formatlari",
+        },
+        {
+          title: "AI analiz süresi ne kadar?",
+          link: "/help/articles/analiz-suresi",
+        },
+        {
+          title: "Ekip üyesi nasıl eklenir?",
+          link: "/help/articles/ekip-ekleme",
+        },
+        {
+          title: "Plan nasıl yükseltilir?",
+          link: "/help/articles/plan-yukseltme",
+        },
+      ],
     },
     {
-      title: 'İletişim',
-      description: 'Destek ekibimizle iletişime geçin',
+      title: "İletişim",
+      description: "Destek ekibimizle iletişime geçin",
       icon: <MessageCircle className="w-6 h-6 text-green-600" />,
       articles: [
-        { title: 'Destek talebi oluşturma', link: '/help/articles/destek-talebi' },
-        { title: 'Canlı destek saatleri', link: '/help/articles/destek-saatleri' },
-        { title: 'Email desteği', link: '/help/articles/email-destek' },
-        { title: 'Öneri ve geri bildirim', link: '/help/articles/geri-bildirim' }
-      ]
-    }
+        {
+          title: "Destek talebi oluşturma",
+          link: "/help/articles/destek-talebi",
+        },
+        {
+          title: "Canlı destek saatleri",
+          link: "/help/articles/destek-saatleri",
+        },
+        { title: "Email desteği", link: "/help/articles/email-destek" },
+        {
+          title: "Öneri ve geri bildirim",
+          link: "/help/articles/geri-bildirim",
+        },
+      ],
+    },
   ];
 
   // Filter articles based on search
-  const filteredCategories = helpCategories.map(cat => ({
-    ...cat,
-    articles: cat.articles.filter(article =>
-      article.title.toLowerCase().includes(searchQuery.toLowerCase())
-    )
-  })).filter(cat => cat.articles.length > 0);
+  const filteredCategories = helpCategories
+    .map((cat) => ({
+      ...cat,
+      articles: cat.articles.filter((article) =>
+        article.title.toLowerCase().includes(searchQuery.toLowerCase())
+      ),
+    }))
+    .filter((cat) => cat.articles.length > 0);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
@@ -58,7 +94,9 @@ export default function HelpPage() {
   const handleChatStart = () => {
     setChatOpen(true);
     // In real implementation, this would open a chat widget
-    alert('Canlı destek başlatılıyor...\n\nGerçek uygulamada burada bir chat widget açılacak (örn: Intercom, Zendesk).');
+    alert(
+      "Canlı destek başlatılıyor...\n\nGerçek uygulamada burada bir chat widget açılacak (örn: Intercom, Zendesk)."
+    );
   };
 
   return (
@@ -89,52 +127,59 @@ export default function HelpPage() {
           </div>
           {searchQuery && (
             <p className="text-center mt-2 text-sm text-slate-600">
-              "{searchQuery}" için {filteredCategories.reduce((sum, cat) => sum + cat.articles.length, 0)} sonuç bulundu
+              "{searchQuery}" için{" "}
+              {filteredCategories.reduce(
+                (sum, cat) => sum + cat.articles.length,
+                0
+              )}{" "}
+              sonuç bulundu
             </p>
           )}
         </div>
 
         {/* Categories - REAL LINKS! */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          {(searchQuery ? filteredCategories : helpCategories).map((category, idx) => (
-            <div
-              key={idx}
-              className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow"
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center">
-                  {category.icon}
+          {(searchQuery ? filteredCategories : helpCategories).map(
+            (category, idx) => (
+              <div
+                key={idx}
+                className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow"
+              >
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center">
+                    {category.icon}
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-slate-800">
+                      {category.title}
+                    </h3>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-slate-800">
-                    {category.title}
-                  </h3>
-                </div>
+                <p className="text-sm text-slate-600 mb-4">
+                  {category.description}
+                </p>
+                <ul className="space-y-2">
+                  {category.articles.map((article, articleIdx) => (
+                    <li key={articleIdx}>
+                      <a
+                        href={article.link}
+                        className="text-sm text-blue-600 hover:text-blue-700 hover:underline"
+                      >
+                        {article.title}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <p className="text-sm text-slate-600 mb-4">
-                {category.description}
-              </p>
-              <ul className="space-y-2">
-                {category.articles.map((article, articleIdx) => (
-                  <li key={articleIdx}>
-                    <a
-                      href={article.link}
-                      className="text-sm text-blue-600 hover:text-blue-700 hover:underline"
-                    >
-                      {article.title}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+            )
+          )}
         </div>
 
         {searchQuery && filteredCategories.length === 0 && (
           <div className="text-center py-12">
             <p className="text-slate-600 mb-4">Aradığınız konu bulunamadı.</p>
             <button
-              onClick={() => setSearchQuery('')}
+              onClick={() => setSearchQuery("")}
               className="text-blue-600 hover:text-blue-700 font-medium"
             >
               Tüm konuları göster
@@ -150,8 +195,8 @@ export default function HelpPage() {
               Email Desteği
             </h3>
             <p className="text-sm text-slate-600 mb-4">
-              support@gaiai.ai adresinden bize ulaşabilirsiniz.
-              Ortalama yanıt süresi: 24 saat
+              support@gaiai.ai adresinden bize ulaşabilirsiniz. Ortalama yanıt
+              süresi: 24 saat
             </p>
             <a
               href="mailto:support@gaiai.ai"
@@ -167,8 +212,8 @@ export default function HelpPage() {
               Canlı Destek
             </h3>
             <p className="text-sm text-slate-600 mb-4">
-              Pazartesi - Cuma, 09:00 - 18:00
-              Anlık destek için canlı sohbet başlatın
+              Pazartesi - Cuma, 09:00 - 18:00 Anlık destek için canlı sohbet
+              başlatın
             </p>
             <button
               onClick={handleChatStart}
@@ -182,8 +227,11 @@ export default function HelpPage() {
         {/* Footer */}
         <div className="mt-8 text-center">
           <p className="text-sm text-slate-500">
-            Aradığınızı bulamadınız mı?{' '}
-            <a href="mailto:support@gaiai.ai" className="text-blue-600 hover:underline">
+            Aradığınızı bulamadınız mı?{" "}
+            <a
+              href="mailto:support@gaiai.ai"
+              className="text-blue-600 hover:underline"
+            >
               Bize yazın
             </a>
           </p>

@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { Search, X } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { Search, X } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export interface SearchBarProps {
   value: string;
@@ -14,9 +14,9 @@ export interface SearchBarProps {
 export default function SearchBar({
   value,
   onChange,
-  placeholder = 'Ara...',
+  placeholder = "Ara...",
   debounce = 300,
-  className = ''
+  className = "",
 }: SearchBarProps) {
   const [localValue, setLocalValue] = useState(value);
 
@@ -35,8 +35,8 @@ export default function SearchBar({
   }, [localValue, debounce, onChange]);
 
   const handleClear = () => {
-    setLocalValue('');
-    onChange('');
+    setLocalValue("");
+    onChange("");
   };
 
   return (

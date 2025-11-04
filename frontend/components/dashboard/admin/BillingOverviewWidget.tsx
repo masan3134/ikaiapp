@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { CreditCard } from 'lucide-react';
-import { Card, CardHeader, CardBody } from '@nextui-org/react';
-import { format } from 'date-fns';
-import { tr } from 'date-fns/locale';
+import Link from "next/link";
+import { CreditCard } from "lucide-react";
+import { Card, CardHeader, CardBody } from "@nextui-org/react";
+import { format } from "date-fns";
+import { tr } from "date-fns/locale";
 
 interface BillingOverviewWidgetProps {
   organization: any;
@@ -16,20 +16,24 @@ interface BillingOverviewWidgetProps {
 }
 
 const PLAN_PRICES: Record<string, number> = {
-  'FREE': 0,
-  'PRO': 99,
-  'ENTERPRISE': 0 // Custom pricing
+  FREE: 0,
+  PRO: 99,
+  ENTERPRISE: 0, // Custom pricing
 };
 
-export default function BillingOverviewWidget({ organization, usage, billing }: BillingOverviewWidgetProps) {
-  const plan = organization?.plan || 'FREE';
+export default function BillingOverviewWidget({
+  organization,
+  usage,
+  billing,
+}: BillingOverviewWidgetProps) {
+  const plan = organization?.plan || "FREE";
   const monthlyAmount = PLAN_PRICES[plan] || 0;
   const nextBillingDate = billing?.nextBillingDate
     ? new Date(billing.nextBillingDate)
     : new Date();
 
   const formatDate = (date: Date) => {
-    return format(date, 'd MMMM yyyy', { locale: tr });
+    return format(date, "d MMMM yyyy", { locale: tr });
   };
 
   return (
@@ -44,11 +48,15 @@ export default function BillingOverviewWidget({ organization, usage, billing }: 
         <div className="mb-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm text-slate-600">Mevcut Plan</span>
-            <span className={`text-sm font-bold px-3 py-1 rounded-full ${
-              plan === 'ENTERPRISE' ? 'bg-purple-100 text-purple-700' :
-              plan === 'PRO' ? 'bg-blue-100 text-blue-700' :
-              'bg-slate-100 text-slate-700'
-            }`}>
+            <span
+              className={`text-sm font-bold px-3 py-1 rounded-full ${
+                plan === "ENTERPRISE"
+                  ? "bg-purple-100 text-purple-700"
+                  : plan === "PRO"
+                    ? "bg-blue-100 text-blue-700"
+                    : "bg-slate-100 text-slate-700"
+              }`}
+            >
               {plan}
             </span>
           </div>
@@ -60,15 +68,13 @@ export default function BillingOverviewWidget({ organization, usage, billing }: 
               </span>
               <span className="text-sm text-slate-600">/ay</span>
             </div>
-            {plan !== 'FREE' && (
+            {plan !== "FREE" && (
               <p className="text-xs text-slate-500 mt-1">
                 Sonraki fatura: {formatDate(nextBillingDate)}
               </p>
             )}
-            {plan === 'FREE' && (
-              <p className="text-xs text-slate-500 mt-1">
-                Ücretsiz plan
-              </p>
+            {plan === "FREE" && (
+              <p className="text-xs text-slate-500 mt-1">Ücretsiz plan</p>
             )}
           </div>
 
@@ -76,16 +82,22 @@ export default function BillingOverviewWidget({ organization, usage, billing }: 
             <div>
               <div className="flex justify-between text-xs mb-1">
                 <span className="text-slate-600">Analiz Kullanımı</span>
-                <span className="font-semibold">{usage?.analysisPercentage || 0}%</span>
+                <span className="font-semibold">
+                  {usage?.analysisPercentage || 0}%
+                </span>
               </div>
               <div className="w-full bg-slate-200 rounded-full h-2">
                 <div
                   className={`h-2 rounded-full transition-all ${
-                    (usage?.analysisPercentage || 0) >= 90 ? 'bg-red-500' :
-                    (usage?.analysisPercentage || 0) >= 75 ? 'bg-yellow-500' :
-                    'bg-green-500'
+                    (usage?.analysisPercentage || 0) >= 90
+                      ? "bg-red-500"
+                      : (usage?.analysisPercentage || 0) >= 75
+                        ? "bg-yellow-500"
+                        : "bg-green-500"
                   }`}
-                  style={{ width: `${Math.min(usage?.analysisPercentage || 0, 100)}%` }}
+                  style={{
+                    width: `${Math.min(usage?.analysisPercentage || 0, 100)}%`,
+                  }}
                 />
               </div>
             </div>
@@ -93,16 +105,22 @@ export default function BillingOverviewWidget({ organization, usage, billing }: 
             <div>
               <div className="flex justify-between text-xs mb-1">
                 <span className="text-slate-600">CV Kullanımı</span>
-                <span className="font-semibold">{usage?.cvPercentage || 0}%</span>
+                <span className="font-semibold">
+                  {usage?.cvPercentage || 0}%
+                </span>
               </div>
               <div className="w-full bg-slate-200 rounded-full h-2">
                 <div
                   className={`h-2 rounded-full transition-all ${
-                    (usage?.cvPercentage || 0) >= 90 ? 'bg-red-500' :
-                    (usage?.cvPercentage || 0) >= 75 ? 'bg-yellow-500' :
-                    'bg-green-500'
+                    (usage?.cvPercentage || 0) >= 90
+                      ? "bg-red-500"
+                      : (usage?.cvPercentage || 0) >= 75
+                        ? "bg-yellow-500"
+                        : "bg-green-500"
                   }`}
-                  style={{ width: `${Math.min(usage?.cvPercentage || 0, 100)}%` }}
+                  style={{
+                    width: `${Math.min(usage?.cvPercentage || 0, 100)}%`,
+                  }}
                 />
               </div>
             </div>

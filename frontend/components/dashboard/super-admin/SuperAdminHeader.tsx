@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { Zap, Settings, Bell } from 'lucide-react';
+import Link from "next/link";
+import { Zap, Settings, Bell } from "lucide-react";
 
 interface SuperAdminHeaderProps {
   platformStats: {
@@ -13,7 +13,9 @@ interface SuperAdminHeaderProps {
   };
 }
 
-export default function SuperAdminHeader({ platformStats }: SuperAdminHeaderProps) {
+export default function SuperAdminHeader({
+  platformStats,
+}: SuperAdminHeaderProps) {
   return (
     <div className="bg-gradient-to-r from-rose-600 to-red-800 rounded-xl p-6 mb-6 text-white relative overflow-hidden">
       {/* Background decoration */}
@@ -27,9 +29,7 @@ export default function SuperAdminHeader({ platformStats }: SuperAdminHeaderProp
               <Zap className="w-8 h-8 text-yellow-300" />
             </div>
             <div>
-              <h1 className="text-4xl font-bold">
-                Platform Control Center
-              </h1>
+              <h1 className="text-4xl font-bold">Platform Control Center</h1>
               <p className="text-rose-100 text-sm">
                 System-wide administration & monitoring
               </p>
@@ -39,11 +39,15 @@ export default function SuperAdminHeader({ platformStats }: SuperAdminHeaderProp
           <div className="flex gap-4 mt-4 flex-wrap">
             <div className="bg-red-700/40 backdrop-blur px-4 py-2 rounded-lg border border-white/20">
               <p className="text-xs text-rose-200">Toplam Organizasyon</p>
-              <p className="text-2xl font-bold">{platformStats.totalOrganizations}</p>
+              <p className="text-2xl font-bold">
+                {platformStats.totalOrganizations}
+              </p>
             </div>
             <div className="bg-red-700/40 backdrop-blur px-4 py-2 rounded-lg border border-white/20">
               <p className="text-xs text-rose-200">Aylık Gelir (MRR)</p>
-              <p className="text-2xl font-bold">₺{platformStats.monthlyRevenue?.toLocaleString() || 0}</p>
+              <p className="text-2xl font-bold">
+                ₺{platformStats.monthlyRevenue?.toLocaleString() || 0}
+              </p>
             </div>
             <div className="bg-red-700/40 backdrop-blur px-4 py-2 rounded-lg border border-white/20">
               <p className="text-xs text-rose-200">Toplam Kullanıcı</p>
@@ -55,7 +59,9 @@ export default function SuperAdminHeader({ platformStats }: SuperAdminHeaderProp
             </div>
             <div className="bg-red-700/40 backdrop-blur px-4 py-2 rounded-lg border border-white/20">
               <p className="text-xs text-rose-200">Aktif Analizler</p>
-              <p className="text-2xl font-bold">{platformStats.activeAnalyses}</p>
+              <p className="text-2xl font-bold">
+                {platformStats.activeAnalyses}
+              </p>
             </div>
           </div>
         </div>

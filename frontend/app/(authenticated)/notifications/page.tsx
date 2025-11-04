@@ -1,17 +1,34 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { getNotifications, markAsRead as markAsReadAPI, markAllAsRead as markAllAsReadAPI, type Notification } from '@/lib/api/notifications';
-import { Card } from '@/components/ui/Card';
-import Button from '@/components/ui/Button';
-import Link from 'next/link';
-import { formatDistanceToNow } from 'date-fns';
-import { tr } from 'date-fns/locale';
+import { useState, useEffect } from "react";
 import {
-  Bell, BellOff, CheckCircle2, Filter, Inbox, Settings,
-  Clock, CheckCheck, AlertCircle, FileText, Users, Calendar,
-  Sparkles, Briefcase, AlertTriangle
-} from 'lucide-react';
+  getNotifications,
+  markAsRead as markAsReadAPI,
+  markAllAsRead as markAllAsReadAPI,
+  type Notification,
+} from "@/lib/api/notifications";
+import { Card } from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import Link from "next/link";
+import { formatDistanceToNow } from "date-fns";
+import { tr } from "date-fns/locale";
+import {
+  Bell,
+  BellOff,
+  CheckCircle2,
+  Filter,
+  Inbox,
+  Settings,
+  Clock,
+  CheckCheck,
+  AlertCircle,
+  FileText,
+  Users,
+  Calendar,
+  Sparkles,
+  Briefcase,
+  AlertTriangle,
+} from "lucide-react";
 
 /**
  * Notification Center Page (System Style)
@@ -21,7 +38,9 @@ import {
 export default function NotificationCenterPage() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
-  const [readFilter, setReadFilter] = useState<'all' | 'unread' | 'read'>('all');
+  const [readFilter, setReadFilter] = useState<"all" | "unread" | "read">(
+    "all"
+  );
 
   useEffect(() => {
     loadNotifications();
@@ -31,12 +50,12 @@ export default function NotificationCenterPage() {
     try {
       setLoading(true);
       const data = await getNotifications({
-        read: readFilter === 'all' ? undefined : readFilter === 'read',
-        limit: 50
+        read: readFilter === "all" ? undefined : readFilter === "read",
+        limit: 50,
       });
       setNotifications(data.notifications || []);
     } catch (err) {
-      console.error('Load error:', err);
+      console.error("Load error:", err);
     } finally {
       setLoading(false);
     }
@@ -47,7 +66,7 @@ export default function NotificationCenterPage() {
       await markAsReadAPI(id);
       await loadNotifications();
     } catch (err) {
-      console.error('Mark as read error:', err);
+      console.error("Mark as read error:", err);
     }
   };
 
@@ -56,12 +75,12 @@ export default function NotificationCenterPage() {
       await markAllAsReadAPI();
       await loadNotifications();
     } catch (err) {
-      console.error('Mark all error:', err);
+      console.error("Mark all error:", err);
     }
   };
 
-  const unreadCount = notifications.filter(n => !n.read).length;
-  const readCount = notifications.filter(n => n.read).length;
+  const unreadCount = notifications.filter((n) => !n.read).length;
+  const readCount = notifications.filter((n) => n.read).length;
 
   const getIcon = (type: string) => {
     const iconMap: Record<string, any> = {
@@ -82,11 +101,11 @@ export default function NotificationCenterPage() {
   };
 
   const getColor = (type: string) => {
-    if (type.includes('COMPLETED') || type.includes('ACCEPTED')) return 'green';
-    if (type.includes('FAILED') || type.includes('REJECTED')) return 'red';
-    if (type.includes('WARNING')) return 'orange';
-    if (type.includes('STARTED') || type.includes('SCHEDULED')) return 'blue';
-    return 'gray';
+    if (type.includes("COMPLETED") || type.includes("ACCEPTED")) return "green";
+    if (type.includes("FAILED") || type.includes("REJECTED")) return "red";
+    if (type.includes("WARNING")) return "orange";
+    if (type.includes("STARTED") || type.includes("SCHEDULED")) return "blue";
+    return "gray";
   };
 
   if (loading) {
@@ -94,7 +113,10 @@ export default function NotificationCenterPage() {
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="bg-white rounded-xl shadow-sm p-6 animate-pulse">
+            <div
+              key={i}
+              className="bg-white rounded-xl shadow-sm p-6 animate-pulse"
+            >
               <div className="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
               <div className="h-8 bg-gray-200 rounded w-1/3"></div>
             </div>
@@ -114,8 +136,12 @@ export default function NotificationCenterPage() {
               <Bell className="text-white" size={24} />
             </div>
             <div>
-              <p className="text-sm font-medium text-blue-700">Toplam Bildirim</p>
-              <p className="text-3xl font-bold text-blue-900">{notifications.length}</p>
+              <p className="text-sm font-medium text-blue-700">
+                Toplam Bildirim
+              </p>
+              <p className="text-3xl font-bold text-blue-900">
+                {notifications.length}
+              </p>
             </div>
           </div>
         </div>
@@ -127,7 +153,9 @@ export default function NotificationCenterPage() {
             </div>
             <div>
               <p className="text-sm font-medium text-orange-700">Okunmamış</p>
-              <p className="text-3xl font-bold text-orange-900">{unreadCount}</p>
+              <p className="text-3xl font-bold text-orange-900">
+                {unreadCount}
+              </p>
             </div>
           </div>
         </div>
@@ -149,31 +177,31 @@ export default function NotificationCenterPage() {
       <div className="flex flex-wrap items-center gap-3">
         <div className="flex gap-2">
           <button
-            onClick={() => setReadFilter('all')}
+            onClick={() => setReadFilter("all")}
             className={`px-4 py-2 rounded-lg font-medium transition-all ${
-              readFilter === 'all'
-                ? 'bg-blue-600 text-white shadow-md'
-                : 'bg-white text-gray-700 border-2 border-gray-300 hover:border-blue-300'
+              readFilter === "all"
+                ? "bg-blue-600 text-white shadow-md"
+                : "bg-white text-gray-700 border-2 border-gray-300 hover:border-blue-300"
             }`}
           >
             Tümü ({notifications.length})
           </button>
           <button
-            onClick={() => setReadFilter('unread')}
+            onClick={() => setReadFilter("unread")}
             className={`px-4 py-2 rounded-lg font-medium transition-all ${
-              readFilter === 'unread'
-                ? 'bg-orange-600 text-white shadow-md'
-                : 'bg-white text-gray-700 border-2 border-gray-300 hover:border-orange-300'
+              readFilter === "unread"
+                ? "bg-orange-600 text-white shadow-md"
+                : "bg-white text-gray-700 border-2 border-gray-300 hover:border-orange-300"
             }`}
           >
             Okunmamış ({unreadCount})
           </button>
           <button
-            onClick={() => setReadFilter('read')}
+            onClick={() => setReadFilter("read")}
             className={`px-4 py-2 rounded-lg font-medium transition-all ${
-              readFilter === 'read'
-                ? 'bg-green-600 text-white shadow-md'
-                : 'bg-white text-gray-700 border-2 border-gray-300 hover:border-green-300'
+              readFilter === "read"
+                ? "bg-green-600 text-white shadow-md"
+                : "bg-white text-gray-700 border-2 border-gray-300 hover:border-green-300"
             }`}
           >
             Okunmuş ({readCount})
@@ -203,9 +231,13 @@ export default function NotificationCenterPage() {
             <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
               <Inbox size={32} className="text-gray-400" />
             </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Bildirim Yok</h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
+              Bildirim Yok
+            </h3>
             <p className="text-gray-600">
-              {readFilter === 'unread' ? 'Okunmamış bildiriminiz bulunmuyor' : 'Henüz bildirim almadınız'}
+              {readFilter === "unread"
+                ? "Okunmamış bildiriminiz bulunmuyor"
+                : "Henüz bildirim almadınız"}
             </p>
           </div>
         </Card>
@@ -214,26 +246,33 @@ export default function NotificationCenterPage() {
           {notifications.map((notification) => {
             const Icon = getIcon(notification.type);
             const color = getColor(notification.type);
-            const timeAgo = formatDistanceToNow(new Date(notification.createdAt), {
-              addSuffix: true,
-              locale: tr
-            });
+            const timeAgo = formatDistanceToNow(
+              new Date(notification.createdAt),
+              {
+                addSuffix: true,
+                locale: tr,
+              }
+            );
 
             const colorClasses = {
-              green: 'bg-green-100 text-green-600',
-              red: 'bg-red-100 text-red-600',
-              blue: 'bg-blue-100 text-blue-600',
-              orange: 'bg-orange-100 text-orange-600',
-              gray: 'bg-gray-100 text-gray-600'
+              green: "bg-green-100 text-green-600",
+              red: "bg-red-100 text-red-600",
+              blue: "bg-blue-100 text-blue-600",
+              orange: "bg-orange-100 text-orange-600",
+              gray: "bg-gray-100 text-gray-600",
             }[color];
 
             return (
               <Card
                 key={notification.id}
                 className={`transition-all cursor-pointer hover:shadow-md ${
-                  !notification.read ? 'border-2 border-blue-200 bg-blue-50/50' : ''
+                  !notification.read
+                    ? "border-2 border-blue-200 bg-blue-50/50"
+                    : ""
                 }`}
-                onClick={() => !notification.read && handleMarkAsRead(notification.id)}
+                onClick={() =>
+                  !notification.read && handleMarkAsRead(notification.id)
+                }
               >
                 <div className="flex items-start gap-4">
                   <div className={`p-3 rounded-lg ${colorClasses}`}>

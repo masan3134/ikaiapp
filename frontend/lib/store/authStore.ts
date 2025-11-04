@@ -1,7 +1,7 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import * as authService from '../services/authService';
-import type { User } from '../services/authService';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import * as authService from "../services/authService";
+import type { User } from "../services/authService";
 
 interface AuthState {
   user: User | null;
@@ -34,14 +34,20 @@ export const useAuthStore = create<AuthState>()(
           const response = await authService.login(email, password);
 
           // Store token in localStorage
-          localStorage.setItem('auth_token', response.token);
-          localStorage.setItem('auth_user', JSON.stringify(response.user));
+          localStorage.setItem("auth_token", response.token);
+          localStorage.setItem("auth_user", JSON.stringify(response.user));
 
           // Track session start for activity tracking
           const now = new Date();
-          localStorage.setItem('sessionStartTimestamp', Date.now().toString());
-          localStorage.setItem('sessionLoginTime', now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }));
-          localStorage.setItem('sessionPageViews', '0'); // Reset page view counter
+          localStorage.setItem("sessionStartTimestamp", Date.now().toString());
+          localStorage.setItem(
+            "sessionLoginTime",
+            now.toLocaleTimeString("tr-TR", {
+              hour: "2-digit",
+              minute: "2-digit",
+            })
+          );
+          localStorage.setItem("sessionPageViews", "0"); // Reset page view counter
 
           set({
             user: response.user,
@@ -56,7 +62,7 @@ export const useAuthStore = create<AuthState>()(
             token: null,
             isAuthenticated: false,
             isLoading: false,
-            error: error.message || 'Login failed',
+            error: error.message || "Login failed",
           });
           throw error;
         }
@@ -68,8 +74,8 @@ export const useAuthStore = create<AuthState>()(
           const response = await authService.register(email, password);
 
           // Store token in localStorage
-          localStorage.setItem('auth_token', response.token);
-          localStorage.setItem('auth_user', JSON.stringify(response.user));
+          localStorage.setItem("auth_token", response.token);
+          localStorage.setItem("auth_user", JSON.stringify(response.user));
 
           set({
             user: response.user,
@@ -84,7 +90,7 @@ export const useAuthStore = create<AuthState>()(
             token: null,
             isAuthenticated: false,
             isLoading: false,
-            error: error.message || 'Registration failed',
+            error: error.message || "Registration failed",
           });
           throw error;
         }
@@ -95,16 +101,16 @@ export const useAuthStore = create<AuthState>()(
         try {
           await authService.logout();
         } catch (error) {
-          console.error('Logout error:', error);
+          console.error("Logout error:", error);
         } finally {
           // Clear localStorage
-          localStorage.removeItem('auth_token');
-          localStorage.removeItem('auth_user');
+          localStorage.removeItem("auth_token");
+          localStorage.removeItem("auth_user");
 
           // Clear session tracking
-          localStorage.removeItem('sessionStartTimestamp');
-          localStorage.removeItem('sessionLoginTime');
-          localStorage.removeItem('sessionPageViews');
+          localStorage.removeItem("sessionStartTimestamp");
+          localStorage.removeItem("sessionLoginTime");
+          localStorage.removeItem("sessionPageViews");
 
           set({
             user: null,
@@ -117,7 +123,7 @@ export const useAuthStore = create<AuthState>()(
       },
 
       checkAuth: async () => {
-        const token = localStorage.getItem('auth_token');
+        const token = localStorage.getItem("auth_token");
 
         if (!token) {
           set({
@@ -141,8 +147,8 @@ export const useAuthStore = create<AuthState>()(
           });
         } catch (error) {
           // Token is invalid, clear everything
-          localStorage.removeItem('auth_token');
-          localStorage.removeItem('auth_user');
+          localStorage.removeItem("auth_token");
+          localStorage.removeItem("auth_user");
           set({
             user: null,
             token: null,
@@ -154,8 +160,8 @@ export const useAuthStore = create<AuthState>()(
       },
 
       setUser: (user: User, token: string) => {
-        localStorage.setItem('auth_token', token);
-        localStorage.setItem('auth_user', JSON.stringify(user));
+        localStorage.setItem("auth_token", token);
+        localStorage.setItem("auth_user", JSON.stringify(user));
         set({
           user,
           token,
@@ -169,7 +175,7 @@ export const useAuthStore = create<AuthState>()(
       },
     }),
     {
-      name: 'auth-storage',
+      name: "auth-storage",
       partialize: (state) => ({
         token: state.token,
         user: state.user,

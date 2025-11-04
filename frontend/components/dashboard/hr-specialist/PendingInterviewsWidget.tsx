@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { Calendar, Clock } from 'lucide-react';
-import Link from 'next/link';
-import { format } from 'date-fns';
-import { tr } from 'date-fns/locale';
+import { Calendar, Clock } from "lucide-react";
+import Link from "next/link";
+import { format } from "date-fns";
+import { tr } from "date-fns/locale";
 
 interface PendingInterviewsWidgetProps {
   data: Array<{
@@ -19,10 +19,12 @@ interface PendingInterviewsWidgetProps {
   }> | null;
 }
 
-export function PendingInterviewsWidget({ data }: PendingInterviewsWidgetProps) {
+export function PendingInterviewsWidget({
+  data,
+}: PendingInterviewsWidgetProps) {
   const formatDateTime = (dateString: string) => {
     try {
-      return format(new Date(dateString), 'd MMM HH:mm', { locale: tr });
+      return format(new Date(dateString), "d MMM HH:mm", { locale: tr });
     } catch {
       return dateString;
     }
@@ -30,12 +32,12 @@ export function PendingInterviewsWidget({ data }: PendingInterviewsWidgetProps) 
 
   const getInterviewTypeLabel = (type: string) => {
     switch (type) {
-      case 'IN_PERSON':
-        return 'Yüz Yüze';
-      case 'VIDEO':
-        return 'Video';
-      case 'PHONE':
-        return 'Telefon';
+      case "IN_PERSON":
+        return "Yüz Yüze";
+      case "VIDEO":
+        return "Video";
+      case "PHONE":
+        return "Telefon";
       default:
         return type;
     }
@@ -43,14 +45,14 @@ export function PendingInterviewsWidget({ data }: PendingInterviewsWidgetProps) 
 
   const getInterviewTypeColor = (type: string) => {
     switch (type) {
-      case 'IN_PERSON':
-        return 'bg-blue-100 text-blue-700';
-      case 'VIDEO':
-        return 'bg-purple-100 text-purple-700';
-      case 'PHONE':
-        return 'bg-green-100 text-green-700';
+      case "IN_PERSON":
+        return "bg-blue-100 text-blue-700";
+      case "VIDEO":
+        return "bg-purple-100 text-purple-700";
+      case "PHONE":
+        return "bg-green-100 text-green-700";
       default:
-        return 'bg-slate-100 text-slate-700';
+        return "bg-slate-100 text-slate-700";
     }
   };
 
@@ -80,10 +82,12 @@ export function PendingInterviewsWidget({ data }: PendingInterviewsWidgetProps) 
                       {interview.candidate.name}
                     </p>
                     <p className="text-xs text-slate-500">
-                      {interview.jobPosting?.title || 'İlan bilgisi yok'}
+                      {interview.jobPosting?.title || "İlan bilgisi yok"}
                     </p>
                   </div>
-                  <span className={`text-xs px-2 py-1 rounded ${getInterviewTypeColor(interview.type)}`}>
+                  <span
+                    className={`text-xs px-2 py-1 rounded ${getInterviewTypeColor(interview.type)}`}
+                  >
                     {getInterviewTypeLabel(interview.type)}
                   </span>
                 </div>

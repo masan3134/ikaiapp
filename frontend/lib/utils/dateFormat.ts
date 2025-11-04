@@ -5,26 +5,26 @@
 /**
  * Format date to Turkish locale
  */
-export function formatDate(date: string | Date, locale = 'tr-TR'): string {
-  const d = typeof date === 'string' ? new Date(date) : date;
+export function formatDate(date: string | Date, locale = "tr-TR"): string {
+  const d = typeof date === "string" ? new Date(date) : date;
   return d.toLocaleDateString(locale, {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric'
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
   });
 }
 
 /**
  * Format date with time to Turkish locale
  */
-export function formatDateTime(date: string | Date, locale = 'tr-TR'): string {
-  const d = typeof date === 'string' ? new Date(date) : date;
+export function formatDateTime(date: string | Date, locale = "tr-TR"): string {
+  const d = typeof date === "string" ? new Date(date) : date;
   return d.toLocaleString(locale, {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
   });
 }
 
@@ -32,7 +32,7 @@ export function formatDateTime(date: string | Date, locale = 'tr-TR'): string {
  * Format relative time (e.g., "2 saat önce", "3 gün önce")
  */
 export function formatRelative(date: string | Date): string {
-  const d = typeof date === 'string' ? new Date(date) : date;
+  const d = typeof date === "string" ? new Date(date) : date;
   const now = new Date();
   const diffMs = now.getTime() - d.getTime();
   const diffSec = Math.floor(diffMs / 1000);
@@ -43,7 +43,7 @@ export function formatRelative(date: string | Date): string {
   const diffMonth = Math.floor(diffDay / 30);
   const diffYear = Math.floor(diffDay / 365);
 
-  if (diffSec < 60) return 'Az önce';
+  if (diffSec < 60) return "Az önce";
   if (diffMin < 60) return `${diffMin} dakika önce`;
   if (diffHour < 24) return `${diffHour} saat önce`;
   if (diffDay < 7) return `${diffDay} gün önce`;
@@ -56,7 +56,7 @@ export function formatRelative(date: string | Date): string {
  * Check if date is today
  */
 export function isToday(date: string | Date): boolean {
-  const d = typeof date === 'string' ? new Date(date) : date;
+  const d = typeof date === "string" ? new Date(date) : date;
   const today = new Date();
   return (
     d.getDate() === today.getDate() &&
@@ -69,7 +69,7 @@ export function isToday(date: string | Date): boolean {
  * Check if date is in current week
  */
 export function isThisWeek(date: string | Date): boolean {
-  const d = typeof date === 'string' ? new Date(date) : date;
+  const d = typeof date === "string" ? new Date(date) : date;
   const now = new Date();
   const weekStart = new Date(now);
   weekStart.setDate(now.getDate() - now.getDay());

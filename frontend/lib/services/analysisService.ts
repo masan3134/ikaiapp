@@ -1,6 +1,6 @@
-import apiClient from './authService';
-import type { JobPosting } from './jobPostingService';
-import type { Candidate } from './candidateService';
+import apiClient from "./authService";
+import type { JobPosting } from "./jobPostingService";
+import type { Candidate } from "./candidateService";
 
 /**
  * Analysis Service
@@ -14,7 +14,7 @@ export interface Analysis {
   id: string;
   jobPostingId: string;
   userId: string;
-  status: 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED';
+  status: "PENDING" | "PROCESSING" | "COMPLETED" | "FAILED";
   errorMessage?: string;
   completedAt?: string;
   createdAt: string;
@@ -22,7 +22,7 @@ export interface Analysis {
   user: {
     id: string;
     email: string;
-    role: 'USER' | 'ADMIN';
+    role: "USER" | "ADMIN";
   };
   _count?: {
     analysisResults: number;
@@ -36,12 +36,12 @@ export interface AnalysisResult {
   candidateId: string;
 
   // V7.1: Scores (all 0-100)
-  experienceScore?: number;     // 0-100
-  educationScore?: number;      // 0-100
-  technicalScore?: number;      // 0-100
-  softSkillsScore?: number;     // V7.1: Soft skills & leadership (0-100)
-  extraScore?: number;          // 0-100
-  compatibilityScore: number;   // V7.1: Weighted final score (0-100)
+  experienceScore?: number; // 0-100
+  educationScore?: number; // 0-100
+  technicalScore?: number; // 0-100
+  softSkillsScore?: number; // V7.1: Soft skills & leadership (0-100)
+  extraScore?: number; // 0-100
+  compatibilityScore: number; // V7.1: Weighted final score (0-100)
 
   // V7.1: Dynamic scoring profile
   scoringProfile?: {
@@ -50,17 +50,17 @@ export interface AnalysisResult {
     technicalWeight: number;
     softSkillsWeight: number;
     extraWeight: number;
-    rationale: string;          // Turkish explanation
+    rationale: string; // Turkish explanation
   };
 
   // V7.1: Summaries
-  experienceSummary?: string;   // Detailed narrative
-  educationSummary?: string;    // Detailed narrative
-  careerTrajectory?: string;    // Career growth analysis
+  experienceSummary?: string; // Detailed narrative
+  educationSummary?: string; // Detailed narrative
+  careerTrajectory?: string; // Career growth analysis
 
   // V7.1: Comments (with evidence types)
-  positiveComments: string[];   // Format: "... (kanıt_tipi: Doğrudan/Çıkarım, kanıt: ...)"
-  negativeComments: string[];   // Format: "Gap: Impact | Mitigation"
+  positiveComments: string[]; // Format: "... (kanıt_tipi: Doğrudan/Çıkarım, kanıt: ...)"
+  negativeComments: string[]; // Format: "Gap: Impact | Mitigation"
 
   // V7.1: Strategic summary
   strategicSummary?: {
@@ -73,7 +73,7 @@ export interface AnalysisResult {
   };
 
   // Legacy (backward compatibility)
-  matchLabel?: string;          // Auto-generated or from strategicSummary
+  matchLabel?: string; // Auto-generated or from strategicSummary
 
   createdAt: string;
   candidate: Candidate;
@@ -115,13 +115,21 @@ export async function createAnalysis(
   candidateIds: string[]
 ): Promise<CreateAnalysisResponse> {
   try {
-    const response = await apiClient.post<CreateAnalysisResponse>('/api/v1/analyses', {
-      jobPostingId,
-      candidateIds
-    });
+    const response = await apiClient.post<CreateAnalysisResponse>(
+      "/api/v1/analyses",
+      {
+        jobPostingId,
+        candidateIds,
+      }
+    );
     return response.data;
   } catch (error: any) {
-    throw error.response?.data || { error: 'Network Error', message: 'Failed to create analysis' };
+    throw (
+      error.response?.data || {
+        error: "Network Error",
+        message: "Failed to create analysis",
+      }
+    );
   }
 }
 
@@ -130,11 +138,16 @@ export async function createAnalysis(
  */
 export async function getAnalyses(): Promise<AnalysesResponse> {
   try {
-    const response = await apiClient.get<AnalysesResponse>('/api/v1/analyses');
+    const response = await apiClient.get<AnalysesResponse>("/api/v1/analyses");
     // Backend returns {analyses: [...], count: ...} format
     return response.data;
   } catch (error: any) {
-    throw error.response?.data || { error: 'Network Error', message: 'Failed to fetch analyses' };
+    throw (
+      error.response?.data || {
+        error: "Network Error",
+        message: "Failed to fetch analyses",
+      }
+    );
   }
 }
 
@@ -145,12 +158,21 @@ export async function getAnalyses(): Promise<AnalysesResponse> {
  * Get analyses for a specific candidate (with full results)
  * Backend returns analysisResults only for this candidate when candidateId is provided
  */
-export async function getAnalysesByCandidate(candidateId: string): Promise<AnalysesResponse> {
+export async function getAnalysesByCandidate(
+  candidateId: string
+): Promise<AnalysesResponse> {
   try {
-    const response = await apiClient.get<AnalysesResponse>(`/api/v1/analyses?candidateId=${candidateId}`);
+    const response = await apiClient.get<AnalysesResponse>(
+      `/api/v1/analyses?candidateId=${candidateId}`
+    );
     return response.data;
   } catch (error: any) {
-    throw error.response?.data || { error: 'Network Error', message: 'Failed to fetch analyses for candidate' };
+    throw (
+      error.response?.data || {
+        error: "Network Error",
+        message: "Failed to fetch analyses for candidate",
+      }
+    );
   }
 }
 
@@ -159,24 +181,39 @@ export async function getAnalysesByCandidate(candidateId: string): Promise<Analy
  */
 export async function getAnalysisById(id: string): Promise<AnalysisResponse> {
   try {
-    const response = await apiClient.get<AnalysisResponse>(`/api/v1/analyses/${id}`);
+    const response = await apiClient.get<AnalysisResponse>(
+      `/api/v1/analyses/${id}`
+    );
     return response.data;
   } catch (error: any) {
-    throw error.response?.data || { error: 'Network Error', message: 'Failed to fetch analysis' };
+    throw (
+      error.response?.data || {
+        error: "Network Error",
+        message: "Failed to fetch analysis",
+      }
+    );
   }
 }
 
 /**
  * Delete analysis
  */
-export async function deleteAnalysis(id: string): Promise<{ message: string; deletedResultsCount: number }> {
+export async function deleteAnalysis(
+  id: string
+): Promise<{ message: string; deletedResultsCount: number }> {
   try {
-    const response = await apiClient.delete<{ message: string; deletedResultsCount: number }>(
-      `/api/v1/analyses/${id}`
-    );
+    const response = await apiClient.delete<{
+      message: string;
+      deletedResultsCount: number;
+    }>(`/api/v1/analyses/${id}`);
     return response.data;
   } catch (error: any) {
-    throw error.response?.data || { error: 'Network Error', message: 'Failed to delete analysis' };
+    throw (
+      error.response?.data || {
+        error: "Network Error",
+        message: "Failed to delete analysis",
+      }
+    );
   }
 }
 
@@ -194,6 +231,11 @@ export async function addCandidatesToAnalysis(
     );
     return response.data;
   } catch (error: any) {
-    throw error.response?.data || { error: 'Network Error', message: 'Adaylar analize eklenemedi' };
+    throw (
+      error.response?.data || {
+        error: "Network Error",
+        message: "Adaylar analize eklenemedi",
+      }
+    );
   }
 }

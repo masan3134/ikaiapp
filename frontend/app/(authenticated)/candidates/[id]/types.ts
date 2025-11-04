@@ -16,7 +16,7 @@ export interface Candidate {
 export interface Analysis {
   id: string;
   jobPostingId: string;
-  status: 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED';
+  status: "PENDING" | "PROCESSING" | "COMPLETED" | "FAILED";
   createdAt: string;
   completedAt?: string;
   jobPosting: {
@@ -83,7 +83,7 @@ export interface TestQuestion {
   question: string;
   options: string[];
   correctAnswer: number;
-  category: 'technical' | 'situational' | 'experience';
+  category: "technical" | "situational" | "experience";
 }
 
 export interface TestAnswer {
@@ -99,7 +99,7 @@ export interface Interview {
   time: string;
   duration: number;
   meetLink?: string;
-  status: 'scheduled' | 'completed' | 'cancelled' | 'no_show';
+  status: "scheduled" | "completed" | "cancelled" | "no_show";
   notes?: string;
   rating?: number;
   createdAt: string;
@@ -121,7 +121,17 @@ export interface JobOffer {
   salary: number;
   currency: string;
   startDate: string;
-  status: 'draft' | 'pending_approval' | 'approved' | 'sent' | 'accepted' | 'rejected' | 'negotiating' | 'withdrawn' | 'expired' | 'cancelled';
+  status:
+    | "draft"
+    | "pending_approval"
+    | "approved"
+    | "sent"
+    | "accepted"
+    | "rejected"
+    | "negotiating"
+    | "withdrawn"
+    | "expired"
+    | "cancelled";
   benefits?: string[];
   conditions?: string[];
   sentAt?: string;

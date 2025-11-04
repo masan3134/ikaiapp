@@ -8,8 +8,8 @@
  * Status: MANDATORY
  */
 
-import axios from 'axios';
-import { errorLoggingService } from '@/lib/services/errorLoggingService';
+import axios from "axios";
+import { errorLoggingService } from "@/lib/services/errorLoggingService";
 
 /**
  * Setup axios error interceptor
@@ -24,7 +24,7 @@ export function setupAxiosErrorInterceptor() {
     },
     (error) => {
       // Log API error automatically
-      const endpoint = error.config?.url || 'unknown';
+      const endpoint = error.config?.url || "unknown";
 
       errorLoggingService.logAPIError(error, endpoint);
 
@@ -33,5 +33,5 @@ export function setupAxiosErrorInterceptor() {
     }
   );
 
-  console.log('[IKAI] Axios error interceptor configured');
+  console.log("[IKAI] Axios error interceptor configured");
 }

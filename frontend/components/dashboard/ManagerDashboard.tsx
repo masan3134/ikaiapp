@@ -1,18 +1,18 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useAuthStore } from '@/lib/store/authStore';
-import LoadingSkeleton from '@/components/ui/LoadingSkeleton';
+import { useState, useEffect } from "react";
+import { useAuthStore } from "@/lib/store/authStore";
+import LoadingSkeleton from "@/components/ui/LoadingSkeleton";
 
 // Manager Widgets
-import { ManagerWelcomeHeader } from './manager/ManagerWelcomeHeader';
-import { TeamPerformanceWidget } from './manager/TeamPerformanceWidget';
-import { DepartmentAnalyticsWidget } from './manager/DepartmentAnalyticsWidget';
-import { ActionItemsWidget } from './manager/ActionItemsWidget';
-import { TeamPerformanceTrendWidget } from './manager/TeamPerformanceTrendWidget';
-import { ApprovalQueueWidget } from './manager/ApprovalQueueWidget';
-import { InterviewScheduleWidget } from './manager/InterviewScheduleWidget';
-import { MonthlyKPIsWidget } from './manager/MonthlyKPIsWidget';
+import { ManagerWelcomeHeader } from "./manager/ManagerWelcomeHeader";
+import { TeamPerformanceWidget } from "./manager/TeamPerformanceWidget";
+import { DepartmentAnalyticsWidget } from "./manager/DepartmentAnalyticsWidget";
+import { ActionItemsWidget } from "./manager/ActionItemsWidget";
+import { TeamPerformanceTrendWidget } from "./manager/TeamPerformanceTrendWidget";
+import { ApprovalQueueWidget } from "./manager/ApprovalQueueWidget";
+import { InterviewScheduleWidget } from "./manager/InterviewScheduleWidget";
+import { MonthlyKPIsWidget } from "./manager/MonthlyKPIsWidget";
 
 export const ManagerDashboard = () => {
   const { user } = useAuthStore();
@@ -27,22 +27,22 @@ export const ManagerDashboard = () => {
   const loadManagerDashboard = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/v1/dashboard/manager', {
+      const response = await fetch("/api/v1/dashboard/manager", {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       });
 
       if (!response.ok) {
-        throw new Error('Failed to load dashboard');
+        throw new Error("Failed to load dashboard");
       }
 
       const data = await response.json();
       setStats(data.data);
       setError(null);
     } catch (err) {
-      console.error('[MANAGER DASHBOARD] Load error:', err);
-      setError('Dashboard verileri yüklenemedi');
+      console.error("[MANAGER DASHBOARD] Load error:", err);
+      setError("Dashboard verileri yüklenemedi");
     } finally {
       setLoading(false);
     }

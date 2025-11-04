@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { Shield, ShieldCheck } from 'lucide-react';
-import { Card, CardHeader, CardBody } from '@nextui-org/react';
-import { formatDistanceToNow } from 'date-fns';
-import { tr } from 'date-fns/locale';
+import Link from "next/link";
+import { Shield, ShieldCheck } from "lucide-react";
+import { Card, CardHeader, CardBody } from "@nextui-org/react";
+import { formatDistanceToNow } from "date-fns";
+import { tr } from "date-fns/locale";
 
 interface SecurityOverviewWidgetProps {
   data: {
@@ -16,16 +16,22 @@ interface SecurityOverviewWidgetProps {
   organization: any;
 }
 
-export default function SecurityOverviewWidget({ data, organization }: SecurityOverviewWidgetProps) {
+export default function SecurityOverviewWidget({
+  data,
+  organization,
+}: SecurityOverviewWidgetProps) {
   const totalUsers = organization?.totalUsers || 1;
   const twoFactorPercent = Math.round((data.twoFactorUsers / totalUsers) * 100);
 
   const formatRelativeTime = (dateStr: string | null) => {
-    if (!dateStr) return 'Yok';
+    if (!dateStr) return "Yok";
     try {
-      return formatDistanceToNow(new Date(dateStr), { addSuffix: true, locale: tr });
+      return formatDistanceToNow(new Date(dateStr), {
+        addSuffix: true,
+        locale: tr,
+      });
     } catch {
-      return 'Bilinmiyor';
+      return "Bilinmiyor";
     }
   };
 
@@ -59,7 +65,9 @@ export default function SecurityOverviewWidget({ data, organization }: SecurityO
           <div className="space-y-2">
             <div className="flex items-center justify-between text-sm">
               <span className="text-slate-600">Aktif Oturumlar</span>
-              <span className="font-semibold text-blue-600">{data.activeSessions}</span>
+              <span className="font-semibold text-blue-600">
+                {data.activeSessions}
+              </span>
             </div>
             <div className="flex items-center justify-between text-sm">
               <span className="text-slate-600">Son Güvenlik Olayı</span>
@@ -69,7 +77,9 @@ export default function SecurityOverviewWidget({ data, organization }: SecurityO
             </div>
             <div className="flex items-center justify-between text-sm">
               <span className="text-slate-600">Uyumluluk Skoru</span>
-              <span className="font-semibold text-green-600">{data.complianceScore}%</span>
+              <span className="font-semibold text-green-600">
+                {data.complianceScore}%
+              </span>
             </div>
           </div>
 

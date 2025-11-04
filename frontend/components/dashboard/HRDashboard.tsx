@@ -1,18 +1,18 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useAuthStore } from '@/lib/store/authStore';
+import { useState, useEffect } from "react";
+import { useAuthStore } from "@/lib/store/authStore";
 
 // HR Specialist Widgets
-import { HRWelcomeHeader } from './hr-specialist/HRWelcomeHeader';
-import { ActiveJobPostingsWidget } from './hr-specialist/ActiveJobPostingsWidget';
-import { CVAnalyticsWidget } from './hr-specialist/CVAnalyticsWidget';
-import { RecentAnalysesWidget } from './hr-specialist/RecentAnalysesWidget';
-import { HiringPipelineWidget } from './hr-specialist/HiringPipelineWidget';
-import { QuickActionsWidget } from './hr-specialist/QuickActionsWidget';
-import { PendingInterviewsWidget } from './hr-specialist/PendingInterviewsWidget';
-import { MonthlyStatsWidget } from './hr-specialist/MonthlyStatsWidget';
-import { HRDashboardSkeleton } from './hr-specialist/HRDashboardSkeleton';
+import { HRWelcomeHeader } from "./hr-specialist/HRWelcomeHeader";
+import { ActiveJobPostingsWidget } from "./hr-specialist/ActiveJobPostingsWidget";
+import { CVAnalyticsWidget } from "./hr-specialist/CVAnalyticsWidget";
+import { RecentAnalysesWidget } from "./hr-specialist/RecentAnalysesWidget";
+import { HiringPipelineWidget } from "./hr-specialist/HiringPipelineWidget";
+import { QuickActionsWidget } from "./hr-specialist/QuickActionsWidget";
+import { PendingInterviewsWidget } from "./hr-specialist/PendingInterviewsWidget";
+import { MonthlyStatsWidget } from "./hr-specialist/MonthlyStatsWidget";
+import { HRDashboardSkeleton } from "./hr-specialist/HRDashboardSkeleton";
 
 export const HRDashboard = () => {
   const { user } = useAuthStore();
@@ -27,22 +27,22 @@ export const HRDashboard = () => {
   const loadHRDashboard = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/v1/dashboard/hr-specialist', {
+      const response = await fetch("/api/v1/dashboard/hr-specialist", {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       });
 
       if (!response.ok) {
-        throw new Error('Failed to load dashboard');
+        throw new Error("Failed to load dashboard");
       }
 
       const data = await response.json();
       setStats(data.data);
       setError(null);
     } catch (err) {
-      console.error('[HR DASHBOARD] Load error:', err);
-      setError('Dashboard verileri yüklenemedi');
+      console.error("[HR DASHBOARD] Load error:", err);
+      setError("Dashboard verileri yüklenemedi");
     } finally {
       setLoading(false);
     }

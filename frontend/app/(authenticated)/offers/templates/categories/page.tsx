@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import * as templateService from '@/services/templateService';
-import { withRoleProtection } from '@/lib/hoc/withRoleProtection';
-import { RoleGroups } from '@/lib/constants/roles';
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import * as templateService from "@/services/templateService";
+import { withRoleProtection } from "@/lib/hoc/withRoleProtection";
+import { RoleGroups } from "@/lib/constants/roles";
 
 function CategoriesPage() {
   const router = useRouter();
@@ -14,10 +14,10 @@ function CategoriesPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    color: '#3B82F6',
-    icon: ''
+    name: "",
+    description: "",
+    color: "#3B82F6",
+    icon: "",
   });
 
   useEffect(() => {
@@ -42,10 +42,10 @@ function CategoriesPage() {
     try {
       if (editingId) {
         await templateService.updateCategory(editingId, formData);
-        alert('Kategori güncellendi');
+        alert("Kategori güncellendi");
       } else {
         await templateService.createCategory(formData);
-        alert('Kategori oluşturuldu');
+        alert("Kategori oluşturuldu");
       }
       resetForm();
       loadCategories();
@@ -55,11 +55,11 @@ function CategoriesPage() {
   }
 
   async function handleDelete(id: string) {
-    if (!confirm('Bu kategoriyi silmek istediğinizden emin misiniz?')) return;
+    if (!confirm("Bu kategoriyi silmek istediğinizden emin misiniz?")) return;
 
     try {
       await templateService.deleteCategory(id);
-      alert('Kategori silindi');
+      alert("Kategori silindi");
       loadCategories();
     } catch (error: any) {
       alert(error.message);
@@ -69,20 +69,26 @@ function CategoriesPage() {
   async function handleMoveUp(index: number) {
     if (index === 0) return;
     const newOrder = [...categories];
-    [newOrder[index - 1], newOrder[index]] = [newOrder[index], newOrder[index - 1]];
+    [newOrder[index - 1], newOrder[index]] = [
+      newOrder[index],
+      newOrder[index - 1],
+    ];
     await saveOrder(newOrder);
   }
 
   async function handleMoveDown(index: number) {
     if (index === categories.length - 1) return;
     const newOrder = [...categories];
-    [newOrder[index], newOrder[index + 1]] = [newOrder[index + 1], newOrder[index]];
+    [newOrder[index], newOrder[index + 1]] = [
+      newOrder[index + 1],
+      newOrder[index],
+    ];
     await saveOrder(newOrder);
   }
 
   async function saveOrder(newOrder: any[]) {
     try {
-      const categoryIds = newOrder.map(c => c.id);
+      const categoryIds = newOrder.map((c) => c.id);
       await templateService.reorderCategories(categoryIds);
       setCategories(newOrder);
     } catch (error: any) {
@@ -94,16 +100,16 @@ function CategoriesPage() {
   function handleEdit(category: any) {
     setFormData({
       name: category.name,
-      description: category.description || '',
-      color: category.color || '#3B82F6',
-      icon: category.icon || ''
+      description: category.description || "",
+      color: category.color || "#3B82F6",
+      icon: category.icon || "",
     });
     setEditingId(category.id);
     setShowForm(true);
   }
 
   function resetForm() {
-    setFormData({ name: '', description: '', color: '#3B82F6', icon: '' });
+    setFormData({ name: "", description: "", color: "#3B82F6", icon: "" });
     setEditingId(null);
     setShowForm(false);
   }
@@ -112,16 +118,21 @@ function CategoriesPage() {
     <div className="p-6 max-w-4xl mx-auto">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <button onClick={() => router.back()} className="text-blue-600 hover:text-blue-800 mb-2">
+          <button
+            onClick={() => router.back()}
+            className="text-blue-600 hover:text-blue-800 mb-2"
+          >
             ← Geri
           </button>
-          <h1 className="text-2xl font-bold text-gray-900">Şablon Kategorileri</h1>
+          <h1 className="text-2xl font-bold text-gray-900">
+            Şablon Kategorileri
+          </h1>
         </div>
         <button
           onClick={() => setShowForm(!showForm)}
           className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
         >
-          {showForm ? 'İptal' : '+ Yeni Kategori'}
+          {showForm ? "İptal" : "+ Yeni Kategori"}
         </button>
       </div>
 
@@ -129,15 +140,19 @@ function CategoriesPage() {
       {showForm && (
         <div className="bg-white rounded-lg shadow p-6 mb-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">
-            {editingId ? 'Kategori Düzenle' : 'Yeni Kategori'}
+            {editingId ? "Kategori Düzenle" : "Yeni Kategori"}
           </h2>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Kategori Adı *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Kategori Adı *
+              </label>
               <input
                 type="text"
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
                 required
                 className="w-full border rounded-lg px-4 py-2"
                 placeholder="Örn: Yazılım"
@@ -145,10 +160,14 @@ function CategoriesPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Açıklama</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Açıklama
+              </label>
               <textarea
                 value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
                 rows={2}
                 className="w-full border rounded-lg px-4 py-2"
               />
@@ -156,21 +175,29 @@ function CategoriesPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Renk</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Renk
+                </label>
                 <input
                   type="color"
                   value={formData.color}
-                  onChange={(e) => setFormData({ ...formData, color: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, color: e.target.value })
+                  }
                   className="w-full border rounded-lg px-2 py-1 h-10"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Icon</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Icon
+                </label>
                 <input
                   type="text"
                   value={formData.icon}
-                  onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, icon: e.target.value })
+                  }
                   className="w-full border rounded-lg px-4 py-2"
                   placeholder="💼"
                 />
@@ -189,7 +216,7 @@ function CategoriesPage() {
                 type="submit"
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
               >
-                {editingId ? 'Güncelle' : 'Oluştur'}
+                {editingId ? "Güncelle" : "Oluştur"}
               </button>
             </div>
           </form>
@@ -204,11 +231,21 @@ function CategoriesPage() {
           <table className="w-full">
             <thead className="bg-gray-50 border-b">
               <tr>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Sıra</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Kategori</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Şablon Sayısı</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Renk</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Aksiyonlar</th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
+                  Sıra
+                </th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
+                  Kategori
+                </th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
+                  Şablon Sayısı
+                </th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
+                  Renk
+                </th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
+                  Aksiyonlar
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y">
@@ -238,9 +275,13 @@ function CategoriesPage() {
                     <div className="flex items-center gap-2">
                       {cat.icon && <span>{cat.icon}</span>}
                       <div>
-                        <div className="font-medium text-gray-900">{cat.name}</div>
+                        <div className="font-medium text-gray-900">
+                          {cat.name}
+                        </div>
                         {cat.description && (
-                          <div className="text-sm text-gray-600">{cat.description}</div>
+                          <div className="text-sm text-gray-600">
+                            {cat.description}
+                          </div>
                         )}
                       </div>
                     </div>
@@ -275,7 +316,10 @@ function CategoriesPage() {
 
               {categories.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-6 py-8 text-center text-gray-600">
+                  <td
+                    colSpan={5}
+                    className="px-6 py-8 text-center text-gray-600"
+                  >
                     Henüz kategori yok. Yeni kategori oluşturun.
                   </td>
                 </tr>
@@ -290,5 +334,5 @@ function CategoriesPage() {
 
 export default withRoleProtection(CategoriesPage, {
   allowedRoles: RoleGroups.HR_MANAGERS,
-  redirectTo: '/dashboard'
+  redirectTo: "/dashboard",
 });

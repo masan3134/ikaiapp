@@ -1,6 +1,6 @@
-import { Candidate } from '@/lib/services/candidateService';
-import { JobPosting } from '@/services/jobPostings';
-import { User } from '@/lib/services/authService';
+import { Candidate } from "@/lib/services/candidateService";
+import { JobPosting } from "@/services/jobPostings";
+import { User } from "@/lib/services/authService";
 
 interface Benefits {
   [key: string]: string;
@@ -19,8 +19,15 @@ export interface Offer {
   workType: string;
   benefits: Benefits;
   terms: string;
-  status: 'draft' | 'pending' | 'approved' | 'sent' | 'accepted' | 'rejected' | 'expired';
-  approvalStatus?: 'pending' | 'approved' | 'rejected';
+  status:
+    | "draft"
+    | "pending"
+    | "approved"
+    | "sent"
+    | "accepted"
+    | "rejected"
+    | "expired";
+  approvalStatus?: "pending" | "approved" | "rejected";
   sentAt?: string;
   respondedAt?: string;
   expiresAt: string;

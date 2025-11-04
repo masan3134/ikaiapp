@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useNotifications } from '@/lib/hooks/useNotifications';
-import NotificationItem from '@/components/notifications/NotificationItem';
-import { CheckIcon, FunnelIcon, InboxIcon } from '@heroicons/react/24/outline';
-import Link from 'next/link';
+import { useState } from "react";
+import { useNotifications } from "@/lib/hooks/useNotifications";
+import NotificationItem from "@/components/notifications/NotificationItem";
+import { CheckIcon, FunnelIcon, InboxIcon } from "@heroicons/react/24/outline";
+import Link from "next/link";
 
 /**
  * Notification Center Page
@@ -24,7 +24,7 @@ import Link from 'next/link';
 
 export default function NotificationCenterPage() {
   const [readFilter, setReadFilter] = useState<boolean | undefined>(undefined);
-  const [typeFilter, setTypeFilter] = useState<string>('');
+  const [typeFilter, setTypeFilter] = useState<string>("");
   const [page, setPage] = useState<number>(1);
 
   const {
@@ -35,7 +35,7 @@ export default function NotificationCenterPage() {
     pagination,
     markAsRead,
     markAllAsRead,
-    refresh
+    refresh,
   } = useNotifications({
     autoRefresh: true,
     refreshInterval: 30000,
@@ -43,8 +43,8 @@ export default function NotificationCenterPage() {
       read: readFilter,
       type: typeFilter || undefined,
       page,
-      limit: 20
-    }
+      limit: 20,
+    },
   });
 
   const handleMarkAsRead = async (notificationId: string) => {
@@ -52,7 +52,7 @@ export default function NotificationCenterPage() {
       await markAsRead(notificationId);
       await refresh();
     } catch (err) {
-      console.error('Failed to mark as read:', err);
+      console.error("Failed to mark as read:", err);
     }
   };
 
@@ -61,26 +61,26 @@ export default function NotificationCenterPage() {
       await markAllAsRead();
       await refresh();
     } catch (err) {
-      console.error('Failed to mark all as read:', err);
+      console.error("Failed to mark all as read:", err);
     }
   };
 
   const notificationTypes = [
-    'ANALYSIS_STARTED',
-    'ANALYSIS_COMPLETED',
-    'ANALYSIS_FAILED',
-    'CANDIDATE_UPLOADED',
-    'OFFER_CREATED',
-    'OFFER_SENT',
-    'OFFER_ACCEPTED',
-    'OFFER_REJECTED',
-    'OFFER_EXPIRED',
-    'INTERVIEW_SCHEDULED',
-    'INTERVIEW_COMPLETED',
-    'INTERVIEW_CANCELLED',
-    'USER_INVITED',
-    'USAGE_LIMIT_WARNING',
-    'USAGE_LIMIT_REACHED'
+    "ANALYSIS_STARTED",
+    "ANALYSIS_COMPLETED",
+    "ANALYSIS_FAILED",
+    "CANDIDATE_UPLOADED",
+    "OFFER_CREATED",
+    "OFFER_SENT",
+    "OFFER_ACCEPTED",
+    "OFFER_REJECTED",
+    "OFFER_EXPIRED",
+    "INTERVIEW_SCHEDULED",
+    "INTERVIEW_COMPLETED",
+    "INTERVIEW_CANCELLED",
+    "USER_INVITED",
+    "USAGE_LIMIT_WARNING",
+    "USAGE_LIMIT_REACHED",
   ];
 
   return (
@@ -103,10 +103,12 @@ export default function NotificationCenterPage() {
 
           {/* Read/Unread Filter */}
           <select
-            value={readFilter === undefined ? 'all' : readFilter ? 'read' : 'unread'}
+            value={
+              readFilter === undefined ? "all" : readFilter ? "read" : "unread"
+            }
             onChange={(e) => {
               const val = e.target.value;
-              setReadFilter(val === 'all' ? undefined : val === 'read');
+              setReadFilter(val === "all" ? undefined : val === "read");
               setPage(1);
             }}
             className="text-sm border border-gray-300 dark:border-gray-600 rounded-md px-3 py-1.5 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
@@ -126,9 +128,9 @@ export default function NotificationCenterPage() {
             className="text-sm border border-gray-300 dark:border-gray-600 rounded-md px-3 py-1.5 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
           >
             <option value="">Tüm Tipler</option>
-            {notificationTypes.map(type => (
+            {notificationTypes.map((type) => (
               <option key={type} value={type}>
-                {type.replace(/_/g, ' ')}
+                {type.replace(/_/g, " ")}
               </option>
             ))}
           </select>
@@ -184,7 +186,9 @@ export default function NotificationCenterPage() {
         {loading ? (
           <div className="p-12 text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto" />
-            <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">Bildirimler yükleniyor...</p>
+            <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">
+              Bildirimler yükleniyor...
+            </p>
           </div>
         ) : error ? (
           <div className="p-12 text-center">
@@ -193,14 +197,16 @@ export default function NotificationCenterPage() {
         ) : notifications.length === 0 ? (
           <div className="p-12 text-center">
             <InboxIcon className="h-16 w-16 text-gray-400 mx-auto" />
-            <p className="mt-4 text-sm font-medium text-gray-900 dark:text-white">Bildirim yok</p>
+            <p className="mt-4 text-sm font-medium text-gray-900 dark:text-white">
+              Bildirim yok
+            </p>
             <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
               Henüz bildirim almadınız
             </p>
           </div>
         ) : (
           <div>
-            {notifications.map(notification => (
+            {notifications.map((notification) => (
               <NotificationItem
                 key={notification.id}
                 notification={notification}
@@ -215,13 +221,13 @@ export default function NotificationCenterPage() {
       {pagination && pagination.totalPages > 1 && (
         <div className="mt-6 flex items-center justify-between bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
           <p className="text-sm text-gray-700 dark:text-gray-300">
-            Sayfa <span className="font-medium">{pagination.page}</span> /{' '}
+            Sayfa <span className="font-medium">{pagination.page}</span> /{" "}
             <span className="font-medium">{pagination.totalPages}</span>
           </p>
 
           <div className="flex gap-2">
             <button
-              onClick={() => setPage(prev => Math.max(1, prev - 1))}
+              onClick={() => setPage((prev) => Math.max(1, prev - 1))}
               disabled={page === 1}
               className="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
             >
@@ -229,7 +235,9 @@ export default function NotificationCenterPage() {
             </button>
 
             <button
-              onClick={() => setPage(prev => Math.min(pagination.totalPages, prev + 1))}
+              onClick={() =>
+                setPage((prev) => Math.min(pagination.totalPages, prev + 1))
+              }
               disabled={page === pagination.totalPages}
               className="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
             >

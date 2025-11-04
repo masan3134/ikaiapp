@@ -1,5 +1,4 @@
-import apiClient from '@/lib/utils/apiClient';
-
+import apiClient from "@/lib/utils/apiClient";
 
 export interface Candidate {
   id: string;
@@ -25,7 +24,7 @@ export interface Interview {
 
 export interface InterviewFormData {
   candidateIds: string[];
-  type: 'phone' | 'online' | 'in-person';
+  type: "phone" | "online" | "in-person";
   date: string;
   time: string;
   duration?: number;
@@ -37,20 +36,26 @@ export interface InterviewFormData {
 }
 
 class InterviewService {
-  
   // Step 1: Get recent candidates
   async getRecentCandidates(search?: string, limit = 10) {
-    const response = await apiClient.get(`/api/v1/interviews/candidates/recent`, {
-      params: { search, limit }
-    });
+    const response = await apiClient.get(
+      `/api/v1/interviews/candidates/recent`,
+      {
+        params: { search, limit },
+      }
+    );
     return response.data.data;
   }
 
   // Step 2: Check conflicts
   async checkConflicts(date: string, time: string) {
-    const response = await apiClient.post(`/api/v1/interviews/check-conflicts`, {
-      date, time
-    });
+    const response = await apiClient.post(
+      `/api/v1/interviews/check-conflicts`,
+      {
+        date,
+        time,
+      }
+    );
     return response.data.data;
   }
 
@@ -63,7 +68,7 @@ class InterviewService {
   // Get all interviews
   async getInterviews(filters?: any) {
     const response = await apiClient.get(`/api/v1/interviews`, {
-      params: filters
+      params: filters,
     });
     return response.data.data;
   }
@@ -77,7 +82,7 @@ class InterviewService {
   // Update interview status
   async updateStatus(id: string, status: string) {
     const response = await apiClient.patch(`/api/v1/interviews/${id}/status`, {
-      status
+      status,
     });
     return response.data;
   }

@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { fetchOffers, JobOffer } from '@/services/offerService';
-import { useAuth } from '@/lib/hooks/useAuth';
+import React, { useState, useEffect } from "react";
+import { fetchOffers, JobOffer } from "@/services/offerService";
+import { useAuth } from "@/lib/hooks/useAuth";
 
 const ApprovalDashboard = () => {
   const [pendingOffers, setPendingOffers] = useState<JobOffer[]>([]);
@@ -13,20 +13,25 @@ const ApprovalDashboard = () => {
   const { user } = useAuth();
 
   useEffect(() => {
-    if (user?.role === 'ADMIN' || user?.role === 'MANAGER') {
+    if (user?.role === "ADMIN" || user?.role === "MANAGER") {
       const loadOffers = async () => {
         try {
           setLoading(true);
           // This is a simplified fetch. Ideally, the backend should support filtering by approvalStatus.
           // For now, we fetch all and filter on the client.
           const { data: allOffers } = await fetchOffers({ limit: 100 }); // Fetch a large number
-          
-          setPendingOffers(allOffers.filter((o: JobOffer) => o.approvalStatus === 'pending'));
-          setApprovedOffers(allOffers.filter((o: JobOffer) => o.approvalStatus === 'approved'));
-          setRejectedOffers(allOffers.filter((o: JobOffer) => o.approvalStatus === 'rejected'));
 
+          setPendingOffers(
+            allOffers.filter((o: JobOffer) => o.approvalStatus === "pending")
+          );
+          setApprovedOffers(
+            allOffers.filter((o: JobOffer) => o.approvalStatus === "approved")
+          );
+          setRejectedOffers(
+            allOffers.filter((o: JobOffer) => o.approvalStatus === "rejected")
+          );
         } catch (err) {
-          setError('Onaylanacak teklifler yüklenirken bir hata oluştu.');
+          setError("Onaylanacak teklifler yüklenirken bir hata oluştu.");
         } finally {
           setLoading(false);
         }
@@ -35,11 +40,12 @@ const ApprovalDashboard = () => {
     }
   }, [user]);
 
-  if (user?.role !== 'ADMIN' && user?.role !== 'MANAGER') {
+  if (user?.role !== "ADMIN" && user?.role !== "MANAGER") {
     return null; // Render nothing if user is not an admin/manager
   }
 
-  if (loading) return <p className="text-gray-700">Onay listesi yükleniyor...</p>;
+  if (loading)
+    return <p className="text-gray-700">Onay listesi yükleniyor...</p>;
   if (error) return <p className="text-red-600">{error}</p>;
 
   const renderOfferList = (title: string, offers: JobOffer[]) => (
@@ -51,12 +57,18 @@ const ApprovalDashboard = () => {
         <p className="text-gray-600">Bu kategoride teklif bulunmuyor.</p>
       ) : (
         <ul className="space-y-2">
-          {offers.map(offer => (
+          {offers.map((offer) => (
             <li key={offer.id} className="py-2 border-b border-gray-200">
-              <a href={`/offers/${offer.id}`} className="text-blue-600 hover:text-blue-800 hover:underline">
-                {offer.position} - {offer.candidate?.firstName} {offer.candidate?.lastName}
+              <a
+                href={`/offers/${offer.id}`}
+                className="text-blue-600 hover:text-blue-800 hover:underline"
+              >
+                {offer.position} - {offer.candidate?.firstName}{" "}
+                {offer.candidate?.lastName}
               </a>
-              <small className="text-gray-500 ml-2">(Oluşturan: {offer.creator?.email})</small>
+              <small className="text-gray-500 ml-2">
+                (Oluşturan: {offer.creator?.email})
+              </small>
             </li>
           ))}
         </ul>
@@ -66,10 +78,12 @@ const ApprovalDashboard = () => {
 
   return (
     <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg mt-8">
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">Teklif Onay Yönetimi</h2>
-      {renderOfferList('Onay Bekleyenler', pendingOffers)}
-      {renderOfferList('Onaylanmış Olanlar', approvedOffers)}
-      {renderOfferList('Reddedilmiş Olanlar', rejectedOffers)}
+      <h2 className="text-2xl font-bold text-gray-900 mb-6">
+        Teklif Onay Yönetimi
+      </h2>
+      {renderOfferList("Onay Bekleyenler", pendingOffers)}
+      {renderOfferList("Onaylanmış Olanlar", approvedOffers)}
+      {renderOfferList("Reddedilmiş Olanlar", rejectedOffers)}
     </div>
   );
 };

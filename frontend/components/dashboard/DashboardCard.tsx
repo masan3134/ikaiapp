@@ -1,18 +1,18 @@
-import { ReactNode } from 'react'
+import { ReactNode } from "react";
 
 interface DashboardCardProps {
-  title: string
-  value?: string | number
-  subtitle?: string
-  icon?: ReactNode
-  color?: string
-  gradient?: string
-  onClick?: () => void
-  loading?: boolean
+  title: string;
+  value?: string | number;
+  subtitle?: string;
+  icon?: ReactNode;
+  color?: string;
+  gradient?: string;
+  onClick?: () => void;
+  loading?: boolean;
   trend?: {
-    value: number
-    isPositive: boolean
-  }
+    value: number;
+    isPositive: boolean;
+  };
 }
 
 export const DashboardCard: React.FC<DashboardCardProps> = ({
@@ -20,11 +20,11 @@ export const DashboardCard: React.FC<DashboardCardProps> = ({
   value,
   subtitle,
   icon,
-  color = '#3B82F6',
+  color = "#3B82F6",
   gradient,
   onClick,
   loading,
-  trend
+  trend,
 }) => {
   return (
     <div
@@ -32,7 +32,7 @@ export const DashboardCard: React.FC<DashboardCardProps> = ({
         bg-white rounded-xl shadow-sm border-2 p-6
         transition-all duration-300
         hover:shadow-lg hover:-translate-y-1
-        ${onClick ? 'cursor-pointer' : ''}
+        ${onClick ? "cursor-pointer" : ""}
       `}
       style={{ borderColor: color }}
       onClick={onClick}
@@ -44,7 +44,8 @@ export const DashboardCard: React.FC<DashboardCardProps> = ({
           <div
             className="w-10 h-10 rounded-lg flex items-center justify-center text-white"
             style={{
-              background: gradient || `linear-gradient(135deg, ${color}, ${color}dd)`
+              background:
+                gradient || `linear-gradient(135deg, ${color}, ${color}dd)`,
             }}
           >
             {icon}
@@ -65,18 +66,16 @@ export const DashboardCard: React.FC<DashboardCardProps> = ({
             {trend && (
               <span
                 className={`text-sm font-medium mb-1 ${
-                  trend.isPositive ? 'text-green-600' : 'text-red-600'
+                  trend.isPositive ? "text-green-600" : "text-red-600"
                 }`}
               >
-                {trend.isPositive ? '↑' : '↓'} {Math.abs(trend.value)}%
+                {trend.isPositive ? "↑" : "↓"} {Math.abs(trend.value)}%
               </span>
             )}
           </div>
-          {subtitle && (
-            <p className="text-sm text-gray-500">{subtitle}</p>
-          )}
+          {subtitle && <p className="text-sm text-gray-500">{subtitle}</p>}
         </>
       )}
     </div>
-  )
-}
+  );
+};

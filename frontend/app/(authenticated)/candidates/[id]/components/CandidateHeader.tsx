@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { User, Download } from 'lucide-react';
-import { downloadCV } from '@/lib/services/candidateService';
-import { useToast } from '@/lib/hooks/useToast';
-import type { Candidate } from '../types';
+import { User, Download } from "lucide-react";
+import { downloadCV } from "@/lib/services/candidateService";
+import { useToast } from "@/lib/hooks/useToast";
+import type { Candidate } from "../types";
 
 interface CandidateHeaderProps {
   candidate: Candidate;
@@ -16,13 +16,13 @@ export default function CandidateHeader({ candidate }: CandidateHeaderProps) {
     try {
       const blob = await downloadCV(candidate.id);
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
-      a.download = candidate.sourceFileName || 'cv.pdf';
+      a.download = candidate.sourceFileName || "cv.pdf";
       a.click();
-      toast.success('CV indirildi');
+      toast.success("CV indirildi");
     } catch (error) {
-      toast.error('CV indirilemedi');
+      toast.error("CV indirilemedi");
     }
   }
 

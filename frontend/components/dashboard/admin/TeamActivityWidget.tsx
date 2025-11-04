@@ -1,9 +1,15 @@
-'use client';
+"use client";
 
-import { Activity, FileText, ClipboardCheck, Mail, Calendar } from 'lucide-react';
-import { Card, CardHeader, CardBody } from '@nextui-org/react';
-import { formatDistanceToNow } from 'date-fns';
-import { tr } from 'date-fns/locale';
+import {
+  Activity,
+  FileText,
+  ClipboardCheck,
+  Mail,
+  Calendar,
+} from "lucide-react";
+import { Card, CardHeader, CardBody } from "@nextui-org/react";
+import { formatDistanceToNow } from "date-fns";
+import { tr } from "date-fns/locale";
 
 interface TeamActivityWidgetProps {
   data: Array<{
@@ -20,13 +26,13 @@ interface TeamActivityWidgetProps {
 
 const getActivityIcon = (type: string) => {
   switch (type) {
-    case 'CV_UPLOAD':
+    case "CV_UPLOAD":
       return <FileText className="w-4 h-4 text-green-600" />;
-    case 'ANALYSIS':
+    case "ANALYSIS":
       return <ClipboardCheck className="w-4 h-4 text-purple-600" />;
-    case 'OFFER':
+    case "OFFER":
       return <Mail className="w-4 h-4 text-blue-600" />;
-    case 'INTERVIEW':
+    case "INTERVIEW":
       return <Calendar className="w-4 h-4 text-yellow-600" />;
     default:
       return <Activity className="w-4 h-4 text-slate-600" />;
@@ -35,24 +41,27 @@ const getActivityIcon = (type: string) => {
 
 const getActivityBgColor = (type: string) => {
   switch (type) {
-    case 'CV_UPLOAD':
-      return 'bg-green-100';
-    case 'ANALYSIS':
-      return 'bg-purple-100';
-    case 'OFFER':
-      return 'bg-blue-100';
-    case 'INTERVIEW':
-      return 'bg-yellow-100';
+    case "CV_UPLOAD":
+      return "bg-green-100";
+    case "ANALYSIS":
+      return "bg-purple-100";
+    case "OFFER":
+      return "bg-blue-100";
+    case "INTERVIEW":
+      return "bg-yellow-100";
     default:
-      return 'bg-slate-100';
+      return "bg-slate-100";
   }
 };
 
 const formatRelativeTime = (dateStr: string) => {
   try {
-    return formatDistanceToNow(new Date(dateStr), { addSuffix: true, locale: tr });
+    return formatDistanceToNow(new Date(dateStr), {
+      addSuffix: true,
+      locale: tr,
+    });
   } catch {
-    return 'Bilinmiyor';
+    return "Bilinmiyor";
   }
 };
 
@@ -76,7 +85,9 @@ export default function TeamActivityWidget({ data }: TeamActivityWidgetProps) {
                 className="flex items-start gap-3 p-3 rounded-lg hover:bg-slate-50 transition-colors"
               >
                 <div className="flex-shrink-0">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${getActivityBgColor(activity.type)}`}>
+                  <div
+                    className={`w-8 h-8 rounded-full flex items-center justify-center ${getActivityBgColor(activity.type)}`}
+                  >
                     {getActivityIcon(activity.type)}
                   </div>
                 </div>
@@ -84,8 +95,7 @@ export default function TeamActivityWidget({ data }: TeamActivityWidgetProps) {
                   <p className="text-sm text-slate-800">
                     <span className="font-medium">
                       {activity.user.firstName} {activity.user.lastName}
-                    </span>
-                    {' '}
+                    </span>{" "}
                     {activity.action}
                   </p>
                   <p className="text-xs text-slate-500 mt-1">

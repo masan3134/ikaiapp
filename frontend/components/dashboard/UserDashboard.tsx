@@ -1,49 +1,47 @@
-'use client'
+"use client";
 
-import { useRouter } from 'next/navigation'
-import { useAuthStore } from '@/lib/store/authStore'
+import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/lib/store/authStore";
 
 export const UserDashboard = () => {
-  const router = useRouter()
-  const { user } = useAuthStore()
+  const router = useRouter();
+  const { user } = useAuthStore();
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       {/* Greeting */}
       <div className="text-center">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          👋 Merhaba {user?.name || 'Kullanıcı'}!
+          👋 Merhaba {user?.name || "Kullanıcı"}!
         </h1>
-        <p className="text-gray-500">
-          Dashboard'unuza hoşgeldiniz
-        </p>
+        <p className="text-gray-500">Dashboard'unuza hoşgeldiniz</p>
       </div>
 
       {/* Your Profile */}
       <div className="bg-white rounded-xl shadow-sm border-2 border-gray-300 p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">
-          Profiliniz
-        </h2>
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Profiliniz</h2>
         <div className="space-y-3">
           <div className="flex items-center gap-3">
             <span className="text-2xl">📧</span>
-            <span className="text-sm text-gray-700">{user?.email || 'email@example.com'}</span>
+            <span className="text-sm text-gray-700">
+              {user?.email || "email@example.com"}
+            </span>
           </div>
           <div className="flex items-center gap-3">
             <span className="text-2xl">🏢</span>
             <span className="text-sm text-gray-700">
-              {user?.organization?.name || 'Your Organization'}
+              {user?.organization?.name || "Your Organization"}
             </span>
           </div>
           <div className="flex items-center gap-3">
             <span className="text-2xl">👤</span>
             <span className="text-sm text-gray-700">
-              {user?.role?.replace('_', ' ') || 'User'}
+              {user?.role?.replace("_", " ") || "User"}
             </span>
           </div>
         </div>
         <button
-          onClick={() => router.push('/settings/profile')}
+          onClick={() => router.push("/settings/profile")}
           className="w-full mt-6 px-4 py-2 bg-gray-100 text-gray-900 rounded-lg font-medium hover:bg-gray-200 transition-all"
         >
           Profili Düzenle →
@@ -74,10 +72,11 @@ export const UserDashboard = () => {
           Daha Fazla Yetkiye Mi İhtiyacınız Var?
         </h3>
         <p className="text-sm text-gray-600 mb-4">
-          İK özelliklerine erişmek ister misiniz? Rolünüzü yükseltmek için yöneticinizle iletişime geçin.
+          İK özelliklerine erişmek ister misiniz? Rolünüzü yükseltmek için
+          yöneticinizle iletişime geçin.
         </p>
         <button
-          onClick={() => router.push('/settings/overview')}
+          onClick={() => router.push("/settings/overview")}
           className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-all hover:scale-105"
         >
           Erişim Talep Et
@@ -103,5 +102,5 @@ export const UserDashboard = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};

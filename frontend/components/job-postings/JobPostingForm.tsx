@@ -1,8 +1,12 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import type { JobPosting, CreateJobPostingData, UpdateJobPostingData } from '@/lib/services/jobPostingService';
-import Button from '@/components/ui/Button';
+import { useState } from "react";
+import type {
+  JobPosting,
+  CreateJobPostingData,
+  UpdateJobPostingData,
+} from "@/lib/services/jobPostingService";
+import Button from "@/components/ui/Button";
 
 export interface JobPostingFormProps {
   initialData?: JobPosting;
@@ -15,13 +19,13 @@ export default function JobPostingForm({
   initialData,
   onSubmit,
   onCancel,
-  loading = false
+  loading = false,
 }: JobPostingFormProps) {
   const [formData, setFormData] = useState({
-    title: initialData?.title || '',
-    department: initialData?.department || '',
-    details: initialData?.details || '',
-    notes: initialData?.notes || ''
+    title: initialData?.title || "",
+    department: initialData?.department || "",
+    details: initialData?.details || "",
+    notes: initialData?.notes || "",
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -31,27 +35,27 @@ export default function JobPostingForm({
 
     // Title validation
     if (!formData.title.trim()) {
-      newErrors.title = 'İş ilanı başlığı zorunludur';
+      newErrors.title = "İş ilanı başlığı zorunludur";
     } else if (formData.title.length < 3) {
-      newErrors.title = 'Başlık en az 3 karakter olmalıdır';
+      newErrors.title = "Başlık en az 3 karakter olmalıdır";
     } else if (formData.title.length > 200) {
-      newErrors.title = 'Başlık en fazla 200 karakter olabilir';
+      newErrors.title = "Başlık en fazla 200 karakter olabilir";
     }
 
     // Department validation
     if (!formData.department.trim()) {
-      newErrors.department = 'Departman zorunludur';
+      newErrors.department = "Departman zorunludur";
     } else if (formData.department.length < 2) {
-      newErrors.department = 'Departman en az 2 karakter olmalıdır';
+      newErrors.department = "Departman en az 2 karakter olmalıdır";
     } else if (formData.department.length > 100) {
-      newErrors.department = 'Departman en fazla 100 karakter olabilir';
+      newErrors.department = "Departman en fazla 100 karakter olabilir";
     }
 
     // Details validation
     if (!formData.details.trim()) {
-      newErrors.details = 'İş tanımı zorunludur';
+      newErrors.details = "İş tanımı zorunludur";
     } else if (formData.details.length < 10) {
-      newErrors.details = 'İş tanımı en az 10 karakter olmalıdır';
+      newErrors.details = "İş tanımı en az 10 karakter olmalıdır";
     }
 
     setErrors(newErrors);
@@ -66,17 +70,17 @@ export default function JobPostingForm({
     try {
       await onSubmit(formData);
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Form submission error:', error);
+      if (process.env.NODE_ENV === "development") {
+        console.error("Form submission error:", error);
       }
     }
   }
 
   function handleChange(field: keyof typeof formData, value: string) {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
     // Clear error when user starts typing
     if (errors[field]) {
-      setErrors(prev => {
+      setErrors((prev) => {
         const newErrors = { ...prev };
         delete newErrors[field];
         return newErrors;
@@ -88,16 +92,19 @@ export default function JobPostingForm({
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Title */}
       <div>
-        <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
+        <label
+          htmlFor="title"
+          className="block text-sm font-medium text-gray-700 mb-2"
+        >
           İş İlanı Başlığı <span className="text-red-500">*</span>
         </label>
         <input
           id="title"
           type="text"
           value={formData.title}
-          onChange={(e) => handleChange('title', e.target.value)}
+          onChange={(e) => handleChange("title", e.target.value)}
           className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all ${
-            errors.title ? 'border-red-500' : 'border-gray-300'
+            errors.title ? "border-red-500" : "border-gray-300"
           }`}
           placeholder="Örn: Lojistik Merkezi Müdürü"
           disabled={loading}
@@ -112,16 +119,19 @@ export default function JobPostingForm({
 
       {/* Department */}
       <div>
-        <label htmlFor="department" className="block text-sm font-medium text-gray-700 mb-2">
+        <label
+          htmlFor="department"
+          className="block text-sm font-medium text-gray-700 mb-2"
+        >
           Departman <span className="text-red-500">*</span>
         </label>
         <input
           id="department"
           type="text"
           value={formData.department}
-          onChange={(e) => handleChange('department', e.target.value)}
+          onChange={(e) => handleChange("department", e.target.value)}
           className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all ${
-            errors.department ? 'border-red-500' : 'border-gray-300'
+            errors.department ? "border-red-500" : "border-gray-300"
           }`}
           placeholder="Örn: Lojistik"
           disabled={loading}
@@ -136,16 +146,19 @@ export default function JobPostingForm({
 
       {/* Details */}
       <div>
-        <label htmlFor="details" className="block text-sm font-medium text-gray-700 mb-2">
+        <label
+          htmlFor="details"
+          className="block text-sm font-medium text-gray-700 mb-2"
+        >
           İş Tanımı <span className="text-red-500">*</span>
         </label>
         <textarea
           id="details"
           value={formData.details}
-          onChange={(e) => handleChange('details', e.target.value)}
+          onChange={(e) => handleChange("details", e.target.value)}
           rows={6}
           className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all resize-none ${
-            errors.details ? 'border-red-500' : 'border-gray-300'
+            errors.details ? "border-red-500" : "border-gray-300"
           }`}
           placeholder="İş tanımını detaylı bir şekilde yazın..."
           disabled={loading}
@@ -160,13 +173,16 @@ export default function JobPostingForm({
 
       {/* Notes (Optional) */}
       <div>
-        <label htmlFor="notes" className="block text-sm font-medium text-gray-700 mb-2">
+        <label
+          htmlFor="notes"
+          className="block text-sm font-medium text-gray-700 mb-2"
+        >
           Notlar (Opsiyonel)
         </label>
         <textarea
           id="notes"
           value={formData.notes}
-          onChange={(e) => handleChange('notes', e.target.value)}
+          onChange={(e) => handleChange("notes", e.target.value)}
           rows={3}
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all resize-none"
           placeholder="Ek notlar veya gereksinimler..."
@@ -184,12 +200,8 @@ export default function JobPostingForm({
         >
           İptal
         </Button>
-        <Button
-          type="submit"
-          variant="primary"
-          loading={loading}
-        >
-          {initialData ? 'Güncelle' : 'Oluştur'}
+        <Button type="submit" variant="primary" loading={loading}>
+          {initialData ? "Güncelle" : "Oluştur"}
         </Button>
       </div>
     </form>

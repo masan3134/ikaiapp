@@ -1,10 +1,13 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import * as analyticsService from '@/services/analyticsService';
-import { OverviewChart, AcceptanceRatePieChart } from '@/components/offers/OfferAnalyticsCharts';
-import { withRoleProtection } from '@/lib/hoc/withRoleProtection';
-import { RoleGroups } from '@/lib/constants/roles';
+import { useState, useEffect } from "react";
+import * as analyticsService from "@/services/analyticsService";
+import {
+  OverviewChart,
+  AcceptanceRatePieChart,
+} from "@/components/offers/OfferAnalyticsCharts";
+import { withRoleProtection } from "@/lib/hoc/withRoleProtection";
+import { RoleGroups } from "@/lib/constants/roles";
 
 function OfferAnalyticsPage() {
   const [overview, setOverview] = useState<any>(null);
@@ -31,17 +34,21 @@ function OfferAnalyticsPage() {
     }
   }
 
-  const overviewChartData = overview ? [
-    { name: 'Kabul Edildi', value: overview.accepted },
-    { name: 'Reddedildi', value: overview.rejected },
-    { name: 'Beklemede', value: overview.pending_approval },
-    { name: 'Süresi Doldu', value: overview.expired },
-  ] : [];
+  const overviewChartData = overview
+    ? [
+        { name: "Kabul Edildi", value: overview.accepted },
+        { name: "Reddedildi", value: overview.rejected },
+        { name: "Beklemede", value: overview.pending_approval },
+        { name: "Süresi Doldu", value: overview.expired },
+      ]
+    : [];
 
-  const acceptanceRateChartData = acceptanceRate ? [
-    { name: 'Kabul Edildi', value: acceptanceRate.accepted },
-    { name: 'Reddedildi', value: acceptanceRate.rejected },
-  ] : [];
+  const acceptanceRateChartData = acceptanceRate
+    ? [
+        { name: "Kabul Edildi", value: acceptanceRate.accepted },
+        { name: "Reddedildi", value: acceptanceRate.rejected },
+      ]
+    : [];
 
   if (loading) {
     return <div>Analitik verileri yükleniyor...</div>;
@@ -57,7 +64,9 @@ function OfferAnalyticsPage() {
         </div>
         <div>
           <h2 className="text-lg font-semibold mb-4">Kabul Oranı</h2>
-          {acceptanceRate && <AcceptanceRatePieChart data={acceptanceRateChartData} />}
+          {acceptanceRate && (
+            <AcceptanceRatePieChart data={acceptanceRateChartData} />
+          )}
         </div>
       </div>
     </div>
@@ -65,5 +74,5 @@ function OfferAnalyticsPage() {
 }
 
 export default withRoleProtection(OfferAnalyticsPage, {
-  allowedRoles: RoleGroups.ANALYTICS_VIEWERS
+  allowedRoles: RoleGroups.ANALYTICS_VIEWERS,
 });

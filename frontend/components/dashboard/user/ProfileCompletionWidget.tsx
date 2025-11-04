@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { User } from 'lucide-react';
-import Link from 'next/link';
+import { User } from "lucide-react";
+import Link from "next/link";
 
 interface ProfileCompletionWidgetProps {
   data: {
@@ -10,7 +10,9 @@ interface ProfileCompletionWidgetProps {
   };
 }
 
-export function ProfileCompletionWidget({ data }: ProfileCompletionWidgetProps) {
+export function ProfileCompletionWidget({
+  data,
+}: ProfileCompletionWidgetProps) {
   const { completion, missingFields } = data;
 
   return (
@@ -23,7 +25,9 @@ export function ProfileCompletionWidget({ data }: ProfileCompletionWidgetProps) 
       <div className="mb-4">
         <div className="flex justify-between mb-2">
           <span className="text-sm text-slate-600">Tamamlanma</span>
-          <span className="text-sm font-semibold text-slate-800">{completion}%</span>
+          <span className="text-sm font-semibold text-slate-800">
+            {completion}%
+          </span>
         </div>
         <div className="w-full bg-slate-200 rounded-full h-3">
           <div

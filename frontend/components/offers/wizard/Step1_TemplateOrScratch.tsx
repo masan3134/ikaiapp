@@ -1,11 +1,15 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useOfferWizardStore, type OfferTemplate, type Candidate } from '@/lib/store/offerWizardStore';
-import { getAuthToken } from '@/services/auth';
-import { Sparkles, FileText, User, TrendingUp } from 'lucide-react';
+import { useState, useEffect } from "react";
+import {
+  useOfferWizardStore,
+  type OfferTemplate,
+  type Candidate,
+} from "@/lib/store/offerWizardStore";
+import { getAuthToken } from "@/services/auth";
+import { Sparkles, FileText, User, TrendingUp } from "lucide-react";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
 export default function Step1_TemplateOrScratch() {
   const {
@@ -47,8 +51,8 @@ export default function Step1_TemplateOrScratch() {
       setCandidates(candidatesData.candidates || candidatesData.data || []);
       setTemplates(templatesData.data || []);
     } catch (error) {
-      console.error('Error loading data:', error);
-      setError('Veri yüklenirken hata oluştu');
+      console.error("Error loading data:", error);
+      setError("Veri yüklenirken hata oluştu");
     } finally {
       setLoadingData(false);
     }
@@ -56,7 +60,7 @@ export default function Step1_TemplateOrScratch() {
 
   function handleTemplateSelect(template: OfferTemplate) {
     setTemplate(template);
-    setCreationMode('template');
+    setCreationMode("template");
     setShowTemplates(false);
   }
 
@@ -103,15 +107,31 @@ export default function Step1_TemplateOrScratch() {
               >
                 <div className="flex items-start justify-between mb-3">
                   <FileText className="w-6 h-6 text-blue-600" />
-                  <span className="text-xs text-gray-500">{template.usageCount}x kullanıldı</span>
+                  <span className="text-xs text-gray-500">
+                    {template.usageCount}x kullanıldı
+                  </span>
                 </div>
-                <h3 className="font-semibold text-gray-900 mb-2">{template.name}</h3>
+                <h3 className="font-semibold text-gray-900 mb-2">
+                  {template.name}
+                </h3>
                 {template.description && (
-                  <p className="text-sm text-gray-600 mb-3">{template.description}</p>
+                  <p className="text-sm text-gray-600 mb-3">
+                    {template.description}
+                  </p>
                 )}
                 <div className="text-sm text-gray-700 space-y-1">
-                  <p>💰 {template.salaryMin.toLocaleString()} - {template.salaryMax.toLocaleString()} {template.currency}</p>
-                  <p>🏠 {template.workType === 'office' ? 'Ofis' : template.workType === 'hybrid' ? 'Hibrit' : 'Remote'}</p>
+                  <p>
+                    💰 {template.salaryMin.toLocaleString()} -{" "}
+                    {template.salaryMax.toLocaleString()} {template.currency}
+                  </p>
+                  <p>
+                    🏠{" "}
+                    {template.workType === "office"
+                      ? "Ofis"
+                      : template.workType === "hybrid"
+                        ? "Hibrit"
+                        : "Remote"}
+                  </p>
                 </div>
                 <button className="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition">
                   Bu Şablonu Seç
@@ -126,8 +146,12 @@ export default function Step1_TemplateOrScratch() {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-gray-900 mb-2">Nasıl başlamak istersiniz?</h2>
-      <p className="text-gray-600 mb-8">Şablondan hızlıca başlayın veya sıfırdan oluşturun</p>
+      <h2 className="text-2xl font-bold text-gray-900 mb-2">
+        Nasıl başlamak istersiniz?
+      </h2>
+      <p className="text-gray-600 mb-8">
+        Şablondan hızlıca başlayın veya sıfırdan oluşturun
+      </p>
 
       {/* Creation Mode Selection */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -135,7 +159,7 @@ export default function Step1_TemplateOrScratch() {
         <div
           className={`
             border-2 rounded-lg p-6 transition-all
-            ${creationMode === 'template' ? 'border-blue-600 bg-blue-50' : 'border-gray-200'}
+            ${creationMode === "template" ? "border-blue-600 bg-blue-50" : "border-gray-200"}
           `}
         >
           <div className="flex items-center gap-3 mb-4">
@@ -166,7 +190,7 @@ export default function Step1_TemplateOrScratch() {
         <div
           className={`
             border-2 rounded-lg p-6 transition-all
-            ${creationMode === 'scratch' ? 'border-purple-600 bg-purple-50' : 'border-gray-200'}
+            ${creationMode === "scratch" ? "border-purple-600 bg-purple-50" : "border-gray-200"}
           `}
         >
           <div className="flex items-center gap-3 mb-4">
@@ -186,7 +210,7 @@ export default function Step1_TemplateOrScratch() {
             Tahmini süre: ~3 dakika
           </div>
           <button
-            onClick={() => setCreationMode('scratch')}
+            onClick={() => setCreationMode("scratch")}
             className="mt-4 w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 transition"
           >
             Manuel Başla →
@@ -197,14 +221,16 @@ export default function Step1_TemplateOrScratch() {
       {/* Candidate Selection */}
       <div className="border-t border-gray-200 pt-8">
         <h3 className="text-xl font-bold text-gray-900 mb-4">Aday Seçimi *</h3>
-        <p className="text-gray-600 mb-4">Teklif göndermek istediğiniz adayı seçin</p>
+        <p className="text-gray-600 mb-4">
+          Teklif göndermek istediğiniz adayı seçin
+        </p>
 
         {candidates.length === 0 ? (
           <div className="text-center py-8 bg-gray-50 rounded-lg">
             <User className="w-12 h-12 text-gray-400 mx-auto mb-3" />
             <p className="text-gray-600">Henüz aday bulunmuyor</p>
             <button
-              onClick={() => window.open('/candidates', '_blank')}
+              onClick={() => window.open("/candidates", "_blank")}
               className="mt-4 text-blue-600 hover:text-blue-800 font-medium"
             >
               Aday Ekle →
@@ -218,22 +244,27 @@ export default function Step1_TemplateOrScratch() {
                 onClick={() => setCandidate(candidate)}
                 className={`
                   flex items-center justify-between p-4 border-2 rounded-lg cursor-pointer transition-all
-                  ${selectedCandidate?.id === candidate.id ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-blue-400'}
+                  ${selectedCandidate?.id === candidate.id ? "border-blue-600 bg-blue-50" : "border-gray-200 hover:border-blue-400"}
                 `}
               >
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
                     <span className="text-white font-semibold">
-                      {candidate.firstName?.[0] || '?'}{candidate.lastName?.[0] || '?'}
+                      {candidate.firstName?.[0] || "?"}
+                      {candidate.lastName?.[0] || "?"}
                     </span>
                   </div>
                   <div>
                     <p className="font-semibold text-gray-900">
                       {candidate.firstName && candidate.lastName
                         ? `${candidate.firstName} ${candidate.lastName}`
-                        : candidate.email || candidate.sourceFileName || 'İsimsiz Aday'}
+                        : candidate.email ||
+                          candidate.sourceFileName ||
+                          "İsimsiz Aday"}
                     </p>
-                    <p className="text-sm text-gray-600">{candidate.email || 'Email yok'}</p>
+                    <p className="text-sm text-gray-600">
+                      {candidate.email || "Email yok"}
+                    </p>
                   </div>
                 </div>
                 {selectedCandidate?.id === candidate.id && (

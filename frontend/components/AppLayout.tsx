@@ -1,8 +1,9 @@
-'use client';
+"use client";
+// Menu reorganized: HR workflow order (2025-11-04)
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { useState } from "react";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   Wand2,
@@ -21,13 +22,13 @@ import {
   Layers,
   Settings,
   Calendar,
-  UserCog  // NEW: For Takım icon
-} from 'lucide-react';
-import ProtectedRoute from '@/components/ProtectedRoute';
-import NotificationBell from '@/components/notifications/NotificationBell';
-import { useAuthStore } from '@/lib/store/authStore';
-import { useHasRole } from '@/lib/hooks/useHasRole';
-import { RoleGroups, UserRole } from '@/lib/constants/roles';
+  UserCog, // NEW: For Takım icon
+} from "lucide-react";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import NotificationBell from "@/components/notifications/NotificationBell";
+import { useAuthStore } from "@/lib/store/authStore";
+import { useHasRole } from "@/lib/hooks/useHasRole";
+import { RoleGroups, UserRole } from "@/lib/constants/roles";
 import {
   canViewJobPostings,
   canViewCandidates,
@@ -36,10 +37,10 @@ import {
   canViewInterviews,
   canViewTeam,
   canViewAnalytics,
-  isSuperAdmin
-} from '@/lib/utils/rbac';
-import { RoleBadge } from '@/components/ui/RoleBadge';
-import { FloatingActionButton } from '@/components/ui/FloatingActionButton';
+  isSuperAdmin,
+} from "@/lib/utils/rbac";
+import { RoleBadge } from "@/components/ui/RoleBadge";
+import { FloatingActionButton } from "@/components/ui/FloatingActionButton";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -59,102 +60,102 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const menuItems = [
     // 1. Dashboard (always first)
     {
-      name: 'Dashboard',
-      path: '/dashboard',
+      name: "Dashboard",
+      path: "/dashboard",
       icon: LayoutDashboard,
-      show: true // All roles can see dashboard
+      show: true, // All roles can see dashboard
     },
     // 2. İş İlanları (start of hiring workflow)
     {
-      name: 'İş İlanları',
-      path: '/job-postings',
+      name: "İş İlanları",
+      path: "/job-postings",
       icon: Briefcase,
-      show: canViewJobPostings(userRole)
+      show: canViewJobPostings(userRole),
     },
     // 3. Adaylar (candidates apply to job postings)
     {
-      name: 'Adaylar',
-      path: '/candidates',
+      name: "Adaylar",
+      path: "/candidates",
       icon: Users,
-      show: canViewCandidates(userRole)
+      show: canViewCandidates(userRole),
     },
     // 4. Analiz Sihirbazı (analyze candidates)
     {
-      name: 'Analiz Sihirbazı',
-      path: '/wizard',
+      name: "Analiz Sihirbazı",
+      path: "/wizard",
       icon: Wand2,
-      show: canViewAnalyses(userRole)
+      show: canViewAnalyses(userRole),
     },
     // 5. Geçmiş Analizlerim (past analyses)
     {
-      name: 'Geçmiş Analizlerim',
-      path: '/analyses',
+      name: "Geçmiş Analizlerim",
+      path: "/analyses",
       icon: Clock,
-      show: canViewAnalyses(userRole)
+      show: canViewAnalyses(userRole),
     },
     // 6. Teklifler (make offers to best candidates)
     {
-      name: 'Teklifler',
-      path: '/offers',
+      name: "Teklifler",
+      path: "/offers",
       icon: FileText,
       show: canViewOffers(userRole),
       submenu: [
         {
-          name: 'Tüm Teklifler',
-          path: '/offers',
+          name: "Tüm Teklifler",
+          path: "/offers",
           icon: FileText,
-          show: canViewOffers(userRole)
+          show: canViewOffers(userRole),
         },
         {
-          name: 'Yeni Teklif',
-          path: '/offers/wizard',
+          name: "Yeni Teklif",
+          path: "/offers/wizard",
           icon: Plus,
-          show: canViewOffers(userRole)
+          show: canViewOffers(userRole),
         },
         {
-          name: 'Şablonlar',
-          path: '/offer-templates',
+          name: "Şablonlar",
+          path: "/offer-templates",
           icon: Layers,
-          show: canViewAnalytics(userRole) // Only MANAGER+ can manage templates
-        }
-      ]
+          show: canViewAnalytics(userRole), // Only MANAGER+ can manage templates
+        },
+      ],
     },
     // 7. Mülakatlar (interview scheduled candidates)
     {
-      name: 'Mülakatlar',
-      path: '/interviews',
+      name: "Mülakatlar",
+      path: "/interviews",
       icon: Calendar,
-      show: canViewInterviews(userRole)
+      show: canViewInterviews(userRole),
     },
     // 8. Takım (team management)
     {
-      name: 'Takım',
-      path: '/team',
+      name: "Takım",
+      path: "/team",
       icon: UserCog, // CHANGED from Users to UserCog (avoid conflict with Adaylar)
-      show: canViewTeam(userRole)
+      show: canViewTeam(userRole),
     },
     // 9. Analitik (analytics & reports)
     {
-      name: 'Analitik',
-      path: '/analytics',
+      name: "Analitik",
+      path: "/analytics",
       icon: BarChart3,
-      show: canViewAnalytics(userRole)
+      show: canViewAnalytics(userRole),
     },
     // 10. Ayarlar (settings - always last)
     {
-      name: 'Ayarlar',
-      path: '/settings/organization',
+      name: "Ayarlar",
+      path: "/settings/organization",
       icon: Settings,
-      show: true // All roles can access settings (but tabs differ)
-    }
+      show: true, // All roles can access settings (but tabs differ)
+    },
   ];
 
   // Filter visible menu items
-  const visibleMenuItems = menuItems.filter(item => item.show);
+  const visibleMenuItems = menuItems.filter((item) => item.show);
 
   const handleLogout = async () => {
     await logout();
-    router.push('/login');
+    router.push("/login");
   };
 
   return (
@@ -181,7 +182,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               fixed lg:static inset-y-0 left-0 z-50
               w-64 bg-white border-r border-gray-200
               transform transition-transform duration-200 ease-in-out
-              ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+              ${isSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
             `}
           >
             {/* Logo */}
@@ -197,7 +198,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
                 // Handle items with submenu (like Offers)
                 if (item.submenu) {
-                  const visibleSubmenuItems = item.submenu.filter((subItem: any) => subItem.show);
+                  const visibleSubmenuItems = item.submenu.filter(
+                    (subItem: any) => subItem.show
+                  );
 
                   return (
                     <div key={item.path}>
@@ -207,9 +210,10 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                           w-full flex items-center justify-between gap-3 px-4 py-3 rounded-lg
                           transition-colors duration-150
                           ${
-                            pathname.startsWith('/offers') || pathname.startsWith('/offer-templates')
-                              ? 'bg-blue-50 text-blue-600 font-medium'
-                              : 'text-gray-700 hover:bg-gray-50'
+                            pathname.startsWith("/offers") ||
+                            pathname.startsWith("/offer-templates")
+                              ? "bg-blue-50 text-blue-600 font-medium"
+                              : "text-gray-700 hover:bg-gray-50"
                           }
                         `}
                       >
@@ -217,7 +221,11 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                           <Icon size={20} />
                           <span>{item.name}</span>
                         </div>
-                        {isOffersExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+                        {isOffersExpanded ? (
+                          <ChevronDown size={16} />
+                        ) : (
+                          <ChevronRight size={16} />
+                        )}
                       </button>
 
                       {/* Submenu */}
@@ -237,8 +245,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                                   transition-colors duration-150
                                   ${
                                     isSubActive
-                                      ? 'bg-blue-50 text-blue-600 font-medium'
-                                      : 'text-gray-600 hover:bg-gray-50'
+                                      ? "bg-blue-50 text-blue-600 font-medium"
+                                      : "text-gray-600 hover:bg-gray-50"
                                   }
                                 `}
                               >
@@ -264,8 +272,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                       transition-colors duration-150
                       ${
                         isActive
-                          ? 'bg-blue-50 text-blue-600 font-medium'
-                          : 'text-gray-700 hover:bg-gray-50'
+                          ? "bg-blue-50 text-blue-600 font-medium"
+                          : "text-gray-700 hover:bg-gray-50"
                       }
                     `}
                   >
@@ -284,9 +292,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                     flex items-center gap-3 px-4 py-3 rounded-lg
                     transition-colors duration-150
                     ${
-                      pathname === '/super-admin'
-                        ? 'bg-blue-50 text-blue-600 font-medium'
-                        : 'text-gray-700 hover:bg-gray-50'
+                      pathname === "/super-admin"
+                        ? "bg-blue-50 text-blue-600 font-medium"
+                        : "text-gray-700 hover:bg-gray-50"
                     }
                   `}
                 >

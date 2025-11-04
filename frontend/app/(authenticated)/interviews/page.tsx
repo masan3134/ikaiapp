@@ -1,30 +1,35 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Plus, Search, Filter, AlertCircle } from 'lucide-react';
-import { withRoleProtection } from '@/lib/hoc/withRoleProtection';
-import { RoleGroups } from '@/lib/constants/roles';
-import InterviewWizard from '@/components/interviews/InterviewWizard';
-import InterviewStats from '@/components/interviews/InterviewStats';
-import InterviewList from '@/components/interviews/InterviewList';
-import interviewService from '@/lib/services/interviewService';
-import { useAuthStore } from '@/lib/store/authStore';
+import { useState, useEffect } from "react";
+import { Plus, Search, Filter, AlertCircle } from "lucide-react";
+import { withRoleProtection } from "@/lib/hoc/withRoleProtection";
+import { RoleGroups } from "@/lib/constants/roles";
+import InterviewWizard from "@/components/interviews/InterviewWizard";
+import InterviewStats from "@/components/interviews/InterviewStats";
+import InterviewList from "@/components/interviews/InterviewList";
+import interviewService from "@/lib/services/interviewService";
+import { useAuthStore } from "@/lib/store/authStore";
 import {
   canScheduleInterview,
   canEditInterview,
-  canDeleteInterview
-} from '@/lib/utils/rbac';
+  canDeleteInterview,
+} from "@/lib/utils/rbac";
 
 function InterviewsPage() {
   const { user } = useAuthStore();
   const userRole = user?.role;
   const [wizardOpen, setWizardOpen] = useState(false);
-  const [stats, setStats] = useState({ total: 0, scheduled: 0, completed: 0, cancelled: 0 });
+  const [stats, setStats] = useState({
+    total: 0,
+    scheduled: 0,
+    completed: 0,
+    cancelled: 0,
+  });
   const [interviews, setInterviews] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filterStatus, setFilterStatus] = useState('all');
+  const [error, setError] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filterStatus, setFilterStatus] = useState("all");
 
   useEffect(() => {
     loadData();
@@ -33,20 +38,20 @@ function InterviewsPage() {
   const loadData = async () => {
     try {
       setLoading(true);
-      setError('');
-      
-      const filters = filterStatus !== 'all' ? { status: filterStatus } : {};
-      
+      setError("");
+
+      const filters = filterStatus !== "all" ? { status: filterStatus } : {};
+
       const [statsData, interviewsData] = await Promise.all([
         interviewService.getStats(),
-        interviewService.getInterviews(filters)
+        interviewService.getInterviews(filters),
       ]);
-      
+
       setStats(statsData);
       setInterviews(interviewsData);
     } catch (err: any) {
-      console.error('Error loading interviews:', err);
-      setError(err.response?.data?.error || 'Veriler yüklenirken hata oluştu');
+      console.error("Error loading interviews:", err);
+      setError(err.response?.data?.error || "Veriler yüklenirken hata oluştu");
     } finally {
       setLoading(false);
     }
@@ -58,13 +63,13 @@ function InterviewsPage() {
   };
 
   const handleDeleteInterview = async (id: string) => {
-    if (!confirm('Bu mülakatı silmek istediğinize emin misiniz?')) return;
-    
+    if (!confirm("Bu mülakatı silmek istediğinize emin misiniz?")) return;
+
     try {
       await interviewService.deleteInterview(id);
       loadData();
     } catch (err: any) {
-      alert(err.response?.data?.error || 'Silme işlemi başarısız');
+      alert(err.response?.data?.error || "Silme işlemi başarısız");
     }
   };
 
@@ -73,7 +78,7 @@ function InterviewsPage() {
       await interviewService.updateStatus(id, newStatus);
       loadData();
     } catch (err: any) {
-      alert(err.response?.data?.error || 'Durum güncelleme başarısız');
+      alert(err.response?.data?.error || "Durum güncelleme başarısız");
     }
   };
 
@@ -112,7 +117,10 @@ function InterviewsPage() {
         <div className="flex flex-col lg:flex-row gap-4 items-center">
           <div className="flex-1 w-full lg:w-auto">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+              <Search
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                size={20}
+              />
               <input
                 type="text"
                 value={searchQuery}
@@ -149,8 +157,8 @@ function InterviewsPage() {
       </div>
 
       {/* Interview List */}
-      <InterviewList 
-        interviews={interviews} 
+      <InterviewList
+        interviews={interviews}
         loading={loading}
         onDelete={handleDeleteInterview}
         onStatusChange={handleStatusChange}
@@ -167,5 +175,5 @@ function InterviewsPage() {
 }
 
 export default withRoleProtection(InterviewsPage, {
-  allowedRoles: RoleGroups.HR_MANAGERS
+  allowedRoles: RoleGroups.HR_MANAGERS,
 });

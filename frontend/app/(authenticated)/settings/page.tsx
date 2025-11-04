@@ -1,52 +1,59 @@
-'use client';
+"use client";
 
-import { Settings as SettingsIcon, User, Bell, Shield, CreditCard, Building2 } from 'lucide-react';
-import Link from 'next/link';
-import { useAuthStore } from '@/lib/store/authStore';
+import {
+  Settings as SettingsIcon,
+  User,
+  Bell,
+  Shield,
+  CreditCard,
+  Building2,
+} from "lucide-react";
+import Link from "next/link";
+import { useAuthStore } from "@/lib/store/authStore";
 
 export default function SettingsPage() {
   const { user } = useAuthStore();
-  const isAdmin = user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN';
+  const isAdmin = user?.role === "ADMIN" || user?.role === "SUPER_ADMIN";
 
   const settingsCategories = [
     {
-      name: 'Profil Ayarları',
-      description: 'Kişisel bilgiler ve profil fotoğrafı',
-      path: '/settings/profile',
+      name: "Profil Ayarları",
+      description: "Kişisel bilgiler ve profil fotoğrafı",
+      path: "/settings/profile",
       icon: <User className="w-6 h-6 text-slate-600" />,
-      available: true
+      available: true,
     },
     {
-      name: 'Bildirim Tercihleri',
-      description: 'Email ve uygulama bildirimleri',
-      path: '/settings/notifications',
+      name: "Bildirim Tercihleri",
+      description: "Email ve uygulama bildirimleri",
+      path: "/settings/notifications",
       icon: <Bell className="w-6 h-6 text-slate-600" />,
-      available: true
+      available: true,
     },
     {
-      name: 'Güvenlik',
-      description: 'Şifre değiştirme ve 2FA ayarları',
-      path: '/settings/security',
+      name: "Güvenlik",
+      description: "Şifre değiştirme ve 2FA ayarları",
+      path: "/settings/security",
       icon: <Shield className="w-6 h-6 text-slate-600" />,
-      available: true
+      available: true,
     },
     {
-      name: 'Faturalandırma',
-      description: 'Plan yönetimi ve ödeme bilgileri',
-      path: '/settings/billing',
+      name: "Faturalandırma",
+      description: "Plan yönetimi ve ödeme bilgileri",
+      path: "/settings/billing",
       icon: <CreditCard className="w-6 h-6 text-purple-600" />,
-      available: isAdmin
+      available: isAdmin,
     },
     {
-      name: 'Organizasyon',
-      description: 'Şirket bilgileri ve ayarları',
-      path: '/settings/organization',
+      name: "Organizasyon",
+      description: "Şirket bilgileri ve ayarları",
+      path: "/settings/organization",
       icon: <Building2 className="w-6 h-6 text-blue-600" />,
-      available: isAdmin
-    }
+      available: isAdmin,
+    },
   ];
 
-  const availableSettings = settingsCategories.filter(cat => cat.available);
+  const availableSettings = settingsCategories.filter((cat) => cat.available);
 
   return (
     <div className="min-h-screen bg-slate-50 p-6">

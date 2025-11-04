@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { Zap, Users, Trophy } from 'lucide-react';
-import Link from 'next/link';
-import { format } from 'date-fns';
-import { tr } from 'date-fns/locale';
+import { Zap, Users, Trophy } from "lucide-react";
+import Link from "next/link";
+import { format } from "date-fns";
+import { tr } from "date-fns/locale";
 
 interface RecentAnalysesWidgetProps {
   data: Array<{
@@ -20,7 +20,7 @@ interface RecentAnalysesWidgetProps {
 export function RecentAnalysesWidget({ data }: RecentAnalysesWidgetProps) {
   const formatDate = (dateString: string) => {
     try {
-      return format(new Date(dateString), 'd MMM', { locale: tr });
+      return format(new Date(dateString), "d MMM", { locale: tr });
     } catch {
       return dateString;
     }

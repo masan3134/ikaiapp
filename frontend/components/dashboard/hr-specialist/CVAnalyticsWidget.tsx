@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { BarChart2 } from 'lucide-react';
+import { BarChart2 } from "lucide-react";
 
 interface CVAnalyticsWidgetProps {
   data: {
@@ -27,19 +27,27 @@ export function CVAnalyticsWidget({ data }: CVAnalyticsWidgetProps) {
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <p className="text-2xl font-bold text-slate-800">{data?.weekCVs || 0}</p>
+            <p className="text-2xl font-bold text-slate-800">
+              {data?.weekCVs || 0}
+            </p>
             <p className="text-xs text-slate-600">CV Yüklendi</p>
           </div>
           <div>
-            <p className="text-2xl font-bold text-purple-600">{data?.weekAnalyses || 0}</p>
+            <p className="text-2xl font-bold text-purple-600">
+              {data?.weekAnalyses || 0}
+            </p>
             <p className="text-xs text-slate-600">Analiz Yapıldı</p>
           </div>
           <div>
-            <p className="text-2xl font-bold text-green-600">{data?.avgScore || 0}%</p>
+            <p className="text-2xl font-bold text-green-600">
+              {data?.avgScore || 0}%
+            </p>
             <p className="text-xs text-slate-600">Ort. Eşleşme</p>
           </div>
           <div>
-            <p className="text-2xl font-bold text-yellow-600">{data?.pendingCVs || 0}</p>
+            <p className="text-2xl font-bold text-yellow-600">
+              {data?.pendingCVs || 0}
+            </p>
             <p className="text-xs text-slate-600">Bekleyen</p>
           </div>
         </div>

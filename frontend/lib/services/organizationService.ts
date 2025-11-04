@@ -1,4 +1,4 @@
-import apiClient from './apiClient';
+import apiClient from "./apiClient";
 
 export interface UsageData {
   monthlyAnalysisCount: number;
@@ -30,16 +30,16 @@ export interface UsageData {
   warnings: Array<{
     type: string;
     message: string;
-    severity: 'warning' | 'critical';
+    severity: "warning" | "critical";
   }>;
-  plan: 'FREE' | 'PRO' | 'ENTERPRISE';
+  plan: "FREE" | "PRO" | "ENTERPRISE";
 }
 
 /**
  * Get organization usage statistics
  */
 export async function getOrganizationUsage(): Promise<UsageData> {
-  const response = await apiClient.get('/api/v1/organizations/me/usage');
+  const response = await apiClient.get("/api/v1/organizations/me/usage");
   return response.data.data;
 }
 
@@ -47,7 +47,7 @@ export async function getOrganizationUsage(): Promise<UsageData> {
  * Get organization details
  */
 export async function getOrganization() {
-  const response = await apiClient.get('/api/v1/organizations/me');
+  const response = await apiClient.get("/api/v1/organizations/me");
   return response.data.data;
 }
 
@@ -55,6 +55,6 @@ export async function getOrganization() {
  * Update organization details
  */
 export async function updateOrganization(data: any) {
-  const response = await apiClient.patch('/api/v1/organizations/me', data);
+  const response = await apiClient.patch("/api/v1/organizations/me", data);
   return response.data.data;
 }

@@ -1,15 +1,24 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Mail, Phone, FileText, Download, ThumbsUp, ThumbsDown, ChevronDown, ChevronUp } from 'lucide-react';
-import type { AnalysisResult } from '@/lib/services/analysisService';
-import CandidateAvatar from '@/components/candidates/CandidateAvatar';
-import ScoreBadge from './ScoreBadge';
-import { getFullName, fixFileNameEncoding } from '@/lib/utils/stringUtils';
-import EnhancedScoreCard from './EnhancedScoreCard';
-import ScoringProfileCard from './ScoringProfileCard';
-import CareerTrajectoryCard from './CareerTrajectoryCard';
-import StrategicSummaryCard from './StrategicSummaryCard';
+import { useState } from "react";
+import {
+  Mail,
+  Phone,
+  FileText,
+  Download,
+  ThumbsUp,
+  ThumbsDown,
+  ChevronDown,
+  ChevronUp,
+} from "lucide-react";
+import type { AnalysisResult } from "@/lib/services/analysisService";
+import CandidateAvatar from "@/components/candidates/CandidateAvatar";
+import ScoreBadge from "./ScoreBadge";
+import { getFullName, fixFileNameEncoding } from "@/lib/utils/stringUtils";
+import EnhancedScoreCard from "./EnhancedScoreCard";
+import ScoringProfileCard from "./ScoringProfileCard";
+import CareerTrajectoryCard from "./CareerTrajectoryCard";
+import StrategicSummaryCard from "./StrategicSummaryCard";
 
 export interface AnalysisResultCardProps {
   result: AnalysisResult;
@@ -26,31 +35,38 @@ export default function AnalysisResultCard({
   result,
   rank,
   onDownload,
-  defaultExpanded = false
+  defaultExpanded = false,
 }: AnalysisResultCardProps) {
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
 
   const getScoreBgColor = (score: number): string => {
-    if (score >= 70) return 'bg-green-50 border-green-200';
-    if (score >= 40) return 'bg-yellow-50 border-yellow-200';
-    return 'bg-red-50 border-red-200';
+    if (score >= 70) return "bg-green-50 border-green-200";
+    if (score >= 40) return "bg-yellow-50 border-yellow-200";
+    return "bg-red-50 border-red-200";
   };
 
   const getRankBadgeColor = (score: number): string => {
-    if (score >= 70) return 'bg-green-100 text-green-600';
-    if (score >= 40) return 'bg-yellow-100 text-yellow-600';
-    return 'bg-red-100 text-red-600';
+    if (score >= 70) return "bg-green-100 text-green-600";
+    if (score >= 40) return "bg-yellow-100 text-yellow-600";
+    return "bg-red-100 text-red-600";
   };
 
-  const fullName = getFullName(result.candidate.firstName, result.candidate.lastName);
+  const fullName = getFullName(
+    result.candidate.firstName,
+    result.candidate.lastName
+  );
 
   return (
-    <div className={`bg-white rounded-lg shadow-sm border-2 p-6 transition-all ${getScoreBgColor(result.compatibilityScore)}`}>
+    <div
+      className={`bg-white rounded-lg shadow-sm border-2 p-6 transition-all ${getScoreBgColor(result.compatibilityScore)}`}
+    >
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-4 flex-1 min-w-0">
           {/* Rank Badge */}
-          <div className={`flex-shrink-0 w-14 h-14 rounded-full flex items-center justify-center text-xl font-bold ${getRankBadgeColor(result.compatibilityScore)}`}>
+          <div
+            className={`flex-shrink-0 w-14 h-14 rounded-full flex items-center justify-center text-xl font-bold ${getRankBadgeColor(result.compatibilityScore)}`}
+          >
             #{rank}
           </div>
 
@@ -93,7 +109,10 @@ export default function AnalysisResultCard({
             {/* CV File */}
             <div className="flex items-center gap-2 mt-2">
               <FileText className="w-4 h-4 text-gray-400 flex-shrink-0" />
-              <span className="text-sm text-gray-600 truncate" title={fixFileNameEncoding(result.candidate.sourceFileName)}>
+              <span
+                className="text-sm text-gray-600 truncate"
+                title={fixFileNameEncoding(result.candidate.sourceFileName)}
+              >
                 {fixFileNameEncoding(result.candidate.sourceFileName)}
               </span>
               <button
@@ -150,7 +169,7 @@ export default function AnalysisResultCard({
               technicalScore: result.technicalScore,
               softSkillsScore: result.softSkillsScore,
               extraScore: result.extraScore,
-              finalCompatibilityScore: result.compatibilityScore
+              finalCompatibilityScore: result.compatibilityScore,
             }}
             matchLabel={result.matchLabel}
           />
@@ -175,7 +194,9 @@ export default function AnalysisResultCard({
             <div className="grid md:grid-cols-2 gap-4">
               {result.experienceSummary && (
                 <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-                  <h4 className="font-semibold text-blue-900 mb-2 text-sm">Detaylı Deneyim Analizi</h4>
+                  <h4 className="font-semibold text-blue-900 mb-2 text-sm">
+                    Detaylı Deneyim Analizi
+                  </h4>
                   <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
                     {result.experienceSummary}
                   </p>
@@ -184,7 +205,9 @@ export default function AnalysisResultCard({
 
               {result.educationSummary && (
                 <div className="bg-purple-50 rounded-lg p-4 border border-purple-200">
-                  <h4 className="font-semibold text-purple-900 mb-2 text-sm">Detaylı Eğitim Analizi</h4>
+                  <h4 className="font-semibold text-purple-900 mb-2 text-sm">
+                    Detaylı Eğitim Analizi
+                  </h4>
                   <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
                     {result.educationSummary}
                   </p>
@@ -194,27 +217,33 @@ export default function AnalysisResultCard({
           )}
 
           {/* Legacy: Fallback to candidate fields if V7.1 summaries not available */}
-          {!result.experienceSummary && !result.educationSummary && (result.candidate.experience || result.candidate.education) && (
-            <div className="grid md:grid-cols-2 gap-4">
-              {result.candidate.experience && (
-                <div className="bg-white rounded-lg p-4 border border-gray-200">
-                  <h4 className="font-semibold text-gray-900 mb-2 text-sm">Deneyim</h4>
-                  <p className="text-sm text-gray-700 whitespace-pre-wrap">
-                    {result.candidate.experience}
-                  </p>
-                </div>
-              )}
+          {!result.experienceSummary &&
+            !result.educationSummary &&
+            (result.candidate.experience || result.candidate.education) && (
+              <div className="grid md:grid-cols-2 gap-4">
+                {result.candidate.experience && (
+                  <div className="bg-white rounded-lg p-4 border border-gray-200">
+                    <h4 className="font-semibold text-gray-900 mb-2 text-sm">
+                      Deneyim
+                    </h4>
+                    <p className="text-sm text-gray-700 whitespace-pre-wrap">
+                      {result.candidate.experience}
+                    </p>
+                  </div>
+                )}
 
-              {result.candidate.education && (
-                <div className="bg-white rounded-lg p-4 border border-gray-200">
-                  <h4 className="font-semibold text-gray-900 mb-2 text-sm">Eğitim</h4>
-                  <p className="text-sm text-gray-700 whitespace-pre-wrap">
-                    {result.candidate.education}
-                  </p>
-                </div>
-              )}
-            </div>
-          )}
+                {result.candidate.education && (
+                  <div className="bg-white rounded-lg p-4 border border-gray-200">
+                    <h4 className="font-semibold text-gray-900 mb-2 text-sm">
+                      Eğitim
+                    </h4>
+                    <p className="text-sm text-gray-700 whitespace-pre-wrap">
+                      {result.candidate.education}
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
 
           {/* AI Comments */}
           <div className="grid md:grid-cols-2 gap-4">
@@ -223,12 +252,19 @@ export default function AnalysisResultCard({
               <div className="bg-green-50 rounded-lg p-4 border border-green-200">
                 <div className="flex items-center gap-2 mb-3">
                   <ThumbsUp className="w-5 h-5 text-green-600" />
-                  <h4 className="font-semibold text-green-900 text-sm">Güçlü Yönler</h4>
+                  <h4 className="font-semibold text-green-900 text-sm">
+                    Güçlü Yönler
+                  </h4>
                 </div>
                 <ul className="space-y-2">
                   {result.positiveComments.map((comment, idx) => (
-                    <li key={idx} className="text-sm text-green-800 flex items-start gap-2">
-                      <span className="text-green-600 mt-0.5 flex-shrink-0">•</span>
+                    <li
+                      key={idx}
+                      className="text-sm text-green-800 flex items-start gap-2"
+                    >
+                      <span className="text-green-600 mt-0.5 flex-shrink-0">
+                        •
+                      </span>
                       <span>{comment}</span>
                     </li>
                   ))}
@@ -241,12 +277,19 @@ export default function AnalysisResultCard({
               <div className="bg-red-50 rounded-lg p-4 border border-red-200">
                 <div className="flex items-center gap-2 mb-3">
                   <ThumbsDown className="w-5 h-5 text-red-600" />
-                  <h4 className="font-semibold text-red-900 text-sm">Gelişim Alanları</h4>
+                  <h4 className="font-semibold text-red-900 text-sm">
+                    Gelişim Alanları
+                  </h4>
                 </div>
                 <ul className="space-y-2">
                   {result.negativeComments.map((comment, idx) => (
-                    <li key={idx} className="text-sm text-red-800 flex items-start gap-2">
-                      <span className="text-red-600 mt-0.5 flex-shrink-0">•</span>
+                    <li
+                      key={idx}
+                      className="text-sm text-red-800 flex items-start gap-2"
+                    >
+                      <span className="text-red-600 mt-0.5 flex-shrink-0">
+                        •
+                      </span>
                       <span>{comment}</span>
                     </li>
                   ))}
@@ -258,7 +301,9 @@ export default function AnalysisResultCard({
           {/* General Comment */}
           {result.candidate.generalComment && (
             <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-              <h4 className="font-semibold text-gray-900 mb-2 text-sm">Genel Değerlendirme</h4>
+              <h4 className="font-semibold text-gray-900 mb-2 text-sm">
+                Genel Değerlendirme
+              </h4>
               <p className="text-sm text-gray-700 whitespace-pre-wrap">
                 {result.candidate.generalComment}
               </p>

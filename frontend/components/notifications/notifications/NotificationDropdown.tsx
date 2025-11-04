@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useNotifications } from '@/lib/hooks/useNotifications';
-import NotificationItem from './NotificationItem';
-import Link from 'next/link';
-import { CheckIcon, InboxIcon, XCircleIcon } from '@heroicons/react/24/outline';
+import { useNotifications } from "@/lib/hooks/useNotifications";
+import NotificationItem from "./NotificationItem";
+import Link from "next/link";
+import { CheckIcon, InboxIcon, XCircleIcon } from "@heroicons/react/24/outline";
 
 /**
  * NotificationDropdown Component
@@ -24,25 +24,21 @@ interface NotificationDropdownProps {
   onClose?: () => void;
 }
 
-export default function NotificationDropdown({ onClose }: NotificationDropdownProps) {
-  const {
-    notifications,
-    loading,
-    error,
-    markAsRead,
-    markAllAsRead,
-    refresh
-  } = useNotifications({
-    autoRefresh: false,
-    filters: { limit: 10 }
-  });
+export default function NotificationDropdown({
+  onClose,
+}: NotificationDropdownProps) {
+  const { notifications, loading, error, markAsRead, markAllAsRead, refresh } =
+    useNotifications({
+      autoRefresh: false,
+      filters: { limit: 10 },
+    });
 
   const handleMarkAsRead = async (notificationId: string) => {
     try {
       await markAsRead(notificationId);
       await refresh();
     } catch (err) {
-      console.error('Failed to mark as read:', err);
+      console.error("Failed to mark as read:", err);
     }
   };
 
@@ -51,11 +47,11 @@ export default function NotificationDropdown({ onClose }: NotificationDropdownPr
       await markAllAsRead();
       await refresh();
     } catch (err) {
-      console.error('Failed to mark all as read:', err);
+      console.error("Failed to mark all as read:", err);
     }
   };
 
-  const unreadNotifications = notifications.filter(n => !n.read);
+  const unreadNotifications = notifications.filter((n) => !n.read);
 
   return (
     <div className="w-96 bg-white dark:bg-gray-800 rounded-lg shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
@@ -83,21 +79,27 @@ export default function NotificationDropdown({ onClose }: NotificationDropdownPr
         {loading ? (
           <div className="p-8 text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto" />
-            <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">Yükleniyor...</p>
+            <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+              Yükleniyor...
+            </p>
           </div>
         ) : error ? (
           <div className="p-8 text-center">
             <XCircleIcon className="h-12 w-12 text-red-500 mx-auto" />
-            <p className="mt-2 text-sm text-red-600 dark:text-red-400">{error}</p>
+            <p className="mt-2 text-sm text-red-600 dark:text-red-400">
+              {error}
+            </p>
           </div>
         ) : notifications.length === 0 ? (
           <div className="p-8 text-center">
             <InboxIcon className="h-12 w-12 text-gray-400 mx-auto" />
-            <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">Bildirim yok</p>
+            <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+              Bildirim yok
+            </p>
           </div>
         ) : (
           <div>
-            {notifications.map(notification => (
+            {notifications.map((notification) => (
               <NotificationItem
                 key={notification.id}
                 notification={notification}

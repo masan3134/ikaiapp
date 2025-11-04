@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { useRouter } from 'next/navigation';
-import { useHasRole } from '@/lib/hooks/useHasRole';
-import { AllowedRoles } from '@/lib/constants/roles';
+import React from "react";
+import { useRouter } from "next/navigation";
+import { useHasRole } from "@/lib/hooks/useHasRole";
+import { AllowedRoles } from "@/lib/constants/roles";
 
 interface RoleGuardProps {
   allowedRoles: AllowedRoles;
@@ -25,7 +25,7 @@ export function RoleGuard({
   allowedRoles,
   children,
   fallback,
-  redirectTo
+  redirectTo,
 }: RoleGuardProps) {
   const hasRole = useHasRole(allowedRoles);
   const router = useRouter();
@@ -45,12 +45,14 @@ export function RoleGuard({
       <div className="flex items-center justify-center min-h-screen bg-gray-50">
         <div className="bg-white p-8 rounded-xl shadow-lg max-w-md w-full text-center">
           <div className="text-red-600 text-5xl mb-4">🔒</div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Erişim Engellendi</h1>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            Erişim Engellendi
+          </h1>
           <p className="text-gray-600 mb-6">
             Bu sayfaya erişim yetkiniz bulunmamaktadır.
           </p>
           <button
-            onClick={() => router.push('/dashboard')}
+            onClick={() => router.push("/dashboard")}
             className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition"
           >
             Ana Sayfaya Dön
@@ -68,7 +70,7 @@ export function RoleGuard({
  */
 export function RoleCheck({
   allowedRoles,
-  children
+  children,
 }: {
   allowedRoles: AllowedRoles;
   children: React.ReactNode;

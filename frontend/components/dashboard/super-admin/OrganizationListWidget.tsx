@@ -1,14 +1,17 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { Building2, Edit2, Trash2 } from 'lucide-react';
+import Link from "next/link";
+import { Building2, Edit2, Trash2 } from "lucide-react";
 
 interface OrganizationListWidgetProps {
   data: any[];
   total: number;
 }
 
-export default function OrganizationListWidget({ data, total }: OrganizationListWidgetProps) {
+export default function OrganizationListWidget({
+  data,
+  total,
+}: OrganizationListWidgetProps) {
   const organizations = data || [];
 
   return (
@@ -32,23 +35,31 @@ export default function OrganizationListWidget({ data, total }: OrganizationList
               className="flex items-center justify-between p-3 border border-slate-200 rounded-lg hover:border-rose-300 hover:bg-rose-50 transition-all group"
             >
               <div className="flex items-center gap-3 flex-1 min-w-0">
-                <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold ${
-                  org.plan === 'ENTERPRISE' ? 'bg-purple-500' :
-                  org.plan === 'PRO' ? 'bg-blue-500' :
-                  'bg-slate-400'
-                }`}>
-                  {org.name?.charAt(0) || '?'}
+                <div
+                  className={`w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold ${
+                    org.plan === "ENTERPRISE"
+                      ? "bg-purple-500"
+                      : org.plan === "PRO"
+                        ? "bg-blue-500"
+                        : "bg-slate-400"
+                  }`}
+                >
+                  {org.name?.charAt(0) || "?"}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-slate-800 truncate">
                     {org.name}
                   </p>
                   <div className="flex items-center gap-2 mt-1">
-                    <span className={`text-xs px-2 py-0.5 rounded ${
-                      org.plan === 'ENTERPRISE' ? 'bg-purple-100 text-purple-700' :
-                      org.plan === 'PRO' ? 'bg-blue-100 text-blue-700' :
-                      'bg-slate-100 text-slate-700'
-                    }`}>
+                    <span
+                      className={`text-xs px-2 py-0.5 rounded ${
+                        org.plan === "ENTERPRISE"
+                          ? "bg-purple-100 text-purple-700"
+                          : org.plan === "PRO"
+                            ? "bg-blue-100 text-blue-700"
+                            : "bg-slate-100 text-slate-700"
+                      }`}
+                    >
                       {org.plan}
                     </span>
                     <span className="text-xs text-slate-500">

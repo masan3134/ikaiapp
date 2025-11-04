@@ -1,27 +1,24 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { Clock, Plus } from 'lucide-react';
-import { Toaster, toast } from 'react-hot-toast';
-import { useRouter } from 'next/navigation';
+import { useEffect, useState } from "react";
+import { Clock, Plus } from "lucide-react";
+import { Toaster, toast } from "react-hot-toast";
+import { useRouter } from "next/navigation";
 import {
   getAnalyses,
   deleteAnalysis,
-  type Analysis
-} from '@/lib/services/analysisService';
-import AnalysisCard from '@/components/analyses/AnalysisCard';
-import EmptyState from '@/components/ui/EmptyState';
-import LoadingSkeleton from '@/components/ui/LoadingSkeleton';
-import SearchBar from '@/components/ui/SearchBar';
-import ConfirmDialog from '@/components/ui/ConfirmDialog';
-import { parseApiError } from '@/lib/utils/errorHandler';
-import { withRoleProtection } from '@/lib/hoc/withRoleProtection';
-import { RoleGroups } from '@/lib/constants/roles';
-import { useAuthStore } from '@/lib/store/authStore';
-import {
-  canCreateAnalysis,
-  canDeleteAnalysis
-} from '@/lib/utils/rbac';
+  type Analysis,
+} from "@/lib/services/analysisService";
+import AnalysisCard from "@/components/analyses/AnalysisCard";
+import EmptyState from "@/components/ui/EmptyState";
+import LoadingSkeleton from "@/components/ui/LoadingSkeleton";
+import SearchBar from "@/components/ui/SearchBar";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
+import { parseApiError } from "@/lib/utils/errorHandler";
+import { withRoleProtection } from "@/lib/hoc/withRoleProtection";
+import { RoleGroups } from "@/lib/constants/roles";
+import { useAuthStore } from "@/lib/store/authStore";
+import { canCreateAnalysis, canDeleteAnalysis } from "@/lib/utils/rbac";
 
 function AnalysesPage() {
   const router = useRouter();
@@ -29,13 +26,15 @@ function AnalysesPage() {
   const userRole = user?.role;
   const [analyses, setAnalyses] = useState<Analysis[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Modals
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   // Selected item
-  const [selectedAnalysis, setSelectedAnalysis] = useState<Analysis | null>(null);
+  const [selectedAnalysis, setSelectedAnalysis] = useState<Analysis | null>(
+    null
+  );
 
   // Loading states
   const [deleteLoading, setDeleteLoading] = useState(false);
@@ -47,8 +46,8 @@ function AnalysesPage() {
       const data = await getAnalyses();
       setAnalyses(data.analyses || []);
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Load analyses error:', error);
+      if (process.env.NODE_ENV === "development") {
+        console.error("Load analyses error:", error);
       }
       toast.error(parseApiError(error));
     } finally {
@@ -62,12 +61,12 @@ function AnalysesPage() {
 
   // Auto-refresh when any analysis is PROCESSING
   useEffect(() => {
-    const hasProcessing = analyses.some(a => a.status === 'PROCESSING');
+    const hasProcessing = analyses.some((a) => a.status === "PROCESSING");
 
     if (hasProcessing) {
       const interval = setInterval(() => {
-        if (process.env.NODE_ENV === 'development') {
-          console.log('Polling for analysis list updates...');
+        if (process.env.NODE_ENV === "development") {
+          console.log("Polling for analysis list updates...");
         }
         loadAnalyses();
       }, 5000); // Poll every 5 seconds
@@ -77,7 +76,7 @@ function AnalysesPage() {
   }, [analyses]);
 
   // Filter analyses
-  const filteredAnalyses = analyses.filter(analysis => {
+  const filteredAnalyses = analyses.filter((analysis) => {
     if (!searchQuery) return true;
     const query = searchQuery.toLowerCase();
     return (
@@ -89,9 +88,9 @@ function AnalysesPage() {
   // Calculate stats
   const stats = {
     total: analyses.length,
-    completed: analyses.filter(a => a.status === 'COMPLETED').length,
-    processing: analyses.filter(a => a.status === 'PROCESSING').length,
-    failed: analyses.filter(a => a.status === 'FAILED').length
+    completed: analyses.filter((a) => a.status === "COMPLETED").length,
+    processing: analyses.filter((a) => a.status === "PROCESSING").length,
+    failed: analyses.filter((a) => a.status === "FAILED").length,
   };
 
   // Handle actions
@@ -110,13 +109,13 @@ function AnalysesPage() {
     try {
       setDeleteLoading(true);
       const response = await deleteAnalysis(selectedAnalysis.id);
-      setAnalyses(prev => prev.filter(a => a.id !== selectedAnalysis.id));
-      toast.success(response.message || 'Analiz silindi');
+      setAnalyses((prev) => prev.filter((a) => a.id !== selectedAnalysis.id));
+      toast.success(response.message || "Analiz silindi");
       setShowDeleteDialog(false);
       setSelectedAnalysis(null);
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Delete error:', error);
+      if (process.env.NODE_ENV === "development") {
+        console.error("Delete error:", error);
       }
       toast.error(parseApiError(error));
     } finally {
@@ -130,7 +129,9 @@ function AnalysesPage() {
         <div className="max-w-7xl mx-auto px-4 py-8">
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-gray-900">Analizler</h1>
-            <p className="text-gray-600 mt-1">CV analiz sonuçlarınızı görüntüleyin</p>
+            <p className="text-gray-600 mt-1">
+              CV analiz sonuçlarınızı görüntüleyin
+            </p>
           </div>
           <LoadingSkeleton variant="card" rows={3} />
         </div>
@@ -146,14 +147,14 @@ function AnalysesPage() {
           duration: 4000,
           success: {
             style: {
-              background: '#10B981',
-              color: '#fff',
+              background: "#10B981",
+              color: "#fff",
             },
           },
           error: {
             style: {
-              background: '#EF4444',
-              color: '#fff',
+              background: "#EF4444",
+              color: "#fff",
             },
           },
         }}
@@ -172,7 +173,7 @@ function AnalysesPage() {
               </div>
               {canCreateAnalysis(userRole) && (
                 <button
-                  onClick={() => router.push('/wizard')}
+                  onClick={() => router.push("/wizard")}
                   className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-all duration-200 flex items-center gap-2 shadow-sm hover:shadow-md"
                 >
                   <Plus className="w-5 h-5" />
@@ -187,19 +188,27 @@ function AnalysesPage() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
                 <p className="text-sm text-gray-600">Toplam</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {stats.total}
+                </p>
               </div>
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
                 <p className="text-sm text-gray-600">Tamamlanan</p>
-                <p className="text-2xl font-bold text-green-600">{stats.completed}</p>
+                <p className="text-2xl font-bold text-green-600">
+                  {stats.completed}
+                </p>
               </div>
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
                 <p className="text-sm text-gray-600">İşleniyor</p>
-                <p className="text-2xl font-bold text-blue-600">{stats.processing}</p>
+                <p className="text-2xl font-bold text-blue-600">
+                  {stats.processing}
+                </p>
               </div>
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
                 <p className="text-sm text-gray-600">Başarısız</p>
-                <p className="text-2xl font-bold text-red-600">{stats.failed}</p>
+                <p className="text-2xl font-bold text-red-600">
+                  {stats.failed}
+                </p>
               </div>
             </div>
           )}
@@ -222,10 +231,14 @@ function AnalysesPage() {
               icon={<Clock className="w-16 h-16" />}
               title="Henüz analiz yapmadınız"
               description="İlk analizinizi başlatmak için sihirbazı kullanın"
-              action={canCreateAnalysis(userRole) ? {
-                label: 'Analiz Başlat',
-                onClick: () => router.push('/wizard')
-              } : undefined}
+              action={
+                canCreateAnalysis(userRole)
+                  ? {
+                      label: "Analiz Başlat",
+                      onClick: () => router.push("/wizard"),
+                    }
+                  : undefined
+              }
             />
           )}
 
@@ -236,8 +249,8 @@ function AnalysesPage() {
               title="Sonuç bulunamadı"
               description="Arama kriterlerinize uygun analiz bulunamadı"
               action={{
-                label: 'Aramayı Temizle',
-                onClick: () => setSearchQuery('')
+                label: "Aramayı Temizle",
+                onClick: () => setSearchQuery(""),
               }}
             />
           )}
@@ -260,12 +273,11 @@ function AnalysesPage() {
               <div className="mt-6 text-sm text-gray-600 text-center">
                 {searchQuery ? (
                   <span>
-                    {filteredAnalyses.length} / {analyses.length} analiz gösteriliyor
+                    {filteredAnalyses.length} / {analyses.length} analiz
+                    gösteriliyor
                   </span>
                 ) : (
-                  <span>
-                    Toplam {analyses.length} analiz
-                  </span>
+                  <span>Toplam {analyses.length} analiz</span>
                 )}
               </div>
             </>
@@ -284,9 +296,10 @@ function AnalysesPage() {
           onConfirm={confirmDelete}
           title="Analizi Sil"
           message={`"${selectedAnalysis.jobPosting.title}" analizini silmek istediğinizden emin misiniz?${
-            selectedAnalysis._count?.analysisResults && selectedAnalysis._count.analysisResults > 0
+            selectedAnalysis._count?.analysisResults &&
+            selectedAnalysis._count.analysisResults > 0
               ? ` Bu analiz ${selectedAnalysis._count.analysisResults} adet sonuç içeriyor.`
-              : ''
+              : ""
           }`}
           confirmText="Sil"
           cancelText="İptal"
@@ -299,5 +312,5 @@ function AnalysesPage() {
 }
 
 export default withRoleProtection(AnalysesPage, {
-  allowedRoles: RoleGroups.HR_MANAGERS
+  allowedRoles: RoleGroups.HR_MANAGERS,
 });

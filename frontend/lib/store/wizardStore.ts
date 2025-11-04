@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
+import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 
 export interface JobPosting {
   id: string;
@@ -68,50 +68,27 @@ interface WizardState {
   removeCandidate: (candidateId: string) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
-  setUploadProgress: (progress: { total: number; completed: number; failed: number }) => void;
+  setUploadProgress: (progress: {
+    total: number;
+    completed: number;
+    failed: number;
+  }) => void;
   resetUploadProgress: () => void;
   canProceedToStep2: () => boolean;
   canProceedToStep3: () => boolean;
 }
 
 const initialJobPostingData: NewJobPostingData = {
-  title: '',
-  department: '',
-  details: '',
-  notes: ''
+  title: "",
+  department: "",
+  details: "",
+  notes: "",
 };
 
 export const useWizardStore = create<WizardState>()(
   persist(
     (set, get) => ({
-  // Initial state
-  currentStep: 1,
-  selectedJobPosting: null,
-  isNewJobPosting: false,
-  newJobPostingData: initialJobPostingData,
-  uploadedFiles: [],
-  selectedCandidates: [],
-  isLoading: false,
-  error: null,
-  uploadProgress: { total: 0, completed: 0, failed: 0 },
-
-  // Navigation actions
-  nextStep: () => {
-    const { currentStep } = get();
-    if (currentStep < 3) {
-      set({ currentStep: (currentStep + 1) as 1 | 2 | 3 });
-    }
-  },
-
-  prevStep: () => {
-    const { currentStep } = get();
-    if (currentStep > 1) {
-      set({ currentStep: (currentStep - 1) as 1 | 2 | 3 });
-    }
-  },
-
-  resetWizard: () => {
-    set({
+      // Initial state
       currentStep: 1,
       selectedJobPosting: null,
       isNewJobPosting: false,
@@ -119,121 +96,153 @@ export const useWizardStore = create<WizardState>()(
       uploadedFiles: [],
       selectedCandidates: [],
       isLoading: false,
-      error: null
-    });
-  },
+      error: null,
+      uploadProgress: { total: 0, completed: 0, failed: 0 },
 
-  // Job posting actions
-  setJobPosting: (jobPosting, isNew) => {
-    set({
-      selectedJobPosting: jobPosting,
-      isNewJobPosting: isNew,
-      error: null
-    });
-  },
+      // Navigation actions
+      nextStep: () => {
+        const { currentStep } = get();
+        if (currentStep < 3) {
+          set({ currentStep: (currentStep + 1) as 1 | 2 | 3 });
+        }
+      },
 
-  setNewJobPostingData: (data) => {
-    set((state) => ({
-      newJobPostingData: {
-        ...state.newJobPostingData,
-        ...data
-      }
-    }));
-  },
+      prevStep: () => {
+        const { currentStep } = get();
+        if (currentStep > 1) {
+          set({ currentStep: (currentStep - 1) as 1 | 2 | 3 });
+        }
+      },
 
-  // File actions
-  addFile: (file) => {
-    set((state) => {
-      const totalFiles = state.uploadedFiles.length + state.selectedCandidates.length;
-      if (totalFiles >= 50) {
-        return { error: 'Maksimum 50 CV seçebilirsiniz' };
-      }
-      return {
-        uploadedFiles: [...state.uploadedFiles, file],
-        error: null
-      };
-    });
-  },
+      resetWizard: () => {
+        set({
+          currentStep: 1,
+          selectedJobPosting: null,
+          isNewJobPosting: false,
+          newJobPostingData: initialJobPostingData,
+          uploadedFiles: [],
+          selectedCandidates: [],
+          isLoading: false,
+          error: null,
+        });
+      },
 
-  removeFile: (index) => {
-    set((state) => ({
-      uploadedFiles: state.uploadedFiles.filter((_, i) => i !== index),
-      error: null
-    }));
-  },
+      // Job posting actions
+      setJobPosting: (jobPosting, isNew) => {
+        set({
+          selectedJobPosting: jobPosting,
+          isNewJobPosting: isNew,
+          error: null,
+        });
+      },
 
-  // Candidate actions
-  addCandidate: (candidate) => {
-    set((state) => {
-      const totalCandidates = state.uploadedFiles.length + state.selectedCandidates.length;
-      if (totalCandidates >= 50) {
-        return { error: 'Maksimum 50 CV seçebilirsiniz' };
-      }
+      setNewJobPostingData: (data) => {
+        set((state) => ({
+          newJobPostingData: {
+            ...state.newJobPostingData,
+            ...data,
+          },
+        }));
+      },
 
-      // Check if already selected
-      if (state.selectedCandidates.find((c) => c.id === candidate.id)) {
-        return state;
-      }
+      // File actions
+      addFile: (file) => {
+        set((state) => {
+          const totalFiles =
+            state.uploadedFiles.length + state.selectedCandidates.length;
+          if (totalFiles >= 50) {
+            return { error: "Maksimum 50 CV seçebilirsiniz" };
+          }
+          return {
+            uploadedFiles: [...state.uploadedFiles, file],
+            error: null,
+          };
+        });
+      },
 
-      return {
-        selectedCandidates: [...state.selectedCandidates, candidate],
-        error: null
-      };
-    });
-  },
+      removeFile: (index) => {
+        set((state) => ({
+          uploadedFiles: state.uploadedFiles.filter((_, i) => i !== index),
+          error: null,
+        }));
+      },
 
-  removeCandidate: (candidateId) => {
-    set((state) => ({
-      selectedCandidates: state.selectedCandidates.filter((c) => c.id !== candidateId),
-      error: null
-    }));
-  },
+      // Candidate actions
+      addCandidate: (candidate) => {
+        set((state) => {
+          const totalCandidates =
+            state.uploadedFiles.length + state.selectedCandidates.length;
+          if (totalCandidates >= 50) {
+            return { error: "Maksimum 50 CV seçebilirsiniz" };
+          }
 
-  // UI state actions
-  setLoading: (loading) => {
-    set({ isLoading: loading });
-  },
+          // Check if already selected
+          if (state.selectedCandidates.find((c) => c.id === candidate.id)) {
+            return state;
+          }
 
-  setError: (error) => {
-    set({ error });
-  },
+          return {
+            selectedCandidates: [...state.selectedCandidates, candidate],
+            error: null,
+          };
+        });
+      },
 
-  setUploadProgress: (progress) => {
-    set({ uploadProgress: progress });
-  },
+      removeCandidate: (candidateId) => {
+        set((state) => ({
+          selectedCandidates: state.selectedCandidates.filter(
+            (c) => c.id !== candidateId
+          ),
+          error: null,
+        }));
+      },
 
-  resetUploadProgress: () => {
-    set({ uploadProgress: { total: 0, completed: 0, failed: 0 } });
-  },
+      // UI state actions
+      setLoading: (loading) => {
+        set({ isLoading: loading });
+      },
 
-  // Validation helpers
-  canProceedToStep2: () => {
-    const { selectedJobPosting, isNewJobPosting, newJobPostingData } = get();
+      setError: (error) => {
+        set({ error });
+      },
 
-    // If existing job posting is selected
-    if (selectedJobPosting && !isNewJobPosting) {
-      return true;
-    }
+      setUploadProgress: (progress) => {
+        set({ uploadProgress: progress });
+      },
 
-    // If creating new job posting, check required fields
-    if (isNewJobPosting) {
-      return (
-        newJobPostingData.title.trim().length > 0 &&
-        newJobPostingData.department.trim().length > 0 &&
-        newJobPostingData.details.trim().length > 0
-      );
-    }
+      resetUploadProgress: () => {
+        set({ uploadProgress: { total: 0, completed: 0, failed: 0 } });
+      },
 
-    return false;
-  },
+      // Validation helpers
+      canProceedToStep2: () => {
+        const { selectedJobPosting, isNewJobPosting, newJobPostingData } =
+          get();
 
-  canProceedToStep3: () => {
-    const { uploadedFiles, selectedCandidates } = get();
-    return uploadedFiles.length > 0 || selectedCandidates.length > 0;
-  }
-}),
+        // If existing job posting is selected
+        if (selectedJobPosting && !isNewJobPosting) {
+          return true;
+        }
+
+        // If creating new job posting, check required fields
+        if (isNewJobPosting) {
+          return (
+            newJobPostingData.title.trim().length > 0 &&
+            newJobPostingData.department.trim().length > 0 &&
+            newJobPostingData.details.trim().length > 0
+          );
+        }
+
+        return false;
+      },
+
+      canProceedToStep3: () => {
+        const { uploadedFiles, selectedCandidates } = get();
+        return uploadedFiles.length > 0 || selectedCandidates.length > 0;
+      },
+    }),
     {
-      name: 'wizard-storage',
+      name: "wizard-storage",
       storage: createJSONStorage(() => localStorage),
       // Don't persist File objects (can't be serialized)
       partialize: (state) => ({
