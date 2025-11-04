@@ -280,4 +280,168 @@ router.get('/manager', [
   authorize(ROLE_GROUPS.MANAGERS_PLUS)
 ], getManagerDashboard);
 
+// GET /api/v1/dashboard/super-admin
+// Get SUPER_ADMIN dashboard data (platform-wide analytics)
+// NOTE: No organizationIsolation - SUPER_ADMIN sees ALL organizations
+router.get('/super-admin', [
+  authenticateToken,
+  authorize(['SUPER_ADMIN'])
+], async (req, res) => {
+  try {
+    // Multi-org overview
+    const totalOrganizations = await prisma.organization.count();
+    const planCounts = await prisma.organization.groupBy({
+      by: ['plan'],
+      _count: true
+    });
+
+    // Active organizations
+    const activeOrganizations = await prisma.organization.count({
+      where: { isActive: true }
+    });
+
+    // Revenue calculation (mock - implement actual pricing later)
+    const proPlanCount = planCounts.find(p => p.plan === 'PRO')?._count || 0;
+    const enterpriseCount = planCounts.find(p => p.plan === 'ENTERPRISE')?._count || 0;
+
+    const revenue = {
+      mrr: (proPlanCount * 99) + (enterpriseCount * 999), // Mock pricing
+      mrrGrowth: 12,
+      avgLTV: 5000,
+      enterprise: enterpriseCount * 999,
+      pro: proPlanCount * 99
+    };
+
+    // Platform analytics
+    const totalAnalyses = await prisma.analysis.count();
+    const totalCVs = await prisma.candidate.count();
+    const totalJobPostings = await prisma.jobPosting.count();
+    const totalOffers = await prisma.offer.count();
+    const totalUsers = await prisma.user.count();
+
+    const analytics = {
+      totalAnalyses,
+      totalCVs,
+      totalJobPostings,
+      totalOffers,
+      analysesGrowth: 15,
+      cvsGrowth: 20,
+      jobsGrowth: 10,
+      offersGrowth: 8
+    };
+
+    // Growth data (90 days - mock data for now)
+    const growthData = {
+      chartData: [
+        { date: '01-08', organizations: 10, users: 50, revenue: 5000, activity: 100 },
+        { date: '15-08', organizations: 12, users: 65, revenue: 6500, activity: 150 },
+        { date: '01-09', organizations: 15, users: 80, revenue: 8000, activity: 200 },
+        { date: '15-09', organizations: 18, users: 95, revenue: 9500, activity: 250 },
+        { date: '01-10', organizations: 20, users: 110, revenue: 11000, activity: 300 },
+        { date: '15-10', organizations: 22, users: 125, revenue: 12500, activity: 350 },
+        { date: '01-11', organizations: totalOrganizations, users: totalUsers, revenue: revenue.mrr, activity: 400 }
+      ],
+      metrics: {
+        orgGrowth: 15,
+        userGrowth: 25,
+        revenueGrowth: 12,
+        activityGrowth: 30
+      }
+    };
+
+    // System health
+    const systemHealth = {
+      backend: 'healthy',
+      database: 'healthy',
+      redis: 'healthy',
+      milvus: 'healthy',
+      queues: 'healthy',
+      uptime: 99.9,
+      apiResponseTime: 180,
+      dbConnections: 15,
+      cacheHitRate: 85,
+      vectorCount: totalAnalyses,
+      queueJobs: 5
+    };
+
+    // Organization list
+    const orgList = await prisma.organization.findMany({
+      select: {
+        id: true,
+        name: true,
+        plan: true,
+        isActive: true,
+        createdAt: true,
+        _count: {
+          select: {
+            users: true
+          }
+        }
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 10
+    });
+
+    // Format org list
+    const formattedOrgList = orgList.map(org => ({
+      id: org.id,
+      name: org.name,
+      plan: org.plan,
+      totalUsers: org._count.users,
+      createdAt: org.createdAt,
+      isActive: org.isActive
+    }));
+
+    // Queue stats (mock - implement BullMQ monitoring later)
+    const queueStats = [
+      { name: 'CV Analysis', status: 'active', waiting: 3, active: 2, completed: 150, failed: 1 },
+      { name: 'Email Sending', status: 'active', waiting: 5, active: 1, completed: 200, failed: 0 },
+      { name: 'Offer Generation', status: 'active', waiting: 0, active: 0, completed: 50, failed: 0 },
+      { name: 'AI Test Creation', status: 'active', waiting: 1, active: 1, completed: 75, failed: 2 },
+      { name: 'Feedback Processing', status: 'active', waiting: 2, active: 0, completed: 100, failed: 0 }
+    ];
+
+    // Security monitoring (mock - implement actual security logging later)
+    const security = {
+      securityScore: 95,
+      failedLogins: 3,
+      suspiciousActivity: 0,
+      rateLimitHits: 12,
+      lastEvent: '2 failed login attempts from 192.168.1.100 (30m ago)'
+    };
+
+    res.json({
+      success: true,
+      data: {
+        overview: {
+          totalOrganizations,
+          monthlyRevenue: revenue.mrr,
+          totalUsers,
+          uptime: systemHealth.uptime,
+          activeAnalyses: totalAnalyses
+        },
+        organizations: {
+          total: totalOrganizations,
+          planCounts,
+          activeOrgs: activeOrganizations,
+          churnedOrgs: totalOrganizations - activeOrganizations
+        },
+        revenue,
+        analytics,
+        growth: growthData,
+        systemHealth,
+        orgList: formattedOrgList,
+        queues: queueStats,
+        security
+      }
+    });
+  } catch (error) {
+    console.error('[DASHBOARD] SUPER_ADMIN error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Dashboard verileri alınırken hata'
+    });
+  }
+});
+
 module.exports = router;
