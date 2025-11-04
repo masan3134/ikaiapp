@@ -230,14 +230,17 @@ async function getManagerDashboard(req, res) {
       prisma.interview.findMany({
         where: {
           organizationId,
-          status: 'SCHEDULED',
-          scheduledAt: { gte: now }
+          status: 'scheduled',
+          date: { gte: now }
         },
         include: {
-          candidate: { select: { name: true } },
-          jobPosting: { select: { title: true } }
+          candidates: {
+            include: {
+              candidate: { select: { name: true } }
+            }
+          }
         },
-        orderBy: { scheduledAt: 'asc' },
+        orderBy: { date: 'asc' },
         take: 10
       }),
 
@@ -245,8 +248,8 @@ async function getManagerDashboard(req, res) {
       prisma.interview.count({
         where: {
           organizationId,
-          status: 'SCHEDULED',
-          scheduledAt: {
+          status: 'scheduled',
+          date: {
             gte: today,
             lt: new Date(today.getTime() + 24 * 60 * 60 * 1000)
           }
@@ -297,7 +300,7 @@ async function getManagerDashboard(req, res) {
       prisma.interview.count({
         where: {
           organizationId,
-          status: { in: ['COMPLETED', 'CANCELLED', 'NO_SHOW'] },
+          status: { in: ['COMPLETED', 'cancelled', 'no_show'] },
           createdAt: { gte: last30Days }
         }
       }),
@@ -540,9 +543,13 @@ async function getManagerDashboard(req, res) {
       interviews: {
         upcomingInterviews: upcomingInterviews.map(interview => ({
           id: interview.id,
-          scheduledAt: interview.scheduledAt,
-          candidate: { name: interview.candidate?.name || 'Aday' },
-          jobPosting: { title: interview.jobPosting?.title || 'Pozisyon' }
+          scheduledAt: interview.date, // Interview uses 'date' field
+          candidate: {
+            name: interview.candidates?.[0]?.candidate?.name || 'Aday'
+          },
+          jobPosting: {
+            title: interview.type || 'Mülakat' // Use interview type as fallback
+          }
         }))
       },
       kpis: {
