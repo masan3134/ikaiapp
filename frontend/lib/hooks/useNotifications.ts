@@ -65,7 +65,8 @@ export function useNotifications(options: UseNotificationsOptions = {}) {
     } finally {
       setLoading(false);
     }
-  }, [filters]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters.read, filters.type, filters.page, filters.limit]); // Stable dependencies
 
   /**
    * Fetch unread count
@@ -136,10 +137,12 @@ export function useNotifications(options: UseNotificationsOptions = {}) {
     ]);
   }, [fetchNotifications, fetchUnreadCount]);
 
-  // Initial fetch
+  // Initial fetch (only on mount)
   useEffect(() => {
-    refresh();
-  }, [refresh]);
+    fetchNotifications();
+    fetchUnreadCount();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run on mount, ignore refresh dependency
 
   // Auto-refresh unread count
   useEffect(() => {
@@ -186,10 +189,13 @@ export function useUnreadCount(autoRefresh = true, refreshInterval = 30000) {
     }
   }, []);
 
+  // Initial fetch (only on mount)
   useEffect(() => {
     fetchCount();
-  }, [fetchCount]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run on mount
 
+  // Auto-refresh interval
   useEffect(() => {
     if (!autoRefresh) return;
 
