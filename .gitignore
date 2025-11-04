@@ -272,3 +272,13 @@ _archive/
 
 # Sensitive analysis documents (contains credentials)
 docs/analyses/
+
+# ================================
+# Test Script Outputs (Worker Testing)
+# ================================
+# Worker test scripts can stay (documentation)
+# But outputs should be ignored (temporary)
+test-outputs/
+*.test-output.txt
+scripts/tests/*.pyc
+scripts/tests/__pycache__/
