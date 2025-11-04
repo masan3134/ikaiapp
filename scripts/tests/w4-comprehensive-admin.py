@@ -11,12 +11,114 @@ Test Coverage:
 - RBAC checks (ADMIN permissions)
 """
 
+import requests
+import json
 import sys
 import os
-sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+from typing import Optional, Dict
 
-from test_helper import IKAITestHelper, TEST_USERS
-import json
+BASE_URL = "http://localhost:8102"
+
+# Test users
+TEST_USERS = {
+    "org1_admin": {
+        "email": "test-admin@test-org-1.com",
+        "password": "TestPass123!",
+    },
+    "org2_admin": {
+        "email": "test-admin@test-org-2.com",
+        "password": "TestPass123!",
+    }
+}
+
+class IKAITestHelper:
+    """Simple test helper for API testing"""
+    def __init__(self):
+        self.token: Optional[str] = None
+        self.user_info: Optional[Dict] = None
+
+    def login(self, email: str, password: str) -> bool:
+        """Login and get token"""
+        try:
+            response = requests.post(
+                f"{BASE_URL}/api/v1/auth/login",
+                json={"email": email, "password": password},
+                headers={"Content-Type": "application/json"}
+            )
+
+            if response.status_code == 200:
+                data = response.json()
+                self.token = data.get("token")
+                self.user_info = data.get("user")
+                print(f"✅ Login successful: {email}")
+                print(f"   Role: {self.user_info.get('role')}")
+                return True
+            else:
+                print(f"❌ Login failed! Status: {response.status_code}")
+                return False
+        except Exception as e:
+            print(f"❌ Error: {e}")
+            return False
+
+    def get(self, endpoint: str) -> Optional[Dict]:
+        """GET request"""
+        if not self.token:
+            return None
+        try:
+            response = requests.get(
+                f"{BASE_URL}{endpoint}",
+                headers={"Authorization": f"Bearer {self.token}"}
+            )
+            if response.status_code == 200:
+                return response.json()
+            return None
+        except:
+            return None
+
+    def post(self, endpoint: str, data: Dict) -> Optional[Dict]:
+        """POST request"""
+        if not self.token:
+            return None
+        try:
+            response = requests.post(
+                f"{BASE_URL}{endpoint}",
+                json=data,
+                headers={"Authorization": f"Bearer {self.token}"}
+            )
+            if response.status_code in [200, 201]:
+                return response.json()
+            return None
+        except:
+            return None
+
+    def put(self, endpoint: str, data: Dict) -> Optional[Dict]:
+        """PUT request"""
+        if not self.token:
+            return None
+        try:
+            response = requests.put(
+                f"{BASE_URL}{endpoint}",
+                json=data,
+                headers={"Authorization": f"Bearer {self.token}"}
+            )
+            if response.status_code == 200:
+                return response.json()
+            return None
+        except:
+            return None
+
+    def delete(self, endpoint: str) -> bool:
+        """DELETE request"""
+        if not self.token:
+            return False
+        try:
+            response = requests.delete(
+                f"{BASE_URL}{endpoint}",
+                headers={"Authorization": f"Bearer {self.token}"}
+            )
+            return response.status_code == 200
+        except:
+            return False
 
 def test_org_management(helper):
     """Test Organization Management Endpoints (6 endpoints)"""
