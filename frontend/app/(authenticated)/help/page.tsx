@@ -99,6 +99,11 @@ export default function HelpPage() {
     );
   };
 
+  const handleArticleClick = (e: React.MouseEvent, title: string) => {
+    e.preventDefault();
+    alert(`"${title}" makalesi hazırlanıyor.\n\nŞu an için lütfen support@gaiai.ai adresinden bize ulaşın.`);
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 p-6">
       <div className="max-w-5xl mx-auto">
@@ -163,7 +168,8 @@ export default function HelpPage() {
                     <li key={articleIdx}>
                       <a
                         href={article.link}
-                        className="text-sm text-blue-600 hover:text-blue-700 hover:underline"
+                        onClick={(e) => handleArticleClick(e, article.title)}
+                        className="text-sm text-blue-600 hover:text-blue-700 hover:underline cursor-pointer"
                       >
                         {article.title}
                       </a>
