@@ -24,6 +24,7 @@ async function createTest(req, res) {
     const { jobPostingId, analysisId } = req.body;
     const userId = req.user.id;
     const organizationId = req.organizationId;
+    const userRole = req.user.role;
 
     if (!jobPostingId) {
       return res.status(400).json({
@@ -32,21 +33,51 @@ async function createTest(req, res) {
       });
     }
 
-    const job = await testGenerationQueue.add('generate-test', {
-      jobPostingId,
-      userId,
-      analysisId,
-      organizationId
+    // Verify jobPosting access (same as analysis controller)
+    const jobPosting = await prisma.jobPosting.findUnique({
+      where: { id: jobPostingId }
     });
+
+    if (!jobPosting) {
+      return res.status(404).json({
+        error: 'Not Found',
+        message: 'İş ilanı bulunamadı'
+      });
+    }
+
+    // Check organization isolation
+    if (jobPosting.organizationId !== organizationId) {
+      return res.status(403).json({
+        error: 'Forbidden',
+        message: 'Bu iş ilanına erişim yetkiniz yok'
+      });
+    }
+
+    // ADMIN/MANAGER/HR_SPECIALIST can use any jobPosting in their org
+    const canAccessAnyJobPosting = ['SUPER_ADMIN', 'ADMIN', 'MANAGER', 'HR_SPECIALIST'].includes(userRole);
+    if (!canAccessAnyJobPosting && jobPosting.userId !== userId) {
+      return res.status(403).json({
+        error: 'Forbidden',
+        message: 'Bu iş ilanına erişim yetkiniz yok'
+      });
+    }
+
+    // Generate test synchronously (already has rate limiter)
+    const result = await generateTest(jobPostingId, userId, analysisId, organizationId);
 
     return res.json({
       success: true,
-      message: 'Test oluşturma işlemi kuyruğa alındı',
-      jobId: job.id,
-      note: 'Test birkaç saniye içinde hazır olacak'
+      data: {
+        testId: result.testId,
+        token: result.token,
+        testUrl: result.testUrl,
+        reused: result.reused
+      }
     });
   } catch (error) {
+    console.error('Test generation error:', error);
     res.status(500).json({
+      success: false,
       error: 'Generation Failed',
       message: error.message || 'Test oluşturulamadı'
     });
