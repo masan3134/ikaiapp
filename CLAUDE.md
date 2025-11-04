@@ -48,6 +48,7 @@ Read: docs/workflow/WORKER-PLAYBOOK.md
 
 **Your responsibilities:**
 - 📋 Plan phases → Create ultra-detailed MD task files
+- 🎯 Assign tasks → Use ready templates! ([`MOD-TASK-ASSIGNMENT-TEMPLATES.md`](docs/workflow/MOD-TASK-ASSIGNMENT-TEMPLATES.md))
 - ✅ Verify Worker's work → Re-run ALL verification commands
 - 🔍 Detect fake data → Compare Worker output vs your output
 - 💬 User'a kısa mesaj → Emoji + dosya ref (3-5 satır max!)
@@ -104,6 +105,7 @@ Read('docs/workflow/WORKER-PLAYBOOK.md')
 "p1 hazırla" → Create Phase 1 JSON
 "p1 bitti doğrula" → Read MD + re-run commands + verify
 "kesin eminmiyiz" → Demand grep/wc proof
+"worker'lara görev ver" → Use MOD-TASK-ASSIGNMENT-TEMPLATES.md (copy-paste!)
 ```
 
 **For Worker:**
