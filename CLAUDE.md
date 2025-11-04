@@ -357,6 +357,62 @@ docker logs ikai-backend -f
 
 ---
 
+## 🐍 TEST SCRIPTS (Workers)
+
+**6 Ready-to-Use Templates** - Copy, customize, run!
+
+**Quick Start:**
+```bash
+# 1. Copy template
+cp scripts/templates/api-test-template.py scripts/tests/w1-my-test.py
+
+# 2. Customize
+nano scripts/tests/w1-my-test.py
+
+# 3. Run
+python3 scripts/tests/w1-my-test.py > test-outputs/w1-output.txt
+```
+
+**Available Templates:**
+- `api-test-template.py` - Basic CRUD testing
+- `rbac-test-template.py` - Role permission testing
+- `workflow-test-template.py` - Full hiring workflow
+- `performance-test-template.py` - Response time measurement
+- `ai-chat-test-template.py` - AI chat testing
+- `cleanup-test-template.py` - Cleanup test data
+
+**Base Helper:**
+```python
+from test_helper import IKAITestHelper, TEST_USERS
+
+helper = IKAITestHelper()
+helper.login("test-admin@test-org-1.com", "TestPass123!")
+helper.get("/api/v1/job-postings")
+```
+
+**📚 Complete Guide:**
+- **Workers:** [`docs/test-tasks/WORKER-SCRIPT-GUIDE.md`](docs/test-tasks/WORKER-SCRIPT-GUIDE.md) (9KB)
+- **Templates:** [`scripts/templates/README.md`](scripts/templates/README.md)
+- **Base Helper:** [`scripts/test-helper.py`](scripts/test-helper.py)
+
+**Directory Structure:**
+```
+scripts/
+├── test-helper.py         # Base helper (READONLY)
+├── templates/             # 6 templates (READONLY)
+├── tests/                 # Worker scripts (write here)
+└── test-outputs/          # Test results (ignored by git)
+```
+
+**⚠️ Rules:**
+- ✅ Copy templates to `tests/`
+- ✅ Save outputs to `test-outputs/`
+- ❌ NEVER modify `test-helper.py`
+- ❌ NEVER modify templates
+- ❌ NEVER modify `test-data/`
+
+---
+
 ## ☁️ VPS DEPLOY
 
 ```bash
