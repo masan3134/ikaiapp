@@ -157,7 +157,7 @@ async function getManagerDashboard(req, res) {
 
       // Active projects (active job postings)
       prisma.jobPosting.count({
-        where: { organizationId, status: 'ACTIVE' }
+        where: { organizationId, isDeleted: false }
       }),
 
       // Completed analyses (last 30 days)
