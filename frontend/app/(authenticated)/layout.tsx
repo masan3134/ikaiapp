@@ -46,27 +46,35 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isOffersExpanded, setIsOffersExpanded] = useState(true);
 
-  // Sidebar menü itemları
+  // Sidebar menü itemları (HR workflow order)
   const allMenuItems = [
+    // 1. Dashboard (always first)
     { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
-    { name: 'Analiz Sihirbazı', path: '/wizard', icon: Wand2 },
+    // 2. İş İlanları (start of hiring workflow)
     { name: 'İş İlanları', path: '/job-postings', icon: Briefcase },
+    // 3. Adaylar (candidates apply to job postings)
     { name: 'Adaylar', path: '/candidates', icon: Users },
+    // 4. Analiz Sihirbazı (analyze candidates)
+    { name: 'Analiz Sihirbazı', path: '/wizard', icon: Wand2 },
+    // 5. Geçmiş Analizlerim (past analyses)
     { name: 'Geçmiş Analizlerim', path: '/analyses', icon: Clock },
-    // Team Management (only for ADMIN and SUPER_ADMIN)
-    ...(user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN' ? [{ name: 'Takım Yönetimi', path: '/team', icon: UserCog }] : []),
-    // Settings (only for ADMIN and SUPER_ADMIN)
-    ...(user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN' ? [{ name: 'Ayarlar', path: '/settings/organization', icon: Settings }] : []),
-    // Super Admin link (only for SUPER_ADMIN role)
+    // 6. Mülakatlar (interview scheduled candidates)
+    { name: 'Mülakatlar', path: '/interviews', icon: Calendar },
+    // 7. Takım (team management - MANAGER+)
+    ...(user?.role === 'MANAGER' || user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN' ? [{ name: 'Takım', path: '/team', icon: UserCog }] : []),
+    // 8. Analitik (analytics & reports - MANAGER+)
+    ...(user?.role === 'MANAGER' || user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN' ? [{ name: 'Analitik', path: '/analytics', icon: BarChart3 }] : []),
+    // 9. Ayarlar (settings - all roles)
+    { name: 'Ayarlar', path: '/settings/profile', icon: Settings },
+    // 9. Super Admin (only for SUPER_ADMIN role)
     ...(user?.role === 'SUPER_ADMIN' ? [{ name: 'Süper Yönetici', path: '/super-admin', icon: Shield }] : []),
   ];
 
   // Offer submenu items
   const offerSubMenuItems = [
-    { name: 'Yeni Teklif', path: '/offers/wizard', icon: Plus },
     { name: 'Tüm Teklifler', path: '/offers', icon: FileText },
+    { name: 'Yeni Teklif', path: '/offers/wizard', icon: Plus },
     { name: 'Şablonlar', path: '/offers/templates', icon: Layers },
-    { name: 'Analytics', path: '/offers/analytics', icon: BarChart3 },
   ];
 
   const handleLogout = async () => {
@@ -148,24 +156,6 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                   </Link>
                 );
               })}
-
-              {/* Mülakatlar */}
-              <Link
-                href="/interviews"
-                onClick={() => setIsSidebarOpen(false)}
-                className={`
-                  flex items-center gap-3 px-4 py-3 rounded-lg
-                  transition-colors duration-150
-                  ${
-                    pathname === '/interviews'
-                      ? 'bg-blue-50 text-blue-600 font-medium'
-                      : 'text-gray-700 hover:bg-gray-50'
-                  }
-                `}
-              >
-                <Calendar size={20} />
-                <span>Mülakatlar</span>
-              </Link>
 
               {/* Offers collapsible menu */}
               <div>
