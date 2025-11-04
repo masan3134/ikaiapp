@@ -501,17 +501,20 @@ grep -r "keyword" docs/ --include="*.md"
 
 **v15.5 (2025-11-04):** 🔄 **ASANMOD UNIVERSAL PRODUCTION-READY DELIVERY**
 - ✅ **Rule 8 (UNIVERSAL):** NO Placeholder, NO Mock, NO TODO - Tüm görev türleri için!
+- ✅ **Rule 9: API Testing Standard** - Token helper script (get-token.sh) - 1 satır token!
 - ✅ **Self-Optimization Protocol:** 4-dimension analysis (Architecture, Content, Usability, Relevance)
 - ✅ **Quality Gates:** 8-point checklist before AsanMod updates
 - ✅ **Communication Templates:** 7 templates for easy copy-paste (Mod ↔ Worker ↔ User)
 - ✅ **Page Completion Prompts:** 5 workers için full-stack examples
 - ✅ **Anti-Fraud Integration:** Independent verification + Verifiable claims
+- **get-token.sh:** Token helper script (all 5 roles)
+- **README-TESTING.md:** Testing guide (Bash vs Python)
 - **COMMUNICATION-TEMPLATES.md:** 562 lines (7 copy-paste templates)
-- **WORKER-PLAYBOOK:** +219 lines (Rule 8 universal + 4 examples)
+- **WORKER-PLAYBOOK:** +298 lines (Rule 8+9 + examples)
 - **MOD-PLAYBOOK:** +64 lines (Enforce production-ready)
 - **ASANMOD-METHODOLOGY:** +246 lines (Self-optimization protocol)
 - **PAGE-COMPLETION-PROMPTS:** 905 lines (Full implementation guides)
-- **Impact:** Easy task distribution, zero placeholders, %100 production-ready delivery
+- **Impact:** Easy API testing, easy task distribution, zero placeholders, %100 production-ready
 
 **v15.4 (2025-11-04):** 🔒 **ASANMOD ANTI-FRAUD - META-RULE** (merged into v15.5)
 - ✅ **4-Dimension Analysis:** Architecture, Content, Usability, Relevance
