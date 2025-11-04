@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '@/lib/store/authStore';
+import apiClient from '@/lib/services/authService';
 import LoadingSkeleton from '@/components/ui/LoadingSkeleton';
 import DashboardSkeleton from './DashboardSkeleton';
 
@@ -27,9 +28,8 @@ export const SuperAdminDashboard = () => {
 
   const loadSuperAdminDashboard = async () => {
     try {
-      const response = await fetch('/api/v1/dashboard/super-admin');
-      const data = await response.json();
-      setPlatformStats(data.data);
+      const response = await apiClient.get('/api/v1/dashboard/super-admin');
+      setPlatformStats(response.data.data);
     } catch (error) {
       console.error('[SUPER ADMIN DASHBOARD] Load error:', error);
     } finally {
