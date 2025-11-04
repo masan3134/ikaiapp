@@ -3,6 +3,7 @@ const offerPdfService = require('../services/offerPdfService');
 const emailService = require('../services/emailService');
 const expirationService = require('../services/expirationService');
 const bulkOfferService = require('../services/bulkOfferService'); // Added for Phase 4
+const notificationService = require('../services/notificationService');
 
 /**
  * Offer Controller
@@ -20,6 +21,29 @@ class OfferController {
       const userId = req.user.id;
       const organizationId = req.organizationId;
       const offer = await offerService.createOffer(req.body, userId, organizationId);
+
+      // Notification: Offer created
+      try {
+        // Fetch candidate name for notification
+        const { PrismaClient } = require('@prisma/client');
+        const prisma = new PrismaClient();
+        const candidate = await prisma.candidate.findUnique({
+          where: { id: offer.candidateId },
+          select: { firstName: true, lastName: true }
+        });
+        const candidateName = candidate ? `${candidate.firstName} ${candidate.lastName}`.trim() : 'Aday';
+
+        await notificationService.notifyOfferCreated(
+          offer.id,
+          userId,
+          organizationId,
+          candidateName,
+          offer.position,
+          offer.salary
+        );
+      } catch (notifError) {
+        console.error('⚠️  Notification failed (non-critical):', notifError.message);
+      }
 
       res.status(201).json({
         success: true,

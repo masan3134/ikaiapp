@@ -93,7 +93,19 @@ class PublicOfferService {
       { acceptedAt: new Date(), candidateResponse: 'accepted' }
     );
 
-    notificationService.notifyHRofOfferResponse(updatedOffer, 'accepted');
+    // Notification: Offer accepted
+    try {
+      const candidateName = `${updatedOffer.candidate.firstName} ${updatedOffer.candidate.lastName}`.trim() || 'Aday';
+      await notificationService.notifyOfferAccepted(
+        offer.id,
+        offer.createdBy,
+        offer.organizationId,
+        candidateName,
+        offer.position
+      );
+    } catch (notifError) {
+      console.error('⚠️  Notification failed (non-critical):', notifError.message);
+    }
 
     return updatedOffer;
   }
@@ -129,7 +141,19 @@ class PublicOfferService {
       { rejectedAt: new Date(), rejectionReason: reason, candidateResponse: 'rejected' }
     );
 
-    notificationService.notifyHRofOfferResponse(updatedOffer, 'rejected', reason);
+    // Notification: Offer rejected
+    try {
+      const candidateName = `${updatedOffer.candidate.firstName} ${updatedOffer.candidate.lastName}`.trim() || 'Aday';
+      await notificationService.notifyOfferRejected(
+        offer.id,
+        offer.createdBy,
+        offer.organizationId,
+        candidateName,
+        reason
+      );
+    } catch (notifError) {
+      console.error('⚠️  Notification failed (non-critical):', notifError.message);
+    }
 
     return updatedOffer;
   }
