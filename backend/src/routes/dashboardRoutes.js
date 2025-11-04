@@ -351,20 +351,82 @@ router.get('/hr-specialist', [
       }
     }));
 
-    // Monthly stats
+    // Monthly stats - REAL DATA from database
+    // Date ranges for comparison
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    const sixtyDaysAgo = new Date();
+    sixtyDaysAgo.setDate(sixtyDaysAgo.getDate() - 60);
+
+    // This month counts (last 30 days)
+    const thisMonthApplications = await prisma.candidate.count({
+      where: { organizationId, createdAt: { gte: thirtyDaysAgo } }
+    });
+
+    const thisMonthAnalyses = await prisma.analysis.count({
+      where: { organizationId, createdAt: { gte: thirtyDaysAgo } }
+    });
+
+    const thisMonthInterviews = await prisma.interview.count({
+      where: { organizationId, createdAt: { gte: thirtyDaysAgo } }
+    });
+
+    const thisMonthOffers = await prisma.jobOffer.count({
+      where: { organizationId, createdAt: { gte: thirtyDaysAgo } }
+    });
+
+    const thisMonthHires = await prisma.jobOffer.count({
+      where: { organizationId, createdAt: { gte: thirtyDaysAgo }, status: 'ACCEPTED' }
+    });
+
+    // Last month counts (30-60 days ago)
+    const lastMonthApplications = await prisma.candidate.count({
+      where: { organizationId, createdAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo } }
+    });
+
+    const lastMonthAnalyses = await prisma.analysis.count({
+      where: { organizationId, createdAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo } }
+    });
+
+    const lastMonthInterviews = await prisma.interview.count({
+      where: { organizationId, createdAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo } }
+    });
+
+    const lastMonthOffers = await prisma.jobOffer.count({
+      where: { organizationId, createdAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo } }
+    });
+
+    const lastMonthHires = await prisma.jobOffer.count({
+      where: { organizationId, createdAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo }, status: 'ACCEPTED' }
+    });
+
+    // Calculate percentage changes
+    const calcChange = (current, previous) => {
+      if (previous === 0) return current > 0 ? 100 : 0;
+      return Math.round(((current - previous) / previous) * 100);
+    };
+
+    // Conversion rate = (hires / applications) * 100
+    const conversionRate = thisMonthApplications > 0
+      ? Math.round((thisMonthHires / thisMonthApplications) * 100)
+      : 0;
+    const lastConversionRate = lastMonthApplications > 0
+      ? Math.round((lastMonthHires / lastMonthApplications) * 100)
+      : 0;
+
     const monthlyStats = {
-      applications: weekCVs * 4, // Approximate
-      applicationsChange: 12,
-      analyses: weekAnalyses * 4,
-      analysesChange: 8,
-      interviews: formattedInterviews.length * 4,
-      interviewsChange: 15,
-      offers: Math.floor(weekCVs * 0.2 * 4),
-      offersChange: 10,
-      hires: Math.floor(weekCVs * 0.15 * 4),
-      hiresChange: 5,
-      conversionRate: 15,
-      conversionChange: 3
+      applications: thisMonthApplications,
+      applicationsChange: calcChange(thisMonthApplications, lastMonthApplications),
+      analyses: thisMonthAnalyses,
+      analysesChange: calcChange(thisMonthAnalyses, lastMonthAnalyses),
+      interviews: thisMonthInterviews,
+      interviewsChange: calcChange(thisMonthInterviews, lastMonthInterviews),
+      offers: thisMonthOffers,
+      offersChange: calcChange(thisMonthOffers, lastMonthOffers),
+      hires: thisMonthHires,
+      hiresChange: calcChange(thisMonthHires, lastMonthHires),
+      conversionRate,
+      conversionChange: conversionRate - lastConversionRate
     };
 
     res.json({
