@@ -125,87 +125,225 @@ async function getManagerDashboard(req, res) {
   try {
     const userId = req.user.id;
     const organizationId = req.organizationId;
+    const now = new Date();
 
-    // Manager Dashboard Data (Mock + Real Data Mix)
+    // Date ranges
+    const today = new Date(now.setHours(0, 0, 0, 0));
+    const last30Days = new Date();
+    last30Days.setDate(last30Days.getDate() - 30);
+    const last60Days = new Date();
+    last60Days.setDate(last60Days.getDate() - 60);
+
+    // REAL DATA QUERIES
+    const [
+      teamSize,
+      activeProjects,
+      completedAnalyses,
+      monthCandidates,
+      previousMonthCandidates,
+      totalOffers,
+      acceptedOffers,
+      pendingOffers,
+      upcomingInterviews,
+      todayInterviews,
+      monthlyInterviews
+    ] = await Promise.all([
+      // Team size (organization users)
+      prisma.user.count({ where: { organizationId } }),
+
+      // Active projects (active job postings)
+      prisma.jobPosting.count({
+        where: { organizationId, status: 'ACTIVE' }
+      }),
+
+      // Completed analyses (last 30 days)
+      prisma.analysis.count({
+        where: {
+          organizationId,
+          status: 'COMPLETED',
+          createdAt: { gte: last30Days }
+        }
+      }),
+
+      // Month hires (candidates created in last 30 days)
+      prisma.candidate.count({
+        where: { organizationId, createdAt: { gte: last30Days } }
+      }),
+
+      // Previous month candidates (for change percentage)
+      prisma.candidate.count({
+        where: {
+          organizationId,
+          createdAt: { gte: last60Days, lt: last30Days }
+        }
+      }),
+
+      // Total offers (last 30 days)
+      prisma.jobOffer.count({
+        where: { organizationId, createdAt: { gte: last30Days } }
+      }),
+
+      // Accepted offers
+      prisma.jobOffer.count({
+        where: {
+          organizationId,
+          status: 'ACCEPTED',
+          createdAt: { gte: last30Days }
+        }
+      }),
+
+      // Pending offers (approval queue)
+      prisma.jobOffer.findMany({
+        where: {
+          organizationId,
+          status: 'PENDING'
+        },
+        include: {
+          candidate: { select: { name: true } },
+          jobPosting: { select: { title: true } }
+        },
+        orderBy: { createdAt: 'desc' },
+        take: 10
+      }),
+
+      // Upcoming interviews
+      prisma.interview.findMany({
+        where: {
+          organizationId,
+          status: 'SCHEDULED',
+          scheduledAt: { gte: now }
+        },
+        include: {
+          candidate: { select: { name: true } },
+          jobPosting: { select: { title: true } }
+        },
+        orderBy: { scheduledAt: 'asc' },
+        take: 10
+      }),
+
+      // Today's interviews
+      prisma.interview.count({
+        where: {
+          organizationId,
+          status: 'SCHEDULED',
+          scheduledAt: {
+            gte: today,
+            lt: new Date(today.getTime() + 24 * 60 * 60 * 1000)
+          }
+        }
+      }),
+
+      // Monthly interviews count
+      prisma.interview.count({
+        where: {
+          organizationId,
+          createdAt: { gte: last30Days }
+        }
+      })
+    ]);
+
+    // Calculate metrics
+    const hiresChange = previousMonthCandidates > 0
+      ? Math.round(((monthCandidates - previousMonthCandidates) / previousMonthCandidates) * 100)
+      : 0;
+
+    const acceptanceRate = totalOffers > 0
+      ? Math.round((acceptedOffers / totalOffers) * 100)
+      : 0;
+
+    const urgentCount = pendingOffers.filter(o => {
+      const age = Date.now() - new Date(o.createdAt).getTime();
+      return age > 48 * 60 * 60 * 1000; // Older than 48 hours
+    }).length;
+
+    // Performance score (based on completed analyses)
+    const performance = completedAnalyses > 0
+      ? Math.min(Math.round((completedAnalyses / activeProjects) * 100), 100)
+      : 0;
+
+    // KPIs
+    const hiringTarget = 10;
+    const interviewTarget = 20;
+    const positionFillTarget = activeProjects;
+
+    // Manager Dashboard Data (REAL DATA from Database)
     const dashboardData = {
       overview: {
-        teamSize: 12,
-        activeProjects: 5,
-        performance: 87,
-        budgetUsed: 65
+        teamSize,
+        activeProjects,
+        performance,
+        budgetUsed: 0 // No budget tracking yet
       },
       teamPerformance: {
-        teamScore: 87,
-        activeMembers: 10,
-        totalMembers: 12,
-        completedTasks: 45,
-        satisfaction: 92
+        teamScore: performance,
+        activeMembers: teamSize,
+        totalMembers: teamSize,
+        completedTasks: completedAnalyses,
+        satisfaction: 0 // No satisfaction survey yet
       },
       departmentAnalytics: {
-        monthHires: 8,
-        hiresChange: 15,
-        avgTimeToHire: 18,
-        timeChange: -5,
-        acceptanceRate: 85,
-        acceptanceChange: 10,
-        costPerHire: 5200,
-        costChange: -8
+        monthHires: monthCandidates,
+        hiresChange,
+        avgTimeToHire: 0, // Would need to calculate from candidate creation to hire date
+        timeChange: 0,
+        acceptanceRate,
+        acceptanceChange: 0, // Would need previous period data
+        costPerHire: 0, // No budget tracking yet
+        costChange: 0
       },
       actionItems: {
-        urgentCount: 3,
-        approvalCount: 7,
-        todayTasksCount: 12
+        urgentCount,
+        approvalCount: pendingOffers.length,
+        todayTasksCount: todayInterviews
       },
       performanceTrend: {
-        trend: [],
-        currentProductivity: 88,
-        currentQuality: 92,
-        currentDelivery: 85
+        trend: [], // Would need daily/weekly analysis data
+        currentProductivity: performance,
+        currentQuality: acceptanceRate,
+        currentDelivery: completedAnalyses
       },
       approvalQueue: {
-        queue: [
-          {
-            id: '1',
-            type: 'OFFER',
-            title: 'Senior Developer pozisyonu teklifi',
-            createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString()
-          },
-          {
-            id: '2',
-            type: 'BUDGET',
-            title: 'Q4 İşe Alım Bütçesi Artışı',
-            createdAt: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString()
-          },
-          {
-            id: '3',
-            type: 'LEAVE',
-            title: 'Ahmet Yılmaz - 5 gün yıllık izin',
-            createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
-          }
-        ]
+        queue: pendingOffers.map(offer => ({
+          id: offer.id,
+          type: 'OFFER',
+          title: `${offer.jobPosting?.title || 'Pozisyon'} - ${offer.candidate?.name || 'Aday'}`,
+          createdAt: offer.createdAt
+        }))
       },
       interviews: {
-        upcomingInterviews: [
-          {
-            id: '1',
-            scheduledAt: new Date(Date.now() + 3 * 60 * 60 * 1000).toISOString(),
-            candidate: { name: 'Zeynep Kaya' },
-            jobPosting: { title: 'Frontend Developer' }
-          },
-          {
-            id: '2',
-            scheduledAt: new Date(Date.now() + 25 * 60 * 60 * 1000).toISOString(),
-            candidate: { name: 'Mehmet Demir' },
-            jobPosting: { title: 'Backend Developer' }
-          }
-        ]
+        upcomingInterviews: upcomingInterviews.map(interview => ({
+          id: interview.id,
+          scheduledAt: interview.scheduledAt,
+          candidate: { name: interview.candidate?.name || 'Aday' },
+          jobPosting: { title: interview.jobPosting?.title || 'Pozisyon' }
+        }))
       },
       kpis: {
         kpis: [
-          { name: 'İşe Alım Hedefi', current: 8, target: 10, percentage: 80 },
-          { name: 'Mülakat Sayısı', current: 18, target: 20, percentage: 90 },
-          { name: 'Pozisyon Doldurma', current: 6, target: 8, percentage: 75 },
-          { name: 'Takım Memnuniyeti', current: 92, target: 100, percentage: 92 }
+          {
+            name: 'İşe Alım Hedefi',
+            current: monthCandidates,
+            target: hiringTarget,
+            percentage: Math.round((monthCandidates / hiringTarget) * 100)
+          },
+          {
+            name: 'Mülakat Sayısı',
+            current: monthlyInterviews,
+            target: interviewTarget,
+            percentage: Math.round((monthlyInterviews / interviewTarget) * 100)
+          },
+          {
+            name: 'Pozisyon Doldurma',
+            current: monthCandidates,
+            target: positionFillTarget,
+            percentage: positionFillTarget > 0 ? Math.round((monthCandidates / positionFillTarget) * 100) : 0
+          },
+          {
+            name: 'Teklif Kabul Oranı',
+            current: acceptanceRate,
+            target: 100,
+            percentage: acceptanceRate
+          }
         ]
       }
     };
