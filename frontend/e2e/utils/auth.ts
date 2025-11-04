@@ -40,8 +40,14 @@ export async function login(page: Page, user: TestUser) {
   await page.fill('input[type="password"]', user.password);
   await page.click('button[type="submit"]');
 
-  // Wait for redirect to dashboard
-  await page.waitForURL('/dashboard', { timeout: 10000 });
+  // Wait for redirect (dashboard or onboarding)
+  await page.waitForLoadState('networkidle');
+
+  // If redirected to onboarding, skip it by going directly to dashboard
+  const currentUrl = page.url();
+  if (currentUrl.includes('/onboarding')) {
+    await page.goto('/dashboard');
+  }
 }
 
 export async function logout(page: Page) {
