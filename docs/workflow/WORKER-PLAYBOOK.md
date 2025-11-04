@@ -211,7 +211,135 @@ Scenario 4: W1 creates user-dashboard.tsx, W2 creates hr-dashboard.tsx, both imp
 → ❌ DON'T FIX shared component (coordinate via Mod)
 ```
 
-### Rule 8: Make Verifiable Claims - Mod Will Re-Run Your Commands!
+### Rule 8: Production-Ready Delivery - NO Placeholder, NO Mock, NO "TODO"!
+```
+🚨 YASAK KELIMELER:
+❌ "Yapım aşamasında"
+❌ "Sonra eklenecek"
+❌ "İleride yapılacak"
+❌ "TODO: API ekle"
+❌ "MOCK data"
+❌ const mockData = {...}
+❌ <p>Placeholder...</p>
+
+✅ ZORUNLU:
+- Her sayfa %100 çalışır olacak
+- Her buton çalışacak (onClick → real action)
+- Her data API'den gelecek (fetch/axios)
+- Gerekli API yoksa → EKLE!
+- Gerekli modal yoksa → OLUŞTUR!
+- Gerekli DB kolon yoksa → MIGRATE ET!
+
+Dashboard Teslim Kriterleri:
+
+Senin Dashboard'ın İçin Gereken HER ŞEY:
+
+Frontend:
+✅ Dashboard component (main)
+✅ Widget components (hepsi çalışır!)
+✅ Modal components (gerekiyorsa)
+✅ Link edilen TÜM sayfalar (dolu, çalışır!)
+
+Backend:
+✅ Dashboard API endpoint (real Prisma!)
+✅ Widget data API'leri (gerekiyorsa)
+✅ CRUD endpoints (sayfalar için gerekiyorsa)
+
+Database:
+✅ Gerekli kolonlar var (migration yap!)
+✅ Test data var (yoksa oluştur!)
+
+Test:
+✅ API test (curl → 200 OK)
+✅ Frontend render (hata yok!)
+✅ Buttonlar çalışıyor (click → action)
+✅ Linkler çalışıyor (404 yok!)
+
+Örnek: /settings Sayfası Oluşturuyorsun
+
+❌ YANLIŞ (Placeholder):
+```tsx
+export default function SettingsPage() {
+  return <div>🚧 Ayarlar sayfası yapım aşamasında</div>;
+}
+```
+
+✅ DOĞRU (Production-Ready):
+```tsx
+'use client';
+
+import { useState, useEffect } from 'react';
+
+export default function SettingsPage() {
+  const [settings, setSettings] = useState(null);
+
+  useEffect(() => {
+    // REAL API fetch
+    fetch('/api/v1/settings')
+      .then(res => res.json())
+      .then(data => setSettings(data));
+  }, []);
+
+  const handleSave = async () => {
+    // REAL save logic
+    await fetch('/api/v1/settings', {
+      method: 'PUT',
+      body: JSON.stringify(settings)
+    });
+  };
+
+  return (
+    <div className="p-6">
+      <h1>Ayarlar</h1>
+      {/* REAL form fields */}
+      <input value={settings?.name} />
+      <button onClick={handleSave}>Kaydet</button>
+    </div>
+  );
+}
+```
+
+VE Backend API Ekle:
+
+```javascript
+// backend/src/routes/settingsRoutes.js
+router.get('/', async (req, res) => {
+  const settings = await prisma.userSettings.findUnique({
+    where: { userId: req.user.userId }
+  });
+  res.json({ data: settings });
+});
+
+router.put('/', async (req, res) => {
+  const updated = await prisma.userSettings.update({
+    where: { userId: req.user.userId },
+    data: req.body
+  });
+  res.json({ data: updated });
+});
+```
+
+Eksik Workflow:
+
+Dashboard'da "Settings" butonu var → /settings linkine gidiyor
+
+Senin Yapacakların:
+1. ✅ /settings page oluştur
+2. ✅ API endpoint ekle (GET, PUT)
+3. ✅ DB'de UserSettings tablosu var mı kontrol et
+4. ❌ Yoksa: Prisma migration yap!
+5. ✅ Form functionality ekle (real save!)
+6. ✅ Test et (curl + browser)
+7. ✅ Commit (her adım için!)
+
+ASLA YAPMA:
+❌ Sayfa oluştur ama placeholder bırak
+❌ "API sonra eklenecek" comment yaz
+❌ Mock data kullan
+❌ Buton ekle ama onClick boş bırak
+```
+
+### Rule 9: Make Verifiable Claims - Mod Will Re-Run Your Commands!
 ```
 🚨 CRITICAL: Mod senin AYNI komutlarını çalıştıracak! Yalan söyleme!
 
