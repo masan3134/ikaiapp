@@ -65,7 +65,8 @@ model Organization {
   trialEndsAt DateTime?
 
   // Relations
-  users User[]
+  users         User[]
+  notifications Notification[]
 
   // Metadata
   createdAt DateTime @default(now())
@@ -129,6 +130,10 @@ model User {
   negotiations   OfferNegotiation[]
   attachments    OfferAttachment[]
   revisions      OfferRevision[]
+
+  // Notification System Relations
+  notifications             Notification[]
+  notificationPreferences   NotificationPreference[]
 
   @@index([organizationId])
   @@map("users")
@@ -733,4 +738,74 @@ model OfferRevision {
   @@index([offerId])
   @@index([createdAt(sort: Desc)])
   @@map("offer_revisions")
+}
+
+// ============================================
+// NOTIFICATION SYSTEM (Worker #2 - 2025-11-04)
+// ============================================
+
+enum NotificationType {
+  ANALYSIS_STARTED
+  ANALYSIS_COMPLETED
+  ANALYSIS_FAILED
+  CANDIDATE_UPLOADED
+  OFFER_CREATED
+  OFFER_SENT
+  OFFER_ACCEPTED
+  OFFER_REJECTED
+  OFFER_EXPIRED
+  INTERVIEW_SCHEDULED
+  INTERVIEW_COMPLETED
+  INTERVIEW_CANCELLED
+  USER_INVITED
+  USAGE_LIMIT_WARNING
+  USAGE_LIMIT_REACHED
+}
+
+model Notification {
+  id             String           @id @default(uuid())
+  organizationId String
+  userId         String
+
+  // Notification details
+  type    NotificationType
+  title   String
+  message String           @db.Text
+  data    Json? // Additional context: {analysisId, offerId, candidateId, etc.}
+
+  // State
+  read   Boolean  @default(false)
+  readAt DateTime?
+
+  // Relations
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, read])
+  @@index([organizationId])
+  @@index([createdAt(sort: Desc)])
+  @@map("notifications")
+}
+
+model NotificationPreference {
+  id     String @id @default(uuid())
+  userId String
+
+  // Preference per notification type
+  type         NotificationType
+  enabled      Boolean          @default(true) // Show in notification center
+  emailEnabled Boolean          @default(false) // Send email notification
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, type])
+  @@index([userId])
+  @@map("notification_preferences")
 }
