@@ -41,6 +41,13 @@ router.get('/user', [
       }
     });
 
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'Kullanıcı bulunamadı'
+      });
+    }
+
     const fields = ['firstName', 'lastName', 'email', 'phone', 'bio', 'avatar'];
     const completedFields = fields.filter(f => user[f]).length;
     const profileCompletion = Math.round((completedFields / fields.length) * 100);
