@@ -83,6 +83,70 @@ router.post('/:id/chat', trackRequest, chatRateLimiter, hrManagers, async (req, 
 });
 
 /**
+ * GET /api/v1/analyses/:id/history
+ * Get chat history for an analysis
+ */
+router.get('/:id/history', hrManagers, async (req, res) => {
+  try {
+    const { id: analysisId } = req.params;
+    const { limit = 50, offset = 0 } = req.query;
+
+    // Analiz kontrolü
+    const analysis = await prisma.analysis.findUnique({
+      where: { id: analysisId },
+      select: { userId: true, organizationId: true }
+    });
+
+    if (!analysis) {
+      return res.status(404).json({ error: 'Analysis not found' });
+    }
+
+    // Access control
+    if (analysis.userId !== req.user.userId &&
+        !['ADMIN', 'SUPER_ADMIN'].includes(req.user.role)) {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
+
+    // Get chat history (ordered by createdAt DESC - most recent first)
+    const messages = await prisma.analysisChatMessage.findMany({
+      where: { analysisId },
+      select: {
+        id: true,
+        message: true,
+        response: true,
+        candidateCount: true,
+        responseTime: true,
+        usedSemanticSearch: true,
+        createdAt: true
+      },
+      orderBy: { createdAt: 'desc' },
+      take: parseInt(limit),
+      skip: parseInt(offset)
+    });
+
+    // Get total count
+    const totalCount = await prisma.analysisChatMessage.count({
+      where: { analysisId }
+    });
+
+    res.json({
+      success: true,
+      messages: messages.reverse(), // Reverse to chronological order (oldest first)
+      total: totalCount,
+      limit: parseInt(limit),
+      offset: parseInt(offset)
+    });
+
+  } catch (error) {
+    console.error('Get chat history error:', error);
+    res.status(500).json({
+      error: 'Failed to get chat history',
+      details: error.message
+    });
+  }
+});
+
+/**
  * GET /api/v1/analyses/:id/chat-stats
  * Chat context istatistikleri
  */
