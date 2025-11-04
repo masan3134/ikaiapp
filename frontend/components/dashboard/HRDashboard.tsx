@@ -88,16 +88,10 @@ export const HRDashboard = () => {
         <QuickActionsWidget />
       </div>
 
-      {/* Bottom Row: 3 Columns */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {/* Bottom Row: 2 Columns */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <PendingInterviewsWidget data={stats?.interviews} />
         <MonthlyStatsWidget data={stats?.monthlyStats} />
-        <div className="bg-white rounded-xl shadow-sm p-6">
-          <h3 className="text-lg font-semibold text-slate-800 flex items-center gap-2 mb-4">
-            🎓 En İyi Adaylar
-          </h3>
-          <p className="text-sm text-slate-500 text-center py-8">Yakında eklenecek</p>
-        </div>
       </div>
     </div>
   );
