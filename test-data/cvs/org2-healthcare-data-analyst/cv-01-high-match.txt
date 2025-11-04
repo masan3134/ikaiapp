@@ -1,0 +1,64 @@
+DR. ELİF DEMİR
+Healthcare Data Analyst
+
+İLETİŞİM:
+Email: mustafaasan91@gmail.com
+Telefon: 05398827540
+LinkedIn: linkedin.com/in/elifdemir
+Konum: İstanbul, Türkiye
+
+ÖZET:
+4 yıl sağlık sektöründe veri analizi deneyimi. Hastane operasyonları, hasta verileri
+ve tedavi sonuçları analizi. Power BI, Tableau ile dashboard geliştirme. SQL, Python,
+R ile veri analizi. KVKK uyumlu çalışma. Healthcare IT sertifikalı.
+
+TEKNİK YETKİNLİKLER:
+• Data Analysis: Python (Pandas, NumPy, Scikit-learn), R, Excel
+• Database: SQL (PostgreSQL, MySQL), MS SQL Server
+• BI Tools: Power BI, Tableau, Looker
+• Statistics: Descriptive/Inferential Statistics, Hypothesis Testing
+• Machine Learning: Regression, Classification, Clustering (basic)
+• Healthcare Systems: HIS (Hospital Information Systems), EMR/EHR
+• ETL: SSIS, Python ETL pipelines
+• Visualization: Matplotlib, Seaborn, Plotly
+• Other: KVKK compliance, ICD-10, Healthcare KPIs
+
+SERTİFİKALAR:
+• Healthcare Data Analytics Specialization (Coursera, 2023)
+• Power BI Data Analyst Associate (Microsoft, 2024)
+• Healthcare IT Certificate (HIMSS, 2023)
+• SQL for Data Science (2022)
+
+DENEYİM:
+
+Healthcare Data Analyst | Özel Hastane Grubu | Ocak 2021 - Şu an
+• Hasta verileri ve tedavi sonuçlarını analiz ettim (50,000+ hasta/yıl)
+• Power BI ile executive dashboard'lar oluşturdum (15+ dashboard)
+• Predictive analytics modelleri geliştirdim (readmission risk, LOS prediction)
+• SQL ve Python ile veri temizleme ve ETL süreçleri
+• Healthcare KPI'ları takip ettim (mortality rate, ALOS, patient satisfaction)
+• KVKK uyumlu veri yönetimi ve raporlama
+• Klinik ekiplerle işbirliği (doktorlar, hemşireler, yönetim)
+• Hastane operasyon verimliliğini %15 artırdım
+
+Junior Data Analyst | Sağlık Teknoloji Şirketi | Haziran 2020 - Aralık 2020
+• HIS verilerinden raporlar oluşturdum
+• SQL query'leri ile veri extraction
+• Excel ile veri analizi ve raporlama
+• Veri kalitesi kontrolleri
+
+EĞİTİM:
+Sağlık Yönetimi (Yüksek Lisans) | Hacettepe Üniversitesi | 2022-2024
+• Thesis: Healthcare data analytics ve predictive modeling
+
+Tıp Fakültesi (Lisans) | İstanbul Üniversitesi | 2014-2020
+• Tıbbi terminoloji ve klinik süreçler
+
+PROJELER:
+• Hospital KPI Dashboard: Power BI + SQL Server
+• Patient Readmission Prediction: Python + Scikit-learn (AUC: 0.82)
+• Healthcare Trend Analysis: R + ggplot2 + Shiny
+
+DİLLER:
+• Türkçe: Ana dil
+• İngilizce: İleri seviye (tıbbi terminoloji dahil)

@@ -1,0 +1,60 @@
+AHMET YILMAZ
+Frontend Developer
+
+İLETİŞİM:
+Email: mustafaasan91@gmail.com
+Telefon: 05398827540
+LinkedIn: linkedin.com/in/ahmetyilmaz
+GitHub: github.com/ahmetyilmaz
+Konum: İstanbul, Türkiye
+
+ÖZET:
+2 yıllık deneyime sahip, React ve TypeScript konusunda uzmanlaşmış Junior Frontend Developer.
+Modern web teknolojileri ile kullanıcı odaklı, performanslı uygulamalar geliştirme deneyimi.
+Next.js, Redux ve responsive design konularında güçlü.
+
+TEKNİK YETKİNLİKLER:
+• Frontend: React, TypeScript, JavaScript (ES6+), Next.js
+• State Management: Redux Toolkit, Zustand, Context API
+• Styling: CSS3, SASS, Tailwind CSS, Styled Components
+• API: RESTful API, GraphQL, Axios
+• Tools: Git, GitHub, VS Code, npm/yarn, Webpack
+• Testing: Jest, React Testing Library
+• Design: Responsive Design, Mobile-First, Figma
+• Diğer: Agile/Scrum, Code Review, Clean Code
+
+DENEYİM:
+
+Frontend Developer | XYZ Teknoloji | Ocak 2023 - Şu an
+• E-ticaret platformu için React ve TypeScript ile responsive web uygulaması geliştirdim
+• Next.js ile SEO-friendly landing page'ler oluşturdum (%40 performans artışı)
+• Redux Toolkit ile global state management implement ettim
+• Backend ekibi ile RESTful API entegrasyonları gerçekleştirdim
+• Figma tasarımlarından pixel-perfect component'ler geliştirdim
+• Git flow ve code review süreçlerine aktif katıldım
+• Jest ile %80+ test coverage sağladım
+
+Junior Frontend Developer (Stajyer) | ABC Yazılım | Haziran 2022 - Aralık 2022
+• React ile kurumsal web uygulaması geliştirdim
+• HTML5, CSS3 ve JavaScript ile responsive UI component'leri oluşturdum
+• REST API entegrasyonları yaptım
+• Agile sprint'lerine katıldım ve daily standup'lara aktif katkı sağladım
+
+EĞİTİM:
+Bilgisayar Mühendisliği (Lisans) | İstanbul Teknik Üniversitesi | 2018-2022
+• GPA: 3.4/4.0
+• Bitirme Projesi: React Native ile mobil uygulama geliştirme
+
+SERTİFİKALAR:
+• React - The Complete Guide (Udemy, 2023)
+• Advanced TypeScript Programming (Pluralsight, 2023)
+• JavaScript Algorithms and Data Structures (freeCodeCamp, 2022)
+
+PROJELER:
+• E-Commerce Dashboard: Next.js, TypeScript, Tailwind CSS
+• Task Management App: React, Redux, Firebase
+• Portfolio Website: Next.js, Framer Motion, Styled Components
+
+DİLLER:
+• Türkçe: Ana dil
+• İngilizce: İleri seviye (teknik dokümantasyon okuma/yazma)

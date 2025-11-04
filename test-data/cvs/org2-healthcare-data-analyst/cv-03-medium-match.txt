@@ -1,0 +1,38 @@
+ZEYNEP KAYA
+Data Analyst
+
+İLETİŞİM:
+Email: mustafaasan91@gmail.com
+Telefon: 05398827540
+Konum: İstanbul, Türkiye
+
+ÖZET:
+2 yıl veri analizi deneyimi. Excel ve SQL kullanımı. Sağlık sektörü dışında
+deneyim ama temel veri analizi bilgisi mevcut.
+
+TEKNİK YETKİNLİKLER:
+• Data Analysis: Excel (Advanced), Python (basic)
+• Database: SQL (intermediate)
+• BI Tools: Power BI (basic)
+• Statistics: Basic descriptive statistics
+• Other: Data cleaning, reporting
+
+DENEYİM:
+
+Data Analyst | Retail Company | Ocak 2022 - Şu an
+• Sales data analysis
+• Excel raporları
+• SQL query'leri
+• Dashboard oluşturma
+
+Junior Analyst | E-commerce | Temmuz 2021 - Aralık 2021
+• Veri toplama ve temizleme
+• Excel ile analiz
+• Basit raporlama
+
+EĞİTİM:
+İstatistik (Lisans) | 2017-2021
+
+DİLLER:
+• Türkçe: Ana dil
+• İngilizce: Orta seviye

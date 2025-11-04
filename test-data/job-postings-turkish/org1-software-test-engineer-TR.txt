@@ -1,0 +1,43 @@
+YAZILIM TEST MÜHENDİSİ (QA ENGINEER)
+TechStart Innovations - Teknoloji / Yazılım
+İstanbul (Hibrit Çalışma)
+
+POZISYON HAKKINDA:
+Kaliteli yazılım ürünleri sunmak için QA ekibimize deneyimli Software Test Engineer
+arıyoruz. Manuel ve otomatik testler tasarlayacak, geliştirme ekibiyle birlikte
+çalışarak ürün kalitesini garanti altına alacaksınız.
+
+SORUMLULUKLAR:
+• Kapsamlı test planları ve test senaryoları tasarlamak
+• Manuel ve otomatik testler gerçekleştirmek
+• Bug takibi ve raporlama (Jira, Trello, vb.)
+• Geliştirme ekibiyle kalite standartlarını sağlamak
+• Agile süreçlerine aktif katılım
+• Regresyon testleri ve smoke testler yürütmek
+
+ARANAN NİTELİKLER:
+• Zorunlu:
+  - 2-3 yıl yazılım test deneyimi
+  - Test metodolojileri ve best practice'ler bilgisi
+  - Test otomasyon (Selenium, Cypress, Jest)
+  - API testing (Postman, REST Assured)
+  - SQL bilgisi
+  - Analitik düşünme ve problem çözme becerisi
+  - İngilizce teknik dokümantasyon
+
+• Artı:
+  - ISTQB sertifikası
+  - CI/CD pipeline deneyimi (Jenkins, GitLab CI)
+  - Performance testing (JMeter, k6)
+  - JavaScript veya Python bilgisi
+  - Test-Driven Development (TDD)
+
+ÇALIŞMA KOŞULLARI:
+• Hibrit çalışma modeli (3 ofis + 2 remote)
+• Özel sağlık sigortası
+• Profesyonel gelişim fırsatları (sertifikasyon desteği)
+• Takım aktiviteleri ve sosyal etkinlikler
+
+BAŞVURU:
+Email: mustafaasan91@gmail.com
+Telefon: 05398827540

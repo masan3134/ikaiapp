@@ -1,0 +1,77 @@
+SERKAN AYDOĞAN, FRM
+Risk Management Specialist
+
+İLETİŞİM:
+Email: mustafaasan91@gmail.com
+Telefon: 05398827540
+LinkedIn: linkedin.com/in/serkanaydogan
+Konum: İstanbul, Türkiye
+
+ÖZET:
+6 yıl bankacılık ve finans sektöründe risk yönetimi deneyimi. FRM ve CFA Level 2
+sertifikalı. Kredi riski, piyasa riski ve operasyonel risk uzmanı. Basel III/IV
+frameworks. BDDK ve SPK regülasyonları. Stress testing ve scenario analysis. Risk
+modelleme ve quantitative analysis. Moody's RiskCalc ve S&P Capital IQ deneyimi.
+
+TEKNİK YETKİNLİKLER:
+• Risk Management: Credit Risk, Market Risk, Operational Risk
+• Regulatory Compliance: Basel III/IV, BDDK, SPK, MASAK
+• Risk Modeling: VaR, Expected Shortfall, Stress Testing, Scenario Analysis
+• Quantitative Analysis: Statistical modeling, Monte Carlo simulation
+• Risk Systems: Moody's RiskCalc, S&P Capital IQ, Bloomberg
+• Programming: Python (Pandas, NumPy, SciPy), R, SQL
+• Financial Modeling: Risk-adjusted returns, RAROC, Economic Capital
+• Reporting: Risk reports, Board presentations, Regulatory reporting
+• Standards: IFRS 9, Basel III/IV, BCBS guidelines
+
+SERTİFİKALAR:
+• FRM (Financial Risk Manager) - GARP, 2021
+• CFA Level 2 Candidate (2024)
+• Basel III/IV Implementation (Risk Academy, 2023)
+• Credit Risk Modeling (Moody's Analytics, 2022)
+• Operational Risk Management (IRM, 2020)
+
+EĞİTİM:
+Finansal Ekonomi (Yüksek Lisans) | Bilkent Üniversitesi | 2019-2021
+• Thesis: Stress testing methodologies for Turkish banking sector
+
+Ekonomi (Lisans) | Boğaziçi Üniversitesi | 2014-2018
+• GPA: 3.6/4.0
+
+DENEYİM:
+
+Risk Management Specialist | Özel Yatırım Bankası | Ocak 2021 - Şu an
+• Kredi riski modelleme ve PD/LGD/EAD hesaplamaları (IFRS 9)
+• Piyasa riski VaR hesaplamaları (Parametric, Historical, Monte Carlo)
+• Stress testing ve scenario analysis (quarterly)
+• Basel III/IV capital adequacy raporlaması
+• BDDK ve SPK düzenlemelerine uyum sağlama
+• Risk komitesi ve yönetim kurulu sunumları (monthly)
+• Operasyonel risk framework implementasyonu
+• Moody's RiskCalc ve S&P Capital IQ kullanımı
+• Python ile risk automation tools geliştirme
+• 2 junior risk analyst'e mentorluk
+
+Credit Risk Analyst | Ticari Banka | Temmuz 2018 - Aralık 2020
+• Kurumsal krediler için risk analizi ve rating
+• Kredi portföy izleme ve raporlama
+• Basel II/III compliance
+• Stress testing ve sensitivity analysis
+• Risk mitigation stratejileri
+
+UZMANLIK ALANLARI:
+• Kredi riski modelleme (PD, LGD, EAD)
+• Piyasa riski yönetimi (VaR, stress testing)
+• Operasyonel risk management
+• Basel III/IV ve IFRS 9 uyumu
+• Regulatory compliance (BDDK, SPK)
+• Risk reporting ve yönetim kurulu sunumları
+
+DİLLER:
+• Türkçe: Ana dil
+• İngilizce: İleri seviye (C1)
+• Almanca: Orta seviye (B1)
+
+YAYINLAR:
+• "Stress Testing in Turkish Banking Sector" - Risk Management Journal (2023)
+• "Basel III Capital Requirements: Implementation Challenges" - Banking Review (2022)

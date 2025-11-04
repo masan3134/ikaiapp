@@ -1,0 +1,42 @@
+JUNIOR FRONTEND GELİŞTİRİCİ
+TechStart Innovations - Teknoloji / Yazılım
+İstanbul (Hibrit Çalışma)
+
+POZISYON HAKKINDA:
+Modern web teknolojileri ile kullanıcı dostu arayüzler geliştiren, yenilikçi ekibimize
+Junior Frontend Developer arıyoruz. React, TypeScript ve Next.js ile çalışacaksınız.
+
+SORUMLULUKLAR:
+• React ve TypeScript ile responsive web uygulamaları geliştirmek
+• UI/UX tasarımlarını pixel-perfect şekilde kodlamak
+• Backend ekibi ile RESTful API entegrasyonları yapmak
+• Git ile versiyon kontrolü ve kod review süreçlerine katılmak
+• Performance optimizasyonları ve best practice'lere uygun kod yazmak
+
+ARANAN NİTELİKLER:
+• Zorunlu:
+  - 1-2 yıl JavaScript/TypeScript deneyimi
+  - React ve modern frontend framework bilgisi
+  - HTML5, CSS3, responsive design deneyimi
+  - Git kullanımı
+  - İngilizce teknik dokümantasyon okuyabilme
+  - Bilgisayar Mühendisliği veya ilgili bölüm mezunu
+
+• Artı:
+  - Next.js deneyimi
+  - State management (Redux, Zustand, Recoil)
+  - RESTful API ve GraphQL bilgisi
+  - UI/UX prensipleri
+  - Agile/Scrum deneyimi
+
+ÇALIŞMA KOŞULLARI:
+• Haftada 2 gün remote çalışma imkanı
+• Esnek çalışma saatleri (core hours: 10:00-16:00)
+• Yemek kartı
+• Özel sağlık sigortası
+• Eğitim ve konferans desteği
+• Genç ve dinamik takım ortamı
+
+BAŞVURU:
+Email: mustafaasan91@gmail.com
+Telefon: 05398827540

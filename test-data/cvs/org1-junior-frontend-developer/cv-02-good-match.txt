@@ -1,0 +1,43 @@
+AYŞE KAYA
+Web Developer
+
+İLETİŞİM:
+Email: mustafaasan91@gmail.com
+Telefon: 05398827540
+GitHub: github.com/aysekaya
+Konum: İstanbul, Türkiye
+
+ÖZET:
+1.5 yıllık web development deneyimi. React ve JavaScript ile modern web uygulamaları
+geliştirme. HTML, CSS ve responsive design konularında deneyimli.
+
+TEKNİK YETKİNLİKLER:
+• Frontend: React, JavaScript, HTML5, CSS3
+• Styling: CSS3, Bootstrap, Material-UI
+• Tools: Git, VS Code, npm
+• Basic: TypeScript, REST API
+• Design: Responsive Web Design
+
+DENEYİM:
+
+Web Developer | Tech Startup | Mart 2023 - Şu an
+• React ile web uygulaması geliştirdim
+• Responsive tasarımlar oluşturdum
+• API entegrasyonları yaptım
+• Team collaboration
+
+Junior Web Developer | Digital Agency | Temmuz 2022 - Şubat 2023
+• HTML, CSS, JavaScript ile web siteleri geliştirdim
+• jQuery kullanarak interaktif özellikler ekledim
+• Git ile versiyon kontrolü
+
+EĞİTİM:
+Bilgisayar Programcılığı (Önlisans) | Anadolu Üniversitesi | 2020-2022
+
+SERTİFİKALAR:
+• JavaScript Fundamentals (Udemy, 2022)
+• React Basics (Coursera, 2023)
+
+DİLLER:
+• Türkçe: Ana dil
+• İngilizce: Orta seviye

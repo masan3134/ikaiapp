@@ -1,0 +1,49 @@
+SEDA AKIN
+Software Tester
+
+İLETİŞİM:
+Email: mustafaasan91@gmail.com
+Telefon: 05398827540
+LinkedIn: linkedin.com/in/sedaakin
+Konum: İstanbul, Türkiye
+
+ÖZET:
+2.5 yıl yazılım test deneyimi. Manuel ve temel otomasyon testleri. Selenium ve Postman
+ile test geliştirme. SQL bilgisi mevcut. Agile süreçlerine aşina.
+
+TEKNİK YETKİNLİKLER:
+• Test Otomasyon: Selenium WebDriver, Cypress (basic)
+• API Testing: Postman, basic REST concepts
+• Programming: JavaScript (intermediate), Python (basic)
+• Database: SQL (MySQL, PostgreSQL)
+• Tools: Jira, TestRail, Git
+• Methodologies: Agile, Scrum
+• Testing Types: Functional, Regression, Smoke, Sanity
+
+DENEYİM:
+
+Software Tester | XYZ Teknoloji | Mart 2022 - Şu an
+• Web ve mobil uygulama testleri
+• Selenium ile otomasyon testleri (50+ test case)
+• Postman ile API testing
+• SQL query'leri ile database validation
+• Jira ile bug tracking
+• Test case yazımı ve execution
+• Agile sprint'lerinde yer aldım
+
+QA Intern | Digital Agency | Eylül 2021 - Şubat 2022
+• Manuel test execution
+• Bug reporting
+• Test dokümantasyonu
+• Regression testing
+
+EĞİTİM:
+Bilgisayar Programcılığı (Önlisans) | İstanbul Üniversitesi | 2019-2021
+
+SERTİFİKALAR:
+• Selenium WebDriver Basics (Udemy, 2022)
+• Software Testing Fundamentals (Coursera, 2021)
+
+DİLLER:
+• Türkçe: Ana dil
+• İngilizce: Orta-İyi seviye

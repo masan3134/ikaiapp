@@ -1,0 +1,65 @@
+BURAK ÖZDEMİR
+QA Test Engineer
+
+İLETİŞİM:
+Email: mustafaasan91@gmail.com
+Telefon: 05398827540
+LinkedIn: linkedin.com/in/burakozdemir
+GitHub: github.com/burakozdemir
+Konum: İstanbul, Türkiye
+
+ÖZET:
+3 yıl yazılım test deneyimi. Manuel ve otomasyon test uzmanı. Selenium, Cypress, Jest
+ile test geliştirme. API testing, CI/CD pipeline ve performance testing deneyimi. ISTQB
+Foundation Level sertifikalı. Agile/Scrum metodolojileri.
+
+TEKNİK YETKİNLİKLER:
+• Test Otomasyon: Selenium WebDriver, Cypress, Jest, TestNG
+• API Testing: Postman, REST Assured, SoapUI
+• Programming: JavaScript, Python, Java (basic)
+• CI/CD: Jenkins, GitLab CI, GitHub Actions
+• Performance: JMeter, k6, Gatling
+• Database: SQL (PostgreSQL, MySQL), MongoDB
+• Tools: Jira, TestRail, Git, VS Code, Docker
+• Methodologies: Agile, Scrum, TDD, BDD
+• Other: Selenium Grid, Page Object Model, Data-Driven Testing
+
+SERTİFİKALAR:
+• ISTQB Foundation Level (2023)
+• Selenium WebDriver with Java (Udemy, 2023)
+• API Testing with Postman (2022)
+• Performance Testing with JMeter (2024)
+
+DENEYİM:
+
+QA Test Engineer | TechSoft Solutions | Ocak 2022 - Şu an
+• E-ticaret platformu için kapsamlı test stratejisi oluşturdum
+• Selenium ve Cypress ile 200+ otomasyon test case geliştirdim
+• REST API testing (Postman + REST Assured) - 150+ endpoint
+• Jenkins CI/CD pipeline'ına test otomasyonu entegre ettim
+• JMeter ile performance ve load testing gerçekleştirdim
+• Bug tracking ve raporlama (Jira) - 500+ bug kaydı
+• Test coverage %85'e çıkardım
+• Agile sprint'lerinde aktif rol (daily standup, retrospective)
+• Junior QA'lara mentorluk
+
+Junior QA Tester | StartupTech | Haziran 2021 - Aralık 2021
+• Manuel test case yazımı ve execution
+• Smoke, regression ve sanity testing
+• SQL ile database testing
+• Bug reporting ve verification
+• Test dokümantasyonu
+
+EĞİTİM:
+Bilgisayar Mühendisliği (Lisans) | Yıldız Teknik Üniversitesi | 2017-2021
+• Yazılım Mühendisliği odaklı eğitim
+• Bitirme Projesi: Otomasyon test framework geliştirme
+
+PROJELER:
+• Hybrid Test Framework: Selenium + Cucumber + TestNG (GitHub - 100+ stars)
+• API Test Suite: REST Assured + Maven + Jenkins
+• Performance Test Scripts: JMeter + Grafana dashboard
+
+DİLLER:
+• Türkçe: Ana dil
+• İngilizce: İleri seviye (teknik dokümantasyon okuma/yazma)

@@ -1,0 +1,42 @@
+SAĞLIK VERİSİ ANALİSTİ (HEALTHCARE DATA ANALYST)
+MediCare Analytics - Sağlık Teknolojileri
+İstanbul / Ankara (Esnek Çalışma)
+
+POZISYON HAKKINDA:
+Sağlık verilerini analiz ederek hasta bakım kalitesini artıran, hastane
+operasyonlarını optimize eden deneyimli Data Analyst arıyoruz.
+
+SORUMLULUKLAR:
+• Hasta verileri, tedavi sonuçları ve hastane operasyonlarını analiz etmek
+• Dashboard ve raporlar oluşturmak (Power BI, Tableau)
+• Veri kalitesini kontrol etmek ve temizlemek
+• Sağlık ekipleri ile işbirliği yaparak insight'lar sunmak
+• Predictive analytics ve trend analizi
+• KPI takibi ve raporlama
+
+ARANAN NİTELİKLER:
+• Zorunlu:
+  - 3+ yıl veri analizi deneyimi (tercihen sağlık sektörü)
+  - SQL ve veri analiz araçları (Python, R, Excel)
+  - Sağlık sektörü bilgisi ve terminoloji
+  - İstatistik ve veri görselleştirme
+  - KVKK ve hasta gizliliği bilinci
+  - İyi seviye İngilizce
+
+• Artı:
+  - BI araçları (Tableau, Power BI, Looker)
+  - Machine Learning temel bilgisi
+  - Hastane Bilgi Sistemleri (HIS) deneyimi
+  - ETL süreçleri bilgisi
+  - Healthcare IT sertifikaları
+
+ÇALIŞMA KOŞULLARI:
+• Esnek çalışma saatleri
+• Kapsamlı sağlık sigortası (aile dahil)
+• Uzaktan çalışma opsiyonu
+• Profesyonel gelişim ve eğitim desteği
+• Anlamlı ve sosyal etkisi yüksek iş
+
+BAŞVURU:
+Email: mustafaasan91@gmail.com
+Telefon: 05398827540

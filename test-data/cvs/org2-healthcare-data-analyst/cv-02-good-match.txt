@@ -1,0 +1,46 @@
+AHMET YÜKSEL
+Sağlık Veri Analisti
+
+İLETİŞİM:
+Email: mustafaasan91@gmail.com
+Telefon: 05398827540
+LinkedIn: linkedin.com/in/ahmetyuksel
+Konum: Ankara, Türkiye
+
+ÖZET:
+3.5 yıl sağlık sektöründe veri analizi. SQL, Python, Excel ile veri işleme.
+Power BI ile raporlama. Sağlık terminolojisi ve KVKK bilgisi mevcut.
+
+TEKNİK YETKİNLİKLER:
+• Data Analysis: Python (Pandas, NumPy), Excel (Advanced)
+• Database: SQL (PostgreSQL, MySQL)
+• BI Tools: Power BI, Tableau (basic)
+• Statistics: Descriptive Statistics, Basic Inferential
+• Healthcare: HIS deneyimi, tıbbi terminoloji, KVKK
+• Visualization: Power BI, Excel charts
+• Other: ICD-10 (basic), Healthcare KPIs
+
+DENEYİM:
+
+Veri Analisti | Özel Hastane | Mart 2021 - Şu an
+• Hasta verileri ve operasyonel raporlar
+• Power BI dashboard'ları (8 dashboard)
+• SQL ile veri extraction
+• KPI tracking (ALOS, bed occupancy)
+• KVKK uyumlu çalışma
+
+Junior Analyst | Sağlık Bilişim | Temmuz 2020 - Şubat 2021
+• HIS veri raporları
+• Excel ile veri analizi
+• Veri kalite kontrolleri
+
+EĞİTİM:
+Sağlık Yönetimi (Lisans) | Ankara Üniversitesi | 2016-2020
+
+SERTİFİKALAR:
+• Power BI Essentials (Udemy, 2022)
+• SQL for Data Analysis (2021)
+
+DİLLER:
+• Türkçe: Ana dil
+• İngilizce: İyi seviye

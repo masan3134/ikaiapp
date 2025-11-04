@@ -1,0 +1,38 @@
+CAN YILMAZ
+Junior QA Tester
+
+İLETİŞİM:
+Email: mustafaasan91@gmail.com
+Telefon: 05398827540
+Konum: İstanbul, Türkiye
+
+ÖZET:
+1.5 yıl manuel test deneyimi. Test case yazımı ve bug tracking. Temel SQL ve
+Selenium bilgisi mevcut.
+
+TEKNİK YETKİNLİKLER:
+• Manuel Testing: Functional, Smoke, Regression
+• Tools: Jira, Excel
+• Basic: Selenium, Postman
+• Database: Basic SQL
+• Version Control: Git (basic)
+
+DENEYİM:
+
+Junior QA Tester | Startup Company | Ocak 2023 - Şu an
+• Manuel test case execution
+• Bug reporting (Jira)
+• Regression testing
+• Test dokümantasyonu
+
+QA Intern | Tech Company | Temmuz 2022 - Aralık 2022
+• Web application testing
+• Bug tracking
+• Basic test automation (Selenium)
+
+EĞİTİM:
+Yönetim Bilişim Sistemleri (Lisans) | 2018-2022
+
+DİLLER:
+• Türkçe: Ana dil
+• İngilizce: Orta seviye
