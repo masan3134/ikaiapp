@@ -28,6 +28,9 @@ const router = express.Router();
 // HR Managers middleware (HR operations)
 const hrManagers = [authenticateToken, enforceOrganizationIsolation, authorize(ROLE_GROUPS.HR_MANAGERS)];
 
+// Admin only middleware
+const adminOnly = [authenticateToken, enforceOrganizationIsolation, authorize(ROLE_GROUPS.ADMINS)];
+
 // Create new analysis
 router.post('/',
   authenticateToken,
@@ -49,7 +52,7 @@ router.get('/', hrManagers, getAllAnalyses);
 // Get analysis by ID with results
 router.get('/:id', hrManagers, getAnalysisById);
 
-router.delete('/:id', hrManagers, deleteAnalysis);
+router.delete('/:id', adminOnly, deleteAnalysis);
 
 router.post('/:id/add-candidates',
   hrManagers,
