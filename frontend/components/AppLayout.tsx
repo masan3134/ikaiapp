@@ -23,6 +23,7 @@ import {
   Calendar
 } from 'lucide-react';
 import ProtectedRoute from '@/components/ProtectedRoute';
+import NotificationBell from '@/components/notifications/NotificationBell';
 import { useAuthStore } from '@/lib/store/authStore';
 import { useHasRole } from '@/lib/hooks/useHasRole';
 import { RoleGroups, UserRole } from '@/lib/constants/roles';
@@ -157,12 +158,15 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         {/* Mobile Header */}
         <div className="lg:hidden bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
           <h1 className="text-xl font-bold text-gray-900">İKAI HR</h1>
-          <button
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="p-2 rounded-lg hover:bg-gray-100"
-          >
-            {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          <div className="flex items-center gap-2">
+            <NotificationBell />
+            <button
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              className="p-2 rounded-lg hover:bg-gray-100"
+            >
+              {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
         </div>
 
         <div className="flex">
