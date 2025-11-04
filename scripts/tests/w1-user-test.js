@@ -17,10 +17,17 @@ async function testUserRole() {
 
   const results = [];
   const errors = [];
+  const errorMessages = [];
 
   // Console error tracking
   page.on('console', msg => {
-    if (msg.type() === 'error') errors.push(msg.text());
+    if (msg.type() === 'error') {
+      errors.push(msg.text());
+      errorMessages.push({
+        text: msg.text(),
+        location: msg.location()
+      });
+    }
   });
 
   // Login
@@ -67,10 +74,18 @@ async function testUserRole() {
 
   // Save results
   fs.writeFileSync('test-outputs/w1-user-results.json', JSON.stringify(results, null, 2));
+  fs.writeFileSync('test-outputs/w1-user-errors.json', JSON.stringify(errorMessages, null, 2));
 
   console.log(`\n✅ W1 (USER) Test Complete!`);
   console.log(`Pages tested: ${results.length}`);
   console.log(`Total errors: ${errors.length}`);
+
+  // Print unique errors
+  console.log(`\n🔍 Console Errors:`);
+  const uniqueErrors = [...new Set(errors)];
+  uniqueErrors.forEach((err, i) => {
+    console.log(`${i+1}. ${err.substring(0, 100)}...`);
+  });
 }
 
 testUserRole().catch(console.error);
