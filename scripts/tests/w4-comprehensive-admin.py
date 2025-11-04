@@ -107,6 +107,22 @@ class IKAITestHelper:
         except:
             return None
 
+    def patch(self, endpoint: str, data: Dict) -> Optional[Dict]:
+        """PATCH request"""
+        if not self.token:
+            return None
+        try:
+            response = requests.patch(
+                f"{BASE_URL}{endpoint}",
+                json=data,
+                headers={"Authorization": f"Bearer {self.token}"}
+            )
+            if response.status_code == 200:
+                return response.json()
+            return None
+        except:
+            return None
+
     def delete(self, endpoint: str) -> bool:
         """DELETE request"""
         if not self.token:
@@ -121,210 +137,177 @@ class IKAITestHelper:
             return False
 
 def test_org_management(helper):
-    """Test Organization Management Endpoints (6 endpoints)"""
+    """Test Organization Management Endpoints (3 endpoints)"""
     print("\n" + "="*60)
-    print("🏢 ORGANIZATION MANAGEMENT (6 endpoints)")
+    print("🏢 ORGANIZATION MANAGEMENT (3 endpoints)")
     print("="*60)
 
     passed = 0
-    total = 6
+    total = 3
+    org_id = None
 
     # 1. GET /organizations/me
-    print("\n[1/6] GET /api/v1/organizations/me")
-    org = helper.get("/api/v1/organizations/me")
-    if org:
+    print("\n[1/3] GET /api/v1/organizations/me")
+    response = helper.get("/api/v1/organizations/me")
+    if response and response.get('success'):
+        org = response.get('data', {})
+        org_id = org.get('id')
         print(f"✅ Organization: {org.get('name', 'N/A')}")
+        print(f"   ID: {org_id}")
         print(f"   Plan: {org.get('plan', 'N/A')}")
         print(f"   Industry: {org.get('industry', 'N/A')}")
         passed += 1
+    else:
+        print(f"❌ Failed to get organization")
 
     # 2. PATCH /organizations/me
-    print("\n[2/6] PATCH /api/v1/organizations/me")
+    print("\n[2/3] PATCH /api/v1/organizations/me")
     update_data = {"name": "Updated Test Org (W4 Test)"}
-    # Note: Using PUT instead of PATCH for compatibility
-    updated = helper.put("/api/v1/organizations/me", update_data)
-    if updated:
+    response = helper.patch("/api/v1/organizations/me", update_data)
+    if response and response.get('success'):
+        updated = response.get('data', {})
         print(f"✅ Updated name: {updated.get('name', 'N/A')}")
         passed += 1
+    else:
+        print(f"❌ Failed to update organization")
 
-    # 3. GET /organizations/usage
-    print("\n[3/6] GET /api/v1/organizations/usage")
-    usage = helper.get("/api/v1/organizations/usage")
-    if usage:
+    # 3. GET /organizations/me/usage
+    print("\n[3/3] GET /api/v1/organizations/me/usage")
+    response = helper.get("/api/v1/organizations/me/usage")
+    if response and response.get('success'):
+        usage = response.get('data', {})
         print(f"✅ Usage stats retrieved")
-        print(f"   Analyses: {usage.get('analysisCount', 0)}")
-        print(f"   CV Count: {usage.get('cvCount', 0)}")
+        print(f"   Analyses: {usage.get('monthlyAnalysisCount', 0)}/{usage.get('maxAnalysisPerMonth', 0)}")
+        print(f"   CVs: {usage.get('monthlyCvCount', 0)}/{usage.get('maxCvPerMonth', 0)}")
+        print(f"   Users: {usage.get('totalUsers', 0)}/{usage.get('maxUsers', 0)}")
         passed += 1
-
-    # 4. PATCH /organizations/plan
-    print("\n[4/6] PATCH /api/v1/organizations/plan")
-    print("   ⚠️  SKIP - Plan changes require payment flow")
-    # Skipping to avoid breaking test data
-
-    # 5. GET /organizations/billing-history
-    print("\n[5/6] GET /api/v1/organizations/billing-history")
-    billing = helper.get("/api/v1/organizations/billing-history")
-    if billing is not None:  # Can be empty array
-        print(f"✅ Billing history retrieved")
-        if isinstance(billing, list):
-            print(f"   Records: {len(billing)}")
-        passed += 1
-
-    # 6. POST /organizations/export-data
-    print("\n[6/6] POST /api/v1/organizations/export-data")
-    export_result = helper.post("/api/v1/organizations/export-data", {})
-    if export_result:
-        print(f"✅ Data export initiated")
-        passed += 1
+    else:
+        print(f"❌ Failed to get usage stats")
 
     print(f"\n📊 Organization Management: {passed}/{total} passed")
-    return passed, total
+    return passed, total, org_id
 
 def test_user_management(helper):
-    """Test User Management Endpoints (8 endpoints)"""
+    """Test User Management Endpoints (5 endpoints from teamRoutes)"""
     print("\n" + "="*60)
-    print("👥 USER MANAGEMENT (8 endpoints)")
+    print("👥 USER MANAGEMENT (5 endpoints)")
     print("="*60)
 
     passed = 0
-    total = 8
+    total = 5
+    test_user_id = None
 
     # 1. GET /team
-    print("\n[1/8] GET /api/v1/team")
-    team = helper.get("/api/v1/team")
-    if team:
-        users = team if isinstance(team, list) else team.get('users', [])
+    print("\n[1/5] GET /api/v1/team")
+    response = helper.get("/api/v1/team")
+    if response and response.get('success'):
+        users = response.get('data', {}).get('users', [])
         print(f"✅ Team retrieved: {len(users)} users")
         passed += 1
 
-        # Save a user ID for later tests
-        test_user_id = None
+        # Save a non-admin user ID
         if users and len(users) > 0:
-            # Find a non-admin user
             for user in users:
                 if user.get('role') != 'ADMIN':
                     test_user_id = user.get('id')
+                    print(f"   Found test user: {user.get('firstName')} ({user.get('role')})")
                     break
 
     # 2. POST /team/invite
-    print("\n[2/8] POST /api/v1/team/invite")
+    print("\n[2/5] POST /api/v1/team/invite")
     invite_data = {
         "email": f"w4-test-{os.getpid()}@test-org-1.com",
         "role": "USER",
-        "firstName": "W4",
-        "lastName": "TestUser"
+        "firstName": "W4Test",
+        "lastName": "User"
     }
-    invite_result = helper.post("/api/v1/team/invite", invite_data)
-    if invite_result:
-        print(f"✅ User invited: {invite_result.get('email', 'N/A')}")
-        invited_user_id = invite_result.get('id')
+    response = helper.post("/api/v1/team/invite", invite_data)
+    if response and response.get('success'):
+        invited_user = response.get('data', {})
+        invited_user_id = invited_user.get('id')
+        print(f"✅ User invited: {invited_user.get('email', 'N/A')}")
+        print(f"   ID: {invited_user_id}")
         passed += 1
+        test_user_id = invited_user_id  # Use this for tests
     else:
-        invited_user_id = test_user_id  # Fallback
+        print(f"❌ Failed to invite user")
+        invited_user_id = test_user_id
 
-    # 3. PATCH /team/:userId/role
-    print("\n[3/8] PATCH /api/v1/team/{userId}/role")
-    if invited_user_id:
-        role_update = {"role": "HR_SPECIALIST"}
-        role_result = helper.put(f"/api/v1/team/{invited_user_id}/role", role_update)
-        if role_result:
-            print(f"✅ Role updated to: {role_result.get('role', 'N/A')}")
+    # 3. PATCH /team/:id (update user)
+    print("\n[3/5] PATCH /api/v1/team/{userId}")
+    if test_user_id:
+        update_data = {"role": "HR_SPECIALIST"}
+        response = helper.patch(f"/api/v1/team/{test_user_id}", update_data)
+        if response and response.get('success'):
+            updated_user = response.get('data', {})
+            print(f"✅ User updated - Role: {updated_user.get('role', 'N/A')}")
             passed += 1
+        else:
+            print(f"❌ Failed to update user")
     else:
         print("   ⚠️  SKIP - No user ID available")
 
-    # 4. GET /team/:userId/permissions
-    print("\n[4/8] GET /api/v1/team/{userId}/permissions")
-    if invited_user_id:
-        perms = helper.get(f"/api/v1/team/{invited_user_id}/permissions")
-        if perms:
-            print(f"✅ Permissions retrieved")
+    # 4. PATCH /team/:id/toggle (deactivate/reactivate)
+    print("\n[4/5] PATCH /api/v1/team/{userId}/toggle")
+    if test_user_id:
+        response = helper.patch(f"/api/v1/team/{test_user_id}/toggle", {})
+        if response and response.get('success'):
+            print(f"✅ User toggled (activated/deactivated)")
             passed += 1
+        else:
+            print(f"❌ Failed to toggle user")
     else:
         print("   ⚠️  SKIP - No user ID available")
 
-    # 5. PATCH /team/:userId/permissions
-    print("\n[5/8] PATCH /api/v1/team/{userId}/permissions")
+    # 5. DELETE /team/:id
+    print("\n[5/5] DELETE /api/v1/team/{userId}")
     if invited_user_id:
-        perm_update = {"canManageJobPostings": True}
-        perm_result = helper.put(f"/api/v1/team/{invited_user_id}/permissions", perm_update)
-        if perm_result:
-            print(f"✅ Permissions updated")
-            passed += 1
-    else:
-        print("   ⚠️  SKIP - No user ID available")
-
-    # 6. POST /team/:userId/deactivate
-    print("\n[6/8] POST /api/v1/team/{userId}/deactivate")
-    if invited_user_id:
-        deactivate_result = helper.post(f"/api/v1/team/{invited_user_id}/deactivate", {})
-        if deactivate_result:
-            print(f"✅ User deactivated")
-            passed += 1
-    else:
-        print("   ⚠️  SKIP - No user ID available")
-
-    # 7. POST /team/:userId/reactivate
-    print("\n[7/8] POST /api/v1/team/{userId}/reactivate")
-    if invited_user_id:
-        reactivate_result = helper.post(f"/api/v1/team/{invited_user_id}/reactivate", {})
-        if reactivate_result:
-            print(f"✅ User reactivated")
-            passed += 1
-    else:
-        print("   ⚠️  SKIP - No user ID available")
-
-    # 8. DELETE /team/:userId
-    print("\n[8/8] DELETE /api/v1/team/{userId}")
-    if invited_user_id:
-        delete_result = helper.delete(f"/api/v1/team/{invited_user_id}")
-        if delete_result:
+        # Only delete if we created it
+        response = helper.delete(f"/api/v1/team/{invited_user_id}")
+        if response:
             print(f"✅ User removed")
             passed += 1
+        else:
+            print(f"❌ Failed to delete user")
     else:
-        print("   ⚠️  SKIP - No user ID available")
+        print("   ⚠️  SKIP - No invited user to delete")
 
     print(f"\n📊 User Management: {passed}/{total} passed")
     return passed, total
 
 def test_settings(helper):
-    """Test Settings Endpoints (4 endpoints)"""
+    """Test Settings Endpoints (2 endpoints from userRoutes)"""
     print("\n" + "="*60)
-    print("⚙️  SETTINGS (4 endpoints)")
+    print("⚙️  SETTINGS (2 endpoints)")
     print("="*60)
 
     passed = 0
-    total = 4
+    total = 2
 
-    # 1. GET /settings/security
-    print("\n[1/4] GET /api/v1/settings/security")
-    security = helper.get("/api/v1/settings/security")
-    if security:
-        print(f"✅ Security settings retrieved")
+    # 1. GET /user/me/notifications (notification preferences)
+    print("\n[1/2] GET /api/v1/user/me/notifications")
+    response = helper.get("/api/v1/user/me/notifications")
+    if response and response.get('success'):
+        prefs = response.get('data', {})
+        print(f"✅ Notification preferences retrieved")
+        print(f"   Email: {prefs.get('emailNotifications', 'N/A')}")
+        print(f"   In-app: {prefs.get('inAppNotifications', 'N/A')}")
         passed += 1
+    else:
+        print(f"❌ Failed to get notification preferences")
 
-    # 2. PATCH /settings/security
-    print("\n[2/4] PATCH /api/v1/settings/security")
-    security_update = {"twoFactorEnabled": False}
-    security_result = helper.put("/api/v1/settings/security", security_update)
-    if security_result:
-        print(f"✅ Security settings updated")
+    # 2. PATCH /user/me/notifications
+    print("\n[2/2] PATCH /api/v1/user/me/notifications")
+    prefs_update = {
+        "emailNotifications": True,
+        "inAppNotifications": True
+    }
+    response = helper.patch("/api/v1/user/me/notifications", prefs_update)
+    if response and response.get('success'):
+        print(f"✅ Notification preferences updated")
         passed += 1
-
-    # 3. GET /settings/integrations
-    print("\n[3/4] GET /api/v1/settings/integrations")
-    integrations = helper.get("/api/v1/settings/integrations")
-    if integrations is not None:
-        print(f"✅ Integrations retrieved")
-        passed += 1
-
-    # 4. PATCH /settings/integrations
-    print("\n[4/4] PATCH /api/v1/settings/integrations")
-    integration_update = {"emailEnabled": True}
-    integration_result = helper.put("/api/v1/settings/integrations", integration_update)
-    if integration_result:
-        print(f"✅ Integrations updated")
-        passed += 1
+    else:
+        print(f"❌ Failed to update notification preferences")
 
     print(f"\n📊 Settings: {passed}/{total} passed")
     return passed, total
@@ -347,26 +330,31 @@ def test_cross_org_isolation(helper_org1, org1_id):
         print("❌ Failed to login to Org 2")
         return 0, total
 
-    org2 = helper_org2.get("/api/v1/organizations/me")
-    org2_id = org2.get('id') if org2 else None
+    response = helper_org2.get("/api/v1/organizations/me")
+    if not response or not response.get('success'):
+        print("❌ Failed to get Org 2 data")
+        return 0, total
+
+    org2_data = response.get('data', {})
+    org2_id = org2_data.get('id')
 
     if not org2_id:
         print("❌ Failed to get Org 2 ID")
         return 0, total
 
     print(f"✅ Org 2 ID: {org2_id}")
+    print(f"   Name: {org2_data.get('name', 'N/A')}")
     passed += 1
 
     # Test 1: Org 1 ADMIN cannot access Org 2 data
     print("\n[2/3] Org 1 ADMIN tries to access Org 2 organization...")
 
-    # Try to access org 2's data using org 1 credentials
     # Most endpoints are implicit (use token's org), so we test team endpoint
     print("   Testing: GET /api/v1/team (should only see Org 1 users)")
-    team_org1 = helper_org1.get("/api/v1/team")
+    response = helper_org1.get("/api/v1/team")
 
-    if team_org1:
-        users_org1 = team_org1 if isinstance(team_org1, list) else team_org1.get('users', [])
+    if response and response.get('success'):
+        users_org1 = response.get('data', {}).get('users', [])
 
         # Verify all users belong to org1
         all_same_org = True
@@ -386,10 +374,10 @@ def test_cross_org_isolation(helper_org1, org1_id):
 
     # Test 2: Verify Org 2 ADMIN sees different data
     print("\n[3/3] Verify Org 2 ADMIN sees different team...")
-    team_org2 = helper_org2.get("/api/v1/team")
+    response = helper_org2.get("/api/v1/team")
 
-    if team_org2:
-        users_org2 = team_org2 if isinstance(team_org2, list) else team_org2.get('users', [])
+    if response and response.get('success'):
+        users_org2 = response.get('data', {}).get('users', [])
 
         # Verify all users belong to org2
         all_same_org = True
@@ -403,7 +391,7 @@ def test_cross_org_isolation(helper_org1, org1_id):
             print(f"   ✅ All {len(users_org2)} users belong to Org 2")
 
             # Verify no overlap
-            org1_emails = {u.get('email') for u in users_org1}
+            org1_emails = {u.get('email') for u in users_org1 if users_org1}
             org2_emails = {u.get('email') for u in users_org2}
             overlap = org1_emails & org2_emails
 
@@ -442,16 +430,12 @@ def main():
         print("❌ Login failed! Aborting test.")
         return
 
-    # Get org ID
-    org = helper.get("/api/v1/organizations/me")
-    org_id = org.get('id') if org else None
-
     # Run all tests
     total_passed = 0
     total_tests = 0
 
     # 1. Organization Management
-    org_passed, org_total = test_org_management(helper)
+    org_passed, org_total, org_id = test_org_management(helper)
     total_passed += org_passed
     total_tests += org_total
 
