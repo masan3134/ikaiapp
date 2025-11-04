@@ -288,3 +288,6 @@ scan-*.txt
 test-*.txt
 test-*.py
 backend/error-logs/*.jsonl
+
+# Puppeteer screenshots (browser testing)
+screenshots/
