@@ -1000,6 +1000,206 @@
           "404": {"description": "Not found"}
         }
       }
+    },
+    "/api/v1/candidates": {
+      "get": {
+        "tags": ["Candidates"],
+        "summary": "Get all candidates",
+        "description": "Returns candidates for current organization. Requires HR_MANAGERS role.",
+        "security": [{"bearerAuth": []}],
+        "x-rbac": {"roleGroup": "HR_MANAGERS"},
+        "parameters": [
+          {"in": "query", "name": "page", "schema": {"type": "integer", "default": 1}},
+          {"in": "query", "name": "limit", "schema": {"type": "integer", "default": 20}},
+          {"in": "query", "name": "search", "schema": {"type": "string"}, "description": "Search by name or email"},
+          {"in": "query", "name": "jobPostingId", "schema": {"type": "string", "format": "uuid"}, "description": "Filter by job posting"}
+        ],
+        "responses": {
+          "200": {
+            "description": "List of candidates",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {"$ref": "#/components/schemas/Candidate"}
+                }
+              }
+            }
+          },
+          "403": {"description": "Forbidden (USER role)"}
+        }
+      }
+    },
+    "/api/v1/candidates/check-duplicate": {
+      "post": {
+        "tags": ["Candidates"],
+        "summary": "Check duplicate CV file",
+        "description": "Check if CV file already exists before upload. Prevents duplicate uploads.",
+        "security": [{"bearerAuth": []}],
+        "x-rbac": {"roleGroup": "HR_MANAGERS"},
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "fileName": {"type": "string"},
+                  "fileSize": {"type": "integer"},
+                  "fileHash": {"type": "string", "description": "MD5 hash of file"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Duplicate check result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "isDuplicate": {"type": "boolean"},
+                    "existingCandidate": {"$ref": "#/components/schemas/Candidate", "nullable": true}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/candidates/upload": {
+      "post": {
+        "tags": ["Candidates"],
+        "summary": "Upload CV and create candidate",
+        "description": "Upload CV file (PDF, DOCX, TXT) and create candidate record. Tracks usage limits (maxCvPerMonth).",
+        "security": [{"bearerAuth": []}],
+        "x-rbac": {"roleGroup": "HR_MANAGERS"},
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": ["cv"],
+                "properties": {
+                  "cv": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "CV file (PDF, DOCX, TXT, max 10MB)"
+                  },
+                  "name": {"type": "string", "description": "Candidate name (optional, extracted from CV if not provided)"},
+                  "email": {"type": "string", "format": "email"},
+                  "phone": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "CV uploaded, candidate created",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Candidate"}
+              }
+            }
+          },
+          "400": {"description": "Invalid file format or size"},
+          "403": {"description": "Usage limit exceeded (FREE plan: 50 CVs/month)"},
+          "413": {"description": "File too large (max 10MB)"}
+        }
+      }
+    },
+    "/api/v1/candidates/{id}": {
+      "get": {
+        "tags": ["Candidates"],
+        "summary": "Get candidate by ID",
+        "security": [{"bearerAuth": []}],
+        "x-rbac": {"roleGroup": "HR_MANAGERS"},
+        "parameters": [
+          {"in": "path", "name": "id", "required": true, "schema": {"type": "string", "format": "uuid"}}
+        ],
+        "responses": {
+          "200": {
+            "description": "Candidate details",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Candidate"}
+              }
+            }
+          },
+          "404": {"description": "Candidate not found"},
+          "403": {"description": "Cannot access other organization's candidate"}
+        }
+      },
+      "delete": {
+        "tags": ["Candidates"],
+        "summary": "Delete candidate",
+        "description": "Delete candidate and associated CV file from MinIO.",
+        "security": [{"bearerAuth": []}],
+        "x-rbac": {"roleGroup": "HR_MANAGERS"},
+        "parameters": [
+          {"in": "path", "name": "id", "required": true, "schema": {"type": "string", "format": "uuid"}}
+        ],
+        "responses": {
+          "204": {"description": "Candidate deleted"},
+          "403": {"description": "Forbidden"},
+          "404": {"description": "Not found"}
+        }
+      }
+    },
+    "/api/v1/candidates/export/xlsx": {
+      "get": {
+        "tags": ["Candidates"],
+        "summary": "Export candidates to Excel",
+        "description": "Download all candidates as XLSX file",
+        "security": [{"bearerAuth": []}],
+        "x-rbac": {"roleGroup": "HR_MANAGERS"},
+        "responses": {
+          "200": {
+            "description": "XLSX file download",
+            "content": {
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {
+                "schema": {"type": "string", "format": "binary"}
+              }
+            },
+            "headers": {
+              "Content-Disposition": {
+                "schema": {"type": "string"},
+                "description": "attachment; filename=candidates.xlsx"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/candidates/export/csv": {
+      "get": {
+        "tags": ["Candidates"],
+        "summary": "Export candidates to CSV",
+        "description": "Download all candidates as CSV file",
+        "security": [{"bearerAuth": []}],
+        "x-rbac": {"roleGroup": "HR_MANAGERS"},
+        "responses": {
+          "200": {
+            "description": "CSV file download",
+            "content": {
+              "text/csv": {
+                "schema": {"type": "string"}
+              }
+            },
+            "headers": {
+              "Content-Disposition": {
+                "schema": {"type": "string"},
+                "description": "attachment; filename=candidates.csv"
+              }
+            }
+          }
+        }
+      }
     }
   },
   "tags": [
