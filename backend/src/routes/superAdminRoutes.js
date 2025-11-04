@@ -346,10 +346,13 @@ router.delete('/:id', superAdminOnly, async (req, res) => {
  */
 router.get('/queues', superAdminOnly, async (req, res) => {
   try {
-    const Queue = require('bull');
+    const { Queue } = require('bullmq');
 
-    // REDIS_URL from environment
-    const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:8179';
+    // Redis connection config (BullMQ format)
+    const connection = {
+      host: process.env.REDIS_HOST || 'localhost',
+      port: parseInt(process.env.REDIS_PORT || '8179')
+    };
 
     // Queue names (must match workers)
     const queueNames = ['analysis', 'offer', 'email', 'test-generation', 'feedback'];
@@ -358,8 +361,11 @@ router.get('/queues', superAdminOnly, async (req, res) => {
     const queueStats = await Promise.all(
       queueNames.map(async (name) => {
         try {
-          const queue = new Queue(name, REDIS_URL);
+          const queue = new Queue(name, { connection });
           const counts = await queue.getJobCounts();
+
+          // Close queue connection
+          await queue.close();
 
           return {
             name: name,
@@ -434,13 +440,17 @@ router.get('/system-health', superAdminOnly, async (req, res) => {
 
     // 2. Redis health (via BullMQ connection)
     try {
-      const Queue = require('bull');
-      const testQueue = new Queue('health-check', process.env.REDIS_URL || 'redis://localhost:8179');
-      await testQueue.isReady();
+      const { Queue } = require('bullmq');
+      const connection = {
+        host: process.env.REDIS_HOST || 'localhost',
+        port: parseInt(process.env.REDIS_PORT || '8179')
+      };
+      const testQueue = new Queue('health-check', { connection });
+      await testQueue.waitUntilReady();
       health.services.redis = {
         status: 'healthy',
         type: 'Redis',
-        url: process.env.REDIS_URL || 'redis://localhost:8179'
+        connection: `${connection.host}:${connection.port}`
       };
       await testQueue.close();
     } catch (error) {
