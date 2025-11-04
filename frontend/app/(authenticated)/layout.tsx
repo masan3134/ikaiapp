@@ -58,9 +58,11 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     { name: 'Analiz Sihirbazı', path: '/wizard', icon: Wand2 },
     // 5. Geçmiş Analizlerim (past analyses)
     { name: 'Geçmiş Analizlerim', path: '/analyses', icon: Clock },
-    // 6. Mülakatlar (interview scheduled candidates)
+    // 6. Teklifler (make offers to selected candidates) - has submenu
+    { name: 'Teklifler', path: '/offers', icon: FileText, hasSubmenu: true },
+    // 7. Mülakatlar (interview scheduled candidates)
     { name: 'Mülakatlar', path: '/interviews', icon: Calendar },
-    // 7. Takım (team management - MANAGER+)
+    // 8. Takım (team management - MANAGER+)
     ...(user?.role === 'MANAGER' || user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN' ? [{ name: 'Takım', path: '/team', icon: UserCog }] : []),
     // 8. Analitik (analytics & reports - MANAGER+)
     ...(user?.role === 'MANAGER' || user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN' ? [{ name: 'Analitik', path: '/analytics', icon: BarChart3 }] : []),
@@ -136,6 +138,63 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 const Icon = item.icon;
                 const isActive = pathname === item.path;
 
+                // Handle Teklifler with submenu
+                if (item.hasSubmenu && item.name === 'Teklifler') {
+                  return (
+                    <div key={item.path}>
+                      <button
+                        onClick={() => setIsOffersExpanded(!isOffersExpanded)}
+                        className={`
+                          w-full flex items-center justify-between gap-3 px-4 py-3 rounded-lg
+                          transition-colors duration-150
+                          ${
+                            pathname.startsWith('/offers')
+                              ? 'bg-blue-50 text-blue-600 font-medium'
+                              : 'text-gray-700 hover:bg-gray-50'
+                          }
+                        `}
+                      >
+                        <div className="flex items-center gap-3">
+                          <Icon size={20} />
+                          <span>{item.name}</span>
+                        </div>
+                        {isOffersExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+                      </button>
+
+                      {/* Submenu */}
+                      {isOffersExpanded && (
+                        <div className="mt-1 ml-4 space-y-1">
+                          {offerSubMenuItems.map((subItem) => {
+                            const SubIcon = subItem.icon;
+                            const isSubActive = pathname === subItem.path;
+
+                            return (
+                              <Link
+                                key={subItem.path}
+                                href={subItem.path}
+                                onClick={() => setIsSidebarOpen(false)}
+                                className={`
+                                  flex items-center gap-3 px-4 py-2 rounded-lg text-sm
+                                  transition-colors duration-150
+                                  ${
+                                    isSubActive
+                                      ? 'bg-blue-50 text-blue-600 font-medium'
+                                      : 'text-gray-600 hover:bg-gray-50'
+                                  }
+                                `}
+                              >
+                                <SubIcon size={18} />
+                                <span>{subItem.name}</span>
+                              </Link>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  );
+                }
+
+                // Regular menu item
                 return (
                   <Link
                     key={item.path}
@@ -156,58 +215,6 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                   </Link>
                 );
               })}
-
-              {/* Offers collapsible menu */}
-              <div>
-                <button
-                  onClick={() => setIsOffersExpanded(!isOffersExpanded)}
-                  className={`
-                    w-full flex items-center justify-between gap-3 px-4 py-3 rounded-lg
-                    transition-colors duration-150
-                    ${
-                      pathname.startsWith('/offers')
-                        ? 'bg-blue-50 text-blue-600 font-medium'
-                        : 'text-gray-700 hover:bg-gray-50'
-                    }
-                  `}
-                >
-                  <div className="flex items-center gap-3">
-                    <FileText size={20} />
-                    <span>Teklifler</span>
-                  </div>
-                  {isOffersExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
-                </button>
-
-                {/* Submenu */}
-                {isOffersExpanded && (
-                  <div className="mt-1 ml-4 space-y-1">
-                    {offerSubMenuItems.map((item) => {
-                      const Icon = item.icon;
-                      const isActive = pathname === item.path;
-
-                      return (
-                        <Link
-                          key={item.path}
-                          href={item.path}
-                          onClick={() => setIsSidebarOpen(false)}
-                          className={`
-                            flex items-center gap-3 px-4 py-2 rounded-lg text-sm
-                            transition-colors duration-150
-                            ${
-                              isActive
-                                ? 'bg-blue-50 text-blue-600 font-medium'
-                                : 'text-gray-600 hover:bg-gray-50'
-                            }
-                          `}
-                        >
-                          <Icon size={18} />
-                          <span>{item.name}</span>
-                        </Link>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
             </nav>
 
             {/* User Section */}
