@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Server, Cpu, Activity, Zap } from "lucide-react";
 import { withRoleProtection } from "@/lib/hoc/withRoleProtection";
 import apiClient from "@/lib/services/apiClient";
+import toast from "react-hot-toast";
 
 function SuperAdminSystemPage() {
   const [data, setData] = useState(null);
@@ -10,9 +11,17 @@ function SuperAdminSystemPage() {
 
   useEffect(() => {
     apiClient.get("/api/v1/super-admin/system-health").then(r => {
-      if (r.data.success) setData(r.data.data);
+      if (r.data.success) {
+        setData(r.data.data);
+      } else {
+        toast.error(r.data.message || "Sistem sağlığı yüklenemedi");
+      }
       setLoading(false);
-    }).catch(e => { console.error(e); setLoading(false); });
+    }).catch(e => {
+      console.error(e);
+      toast.error("Sistem sağlığı yüklenirken hata oluştu");
+      setLoading(false);
+    });
   }, []);
 
   if (loading) return <div className="p-12 text-center">Yükleniyor...</div>;
