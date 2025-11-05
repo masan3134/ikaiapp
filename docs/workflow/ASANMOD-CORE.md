@@ -61,6 +61,12 @@ Task: 3-5 lines max
 Report: 3-5 lines max
 
 Use: Emoji + file ref + status
+
+MOD OUTPUT STYLE:
+- Tablo kullan (görsel)
+- Checklist format
+- Status icons (✅ ❌ ⏳ 🔄)
+- Kısa Insight (1-2 cümle, net)
 ```
 
 ### Rule 4: Raw Data Only
