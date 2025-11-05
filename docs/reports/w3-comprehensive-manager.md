@@ -86,13 +86,14 @@
 
 ### RBAC Forbidden Endpoints (3)
 
-| Endpoint | Method | Expected | Actual | Result |
-|----------|--------|----------|--------|--------|
-| \`/api/v1/organizations/me\` | PATCH | 403 | 403 | ✅ Correct |
-| \`/api/v1/super-admin/organizations\` | GET | 403 | 403 | ✅ Correct |
-| \`/api/v1/super-admin/queues\` | GET | 403 | 403 | ✅ Correct |
+| Endpoint | Method | Expected | Actual | Result | Note |
+|----------|--------|----------|--------|--------|------|
+| \`/api/v1/organizations/me\` | GET | 200 | 200 | ✅ Allowed | All authenticated users can read their org |
+| \`/api/v1/organizations/me\` | PATCH | 403 | 403 | ✅ Correct | Only ADMIN can update |
+| \`/api/v1/super-admin/organizations\` | GET | 403 | 403 | ✅ Correct |  |
+| \`/api/v1/super-admin/queues\` | GET | 403 | 403 | ✅ Correct |  |
 
-**Summary:** 3/3 correctly forbidden (100%)
+**Summary:** 2/3 correctly forbidden, 1/3 correctly allowed
 
 ---
 
