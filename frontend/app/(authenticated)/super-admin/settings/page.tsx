@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Settings, Save } from "lucide-react";
 import { withRoleProtection } from "@/lib/hoc/withRoleProtection";
 import apiClient from "@/lib/services/apiClient";
+import toast from "react-hot-toast";
 
 function SuperAdminSettingsPage() {
   const [data, setData] = useState(null);
@@ -11,19 +12,31 @@ function SuperAdminSettingsPage() {
 
   useEffect(() => {
     apiClient.get("/api/v1/super-admin/settings").then(r => {
-      if (r.data.success) setData(r.data.data);
+      if (r.data.success) {
+        setData(r.data.data);
+      } else {
+        toast.error(r.data.message || "Ayarlar yüklenemedi");
+      }
       setLoading(false);
-    }).catch(e => { console.error(e); setLoading(false); });
+    }).catch(e => {
+      console.error(e);
+      toast.error("Ayarlar yüklenirken hata oluştu");
+      setLoading(false);
+    });
   }, []);
 
   const handleSave = async () => {
     setSaving(true);
     try {
-      await apiClient.post("/api/v1/super-admin/settings", data);
-      alert("Ayarlar kaydedildi!");
+      const res = await apiClient.post("/api/v1/super-admin/settings", data);
+      if (res.data.success) {
+        toast.success("Ayarlar başarıyla kaydedildi!");
+      } else {
+        toast.error(res.data.message || "Ayarlar kaydedilemedi");
+      }
     } catch (e) {
       console.error(e);
-      alert("Hata!");
+      toast.error("Ayarlar kaydedilirken hata oluştu");
     } finally {
       setSaving(false);
     }
