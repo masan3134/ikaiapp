@@ -277,6 +277,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                                   <Link
                                     key={subItem.path}
                                     href={subItem.path}
+                                    prefetch={false}
                                     onClick={() => setIsSidebarOpen(false)}
                                     className={`
                                   flex items-center gap-3 px-4 py-2 rounded-lg text-sm
@@ -304,6 +305,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                       <Link
                         key={item.path}
                         href={item.path}
+                        prefetch={false}
                         onClick={() => setIsSidebarOpen(false)}
                         className={`
                       flex items-center gap-3 px-4 py-3 rounded-lg
