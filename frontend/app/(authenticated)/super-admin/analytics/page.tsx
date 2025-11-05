@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { BarChart3, TrendingUp, Users, Database, Briefcase, FileText } from "lucide-react";
 import { withRoleProtection } from "@/lib/hoc/withRoleProtection";
 import apiClient from "@/lib/services/apiClient";
+import toast from "react-hot-toast";
 
 function SuperAdminAnalyticsPage() {
   const [data, setData] = useState(null);
@@ -20,9 +21,12 @@ function SuperAdminAnalyticsPage() {
 
       if (res.data.success) {
         setData(res.data.data);
+      } else {
+        toast.error(res.data.message || "Analitikler yüklenemedi");
       }
     } catch (error) {
       console.error("Error loading analytics:", error);
+      toast.error("Analitikler yüklenirken hata oluştu");
     } finally {
       setLoading(false);
     }
