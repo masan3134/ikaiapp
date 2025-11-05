@@ -709,14 +709,14 @@ router.get('/database-stats', superAdminOnly, async (req, res) => {
   try {
     const stats = await prisma.$queryRaw`
       SELECT
-        (SELECT COUNT(*) FROM "users") as total_users,
-        (SELECT COUNT(*) FROM "organizations") as total_orgs,
-        (SELECT COUNT(*) FROM "jobPostings") as total_jobs,
-        (SELECT COUNT(*) FROM "candidates") as total_candidates,
-        (SELECT COUNT(*) FROM "analyses") as total_analyses,
-        (SELECT COUNT(*) FROM "offers") as total_offers,
-        (SELECT COUNT(*) FROM "interviews") as total_interviews,
-        (SELECT COUNT(*) FROM "notifications") as total_notifications,
+        (SELECT COUNT(*) FROM "User") as total_users,
+        (SELECT COUNT(*) FROM "Organization") as total_orgs,
+        (SELECT COUNT(*) FROM "JobPosting") as total_jobs,
+        (SELECT COUNT(*) FROM "Candidate") as total_candidates,
+        (SELECT COUNT(*) FROM "Analysis") as total_analyses,
+        (SELECT COUNT(*) FROM "Offer") as total_offers,
+        (SELECT COUNT(*) FROM "Interview") as total_interviews,
+        (SELECT COUNT(*) FROM "Notification") as total_notifications,
         pg_size_pretty(pg_database_size(current_database())) as db_size
     `;
 
@@ -760,8 +760,8 @@ router.get('/redis-stats', superAdminOnly, async (req, res) => {
     const testQueue = new Queue('health-check', { connection });
     await testQueue.waitUntilReady();
 
-    // Get Redis client
-    const client = testQueue.redisConnection;
+    // Get Redis client from BullMQ queue
+    const client = await testQueue.client;
 
     // Get info
     const info = await client.info('memory');
