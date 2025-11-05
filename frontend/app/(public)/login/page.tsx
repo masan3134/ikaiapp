@@ -40,6 +40,7 @@ export default function LoginPage() {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
+    console.log("[LOGIN] handleSubmit called");  // DEBUG
     e.preventDefault();
     setValidationError("");
     clearError();
@@ -57,29 +58,35 @@ export default function LoginPage() {
 
     try {
       // Login first
+      console.log("[LOGIN] Calling login()...");  // DEBUG
       await login(email, password);
+      console.log("[LOGIN] Login successful");  // DEBUG
 
       // Check onboarding status using apiClient (works in browser)
       try {
+        console.log("[LOGIN] Fetching organization...");  // DEBUG
         const response = await apiClient.get("/api/v1/organizations/me");
         const org = response.data.data;
+        console.log("[LOGIN] Org fetched, onboarding:", org.onboardingCompleted);  // DEBUG
 
         // Redirect based on onboarding status
         // Use window.location to avoid Next.js prefetch race conditions
         if (org.onboardingCompleted) {
+          console.log("[LOGIN] Redirecting to /dashboard");  // DEBUG
           window.location.href = "/dashboard";
         } else {
+          console.log("[LOGIN] Redirecting to /onboarding");  // DEBUG
           window.location.href = "/onboarding";
         }
       } catch (orgError) {
         // Fallback to dashboard if org fetch fails
-        console.error("Org fetch error:", orgError);
+        console.error("[LOGIN] Org fetch error:", orgError);
         window.location.href = "/dashboard";
       }
     } catch (err: any) {
       // useAuthStore zaten hata durumunu yönetiyor.
       // Konsola yazdırmak, geliştirme sırasında hata ayıklama için yararlıdır.
-      console.error("Login error:", err);
+      console.error("[LOGIN] Login error:", err);
     }
   };
 
