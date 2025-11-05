@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { FileText, Search, Filter, Download } from "lucide-react";
 import { withRoleProtection } from "@/lib/hoc/withRoleProtection";
 import apiClient from "@/lib/services/apiClient";
+import toast from "react-hot-toast";
 
 function SuperAdminLogsPage() {
   const [logs, setLogs] = useState([]);
@@ -20,9 +21,12 @@ function SuperAdminLogsPage() {
       const res = await apiClient.get(`/api/v1/super-admin/logs?level=${level}&limit=50`);
       if (res.data.success) {
         setLogs(res.data.data.logs);
+      } else {
+        toast.error(res.data.message || "Loglar yüklenemedi");
       }
     } catch (error) {
       console.error("Error loading logs:", error);
+      toast.error("Loglar yüklenirken hata oluştu");
     } finally {
       setLoading(false);
     }
