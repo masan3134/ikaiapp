@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Users, UserPlus, Search, Filter, Shield, Building2 } from "lucide-react";
 import { withRoleProtection } from "@/lib/hoc/withRoleProtection";
 import apiClient from "@/lib/services/apiClient";
+import toast from "react-hot-toast";
 
 function SuperAdminUsersPage() {
   const [users, setUsers] = useState([]);
@@ -26,9 +27,12 @@ function SuperAdminUsersPage() {
       if (res.data.success) {
         setUsers(res.data.data.users);
         setStats(res.data.data.stats);
+      } else {
+        toast.error(res.data.message || "Kullanıcılar yüklenemedi");
       }
     } catch (error) {
       console.error("Error loading users:", error);
+      toast.error("Kullanıcılar yüklenirken hata oluştu");
     } finally {
       setLoading(false);
     }
