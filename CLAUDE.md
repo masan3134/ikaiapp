@@ -520,14 +520,16 @@ git commit -m "docs(workflow): Update task assignments [MOD]"
 
 ## ⚠️ STRICT RULES
 
-**Rule 1: NEVER GIVE UP** - 3 errors → Ask Gemini
-**Rule 2: VALIDATE FIRST** - Check paths, test, then execute
-**Rule 3: GEMINI ASSISTANT** - Get suggestion → Validate → Apply
-**Rule 4: HOT RELOAD ON** - Backend (nodemon), Frontend (Next.js dev)
-**Rule 5: NO ROOT FILES** - Use `docs/` for documentation
-**Rule 6: READ YOUR PLAYBOOK** - MOD-PLAYBOOK.md or WORKER-PLAYBOOK.md
-**Rule 7: PYTHON FIRST** - NEVER use curl for API testing! Use Python requests (see MOD/WORKER playbooks Rule 11)
-**Rule 8: BEWARE DUPLICATE FILES** - Check which file is ACTUALLY used before editing! (Details: docs/DUPLICATE-FILES-WARNING.md)
+**Rule 1: ZERO CONSOLE ERROR TOLERANCE** 🚨 - SIFIR konsol hatası zorunlu! MOD ve WORKER konsol hatası varken "tamam" diyemez. playwright.console_errors() veya puppeteer.console_errors() → errorCount MUST be 0. Hiç istisna yok!
+**Rule 2: CREDENTIALS CENTRAL** 📋 - TÜM credentials tek yerde: `docs/CREDENTIALS.md`. Env vars, test users, API keys, database credentials - hiçbir şey aranmaz, hepsi hazır!
+**Rule 3: NEVER GIVE UP** - 3 errors → Ask Gemini
+**Rule 4: VALIDATE FIRST** - Check paths, test, then execute
+**Rule 5: GEMINI ASSISTANT** - Get suggestion → Validate → Apply
+**Rule 6: HOT RELOAD ON** - Backend (nodemon), Frontend (Next.js dev)
+**Rule 7: NO ROOT FILES** - Use `docs/` for documentation
+**Rule 8: READ YOUR PLAYBOOK** - MOD-PLAYBOOK.md or WORKER-PLAYBOOK.md
+**Rule 9: PYTHON FIRST** - NEVER use curl for API testing! Use Python requests (see MOD/WORKER playbooks Rule 11)
+**Rule 10: BEWARE DUPLICATE FILES** - Check which file is ACTUALLY used before editing! (Details: docs/DUPLICATE-FILES-WARNING.md)
 
 **Gemini Helper:**
 ```bash
