@@ -91,18 +91,22 @@ class UserService {
   /**
    * Create new user
    */
-  async createUser({ email, password, role = 'USER' }) {
+  async createUser({ email, password, role = 'USER', organizationId, firstName, lastName, department }) {
     // Validate
     if (!email || !password) {
       throw new Error('Email ve şifre zorunludur');
+    }
+
+    if (!organizationId) {
+      throw new Error('Organization ID zorunludur');
     }
 
     if (password.length < 6) {
       throw new Error('Şifre en az 6 karakter olmalıdır');
     }
 
-    if (!['USER', 'ADMIN'].includes(role)) {
-      throw new Error('Geçersiz rol. USER veya ADMIN olmalıdır');
+    if (!['USER', 'ADMIN', 'HR_SPECIALIST', 'MANAGER'].includes(role)) {
+      throw new Error('Geçersiz rol');
     }
 
     // Check if user exists
@@ -122,12 +126,16 @@ class UserService {
       data: {
         email: email.toLowerCase().trim(),
         password: hashedPassword,
-        role
+        role,
+        organizationId,
+        ...(firstName && { firstName }),
+        ...(lastName && { lastName })
       },
       select: {
         id: true,
         email: true,
         role: true,
+        organizationId: true,
         createdAt: true
       }
     });
