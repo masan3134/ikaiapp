@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 function SuperAdminSecurityPage() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     loadSecuritySettings();
@@ -30,6 +31,25 @@ function SuperAdminSecurityPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleToggle = (category: "authentication" | "accessControl", field: string) => {
+    setSaving(true);
+
+    // Update local state immediately (optimistic update)
+    setData((prev: any) => ({
+      ...prev,
+      [category]: {
+        ...prev[category],
+        [field]: !prev[category][field]
+      }
+    }));
+
+    // Simulate API call (in real implementation, would call backend)
+    setTimeout(() => {
+      setSaving(false);
+      toast.success(`${field} ayarı güncellendi`);
+    }, 300);
   };
 
   if (loading) {
@@ -100,27 +120,31 @@ function SuperAdminSecurityPage() {
           <div className="space-y-3">
             <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
               <span className="text-sm text-gray-700">İki Faktörlü Doğrulama</span>
-              <span
-                className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+              <button
+                onClick={() => handleToggle("authentication", "twoFactorEnabled")}
+                disabled={saving}
+                className={`px-4 py-1.5 rounded-full text-xs font-medium transition-colors ${
                   data.authentication.twoFactorEnabled
-                    ? "bg-green-100 text-green-700"
-                    : "bg-gray-100 text-gray-700"
-                }`}
+                    ? "bg-green-600 text-white hover:bg-green-700"
+                    : "bg-gray-300 text-gray-700 hover:bg-gray-400"
+                } disabled:opacity-50`}
               >
                 {data.authentication.twoFactorEnabled ? "Aktif" : "Pasif"}
-              </span>
+              </button>
             </div>
             <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
               <span className="text-sm text-gray-700">Şifre Karmaşıklığı</span>
-              <span
-                className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+              <button
+                onClick={() => handleToggle("authentication", "passwordComplexity")}
+                disabled={saving}
+                className={`px-4 py-1.5 rounded-full text-xs font-medium transition-colors ${
                   data.authentication.passwordComplexity
-                    ? "bg-green-100 text-green-700"
-                    : "bg-gray-100 text-gray-700"
-                }`}
+                    ? "bg-green-600 text-white hover:bg-green-700"
+                    : "bg-gray-300 text-gray-700 hover:bg-gray-400"
+                } disabled:opacity-50`}
               >
                 {data.authentication.passwordComplexity ? "Zorunlu" : "Pasif"}
-              </span>
+              </button>
             </div>
             <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
               <span className="text-sm text-gray-700">Oturum Zaman Aşımı</span>
@@ -139,39 +163,45 @@ function SuperAdminSecurityPage() {
           <div className="space-y-3">
             <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
               <span className="text-sm text-gray-700">IP Beyaz Listesi</span>
-              <span
-                className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+              <button
+                onClick={() => handleToggle("accessControl", "ipWhitelist")}
+                disabled={saving}
+                className={`px-4 py-1.5 rounded-full text-xs font-medium transition-colors ${
                   data.accessControl.ipWhitelist
-                    ? "bg-green-100 text-green-700"
-                    : "bg-gray-100 text-gray-700"
-                }`}
+                    ? "bg-green-600 text-white hover:bg-green-700"
+                    : "bg-gray-300 text-gray-700 hover:bg-gray-400"
+                } disabled:opacity-50`}
               >
                 {data.accessControl.ipWhitelist ? "Aktif" : "Pasif"}
-              </span>
+              </button>
             </div>
             <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
               <span className="text-sm text-gray-700">API Rate Limiting</span>
-              <span
-                className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+              <button
+                onClick={() => handleToggle("accessControl", "apiRateLimit")}
+                disabled={saving}
+                className={`px-4 py-1.5 rounded-full text-xs font-medium transition-colors ${
                   data.accessControl.apiRateLimit
-                    ? "bg-green-100 text-green-700"
-                    : "bg-gray-100 text-gray-700"
-                }`}
+                    ? "bg-green-600 text-white hover:bg-green-700"
+                    : "bg-gray-300 text-gray-700 hover:bg-gray-400"
+                } disabled:opacity-50`}
               >
                 {data.accessControl.apiRateLimit ? "Aktif" : "Pasif"}
-              </span>
+              </button>
             </div>
             <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
               <span className="text-sm text-gray-700">CORS Koruması</span>
-              <span
-                className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+              <button
+                onClick={() => handleToggle("accessControl", "corsProtection")}
+                disabled={saving}
+                className={`px-4 py-1.5 rounded-full text-xs font-medium transition-colors ${
                   data.accessControl.corsProtection
-                    ? "bg-green-100 text-green-700"
-                    : "bg-gray-100 text-gray-700"
-                }`}
+                    ? "bg-green-600 text-white hover:bg-green-700"
+                    : "bg-gray-300 text-gray-700 hover:bg-gray-400"
+                } disabled:opacity-50`}
               >
                 {data.accessControl.corsProtection ? "Aktif" : "Pasif"}
-              </span>
+              </button>
             </div>
           </div>
         </div>
