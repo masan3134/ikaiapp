@@ -56,7 +56,7 @@ export default function UserAvatar() {
   ];
 
   return (
-    <div className="relative">
+    <div className="relative z-50">
       {/* Avatar Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
