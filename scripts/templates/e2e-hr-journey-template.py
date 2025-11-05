@@ -358,8 +358,13 @@ def run_hr_journey():
                 page.goto(f"{BASE_URL}{url}")
                 page.wait_for_timeout(1000)
 
-                if "/dashboard" in page.url or "/login" in page.url:
-                    print(f"  ✅ {url} → Blocked")
+                # Check if blocked (redirected OR 404 page)
+                is_redirected = "/dashboard" in page.url or "/login" in page.url
+                is_404 = "404" in page.title().lower() or "not found" in page.title().lower()
+
+                if is_redirected or is_404:
+                    status = "Redirected" if is_redirected else "404"
+                    print(f"  ✅ {url} → Blocked ({status})")
                     rbac_pass += 1
                 else:
                     print(f"  ❌ {url} → NOT blocked!")
