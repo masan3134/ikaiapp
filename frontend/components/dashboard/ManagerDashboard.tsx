@@ -30,12 +30,9 @@ export const ManagerDashboard = () => {
       setLoading(true);
       const response = await apiClient.get("/api/v1/dashboard/manager");
 
-      if (!response.ok) {
-        throw new Error("Failed to load dashboard");
-      }
-
-      const data = await response.json();
-      setStats(data.data);
+      // Axios automatically throws on non-2xx status codes
+      // response.data contains the JSON data directly
+      setStats(response.data.data);
       setError(null);
     } catch (err) {
       console.error("[MANAGER DASHBOARD] Load error:", err);
