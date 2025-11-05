@@ -18,9 +18,9 @@ export default function RegisterPage() {
   // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
-      router.push("/dashboard");
+      window.location.href = "/dashboard";
     }
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,7 +51,8 @@ export default function RegisterPage() {
     try {
       await register(email, password);
       // Auto-login happens in store, redirect to dashboard
-      router.push("/dashboard");
+      // Use window.location to avoid Next.js prefetch race conditions
+      window.location.href = "/dashboard";
     } catch (err: any) {
       console.error("Registration error:", err);
     }

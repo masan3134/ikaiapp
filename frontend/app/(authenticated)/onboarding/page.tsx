@@ -87,7 +87,8 @@ export default function OnboardingWizard() {
       if (res.ok) {
         localStorage.removeItem("onboarding-progress");
         await refreshOrganization();
-        router.push("/dashboard");
+        // Use window.location to avoid Next.js prefetch race conditions
+        window.location.href = "/dashboard";
       }
     } catch (error) {
       console.error("Complete onboarding error:", error);
