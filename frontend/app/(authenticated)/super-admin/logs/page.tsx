@@ -10,15 +10,16 @@ function SuperAdminLogsPage() {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [level, setLevel] = useState("all");
+  const [limit, setLimit] = useState(50);
 
   useEffect(() => {
     loadLogs();
-  }, [level]);
+  }, [level, limit]);
 
   const loadLogs = async () => {
     try {
       setLoading(true);
-      const res = await apiClient.get(`/api/v1/super-admin/logs?level=${level}&limit=50`);
+      const res = await apiClient.get(`/api/v1/super-admin/logs?level=${level}&limit=${limit}`);
       if (res.data.success) {
         setLogs(res.data.data.logs);
       } else {
@@ -65,6 +66,16 @@ function SuperAdminLogsPage() {
             <option value="WARN">WARN</option>
             <option value="INFO">INFO</option>
             <option value="DEBUG">DEBUG</option>
+          </select>
+          <select
+            value={limit}
+            onChange={(e) => setLimit(parseInt(e.target.value))}
+            className="px-4 py-2 border border-gray-300 rounded-lg"
+          >
+            <option value="25">Son 25</option>
+            <option value="50">Son 50</option>
+            <option value="100">Son 100</option>
+            <option value="200">Son 200</option>
           </select>
         </div>
       </div>
