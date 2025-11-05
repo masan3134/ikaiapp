@@ -1,0 +1,62 @@
+[
+  {
+    "page": "landing",
+    "success": true,
+    "url": "http://localhost:8103",
+    "consoleErrors": 0,
+    "consoleErrorDetails": [],
+    "checks": {
+      "heroExists": true,
+      "ctaExists": true
+    },
+    "screenshotPath": "/home/asan/Desktop/ikai/screenshots/public-pages/landing.png"
+  },
+  {
+    "page": "pricing",
+    "success": true,
+    "url": "http://localhost:8103/pricing",
+    "consoleErrors": 0,
+    "consoleErrorDetails": [],
+    "checks": {
+      "plansExist": true
+    },
+    "screenshotPath": "/home/asan/Desktop/ikai/screenshots/public-pages/pricing.png"
+  },
+  {
+    "page": "features",
+    "success": true,
+    "url": "http://localhost:8103/features",
+    "consoleErrors": 0,
+    "consoleErrorDetails": [],
+    "checks": {
+      "contentExists": true
+    },
+    "screenshotPath": "/home/asan/Desktop/ikai/screenshots/public-pages/features.png"
+  },
+  {
+    "page": "signup",
+    "success": true,
+    "url": "http://localhost:8103/signup",
+    "consoleErrors": 0,
+    "consoleErrorDetails": [],
+    "checks": {
+      "formExists": true,
+      "emailExists": true,
+      "passwordExists": true
+    },
+    "screenshotPath": "/home/asan/Desktop/ikai/screenshots/public-pages/signup.png"
+  },
+  {
+    "page": "login",
+    "success": true,
+    "url": "http://localhost:8103/login",
+    "consoleErrors": 0,
+    "consoleErrorDetails": [],
+    "checks": {
+      "formExists": true,
+      "emailExists": true,
+      "passwordExists": true
+    },
+    "screenshotPath": "/home/asan/Desktop/ikai/screenshots/public-pages/login.png"
+  }
+]
