@@ -55,6 +55,7 @@ async function authenticateToken(req, res, next) {
         id: true,
         email: true,
         role: true,
+        department: true, // For department isolation (MANAGER role)
         createdAt: true
       }
     });
