@@ -64,22 +64,32 @@ async function takeScreenshot(role) {
 
     // Navigate to login
     console.log(`  → Navigating to login page...`);
-    await page.goto(`${BASE_URL}/login`, { waitUntil: 'networkidle2' });
+    await page.goto(`${BASE_URL}/login`, {
+      waitUntil: 'networkidle0',
+      timeout: 60000
+    });
+
+    // Wait for login form to be visible
+    await page.waitForSelector('input[type="email"], input[name="email"]', { timeout: 10000 });
 
     // Fill login form
     console.log(`  → Logging in as ${role.email}...`);
-    await page.type('input[type="email"]', role.email);
-    await page.type('input[type="password"]', role.password);
+    await page.type('input[type="email"], input[name="email"]', role.email);
+    await page.type('input[type="password"], input[name="password"]', role.password);
 
-    // Click login button
+    // Click login button and wait for navigation
+    console.log(`  → Submitting login form...`);
     await Promise.all([
-      page.waitForNavigation({ waitUntil: 'networkidle2' }),
+      page.waitForNavigation({
+        waitUntil: 'networkidle0',
+        timeout: 60000
+      }),
       page.click('button[type="submit"]')
     ]);
 
-    // Wait for dashboard to load
+    // Wait for dashboard to load (using setTimeout wrapped in Promise)
     console.log(`  → Waiting for dashboard to load...`);
-    await page.waitForTimeout(3000); // Wait for any animations/data loading
+    await new Promise(resolve => setTimeout(resolve, 3000));
 
     // Take full-page screenshot
     const screenshotPath = path.join(SCREENSHOTS_DIR, role.filename);
