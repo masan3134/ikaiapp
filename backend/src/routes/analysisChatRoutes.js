@@ -118,7 +118,7 @@ router.get('/:id/history', hrManagers, async (req, res) => {
     }
 
     // Access control
-    if (analysis.userId !== req.user.userId &&
+    if (analysis.userId !== req.user.id &&
         !['ADMIN', 'SUPER_ADMIN'].includes(req.user.role)) {
       return res.status(403).json({ error: 'Forbidden' });
     }
@@ -181,7 +181,7 @@ router.get('/:id/chat-stats', hrManagers, async (req, res) => {
     }
 
     // SUPER_ADMIN and ADMIN can access all analyses, others only their own
-    if (analysis.userId !== req.user.userId &&
+    if (analysis.userId !== req.user.id &&
         !['ADMIN', 'SUPER_ADMIN'].includes(req.user.role)) {
       return res.status(403).json({ error: 'Forbidden' });
     }
