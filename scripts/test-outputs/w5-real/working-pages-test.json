@@ -1,0 +1,55 @@
+{
+  "timestamp": "2025-11-05 12:39:45",
+  "pages_tested": [
+    {
+      "page": "Login",
+      "status": "PASS"
+    },
+    {
+      "page": "Dashboard",
+      "status": "PASS",
+      "url": "/super-admin"
+    },
+    {
+      "page": "Organizations",
+      "status": "PASS",
+      "url": "/super-admin/organizations"
+    },
+    {
+      "page": "System Health",
+      "status": "PASS",
+      "url": "/super-admin/system-health"
+    },
+    {
+      "page": "Queue Management",
+      "status": "PASS",
+      "url": "/super-admin/queues"
+    },
+    {
+      "page": "Analytics",
+      "status": "PASS",
+      "url": "/super-admin/analytics"
+    },
+    {
+      "page": "Users",
+      "status": "PASS",
+      "url": "/super-admin/users"
+    },
+    {
+      "page": "Settings",
+      "status": "PASS",
+      "url": "/super-admin/settings"
+    },
+    {
+      "page": "Security Logs",
+      "status": "PASS",
+      "url": "/super-admin/security-logs"
+    },
+    {
+      "page": "Logs",
+      "status": "PASS",
+      "url": "/super-admin/logs"
+    }
+  ],
+  "console_errors": []
+}
