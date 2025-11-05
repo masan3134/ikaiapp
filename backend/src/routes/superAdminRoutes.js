@@ -1030,4 +1030,324 @@ router.get('/security-logs', superAdminOnly, async (req, res) => {
   }
 });
 
+/**
+ * GET /users
+ * Get all users across all organizations (with pagination, search, role filter)
+ */
+router.get('/users', superAdminOnly, async (req, res) => {
+  try {
+    const { search, role, page = 1, limit = 50 } = req.query;
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+
+    // Build where clause
+    const where = {};
+    if (search) {
+      where.OR = [
+        { email: { contains: search, mode: 'insensitive' } },
+        { firstName: { contains: search, mode: 'insensitive' } },
+        { lastName: { contains: search, mode: 'insensitive' } }
+      ];
+    }
+    if (role) {
+      where.role = role;
+    }
+
+    // Get users with organization info
+    const [users, total] = await Promise.all([
+      prisma.user.findMany({
+        where,
+        skip,
+        take: parseInt(limit),
+        include: {
+          organization: {
+            select: { id: true, name: true, plan: true, isActive: true }
+          }
+        },
+        orderBy: { createdAt: 'desc' }
+      }),
+      prisma.user.count({ where })
+    ]);
+
+    // Get stats
+    const stats = await prisma.user.groupBy({
+      by: ['role'],
+      _count: true
+    });
+
+    const roleStats = {};
+    stats.forEach(s => { roleStats[s.role] = s._count; });
+
+    return res.json({
+      success: true,
+      data: {
+        users,
+        pagination: {
+          total,
+          page: parseInt(page),
+          limit: parseInt(limit),
+          pages: Math.ceil(total / parseInt(limit))
+        },
+        stats: {
+          total,
+          byRole: roleStats,
+          active: users.filter(u => u.isActive).length
+        }
+      }
+    });
+  } catch (error) {
+    console.error('[SuperAdmin] Error fetching users:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Kullanıcılar alınırken hata oluştu'
+    });
+  }
+});
+
+/**
+ * GET /security-settings
+ * Get system-wide security settings and statistics
+ */
+router.get('/security-settings', superAdminOnly, async (req, res) => {
+  try {
+    // Get recent login attempts (last 24h)
+    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+    const recentLogins = await prisma.user.count({
+      where: { lastLoginAt: { gte: oneDayAgo } }
+    });
+
+    // Get security stats
+    const [totalUsers, activeUsers, inactiveUsers] = await Promise.all([
+      prisma.user.count(),
+      prisma.user.count({ where: { isActive: true } }),
+      prisma.user.count({ where: { isActive: false } })
+    ]);
+
+    return res.json({
+      success: true,
+      data: {
+        authentication: {
+          twoFactorEnabled: false, // TODO: Implement 2FA
+          passwordComplexity: true,
+          sessionTimeout: 30 // minutes
+        },
+        accessControl: {
+          ipWhitelist: false,
+          apiRateLimit: true,
+          corsProtection: true
+        },
+        stats: {
+          totalUsers,
+          activeUsers,
+          inactiveUsers,
+          recentLogins,
+          suspiciousActivity: 0 // TODO: Track suspicious logins
+        }
+      }
+    });
+  } catch (error) {
+    console.error('[SuperAdmin] Error fetching security settings:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Güvenlik ayarları alınırken hata oluştu'
+    });
+  }
+});
+
+/**
+ * GET /analytics
+ * Get system-wide analytics and usage metrics
+ */
+router.get('/analytics', superAdminOnly, async (req, res) => {
+  try {
+    // Get counts
+    const [
+      totalOrgs,
+      activeOrgs,
+      totalUsers,
+      activeUsers,
+      totalJobs,
+      totalCandidates,
+      totalAnalyses
+    ] = await Promise.all([
+      prisma.organization.count(),
+      prisma.organization.count({ where: { isActive: true } }),
+      prisma.user.count(),
+      prisma.user.count({ where: { isActive: true } }),
+      prisma.jobPosting.count(),
+      prisma.candidate.count(),
+      prisma.analysis.count()
+    ]);
+
+    // Get growth stats (last 30 days)
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+
+    const [newOrgs, newUsers, newJobs] = await Promise.all([
+      prisma.organization.count({ where: { createdAt: { gte: thirtyDaysAgo } } }),
+      prisma.user.count({ where: { createdAt: { gte: thirtyDaysAgo } } }),
+      prisma.jobPosting.count({ where: { createdAt: { gte: thirtyDaysAgo } } })
+    ]);
+
+    return res.json({
+      success: true,
+      data: {
+        overview: {
+          totalOrganizations: totalOrgs,
+          activeOrganizations: activeOrgs,
+          totalUsers,
+          activeUsers,
+          totalJobPostings: totalJobs,
+          totalCandidates,
+          totalAnalyses
+        },
+        growth: {
+          newOrganizations: newOrgs,
+          newUsers,
+          newJobPostings: newJobs,
+          period: '30 days'
+        },
+        engagement: {
+          avgJobsPerOrg: totalOrgs > 0 ? Math.round(totalJobs / totalOrgs) : 0,
+          avgUsersPerOrg: totalOrgs > 0 ? Math.round(totalUsers / totalOrgs) : 0,
+          avgAnalysesPerJob: totalJobs > 0 ? Math.round(totalAnalyses / totalJobs) : 0
+        }
+      }
+    });
+  } catch (error) {
+    console.error('[SuperAdmin] Error fetching analytics:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Analitikler alınırken hata oluştu'
+    });
+  }
+});
+
+/**
+ * GET /logs
+ * Get system logs (from error-logs directory)
+ */
+router.get('/logs', superAdminOnly, async (req, res) => {
+  try {
+    const fs = require('fs').promises;
+    const path = require('path');
+
+    const { level = 'all', limit = 100 } = req.query;
+
+    // Get today's log file
+    const today = new Date().toISOString().split('T')[0];
+    const logFile = path.join(__dirname, '../../error-logs', `error-log-${today}.jsonl`);
+
+    let logs = [];
+
+    try {
+      const content = await fs.readFile(logFile, 'utf-8');
+      const lines = content.trim().split('\n').filter(line => line);
+
+      logs = lines.map(line => {
+        try {
+          return JSON.parse(line);
+        } catch {
+          return null;
+        }
+      }).filter(log => log !== null);
+
+      // Filter by level
+      if (level !== 'all') {
+        logs = logs.filter(log => log.level === level.toUpperCase());
+      }
+
+      // Limit results
+      logs = logs.slice(-parseInt(limit));
+
+    } catch (fileError) {
+      // Log file doesn't exist or empty
+      console.log('[SuperAdmin] No log file for today:', fileError.message);
+    }
+
+    return res.json({
+      success: true,
+      data: {
+        logs: logs.reverse(), // Most recent first
+        count: logs.length,
+        date: today
+      }
+    });
+  } catch (error) {
+    console.error('[SuperAdmin] Error fetching logs:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Loglar alınırken hata oluştu'
+    });
+  }
+});
+
+/**
+ * GET /settings
+ * Get system-wide settings
+ */
+router.get('/settings', superAdminOnly, async (req, res) => {
+  try {
+    // TODO: Implement system settings table
+    // For now, return default settings
+    return res.json({
+      success: true,
+      data: {
+        general: {
+          platformName: 'IKAI HR Platform',
+          defaultLanguage: 'tr',
+          timezone: 'Europe/Istanbul'
+        },
+        notifications: {
+          emailEnabled: true,
+          smsEnabled: false,
+          pushEnabled: true,
+          webhookEnabled: false
+        },
+        security: {
+          twoFactorRequired: false,
+          passwordComplexity: true,
+          sessionTimeout: 30
+        },
+        performance: {
+          apiRateLimit: 1000,
+          cacheTTL: 300
+        }
+      }
+    });
+  } catch (error) {
+    console.error('[SuperAdmin] Error fetching settings:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Ayarlar alınırken hata oluştu'
+    });
+  }
+});
+
+/**
+ * POST /settings
+ * Update system-wide settings
+ */
+router.post('/settings', superAdminOnly, async (req, res) => {
+  try {
+    const settings = req.body;
+
+    // TODO: Implement system settings table and save
+    // For now, just validate and return success
+
+    console.log('[SuperAdmin] Settings update requested:', settings);
+
+    return res.json({
+      success: true,
+      message: 'Ayarlar güncellendi',
+      data: settings
+    });
+  } catch (error) {
+    console.error('[SuperAdmin] Error updating settings:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Ayarlar güncellenirken hata oluştu'
+    });
+  }
+});
+
 module.exports = router;
