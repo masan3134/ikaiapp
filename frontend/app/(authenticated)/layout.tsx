@@ -32,6 +32,9 @@ import {
   FileWarning, // W1: Security Logs
   Activity, // W1: System Health
   TrendingUp, // W1: Offers Analytics
+  Database, // W7: Milvus/Database
+  Lock, // W7: Security
+  ServerCog, // W7: System
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import ProtectedRoute from "@/components/ProtectedRoute";
@@ -139,12 +142,19 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     },
   ];
 
-  // W1: Super Admin submenu items
+  // W1: Super Admin submenu items (W7 UPDATED: Added 7 new pages)
   const superAdminSubMenuItems = [
     { name: "Organizasyonlar", path: "/super-admin/organizations", icon: Building2 },
+    { name: "Kullanıcı Yönetimi", path: "/super-admin/users", icon: Users },
     { name: "Kuyruk Yönetimi", path: "/super-admin/queues", icon: ListChecks },
+    { name: "Güvenlik", path: "/super-admin/security", icon: Lock },
     { name: "Güvenlik Logları", path: "/super-admin/security-logs", icon: FileWarning },
     { name: "Sistem Sağlığı", path: "/super-admin/system-health", icon: Activity },
+    { name: "Sistem", path: "/super-admin/system", icon: ServerCog },
+    { name: "Analitik", path: "/super-admin/analytics", icon: BarChart3 },
+    { name: "Loglar", path: "/super-admin/logs", icon: FileText },
+    { name: "Milvus", path: "/super-admin/milvus", icon: Database },
+    { name: "Ayarlar", path: "/super-admin/settings", icon: Settings },
   ];
 
   const handleLogout = async () => {
