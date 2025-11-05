@@ -284,7 +284,7 @@ export default function NotificationPreferencesPage() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-4">
       {/* Success/Error Message - ENHANCED */}
       {message && (
         <div
@@ -380,8 +380,8 @@ export default function NotificationPreferencesPage() {
         </button>
       </div>
 
-      {/* Notification Categories */}
-      <div className="space-y-6">
+      {/* Notification Categories COMPACT */}
+      <div className="space-y-4">
         {categories.map((category) => {
           const categoryPrefs = preferences.filter(
             (p) => notificationTypeLabels[p.type]?.category === category
@@ -409,29 +409,29 @@ export default function NotificationPreferencesPage() {
           }[color];
 
           return (
-            <div key={category} className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-200/50 overflow-hidden">
-              {/* Category Header - ULTRA PREMIUM */}
+            <div key={category} className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-gray-200/50 overflow-hidden">
+              {/* Category Header - ULTRA PREMIUM COMPACT */}
               <div
-                className={`relative overflow-hidden flex items-center gap-4 p-6 bg-gradient-to-r ${colorClasses} text-white`}
+                className={`relative overflow-hidden flex items-center gap-3 p-4 bg-gradient-to-r ${colorClasses} text-white`}
               >
                 <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMwLTkuOTQtOC4wNi0xOC0xOC0xOCIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjEiIG9wYWNpdHk9Ii4xIi8+PC9nPjwvc3ZnPg==')] opacity-20"></div>
-                <div className="relative p-3 bg-white/20 backdrop-blur-sm rounded-xl shadow-lg">
-                  {category === "CV Analizi" && <Sparkles size={24} />}
-                  {category === "Adaylar" && <Users size={24} />}
-                  {category === "İş Teklifleri" && <Briefcase size={24} />}
-                  {category === "Mülakatlar" && <Calendar size={24} />}
-                  {category === "Sistem" && <AlertTriangle size={24} />}
+                <div className="relative p-2 bg-white/20 backdrop-blur-sm rounded-lg shadow-md">
+                  {category === "CV Analizi" && <Sparkles size={18} />}
+                  {category === "Adaylar" && <Users size={18} />}
+                  {category === "İş Teklifleri" && <Briefcase size={18} />}
+                  {category === "Mülakatlar" && <Calendar size={18} />}
+                  {category === "Sistem" && <AlertTriangle size={18} />}
                 </div>
                 <div className="relative">
-                  <h3 className="font-bold text-2xl">{category}</h3>
-                  <p className="text-sm text-white/90 font-medium">
+                  <h3 className="font-bold text-lg">{category}</h3>
+                  <p className="text-xs text-white/90 font-medium">
                     {categoryPrefs.length} bildirim türü
                   </p>
                 </div>
               </div>
 
-              {/* Preference Items - ENHANCED */}
-              <div className="space-y-3 p-8">
+              {/* Preference Items - ENHANCED COMPACT */}
+              <div className="space-y-2 p-4">
                 {categoryPrefs.map((pref) => {
                   const typeInfo = notificationTypeLabels[pref.type];
                   const Icon = typeInfo?.icon || Bell;

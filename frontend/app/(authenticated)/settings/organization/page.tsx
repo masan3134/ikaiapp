@@ -86,18 +86,18 @@ function OrganizationSettingsPage() {
   }
 
   return (
-    <div className="space-y-8">
-      {/* Organization Branding - GLASSMORPHISM */}
-      <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-200/50 p-8">
-        <div className="flex items-center gap-4 mb-8 pb-6 border-b-2 border-gray-100">
-          <div className="p-4 bg-gradient-to-br from-blue-500 to-purple-500 rounded-2xl shadow-xl">
-            <Building2 className="text-white" size={28} />
+    <div className="space-y-4">
+      {/* Organization Branding - GLASSMORPHISM COMPACT */}
+      <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-gray-200/50 p-4">
+        <div className="flex items-center gap-3 mb-4 pb-4 border-b border-gray-100">
+          <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl shadow-lg">
+            <Building2 className="text-white" size={20} />
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">
+            <h2 className="text-lg font-bold text-gray-900">
               Organizasyon Bilgileri
             </h2>
-            <p className="text-sm text-gray-600 font-medium">
+            <p className="text-xs text-gray-600 font-medium">
               Şirketinizin temel bilgilerini güncelleyin
             </p>
           </div>
@@ -282,17 +282,17 @@ function OrganizationSettingsPage() {
         </form>
       </div>
 
-      {/* Plan & Usage - GLASSMORPHISM */}
-      <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-200/50 p-8">
-        <div className="flex items-center gap-4 mb-8 pb-6 border-b-2 border-gray-100">
-          <div className="p-4 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl shadow-xl">
-            <Crown className="text-white" size={28} />
+      {/* Plan & Usage - GLASSMORPHISM COMPACT */}
+      <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-gray-200/50 p-4">
+        <div className="flex items-center gap-3 mb-4 pb-4 border-b border-gray-100">
+          <div className="p-3 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl shadow-lg">
+            <Crown className="text-white" size={20} />
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">
+            <h2 className="text-lg font-bold text-gray-900">
               Abonelik ve Kullanım
             </h2>
-            <p className="text-sm text-gray-600 font-medium">
+            <p className="text-xs text-gray-600 font-medium">
               Planınız ve aylık kullanım durumunuz
             </p>
           </div>

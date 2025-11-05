@@ -169,9 +169,9 @@ export default function SettingsOverviewPage() {
   ];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-4">
       {/* Command Bar - Modern Glassmorphism */}
-      <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-gray-200/50 p-5">
+      <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-gray-200/50 p-4">
         <div className="flex items-center gap-4">
           <div className="flex-1 relative">
             <Search className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -227,36 +227,36 @@ export default function SettingsOverviewPage() {
         </div>
       </div>
 
-      {/* Welcome Banner - Ultra Modern */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 rounded-3xl shadow-2xl">
+      {/* Welcome Banner - Ultra Modern COMPACT */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 rounded-2xl shadow-xl">
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMSIgb3BhY2l0eT0iMC4xIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-20"></div>
         <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>
-        <div className="relative p-8">
+        <div className="relative p-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-6">
-              <div className="w-20 h-20 rounded-2xl bg-white/20 backdrop-blur-xl flex items-center justify-center shadow-xl">
-                <Rocket className="w-10 h-10 text-white" />
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-xl flex items-center justify-center shadow-lg">
+                <Rocket className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-4xl font-bold text-white mb-2 flex items-center gap-3">
+                <h1 className="text-2xl font-bold text-white mb-1 flex items-center gap-2">
                   Merhaba, {user?.firstName || user?.email?.split("@")[0] || "Kullanıcı"}!
                   {usage?.plan === "ENTERPRISE" && (
-                    <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-amber-400/20 backdrop-blur-sm rounded-full text-lg">
-                      <Crown className="w-5 h-5 text-amber-300" />
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-400/20 backdrop-blur-sm rounded-full text-sm">
+                      <Crown className="w-4 h-4 text-amber-300" />
                       <span className="text-amber-100 font-semibold">ENTERPRISE</span>
                     </span>
                   )}
                 </h1>
-                <p className="text-xl text-blue-100">
+                <p className="text-sm text-blue-100">
                   {organization?.name || "Organizasyon"} • {user?.position || user?.role}
                 </p>
               </div>
             </div>
             <Link
               href="/wizard"
-              className="px-8 py-4 bg-white text-blue-600 rounded-2xl hover:bg-blue-50 transition-all font-bold text-lg flex items-center gap-3 shadow-2xl hover:shadow-3xl hover:scale-105 duration-300"
+              className="px-4 py-2 bg-white text-blue-600 rounded-xl hover:bg-blue-50 transition-all font-bold text-sm flex items-center gap-2 shadow-lg hover:scale-105 duration-300"
             >
-              <Plus className="w-6 h-6" />
+              <Plus className="w-4 h-4" />
               Yeni Analiz
             </Link>
           </div>
@@ -265,8 +265,8 @@ export default function SettingsOverviewPage() {
 
       {selectedView === "overview" && (
         <>
-          {/* Quick Stats Grid - Premium Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+          {/* Quick Stats Grid - Premium Cards COMPACT */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
             {[
               {
                 title: "Analizler",

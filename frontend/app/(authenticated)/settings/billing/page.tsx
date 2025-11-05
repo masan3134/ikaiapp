@@ -92,18 +92,18 @@ function BillingPage() {
   }
 
   return (
-    <div className="space-y-8">
-      {/* Current Usage Overview - GLASSMORPHISM */}
-      <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-200/50 p-8">
-        <div className="flex items-center gap-4 mb-8 pb-6 border-b-2 border-gray-100">
-          <div className="p-4 bg-gradient-to-br from-blue-500 to-purple-500 rounded-2xl shadow-xl">
-            <BarChart3 className="text-white" size={28} />
+    <div className="space-y-4">
+      {/* Current Usage Overview - GLASSMORPHISM COMPACT */}
+      <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-gray-200/50 p-4">
+        <div className="flex items-center gap-3 mb-4 pb-4 border-b border-gray-100">
+          <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl shadow-lg">
+            <BarChart3 className="text-white" size={20} />
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">
+            <h2 className="text-lg font-bold text-gray-900">
               Aylık Kullanım Durumu
             </h2>
-            <p className="text-sm text-gray-600 font-medium">
+            <p className="text-xs text-gray-600 font-medium">
               Mevcut ay için kullanım istatistikleriniz
             </p>
           </div>
@@ -235,8 +235,8 @@ function BillingPage() {
         )}
       </div>
 
-      {/* Plan Cards - PREMIUM */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {/* Plan Cards - PREMIUM COMPACT */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* FREE Plan */}
         <div
           className={`bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border-2 p-8 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 ${
@@ -437,11 +437,11 @@ function BillingPage() {
         </div>
       </div>
 
-      {/* Feature Comparison - GLASSMORPHISM */}
-      <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-200/50 p-8">
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900">Plan Karşılaştırması</h2>
-          <p className="text-sm text-gray-600 font-medium mt-2">Tüm plan özelliklerini detaylı inceleyin</p>
+      {/* Feature Comparison - GLASSMORPHISM COMPACT */}
+      <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-gray-200/50 p-4">
+        <div className="mb-4">
+          <h2 className="text-lg font-bold text-gray-900">Plan Karşılaştırması</h2>
+          <p className="text-xs text-gray-600 font-medium mt-1">Tüm plan özelliklerini detaylı inceleyin</p>
         </div>
         <div className="overflow-x-auto rounded-2xl border-2 border-gray-200">
           <table className="w-full">

@@ -110,33 +110,33 @@ export default function SecurityPage() {
   }, []);
 
   return (
-    <div className="space-y-8">
-      {/* Security Status Banner - ULTRA MODERN */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-green-500 via-emerald-500 to-teal-600 rounded-3xl shadow-2xl">
+    <div className="space-y-4">
+      {/* Security Status Banner - ULTRA MODERN COMPACT */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-green-500 via-emerald-500 to-teal-600 rounded-2xl shadow-xl">
         {/* Pattern Overlay */}
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMwLTkuOTQtOC4wNi0xOC0xOC0xOCIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjEiIG9wYWNpdHk9Ii4xIi8+PC9nPjwvc3ZnPg==')] opacity-20"></div>
         <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>
 
-        <div className="relative p-8">
-          <div className="flex items-start gap-6">
-            <div className="p-4 bg-white/20 backdrop-blur-xl rounded-2xl shadow-xl border border-white/30">
-              <Shield className="text-white" size={32} />
+        <div className="relative p-4">
+          <div className="flex items-start gap-4">
+            <div className="p-3 bg-white/20 backdrop-blur-xl rounded-xl shadow-lg border border-white/30">
+              <Shield className="text-white" size={20} />
             </div>
             <div className="flex-1">
-              <h3 className="text-3xl font-bold text-white mb-3">
+              <h3 className="text-xl font-bold text-white mb-2">
                 Hesabınız Güvende ✓
               </h3>
-              <p className="text-green-50 mb-4 text-lg">
+              <p className="text-green-50 mb-3 text-sm">
                 Son güvenlik kontrolü: <span className="font-bold">Bugün</span> •
                 Tespit edilen risk: <span className="font-bold">Yok</span>
               </p>
-              <div className="flex flex-wrap gap-3">
-                <div className="flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-xl text-sm font-bold text-white border border-white/30 shadow-lg">
-                  <CheckCircle2 size={16} />
+              <div className="flex flex-wrap gap-2">
+                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white/20 backdrop-blur-sm rounded-lg text-xs font-bold text-white border border-white/30 shadow-md">
+                  <CheckCircle2 size={14} />
                   <span>Güçlü Şifre</span>
                 </div>
-                <div className="flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-xl text-sm font-bold text-white border border-white/30 shadow-lg">
-                  <CheckCircle2 size={16} />
+                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white/20 backdrop-blur-sm rounded-lg text-xs font-bold text-white border border-white/30 shadow-md">
+                  <CheckCircle2 size={14} />
                   <span>Aktif Oturum</span>
                 </div>
               </div>
@@ -145,15 +145,15 @@ export default function SecurityPage() {
         </div>
       </div>
 
-      {/* Password Change - GLASSMORPHISM */}
-      <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-200/50 p-8">
-        <div className="flex items-center gap-4 mb-8 pb-6 border-b-2 border-gray-100">
-          <div className="p-4 bg-gradient-to-br from-blue-500 to-purple-500 rounded-2xl shadow-xl">
-            <Lock className="text-white" size={28} />
+      {/* Password Change - GLASSMORPHISM COMPACT */}
+      <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-gray-200/50 p-4">
+        <div className="flex items-center gap-3 mb-4 pb-4 border-b border-gray-100">
+          <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl shadow-lg">
+            <Lock className="text-white" size={20} />
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Şifre Değiştir</h2>
-            <p className="text-sm text-gray-600 font-medium">
+            <h2 className="text-lg font-bold text-gray-900">Şifre Değiştir</h2>
+            <p className="text-xs text-gray-600 font-medium">
               Hesap güvenliğiniz için düzenli olarak şifrenizi değiştirin
             </p>
           </div>
@@ -372,15 +372,15 @@ export default function SecurityPage() {
         </form>
       </div>
 
-      {/* Active Sessions - GLASSMORPHISM */}
-      <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-200/50 p-8">
-        <div className="flex items-center gap-4 mb-8 pb-6 border-b-2 border-gray-100">
-          <div className="p-4 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl shadow-xl">
-            <Monitor className="text-white" size={28} />
+      {/* Active Sessions - GLASSMORPHISM COMPACT */}
+      <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-gray-200/50 p-4">
+        <div className="flex items-center gap-3 mb-4 pb-4 border-b border-gray-100">
+          <div className="p-3 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl shadow-lg">
+            <Monitor className="text-white" size={20} />
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Aktif Oturumlar</h2>
-            <p className="text-sm text-gray-600 font-medium">
+            <h2 className="text-lg font-bold text-gray-900">Aktif Oturumlar</h2>
+            <p className="text-xs text-gray-600 font-medium">
               Hesabınıza bağlı tüm cihazları görün ve yönetin
             </p>
           </div>
@@ -488,17 +488,17 @@ export default function SecurityPage() {
         </div>
       </div>
 
-      {/* Two-Factor Authentication - GLASSMORPHISM */}
-      <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-200/50 p-8">
-        <div className="flex items-center gap-4 mb-8 pb-6 border-b-2 border-gray-100">
-          <div className="p-4 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl shadow-xl">
-            <Key className="text-white" size={28} />
+      {/* Two-Factor Authentication - GLASSMORPHISM COMPACT */}
+      <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-gray-200/50 p-4">
+        <div className="flex items-center gap-3 mb-4 pb-4 border-b border-gray-100">
+          <div className="p-3 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl shadow-lg">
+            <Key className="text-white" size={20} />
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">
+            <h2 className="text-lg font-bold text-gray-900">
               İki Faktörlü Doğrulama (2FA)
             </h2>
-            <p className="text-sm text-gray-600 font-medium">
+            <p className="text-xs text-gray-600 font-medium">
               Hesabınıza ekstra bir güvenlik katmanı ekleyin
             </p>
           </div>
