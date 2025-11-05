@@ -1,9 +1,33 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { FileText, Search, Filter, Download } from "lucide-react";
 import { withRoleProtection } from "@/lib/hoc/withRoleProtection";
+import apiClient from "@/lib/services/apiClient";
 
 function SuperAdminLogsPage() {
+  const [logs, setLogs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [level, setLevel] = useState("all");
+
+  useEffect(() => {
+    loadLogs();
+  }, [level]);
+
+  const loadLogs = async () => {
+    try {
+      setLoading(true);
+      const res = await apiClient.get(`/api/v1/super-admin/logs?level=${level}&limit=50`);
+      if (res.data.success) {
+        setLogs(res.data.data.logs);
+      }
+    } catch (error) {
+      console.error("Error loading logs:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -27,24 +51,40 @@ function SuperAdminLogsPage() {
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
             />
           </div>
-          <select className="px-4 py-2 border border-gray-300 rounded-lg">
-            <option>Tüm Seviyeler</option>
-            <option>ERROR</option>
-            <option>WARN</option>
-            <option>INFO</option>
-            <option>DEBUG</option>
+          <select
+            value={level}
+            onChange={(e) => setLevel(e.target.value)}
+            className="px-4 py-2 border border-gray-300 rounded-lg"
+          >
+            <option value="all">Tüm Seviyeler</option>
+            <option value="ERROR">ERROR</option>
+            <option value="WARN">WARN</option>
+            <option value="INFO">INFO</option>
+            <option value="DEBUG">DEBUG</option>
           </select>
-          <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
-            <Filter className="w-5 h-5" />
-            Filtrele
-          </button>
         </div>
       </div>
 
       <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <div className="text-center py-12 text-gray-500">
-          Log kayıtları yüklenecek...
-        </div>
+        {loading ? (
+          <div className="text-center py-12 text-gray-500">Yükleniyor...</div>
+        ) : logs.length === 0 ? (
+          <div className="text-center py-12 text-gray-500">Log kaydı bulunamadı</div>
+        ) : (
+          <div className="space-y-2">
+            {logs.map((log, i) => (
+              <div key={i} className="p-3 bg-gray-50 rounded border-l-4 border-red-500 text-sm font-mono">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="px-2 py-0.5 bg-red-100 text-red-700 rounded text-xs font-semibold">
+                    {log.level || "INFO"}
+                  </span>
+                  <span className="text-gray-500">{log.timestamp || new Date().toISOString()}</span>
+                </div>
+                <div className="text-gray-900">{log.message}</div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
