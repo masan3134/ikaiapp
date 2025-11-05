@@ -229,6 +229,51 @@ class IKAITestHelper:
             print(f"❌ Hata: {e}")
             return False
 
+    def post_file(self, endpoint: str, files: Dict) -> Optional[Dict]:
+        """
+        POST request with file upload
+
+        Örnek:
+        with open('cv.pdf', 'rb') as f:
+            files = {'file': ('cv.pdf', f, 'application/pdf')}
+            helper.post_file('/api/v1/candidates/upload', files)
+        """
+        if not self.token:
+            print("❌ Önce login olmalısınız!")
+            return None
+
+        try:
+            response = requests.post(
+                f"{BASE_URL}{endpoint}",
+                files=files,
+                headers={
+                    "Authorization": f"Bearer {self.token}"
+                }
+            )
+
+            print(f"\n{'='*60}")
+            print(f"POST (file) {endpoint}")
+            print(f"Status: {response.status_code}")
+            print(f"{'='*60}")
+
+            if response.status_code in [200, 201]:
+                result = response.json()
+                print(json.dumps(result, indent=2, ensure_ascii=False))
+                return result
+            elif response.status_code == 409:
+                # Duplicate file - but still contains candidate info
+                result = response.json()
+                print(f"⚠️  Duplicate file detected")
+                print(json.dumps(result, indent=2, ensure_ascii=False))
+                return result
+            else:
+                print(f"Hata: {response.text}")
+                return None
+
+        except Exception as e:
+            print(f"❌ Hata: {e}")
+            return None
+
 
 # Test kullanıcıları
 TEST_USERS = {
