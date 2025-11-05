@@ -36,9 +36,12 @@ const ROUTE_PERMISSIONS: Record<string, string[]> = {
   // Reports - Manager and above
   '/reports': ['MANAGER', 'ADMIN', 'SUPER_ADMIN'],
 
-  // Organization settings - Manager and above
-  '/settings/organization': ['MANAGER', 'ADMIN', 'SUPER_ADMIN'],
-  '/settings/billing': ['MANAGER', 'ADMIN', 'SUPER_ADMIN'],
+  // Organization settings - ADMIN only (not MANAGER!)
+  '/settings/organization': ['ADMIN', 'SUPER_ADMIN'],
+  '/settings/billing': ['ADMIN', 'SUPER_ADMIN'],
+
+  // Settings overview - All users can access their own settings
+  // But we don't restrict /settings root here since all roles should access their profile settings
 };
 
 export function middleware(request: NextRequest) {
