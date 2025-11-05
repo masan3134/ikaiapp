@@ -182,14 +182,16 @@ class FullManualTest:
             if not found:
                 # Try direct URL - ADMIN uses /team route (not /users)
                 self.page.goto("http://localhost:8103/team", wait_until="networkidle")
-                time.sleep(3)  # Wait for async data load
+                time.sleep(5)  # Wait longer for async data load
 
             self.take_screenshot("03-users-list")
             self.results["pages_visited"].append("User Management")
 
-            # Check if user list is visible (wait up to 10s for async data)
-            user_list = self.page.locator('table, [role="table"], [class*="list"]').first
-            if user_list.is_visible(timeout=10000):
+            # Check if user list is visible (wait up to 15s for async data)
+            # Wait for LoadingSkeleton to disappear first
+            time.sleep(2)
+            user_list = self.page.locator('table, [role="table"]').first
+            if user_list.is_visible(timeout=15000):
                 print("   ✅ User list visible")
 
                 # Count table rows
@@ -308,10 +310,11 @@ class FullManualTest:
 
         try:
             # Look for profile/avatar/user menu
-            profile_triggers = self.page.locator('[class*="avatar"], [class*="Avatar"], [class*="profile"], [class*="Profile"], [aria-label*="profile" i], [aria-label*="user" i]').all()
+            # UserAvatar component renders gradient circle button with initials
+            profile_triggers = self.page.locator('button[aria-label*="Kullanıcı menüsü"], button.rounded-full.bg-gradient-to-br, [class*="avatar"], [class*="Avatar"]').all()
 
             if len(profile_triggers) > 0:
-                print(f"   Found {len(profile_triggers)} profile elements")
+                print(f"   ✅ Found {len(profile_triggers)} profile/avatar elements")
 
                 # Try clicking first one
                 try:
@@ -417,9 +420,10 @@ class FullManualTest:
 
             self.take_screenshot("11-mobile-view")
 
-            # Check if hamburger menu appears
-            hamburger = self.page.locator('[class*="hamburger"], [class*="menu-toggle"], [aria-label*="menu" i]').first
-            if hamburger.is_visible():
+            # Check if hamburger menu appears (Menu icon button in mobile header)
+            # Layout has Menu/X button for sidebar toggle
+            hamburger = self.page.locator('button:has-text("☰"), button svg, [class*="hamburger"], [class*="menu-toggle"]').first
+            if hamburger.is_visible(timeout=3000):
                 print("   ✅ Mobile menu icon visible")
 
                 hamburger.click()
