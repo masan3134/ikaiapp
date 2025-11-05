@@ -14,7 +14,7 @@ import { UserRole } from "@/lib/constants/roles";
  */
 export const canCreateJobPosting = (role?: UserRole): boolean => {
   if (!role) return false;
-  return ["SUPER_ADMIN", "ADMIN", "MANAGER"].includes(role);
+  return ["SUPER_ADMIN", "ADMIN", "MANAGER", "HR_SPECIALIST"].includes(role);
 };
 
 /**
@@ -22,7 +22,7 @@ export const canCreateJobPosting = (role?: UserRole): boolean => {
  */
 export const canEditJobPosting = (role?: UserRole): boolean => {
   if (!role) return false;
-  return ["SUPER_ADMIN", "ADMIN", "MANAGER"].includes(role);
+  return ["SUPER_ADMIN", "ADMIN", "MANAGER", "HR_SPECIALIST"].includes(role);
 };
 
 /**
