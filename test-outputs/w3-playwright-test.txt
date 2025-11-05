@@ -1,0 +1,210 @@
+🚀 Starting MANAGER E2E Test...
+📧 Account: test-manager@test-org-1.com
+🏢 Department: Engineering
+
+============================================================
+TEST 1: LOGIN & DASHBOARD
+============================================================
+✅ Login form filled
+✅ Login successful - redirected to dashboard
+✅ Dashboard screenshot saved
+
+📊 Checking MANAGER dashboard widgets...
+   Found 0 widgets/cards
+
+🔍 Expected MANAGER widgets:
+   ✓ Department Overview (Engineering only)
+   ✓ Active Candidates (department-only)
+   ✓ Pending Approvals (offers)
+   ✓ Hiring Pipeline
+   ✓ Team Performance
+
+❌ Should NOT see:
+   ✗ Org-wide analytics (ADMIN only)
+   ✗ System health
+   ✗ Usage limits
+
+🔍 Console Errors: 2
+❌ CONSOLE ERRORS FOUND:
+   - [MANAGER DASHBOARD] Load error: Error: Failed to load dashboard
+    at loadManagerDashboard (webpack-internal:///(app-pages-browser)/./components/dashboard/ManagerDashboard.tsx:48:23)
+   - [MANAGER DASHBOARD] Load error: Error: Failed to load dashboard
+    at loadManagerDashboard (webpack-internal:///(app-pages-browser)/./components/dashboard/ManagerDashboard.tsx:48:23)
+
+✅ TEST 1 COMPLETE
+
+============================================================
+TEST 2: DEPARTMENT DATA ISOLATION (CRITICAL)
+============================================================
+✅ Navigated to Candidates page
+📊 Candidates visible: 0
+✅ No department filter (good - should only see Engineering)
+
+🔍 CRITICAL CHECK:
+   All candidates MUST be from Engineering department
+   NO Sales, Marketing, HR candidates should be visible
+
+✅ TEST 2 COMPLETE
+
+============================================================
+TEST 3: CANDIDATE REVIEW
+============================================================
+⚠️ No candidates found to test detail view
+
+✅ TEST 3 COMPLETE
+
+============================================================
+TEST 4: OFFER APPROVAL WORKFLOW
+============================================================
+✅ Navigated to Offers page
+   Approve button visible: False
+   Reject button visible: False
+
+🔍 CRITICAL CHECK:
+   All offers MUST be for Engineering department only
+   Cannot approve/reject other departments' offers
+
+✅ TEST 4 COMPLETE
+
+============================================================
+TEST 5: DEPARTMENT ANALYTICS
+============================================================
+✅ Navigated to Analytics page
+
+🔍 CRITICAL CHECK:
+   Analytics MUST show only Engineering department data
+   NO org-wide analytics visible
+
+✅ TEST 5 COMPLETE
+
+============================================================
+TEST 6: JOB POSTINGS (LIMITED ACCESS)
+============================================================
+✅ Navigated to Job Postings page
+✅ 'Create Job Posting' button correctly hidden
+
+🔍 Expected behavior:
+   ✅ Can VIEW job postings
+   ✅ Can COMMENT on job postings
+   ❌ Cannot CREATE job postings
+   ❌ Cannot DELETE job postings
+
+✅ TEST 6 COMPLETE
+
+============================================================
+TEST 7: TEAM VIEW (DEPARTMENT ONLY)
+============================================================
+✅ Navigated to Team page
+📊 Team members visible: 5
+
+🔍 CRITICAL CHECK:
+   Team list MUST show only Engineering department members
+   Cannot see other departments' members
+   Cannot change roles (ADMIN only)
+
+✅ TEST 7 COMPLETE
+
+============================================================
+TEST 8: RBAC VIOLATION ATTEMPTS
+============================================================
+
+🔒 Testing restricted URLs...
+   ❌ Admin panel: ACCESSIBLE (security issue!)
+   ❌ Org settings: ACCESSIBLE (security issue!)
+   ❌ Billing: ACCESSIBLE (security issue!)
+   ❌ User management: ACCESSIBLE (security issue!)
+   ❌ Super admin: ACCESSIBLE (security issue!)
+
+✅ TEST 8 COMPLETE
+
+============================================================
+FINAL CONSOLE ERROR CHECK
+============================================================
+
+📊 Total Console Errors: 15
+
+❌ CONSOLE ERRORS DETECTED:
+
+First 20 errors:
+1. [MANAGER DASHBOARD] Load error: Error: Failed to load dashboard
+    at loadManagerDashboard (webpack-internal:///(app-pages-browser)/./components/dashboard/ManagerDashboard.tsx:48:23)
+2. [MANAGER DASHBOARD] Load error: Error: Failed to load dashboard
+    at loadManagerDashboard (webpack-internal:///(app-pages-browser)/./components/dashboard/ManagerDashboard.tsx:48:23)
+3. Failed to fetch RSC payload for http://localhost:8103/candidates. Falling back to browser navigation. TypeError: Failed to fetch
+    at fetchServerResponse (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/router-reducer/fetch-server-response.js:58:27)
+    at InnerLayoutRouter (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/layout-router.js:305:90)
+    at renderWithHooks (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js:11121:18)
+    at mountIndeterminateComponent (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js:16869:13)
+    at beginWork$1 (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js:18458:16)
+    at beginWork (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js:26927:14)
+    at performUnitOfWork (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js:25748:12)
+    at workLoopSync (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js:25464:5)
+    at renderRootSync (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js:25419:7)
+    at performConcurrentWorkOnRoot (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js:24504:74)
+    at workLoop (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/scheduler/cjs/scheduler.development.js:256:34)
+    at flushWork (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/scheduler/cjs/scheduler.development.js:225:14)
+    at MessagePort.performWorkUntilDeadline (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/scheduler/cjs/scheduler.development.js:534:21)
+4. [MANAGER DASHBOARD] Load error: Error: Failed to load dashboard
+    at loadManagerDashboard (webpack-internal:///(app-pages-browser)/./components/dashboard/ManagerDashboard.tsx:48:23)
+5. [MANAGER DASHBOARD] Load error: Error: Failed to load dashboard
+    at loadManagerDashboard (webpack-internal:///(app-pages-browser)/./components/dashboard/ManagerDashboard.tsx:48:23)
+6. [MANAGER DASHBOARD] Load error: Error: Failed to load dashboard
+    at loadManagerDashboard (webpack-internal:///(app-pages-browser)/./components/dashboard/ManagerDashboard.tsx:48:23)
+7. [MANAGER DASHBOARD] Load error: Error: Failed to load dashboard
+    at loadManagerDashboard (webpack-internal:///(app-pages-browser)/./components/dashboard/ManagerDashboard.tsx:48:23)
+8. [MANAGER DASHBOARD] Load error: Error: Failed to load dashboard
+    at loadManagerDashboard (webpack-internal:///(app-pages-browser)/./components/dashboard/ManagerDashboard.tsx:48:23)
+9. [MANAGER DASHBOARD] Load error: Error: Failed to load dashboard
+    at loadManagerDashboard (webpack-internal:///(app-pages-browser)/./components/dashboard/ManagerDashboard.tsx:48:23)
+10. Failed to fetch RSC payload for http://localhost:8103/job-postings. Falling back to browser navigation. TypeError: Failed to fetch
+    at fetchServerResponse (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/router-reducer/fetch-server-response.js:58:27)
+    at InnerLayoutRouter (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/layout-router.js:305:90)
+    at renderWithHooks (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js:11121:18)
+    at mountIndeterminateComponent (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js:16869:13)
+    at beginWork$1 (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js:18458:16)
+    at beginWork (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js:26927:14)
+    at performUnitOfWork (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js:25748:12)
+    at workLoopConcurrent (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js:25734:5)
+    at renderRootConcurrent (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js:25690:9)
+    at performConcurrentWorkOnRoot (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js:24504:38)
+    at workLoop (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/scheduler/cjs/scheduler.development.js:256:34)
+    at flushWork (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/scheduler/cjs/scheduler.development.js:225:14)
+    at MessagePort.performWorkUntilDeadline (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/scheduler/cjs/scheduler.development.js:534:21)
+11. [MANAGER DASHBOARD] Load error: Error: Failed to load dashboard
+    at loadManagerDashboard (webpack-internal:///(app-pages-browser)/./components/dashboard/ManagerDashboard.tsx:48:23)
+12. [MANAGER DASHBOARD] Load error: Error: Failed to load dashboard
+    at loadManagerDashboard (webpack-internal:///(app-pages-browser)/./components/dashboard/ManagerDashboard.tsx:48:23)
+13. Failed to load resource: the server responded with a status of 404 (Not Found)
+14. Failed to load resource: the server responded with a status of 404 (Not Found)
+15. Failed to load resource: the server responded with a status of 404 (Not Found)
+
+🚨 ZERO CONSOLE ERROR POLICY VIOLATED!
+   errorCount MUST be 0
+
+============================================================
+E2E TEST SUMMARY - MANAGER ROLE
+============================================================
+
+✅ Tests Completed: 8
+📧 Account: test-manager@test-org-1.com
+🏢 Department: Engineering
+📸 Screenshots: /home/asan/Desktop/ikai/screenshots/w3-manager/
+🔍 Console Errors: 15
+
+🔴 CRITICAL VERIFICATION NEEDED:
+   1. Department isolation (Engineering only)
+   2. Cross-department access blocked
+   3. Offer approval scope (Engineering only)
+   4. RBAC violations properly blocked
+   5. Zero console errors
+
+✅ Test script completed!
+
+⏸️  Browser kept open for manual inspection...
+   Press Enter to close browser and exit...
+Traceback (most recent call last):
+  File "/home/asan/Desktop/ikai/test-e2e-w3-manager.py", line 385, in <module>
+    main()
+  File "/home/asan/Desktop/ikai/test-e2e-w3-manager.py", line 380, in main
+    input()
+EOFError: EOF when reading a line

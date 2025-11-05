@@ -1,0 +1,38 @@
+🚀 Starting MANAGER E2E Test...
+📧 Account: test-manager@test-org-1.com
+🏢 Department: Engineering
+
+============================================================
+TEST 1: LOGIN & DASHBOARD
+============================================================
+✅ Login form filled
+
+❌ Test failed with error: Timeout 10000ms exceeded.
+=========================== logs ===========================
+waiting for navigation to "http://localhost:8103/dashboard" until 'load'
+============================================================
+Traceback (most recent call last):
+  File "/home/asan/Desktop/ikai/test-e2e-w3-manager.py", line 53, in main
+    page.wait_for_url(f"{BASE_URL}/dashboard", timeout=10000)
+  File "/home/asan/.local/lib/python3.12/site-packages/playwright/sync_api/_generated.py", line 9162, in wait_for_url
+    self._sync(
+  File "/home/asan/.local/lib/python3.12/site-packages/playwright/_impl/_sync_base.py", line 115, in _sync
+    return task.result()
+           ^^^^^^^^^^^^^
+  File "/home/asan/.local/lib/python3.12/site-packages/playwright/_impl/_page.py", line 584, in wait_for_url
+    return await self._main_frame.wait_for_url(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/asan/.local/lib/python3.12/site-packages/playwright/_impl/_frame.py", line 263, in wait_for_url
+    async with self.expect_navigation(
+  File "/home/asan/.local/lib/python3.12/site-packages/playwright/_impl/_event_context_manager.py", line 33, in __aexit__
+    await self._future
+  File "/home/asan/.local/lib/python3.12/site-packages/playwright/_impl/_frame.py", line 239, in continuation
+    event = await waiter.result()
+            ^^^^^^^^^^^^^^^^^^^^^
+playwright._impl._errors.TimeoutError: Timeout 10000ms exceeded.
+=========================== logs ===========================
+waiting for navigation to "http://localhost:8103/dashboard" until 'load'
+============================================================
+
+✅ Closing browser...
+✅ Browser closed successfully

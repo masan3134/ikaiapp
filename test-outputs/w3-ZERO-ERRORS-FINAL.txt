@@ -1,0 +1,145 @@
+🚀 Starting MANAGER E2E Test...
+📧 Account: test-manager@test-org-1.com
+🏢 Department: Engineering
+
+============================================================
+TEST 1: LOGIN & DASHBOARD
+============================================================
+✅ Login form filled
+⏳ Submitting login...
+✅ Login successful - redirected to dashboard
+✅ Dashboard screenshot saved
+
+📊 Checking MANAGER dashboard widgets...
+   Found 0 widgets/cards
+
+🔍 Expected MANAGER widgets:
+   ✓ Department Overview (Engineering only)
+   ✓ Active Candidates (department-only)
+   ✓ Pending Approvals (offers)
+   ✓ Hiring Pipeline
+   ✓ Team Performance
+
+❌ Should NOT see:
+   ✗ Org-wide analytics (ADMIN only)
+   ✗ System health
+   ✗ Usage limits
+
+🔍 Console Errors: 0
+✅ ZERO console errors
+
+✅ TEST 1 COMPLETE
+
+============================================================
+TEST 2: DEPARTMENT DATA ISOLATION (CRITICAL)
+============================================================
+✅ Navigated to Candidates page
+📊 Candidates visible: 4
+✅ No department filter (good - should only see Engineering)
+
+🔍 CRITICAL CHECK:
+   All candidates MUST be from Engineering department
+   NO Sales, Marketing, HR candidates should be visible
+
+✅ TEST 2 COMPLETE
+
+============================================================
+TEST 3: CANDIDATE REVIEW
+============================================================
+⚠️ No candidates found to test detail view
+
+✅ TEST 3 COMPLETE
+
+============================================================
+TEST 4: OFFER APPROVAL WORKFLOW
+============================================================
+✅ Navigated to Offers page
+   Approve button visible: False
+   Reject button visible: False
+
+🔍 CRITICAL CHECK:
+   All offers MUST be for Engineering department only
+   Cannot approve/reject other departments' offers
+
+✅ TEST 4 COMPLETE
+
+============================================================
+TEST 5: DEPARTMENT ANALYTICS
+============================================================
+✅ Navigated to Analytics page
+
+🔍 CRITICAL CHECK:
+   Analytics MUST show only Engineering department data
+   NO org-wide analytics visible
+
+✅ TEST 5 COMPLETE
+
+============================================================
+TEST 6: JOB POSTINGS (LIMITED ACCESS)
+============================================================
+✅ Navigated to Job Postings page
+✅ 'Create Job Posting' button correctly hidden
+
+🔍 Expected behavior:
+   ✅ Can VIEW job postings
+   ✅ Can COMMENT on job postings
+   ❌ Cannot CREATE job postings
+   ❌ Cannot DELETE job postings
+
+✅ TEST 6 COMPLETE
+
+============================================================
+TEST 7: TEAM VIEW (DEPARTMENT ONLY)
+============================================================
+✅ Navigated to Team page
+📊 Team members visible: 5
+
+🔍 CRITICAL CHECK:
+   Team list MUST show only Engineering department members
+   Cannot see other departments' members
+   Cannot change roles (ADMIN only)
+
+✅ TEST 7 COMPLETE
+
+============================================================
+TEST 8: RBAC VIOLATION ATTEMPTS
+============================================================
+
+🔒 Testing restricted URLs...
+   ✅ Admin panel: Redirected to /dashboard
+   ✅ Org settings: Redirected to /dashboard
+   ✅ Billing: Redirected to /dashboard
+   ✅ User management: Redirected to /dashboard
+   ✅ Super admin: Redirected to /dashboard
+
+✅ TEST 8 COMPLETE
+
+============================================================
+FINAL CONSOLE ERROR CHECK
+============================================================
+
+📊 Total Console Errors: 0
+
+✅ ZERO CONSOLE ERRORS - PERFECT!
+
+============================================================
+E2E TEST SUMMARY - MANAGER ROLE
+============================================================
+
+✅ Tests Completed: 8
+📧 Account: test-manager@test-org-1.com
+🏢 Department: Engineering
+📸 Screenshots: /home/asan/Desktop/ikai/screenshots/w3-manager/
+🔍 Console Errors: 0
+
+🔴 CRITICAL VERIFICATION NEEDED:
+   1. Department isolation (Engineering only)
+   2. Cross-department access blocked
+   3. Offer approval scope (Engineering only)
+   4. RBAC violations properly blocked
+   5. Zero console errors
+
+✅ Test script completed!
+
+✅ Closing browser...
+✅ Browser closed successfully
