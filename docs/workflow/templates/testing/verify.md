@@ -1,167 +1,275 @@
-# ✅ Template: Mod Verification
+# 🔍 Verification Template (MOD) - MCP-Based
 
-**Use case:** Mod verifying Worker's work
-**Duration:** 10 minutes
-**Difficulty:** Easy
-
----
-
-## Step 1: Read Worker Report
-
-**File:** `docs/reports/w{N}-{feature}-verification.md`
-
-```bash
-Read('docs/reports/w{N}-{feature}-verification.md')
-```
-
-**Look for:**
-- ✅ Raw terminal outputs (not summaries!)
-- ✅ Verification commands listed
-- ✅ Expected vs Actual values
+**Use case:** Mod verifying Worker's work using MCP
+**Duration:** 5-10 minutes
+**Tools:** PostgreSQL MCP, Docker MCP, Playwright MCP, Code Analysis MCP
+**Version:** 2.0 (MCP Integration)
 
 ---
 
-## Step 2: Extract Claims
+## Pre-Verification
 
-**Worker claims:**
+**Read worker's report:**
 ```
-- 5 widgets added
-- 10 pages protected
-- API returns 200 OK
+Read: docs/reports/w{N}-task-report.md
+```
+
+**Identify MCP claims:**
+- [ ] Database: postgres.count() results
+- [ ] Frontend: playwright.console_errors() results
+- [ ] Build: code_analysis.build_check() results
+- [ ] Health: docker.health() results
+
+---
+
+## MCP Verification Workflow
+
+### Step 1: Health Check
+
+```
+docker.health()
+```
+
+**Worker claimed:** `{overall: "healthy"}`
+**You verify:** Re-run same command
+- ✅ Match = System stable
+- ❌ No match = Investigate
+
+---
+
+### Step 2: Database Verification
+
+**If worker added/modified data:**
+
+```
+postgres.count({table: "users", where: "organizationId = $1", params: ["..."]})
+```
+
+**Worker claimed:** `{count: 24}`
+**You verify:** Re-run same command
+
+**If match:** ✅ Database changes verified
+**If no match:** ❌ Worker lied or made mistake
+
+**⚠️ CRITICAL:** Use lowercase table names (`"users"` not `"User"`)
+
+---
+
+### Step 3: Code Quality
+
+```
+code_analysis.typescript_check()
+code_analysis.build_check()
+```
+
+**Worker claimed:** `{exitCode: 0}`
+**You verify:** Re-run same commands
+
+**If exitCode: 0** → ✅ Quality verified
+**If exitCode: 1** → ❌ REJECT TASK
+
+---
+
+### Step 4: Frontend Testing
+
+```
+playwright.navigate({url: "http://localhost:8103/..."})
+playwright.console_errors({url: "..."})
+```
+
+**Worker claimed:** `{errorCount: 0}`
+**You verify:** Re-run same commands
+
+**If errorCount: 0** → ✅ Frontend clean
+**If errorCount > 0** → ❌ REJECT TASK
+
+**⚠️ CRITICAL:** Use localhost URLs (not Docker hostnames)
+
+---
+
+## Spot-Check Sampling
+
+**Pick 2-3 critical MCPs:**
+
+**Example:**
+1. `postgres.count()` → Match?
+2. `playwright.console_errors()` → Match?
+3. `code_analysis.build_check()` → Match?
+
+**If 3/3 match** → 100% confidence → ✅ VERIFIED
+**If 2/3 match** → 66% confidence → ⚠️ Investigate
+**If 1/3 match** → 33% confidence → ❌ REJECT
+
+---
+
+## Decision
+
+### APPROVED ✅
+
+```
+✅ Docker: Healthy (match)
+✅ Database: Count 24/24 (match)
+✅ TypeScript: 0 errors (match)
+✅ Build: exitCode 0 (match)
+✅ Console: 0 errors (match)
+
+Decision: ✅ TASK VERIFIED
+Confidence: 100%
+```
+
+**Report to user:**
+```
+W{N} task doğrulandı ✅
+- {X} verified (postgres.count)
+- Build başarılı (exitCode: 0)
+- Console temiz (0 error)
+
+Sıradaki task başlayabilir.
 ```
 
 ---
 
-## Step 3: Re-Run Commands
+### REJECTED ❌
 
-**For each claim, run EXACT command:**
+```
+✅ Docker: Healthy (match)
+❌ Database: 24 ≠ 5 (NO MATCH)
+✅ TypeScript: 0 errors (match)
+❌ Build: exitCode 1 (FAILED)
+❌ Console: 3 errors (FAILED)
 
-```bash
-# Claim: "5 widgets"
-$ ls -1 frontend/components/dashboard/{role}/*.tsx | wc -l
-5
+Decision: ❌ TASK REJECTED (3 blockers)
+Confidence: 0%
+```
 
-# Claim: "10 pages protected"
-$ grep -r "withRoleProtection" frontend/app/ --include="page.tsx" | wc -l
-10
+**Report to user:**
+```
+W{N} task reddedildi ❌
 
-# Claim: "API 200 OK"
-$ python3 scripts/tests/test-api.py
-Status: 200
+Sorunlar:
+1. Database count mismatch (24 ≠ 5)
+2. Build failed (exitCode: 1)
+3. Console 3 error var
+
+Action: Düzeltme task'i ver
 ```
 
 ---
 
-## Step 4: Compare
+## MCP Commands Reference
 
-**Create comparison table:**
+### PostgreSQL MCP
+```
+postgres.count({table: "users"})
+postgres.verify_exists({table: "users", where: "email = $1", params: [...]})
+postgres.query({sql: "SELECT...", params: [...]})
+```
 
-| Claim | Worker Said | Mod Got | Match? |
-|-------|-------------|---------|--------|
-| Widgets | 5 | 5 | ✅ |
-| Protected | 10 | 10 | ✅ |
-| API Status | 200 | 200 | ✅ |
+### Docker MCP
+```
+docker.health()
+docker.logs({container: "ikai-backend", tail: 50})
+docker.stats({container: "ikai-backend"})
+```
+
+### Playwright MCP
+```
+playwright.navigate({url: "http://localhost:8103/...", screenshot: true})
+playwright.console_errors({url: "..."})
+playwright.check_element({url: "...", selector: "..."})
+```
+
+### Code Analysis MCP
+```
+code_analysis.typescript_check()
+code_analysis.eslint_check()
+code_analysis.build_check()
+```
 
 ---
 
-## Step 5: Decision
+## Critical Warnings
 
-**If ALL match:**
-```
-✅ Verified
-Worker: Honest
-Status: APPROVED
-```
+### PostgreSQL
+❌ `table: "User"` → ERROR
+✅ `table: "users"` → SUCCESS
 
-**If ANY mismatch:**
-```
-❌ Failed Verification
-Worker claimed: 10, Mod found: 7
-Status: RE-DO REQUIRED
-```
+### Playwright
+❌ `url: "http://ikai-frontend:3000"` → ERROR
+✅ `url: "http://localhost:8103"` → SUCCESS
+
+### Exit Codes
+- exitCode: 0 = SUCCESS
+- exitCode: 1 = FAILED
 
 ---
 
-## Step 6: Create Mod Report
+## Verification Report Template
 
-**File:** `docs/reports/MOD-{feature}-verification.md`
+**Create:** `docs/reports/mod-verification-w{N}.md`
 
 ```markdown
-# MOD: {Feature} Verification
+# MOD Verification - W{N} Task
 
-**Date:** 2025-11-04
+**Date:** 2025-11-05
+**Task:** {Task description}
 **Worker:** W{N}
+**Status:** ✅ VERIFIED / ❌ REJECTED
 
-## Comparison
+---
 
-| Metric | Worker | Mod | Match |
-|--------|--------|-----|-------|
-| {Metric1} | {X} | {X} | ✅ |
-| {Metric2} | {Y} | {Y} | ✅ |
+## MCP Verification Results
 
-## Verdict
+### 1. Docker Health
+docker.health()
+Worker: {output}
+Mod: {output}
+✅ MATCH / ❌ MISMATCH
 
-✅ VERIFIED - All claims match
-Worker honesty: 100%
-Status: APPROVED
+### 2. Database Count
+postgres.count({...})
+Worker: {count: X}
+Mod: {count: X}
+✅ MATCH / ❌ MISMATCH
 
-**Next:** {Next phase can start}
+### 3. Build Check
+code_analysis.build_check()
+Worker: {exitCode: 0}
+Mod: {exitCode: 0}
+✅ MATCH / ❌ MISMATCH
+
+### 4. Console Errors
+playwright.console_errors({...})
+Worker: {errorCount: 0}
+Mod: {errorCount: 0}
+✅ MATCH / ❌ MISMATCH
+
+---
+
+## Decision
+
+✅ **VERIFIED** / ❌ **REJECTED**
+
+Score: X/X checks passed (100%)
+Confidence: High/Medium/Low
+Action: Approve/Reject
+
+---
+
+## User Report
+
+W{N} task {doğrulandı/reddedildi} {✅/❌}
+- {Summary}
 ```
 
 **Commit:**
 ```bash
-git add docs/reports/MOD-{feature}-verification.md
-git commit -m "docs(mod): {Feature} verification - ✅ VERIFIED"
+git add docs/reports/mod-verification-w{N}.md
+git commit -m "docs(mod): W{N} verification - ✅ VERIFIED"
 ```
 
 ---
 
-## Step 7: Report to User
-
-**Format:**
-```
-✅ W{N} doğrulandı
-Karşılaştırma: {X}/{X} MATCH ✅
-Worker dürüstlük: 100%
-Sonraki aşama başlayabilir
-```
-
----
-
-## Quick Verification Commands
-
-**Frontend:**
-```bash
-# Count files
-find frontend/app -name "*.tsx" | wc -l
-
-# Count protections
-grep -r "withRoleProtection" frontend/ | wc -l
-
-# Count widgets
-ls -1 frontend/components/dashboard/*/*.tsx | wc -l
-
-# Build check
-cd frontend && npm run build
-```
-
-**Backend:**
-```bash
-# Count routes
-grep -c "router\." backend/src/routes/*.js
-
-# Count Prisma queries
-grep -c "await prisma\." backend/src/routes/{file}.js
-
-# API test
-python3 -c "import requests; r = requests.get('http://localhost:8102/health'); print(r.status_code)"
-```
-
-**Database:**
-```bash
-# Check migrations
-ls -1 backend/prisma/migrations/ | wc -l
-
-# Check schema
-grep "model" backend/prisma/schema.prisma | wc -l
-```
+**MCP = Tamper-Proof Verification**
+**Spot-Check = Resource Efficient**
+**Zero Tolerance = Production Quality**

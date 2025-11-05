@@ -35,6 +35,7 @@ import {
   Database, // W7: Milvus/Database
   Lock, // W7: Security
   ServerCog, // W7: System
+  MessageCircle, // W1: AI Chat
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import ProtectedRoute from "@/components/ProtectedRoute";
@@ -73,6 +74,10 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
     // 2. Bildirimler (W1 ADDED - all users)
     { name: "Bildirimler", path: "/notifications", icon: Bell },
+    // 2.5. AI Chat (all users)
+    { name: "AI Chat", path: "/chat", icon: MessageCircle },
+    // 2.6. Analizler - Read-only for USER (all users can view)
+    { name: "Analizler", path: "/analyses", icon: Clock },
     // 3-8. HR Features (HR_SPECIALIST+ only)
     ...(user?.role === "HR_SPECIALIST" ||
     user?.role === "MANAGER" ||
@@ -85,8 +90,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           { name: "Adaylar", path: "/candidates", icon: Users },
           // 5. Analiz Sihirbazı (analyze candidates)
           { name: "Analiz Sihirbazı", path: "/wizard", icon: Wand2 },
-          // 6. Geçmiş Analizlerim (past analyses)
-          { name: "Geçmiş Analizlerim", path: "/analyses", icon: Clock },
+          // 6. Geçmiş Analizlerim - REMOVED (now global "Analizler" for all users)
           // 7. Teklifler (W1 UPDATED - has submenu with 4 items)
           { name: "Teklifler", path: "/offers", icon: FileText, hasSubmenu: true },
           // 8. Mülakatlar (interview scheduled candidates)

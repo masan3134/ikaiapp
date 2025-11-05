@@ -1,7 +1,7 @@
 # 🎯 AsanMod Core - Universal System
 
-**Version:** 16.0 (Compact + Template-Based)
-**Date:** 2025-11-04
+**Version:** 17.0 (MCP Integration + Rule 6)
+**Date:** 2025-11-05
 **Purpose:** Minimal rules + Template system = Fast coordination
 
 ---
@@ -77,6 +77,33 @@ Mod verifies by re-running commands
 ❌ "Widget added successfully"
 
 Technical terms in English OK (commit, grep, etc)
+```
+
+### Rule 6: MCP-First Verification
+```
+🔌 ALWAYS use MCP for verification!
+
+Mod verification:
+✅ postgres.count({table: "users"})
+✅ playwright.navigate({url: "http://localhost:8103/..."})
+✅ docker.health()
+✅ code_analysis.build_check()
+
+Worker workflow:
+1. docker.health() → Start
+2. (Work...)
+3. code_analysis.typescript_check() → Pre-commit
+4. code_analysis.build_check() → Pre-commit
+5. playwright.console_errors() → Frontend
+6. postgres.count() → Database
+7. docker.health() → End
+
+CRITICAL:
+- PostgreSQL: Lowercase tables ("users" not "User")
+- Playwright: Localhost URLs (not Docker hostnames)
+- Exit code 0 = Success, 1 = Failed
+
+NO MCP = NO VERIFICATION
 ```
 
 ---

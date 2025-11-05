@@ -53,8 +53,8 @@
     "email": "test-hr_specialist@test-org-2.com",
     "success": true,
     "stats": {
-      "totalMessages": 8,
-      "errors": 2,
+      "totalMessages": 6,
+      "errors": 0,
       "warnings": 0
     },
     "consoleMessages": [
@@ -92,34 +92,9 @@
         "text": "[IKAI] Error tracking initialized",
         "url": "webpack-internal:///(app-pages-browser)/./components/ClientInitializer.tsx",
         "lineNumber": 22
-      },
-      {
-        "type": "error",
-        "text": "[HR DASHBOARD] Load error: JSHandle@error",
-        "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/app-index.js",
-        "lineNumber": 32
-      },
-      {
-        "type": "error",
-        "text": "[HR DASHBOARD] Load error: JSHandle@error",
-        "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/app-index.js",
-        "lineNumber": 32
       }
     ],
-    "consoleErrors": [
-      {
-        "type": "error",
-        "text": "[HR DASHBOARD] Load error: JSHandle@error",
-        "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/app-index.js",
-        "lineNumber": 32
-      },
-      {
-        "type": "error",
-        "text": "[HR DASHBOARD] Load error: JSHandle@error",
-        "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/app-index.js",
-        "lineNumber": 32
-      }
-    ],
+    "consoleErrors": [],
     "consoleWarnings": []
   },
   {
@@ -127,8 +102,8 @@
     "email": "test-manager@test-org-1.com",
     "success": true,
     "stats": {
-      "totalMessages": 8,
-      "errors": 2,
+      "totalMessages": 6,
+      "errors": 0,
       "warnings": 0
     },
     "consoleMessages": [
@@ -166,34 +141,9 @@
         "text": "[IKAI] Error tracking initialized",
         "url": "webpack-internal:///(app-pages-browser)/./components/ClientInitializer.tsx",
         "lineNumber": 22
-      },
-      {
-        "type": "error",
-        "text": "[MANAGER DASHBOARD] Load error: JSHandle@error",
-        "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/app-index.js",
-        "lineNumber": 32
-      },
-      {
-        "type": "error",
-        "text": "[MANAGER DASHBOARD] Load error: JSHandle@error",
-        "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/app-index.js",
-        "lineNumber": 32
       }
     ],
-    "consoleErrors": [
-      {
-        "type": "error",
-        "text": "[MANAGER DASHBOARD] Load error: JSHandle@error",
-        "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/app-index.js",
-        "lineNumber": 32
-      },
-      {
-        "type": "error",
-        "text": "[MANAGER DASHBOARD] Load error: JSHandle@error",
-        "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/app-index.js",
-        "lineNumber": 32
-      }
-    ],
+    "consoleErrors": [],
     "consoleWarnings": []
   },
   {
