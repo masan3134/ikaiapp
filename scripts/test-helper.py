@@ -161,6 +161,41 @@ class IKAITestHelper:
             print(f"❌ Hata: {e}")
             return None
 
+    def patch(self, endpoint: str, data: Dict) -> Optional[Dict]:
+        """
+        PATCH request yap
+        """
+        if not self.token:
+            print("❌ Önce login olmalısınız!")
+            return None
+
+        try:
+            response = requests.patch(
+                f"{BASE_URL}{endpoint}",
+                json=data,
+                headers={
+                    "Authorization": f"Bearer {self.token}",
+                    "Content-Type": "application/json"
+                }
+            )
+
+            print(f"\n{'='*60}")
+            print(f"PATCH {endpoint}")
+            print(f"Status: {response.status_code}")
+            print(f"{'='*60}")
+
+            if response.status_code == 200:
+                result = response.json()
+                print(json.dumps(result, indent=2, ensure_ascii=False))
+                return result
+            else:
+                print(f"Hata: {response.text}")
+                return None
+
+        except Exception as e:
+            print(f"❌ Hata: {e}")
+            return None
+
     def delete(self, endpoint: str) -> bool:
         """
         DELETE request yap
