@@ -26,6 +26,63 @@
 
 ---
 
+## 🔒 RBAC MATRIX - CRITICAL!
+
+**Employee Management Permissions by Role:**
+
+| Feature | SUPER_ADMIN | ADMIN | HR_SPECIALIST | MANAGER | USER |
+|---------|-------------|-------|---------------|---------|------|
+| **Employees** |||||
+| List all employees | ✅ All orgs | ✅ Own org | ✅ Own org | ✅ Own dept only | ❌ |
+| View employee detail | ✅ | ✅ | ✅ | ✅ Own dept | ✅ Own profile |
+| Create employee | ✅ | ✅ | ✅ | ❌ | ❌ |
+| Update employee | ✅ | ✅ | ✅ | ❌ | ❌ Own profile (limited) |
+| Terminate employee | ✅ | ✅ | ✅ | ❌ | ❌ |
+| Convert candidate | ✅ | ✅ | ✅ | ❌ | ❌ |
+| **Leaves** |||||
+| Request leave | ✅ | ✅ | ✅ | ✅ | ✅ |
+| View own leaves | ✅ | ✅ | ✅ | ✅ | ✅ |
+| View team leaves | ✅ | ✅ | ✅ | ✅ Own dept | ❌ |
+| Approve/reject leave | ✅ | ✅ | ✅ | ✅ Own dept | ❌ |
+| **Performance** |||||
+| Create review | ✅ | ✅ | ✅ | ✅ Own dept | ❌ |
+| View own reviews | ✅ | ✅ | ✅ | ✅ | ✅ |
+| View team reviews | ✅ | ✅ | ✅ | ✅ Own dept | ❌ |
+| **Documents** |||||
+| Upload document | ✅ | ✅ | ✅ | ❌ | ❌ |
+| View own documents | ✅ | ✅ | ✅ | ✅ | ✅ |
+| View team documents | ✅ | ✅ | ✅ | ✅ Own dept | ❌ |
+| Delete document | ✅ | ✅ | ✅ | ❌ | ❌ |
+
+**CRITICAL RULES:**
+
+1. **MANAGER Department Isolation:**
+   - MANAGER sees ONLY their department's employees
+   - Apply `departmentId` filter in WHERE clause
+   - Check: `req.user.role === 'MANAGER' ? req.user.departmentId : undefined`
+
+2. **USER Self-Only Access:**
+   - USER can only view/edit their OWN profile
+   - Check: `employee.userId === req.user.id`
+   - Reject if trying to access others
+
+3. **Salary Visibility:**
+   - Only ADMIN + HR_SPECIALIST can view salary
+   - MANAGER and USER see `salary: null` in responses
+   - Filter sensitive fields in controller
+
+4. **Organization Isolation:**
+   - ALL roles restricted to their organization
+   - Use `organizationIsolation` middleware
+   - Multi-tenant security enforced
+
+5. **SUPER_ADMIN Exception:**
+   - Can access ALL organizations
+   - System-wide management
+   - Skip org isolation for SUPER_ADMIN
+
+---
+
 ## 📊 DATABASE SCHEMA
 
 ### New Tables
