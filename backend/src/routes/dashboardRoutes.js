@@ -10,6 +10,42 @@ const prisma = new PrismaClient();
 
 const router = express.Router();
 
+// GET /api/v1/dashboard
+// Generic dashboard endpoint - returns role-appropriate data
+router.get('/', [
+  authenticateToken,
+  enforceOrganizationIsolation,
+  authorize(['USER', 'HR_SPECIALIST', 'MANAGER', 'ADMIN', 'SUPER_ADMIN'])
+], async (req, res) => {
+  try {
+    const userRole = req.user.role;
+
+    // Return link to role-specific endpoint for frontend
+    const roleEndpoints = {
+      'USER': '/api/v1/dashboard/user',
+      'HR_SPECIALIST': '/api/v1/dashboard/hr-specialist',
+      'MANAGER': '/api/v1/dashboard/manager',
+      'ADMIN': '/api/v1/dashboard/admin',
+      'SUPER_ADMIN': '/api/v1/dashboard/super-admin'
+    };
+
+    res.json({
+      success: true,
+      data: {
+        role: userRole,
+        endpoint: roleEndpoints[userRole],
+        message: 'Use the role-specific endpoint for dashboard data'
+      }
+    });
+  } catch (error) {
+    console.error('[DASHBOARD] Generic endpoint error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Dashboard verileri alınırken hata oluştu'
+    });
+  }
+});
+
 router.get(
   '/stats',
   authenticateToken,
