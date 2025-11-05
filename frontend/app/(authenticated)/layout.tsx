@@ -49,6 +49,11 @@ const NotificationBell = dynamic(
   { ssr: false }
 );
 
+const UserAvatar = dynamic(
+  () => import("@/components/layout/UserAvatar"),
+  { ssr: false }
+);
+
 interface DashboardLayoutProps {
   children: React.ReactNode;
 }
@@ -178,6 +183,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               </div>
               <div className="flex items-center gap-2">
                 <NotificationBell />
+                <UserAvatar />
                 <button
                   onClick={() => setIsSidebarOpen(!isSidebarOpen)}
                   className="p-2 rounded-lg hover:bg-gray-100"
@@ -365,10 +371,11 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
               {/* Main Content */}
               <main className="flex-1 overflow-x-hidden">
-                {/* Desktop Top Bar - Bell Icon (hidden on mobile) */}
+                {/* Desktop Top Bar - Bell Icon + Avatar (hidden on mobile) */}
                 <div className="hidden lg:block sticky top-0 z-30 bg-white border-b border-gray-200 shadow-sm">
-                  <div className="px-6 py-3 flex items-center justify-end">
+                  <div className="px-6 py-3 flex items-center justify-end gap-3">
                     <NotificationBell />
+                    <UserAvatar />
                   </div>
                 </div>
 
