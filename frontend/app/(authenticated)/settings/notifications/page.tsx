@@ -284,94 +284,97 @@ export default function NotificationPreferencesPage() {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Success/Error Message */}
+    <div className="space-y-8">
+      {/* Success/Error Message - ENHANCED */}
       {message && (
         <div
-          className={`p-4 rounded-xl flex items-center gap-3 shadow-sm animate-in slide-in-from-top duration-300 ${
+          className={`p-5 rounded-2xl flex items-center gap-4 shadow-xl animate-in slide-in-from-top duration-300 border-2 ${
             message.type === "success"
-              ? "bg-green-50 border-2 border-green-200 text-green-800"
-              : "bg-red-50 border-2 border-red-200 text-red-800"
+              ? "bg-gradient-to-r from-green-50 to-emerald-50 border-green-300 text-green-900"
+              : "bg-gradient-to-r from-red-50 to-rose-50 border-red-300 text-red-900"
           }`}
         >
           {message.type === "success" ? (
-            <CheckCircle2 className="flex-shrink-0" size={20} />
+            <CheckCircle2 className="flex-shrink-0" size={24} />
           ) : (
-            <AlertTriangle className="flex-shrink-0" size={20} />
+            <AlertTriangle className="flex-shrink-0" size={24} />
           )}
-          <p className="font-medium flex-1">{message.text}</p>
+          <p className="font-bold flex-1 text-lg">{message.text}</p>
         </div>
       )}
 
-      {/* Stats Cards */}
+      {/* Stats Cards - PREMIUM GRADIENTS */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-xl shadow-sm border-2 border-blue-200 p-6">
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-blue-500 rounded-lg shadow-md">
-              <Bell className="text-white" size={24} />
+        <div className="relative group bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 rounded-2xl shadow-2xl p-6 text-white hover:shadow-3xl transition-all duration-300 hover:-translate-y-1 overflow-hidden">
+          <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <div className="relative flex items-center gap-4">
+            <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl shadow-lg">
+              <Bell className="text-white" size={28} />
             </div>
             <div>
-              <p className="text-sm font-medium text-blue-700">Uygulama İçi</p>
-              <p className="text-3xl font-bold text-blue-900">{enabledCount}</p>
-              <p className="text-xs text-blue-600">
+              <p className="text-sm font-medium text-blue-100">Uygulama İçi</p>
+              <p className="text-4xl font-bold text-white mb-1">{enabledCount}</p>
+              <p className="text-xs text-blue-100">
                 / {preferences.length} bildirim
               </p>
             </div>
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-purple-50 to-purple-100/50 rounded-xl shadow-sm border-2 border-purple-200 p-6">
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-purple-500 rounded-lg shadow-md">
-              <Mail className="text-white" size={24} />
+        <div className="relative group bg-gradient-to-br from-purple-500 via-purple-600 to-pink-600 rounded-2xl shadow-2xl p-6 text-white hover:shadow-3xl transition-all duration-300 hover:-translate-y-1 overflow-hidden">
+          <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <div className="relative flex items-center gap-4">
+            <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl shadow-lg">
+              <Mail className="text-white" size={28} />
             </div>
             <div>
-              <p className="text-sm font-medium text-purple-700">E-posta</p>
-              <p className="text-3xl font-bold text-purple-900">
+              <p className="text-sm font-medium text-purple-100">E-posta</p>
+              <p className="text-4xl font-bold text-white mb-1">
                 {emailEnabledCount}
               </p>
-              <p className="text-xs text-purple-600">
+              <p className="text-xs text-purple-100">
                 / {preferences.length} bildirim
               </p>
             </div>
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-green-50 to-green-100/50 rounded-xl shadow-sm border-2 border-green-200 p-6">
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-green-500 rounded-lg shadow-md">
-              <CheckCircle2 className="text-white" size={24} />
+        <div className="relative group bg-gradient-to-br from-green-500 via-emerald-600 to-teal-600 rounded-2xl shadow-2xl p-6 text-white hover:shadow-3xl transition-all duration-300 hover:-translate-y-1 overflow-hidden">
+          <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <div className="relative flex items-center gap-4">
+            <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl shadow-lg">
+              <CheckCircle2 className="text-white" size={28} />
             </div>
             <div>
-              <p className="text-sm font-medium text-green-700">Kategoriler</p>
-              <p className="text-3xl font-bold text-green-900">
+              <p className="text-sm font-medium text-green-100">Kategoriler</p>
+              <p className="text-4xl font-bold text-white mb-1">
                 {categories.length}
               </p>
-              <p className="text-xs text-green-600">farklı kategori</p>
+              <p className="text-xs text-green-100">farklı kategori</p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Quick Actions */}
-      <div className="flex flex-wrap gap-3">
+      {/* Quick Actions - ENHANCED */}
+      <div className="flex flex-wrap gap-4">
         <button
           onClick={handleEnableAll}
-          className="px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-all shadow-sm hover:shadow-md flex items-center gap-2"
+          className="px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 flex items-center gap-2"
         >
-          <CheckCircle2 size={16} />
+          <CheckCircle2 size={18} />
           Hepsini Aç
         </button>
         <button
           onClick={handleDisableAll}
-          className="px-4 py-2.5 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-all shadow-sm hover:shadow-md flex items-center gap-2"
+          className="px-6 py-3 bg-gradient-to-r from-gray-600 to-slate-600 hover:from-gray-700 hover:to-slate-700 text-white rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 flex items-center gap-2"
         >
-          <AlertTriangle size={16} />
+          <AlertTriangle size={18} />
           Hepsini Kapat
         </button>
         <button
           onClick={handleResetToDefaults}
-          className="px-4 py-2.5 bg-white hover:bg-gray-50 text-gray-700 border-2 border-gray-300 rounded-lg font-medium transition-all shadow-sm hover:shadow-md"
+          className="px-6 py-3 bg-white hover:bg-gray-50 text-gray-700 border-2 border-gray-300 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
         >
           Varsayılanlara Dön
         </button>
@@ -406,28 +409,29 @@ export default function NotificationPreferencesPage() {
           }[color];
 
           return (
-            <Card key={category}>
-              {/* Category Header */}
+            <div key={category} className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-200/50 overflow-hidden">
+              {/* Category Header - ULTRA PREMIUM */}
               <div
-                className={`flex items-center gap-3 -m-6 p-4 mb-6 rounded-t-xl bg-gradient-to-r ${colorClasses} text-white`}
+                className={`relative overflow-hidden flex items-center gap-4 p-6 bg-gradient-to-r ${colorClasses} text-white`}
               >
-                <div className="p-2 bg-white/20 backdrop-blur-sm rounded-lg">
-                  {category === "CV Analizi" && <Sparkles size={20} />}
-                  {category === "Adaylar" && <Users size={20} />}
-                  {category === "İş Teklifleri" && <Briefcase size={20} />}
-                  {category === "Mülakatlar" && <Calendar size={20} />}
-                  {category === "Sistem" && <AlertTriangle size={20} />}
+                <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMwLTkuOTQtOC4wNi0xOC0xOC0xOCIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjEiIG9wYWNpdHk9Ii4xIi8+PC9nPjwvc3ZnPg==')] opacity-20"></div>
+                <div className="relative p-3 bg-white/20 backdrop-blur-sm rounded-xl shadow-lg">
+                  {category === "CV Analizi" && <Sparkles size={24} />}
+                  {category === "Adaylar" && <Users size={24} />}
+                  {category === "İş Teklifleri" && <Briefcase size={24} />}
+                  {category === "Mülakatlar" && <Calendar size={24} />}
+                  {category === "Sistem" && <AlertTriangle size={24} />}
                 </div>
-                <div>
-                  <h3 className="font-bold text-lg">{category}</h3>
-                  <p className="text-sm text-white/90">
+                <div className="relative">
+                  <h3 className="font-bold text-2xl">{category}</h3>
+                  <p className="text-sm text-white/90 font-medium">
                     {categoryPrefs.length} bildirim türü
                   </p>
                 </div>
               </div>
 
-              {/* Preference Items */}
-              <div className="space-y-3">
+              {/* Preference Items - ENHANCED */}
+              <div className="space-y-3 p-8">
                 {categoryPrefs.map((pref) => {
                   const typeInfo = notificationTypeLabels[pref.type];
                   const Icon = typeInfo?.icon || Bell;
@@ -435,9 +439,9 @@ export default function NotificationPreferencesPage() {
                   return (
                     <div
                       key={pref.type}
-                      className={`p-4 rounded-xl border-2 transition-all ${
+                      className={`p-5 rounded-2xl border-2 transition-all duration-300 hover:shadow-lg ${
                         pref.enabled
-                          ? `${bgClasses} border-${color}-200 shadow-sm`
+                          ? `${bgClasses} border-${color}-200 shadow-md`
                           : "bg-gray-50 border-gray-200"
                       }`}
                     >
@@ -524,59 +528,64 @@ export default function NotificationPreferencesPage() {
                   );
                 })}
               </div>
-            </Card>
+            </div>
           );
         })}
       </div>
 
-      {/* Info Box */}
-      <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-6">
-        <div className="flex gap-4">
-          <div className="flex-shrink-0">
-            <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center shadow-md">
-              <Info className="text-white" size={20} />
+      {/* Info Box - ULTRA MODERN */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-600 rounded-3xl shadow-2xl">
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMwLTkuOTQtOC4wNi0xOC0xOC0xOCIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjEiIG9wYWNpdHk9Ii4xIi8+PC9nPjwvc3ZnPg==')] opacity-20"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>
+
+        <div className="relative p-8">
+          <div className="flex gap-6">
+            <div className="flex-shrink-0">
+              <div className="p-4 bg-white/20 backdrop-blur-xl rounded-2xl shadow-xl border border-white/30">
+                <Info className="text-white" size={28} />
+              </div>
             </div>
-          </div>
-          <div className="flex-1">
-            <h4 className="font-bold text-blue-900 mb-2">
-              Bildirim Tercihleri Hakkında
-            </h4>
-            <ul className="text-sm text-blue-800 space-y-2">
-              <li className="flex items-start gap-2">
-                <CheckCircle2 className="flex-shrink-0 mt-0.5" size={16} />
-                <span>
-                  E-posta bildirimleri sadece uygulama içi bildirimi açık olan
-                  tipler için gönderilebilir
-                </span>
-              </li>
-              <li className="flex items-start gap-2">
-                <CheckCircle2 className="flex-shrink-0 mt-0.5" size={16} />
-                <span>
-                  Önemli olaylar (Teklif Kabul/Red, Limit Doldu) için e-posta
-                  bildirimi önerilir
-                </span>
-              </li>
-              <li className="flex items-start gap-2">
-                <CheckCircle2 className="flex-shrink-0 mt-0.5" size={16} />
-                <span>
-                  Değişiklikler anında uygulanır, yeniden giriş yapmanız
-                  gerekmez
-                </span>
-              </li>
-              <li className="flex items-start gap-2">
-                <CheckCircle2 className="flex-shrink-0 mt-0.5" size={16} />
-                <span>
-                  SUPER_ADMIN tüm organizasyonlardan bildirimleri görür
-                </span>
-              </li>
-            </ul>
+            <div className="flex-1">
+              <h4 className="text-2xl font-bold text-white mb-4">
+                Bildirim Tercihleri Hakkında
+              </h4>
+              <ul className="text-sm text-white/90 space-y-3 font-medium">
+                <li className="flex items-start gap-3">
+                  <CheckCircle2 className="flex-shrink-0 mt-0.5" size={18} />
+                  <span>
+                    E-posta bildirimleri sadece uygulama içi bildirimi açık olan
+                    tipler için gönderilebilir
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle2 className="flex-shrink-0 mt-0.5" size={18} />
+                  <span>
+                    Önemli olaylar (Teklif Kabul/Red, Limit Doldu) için e-posta
+                    bildirimi önerilir
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle2 className="flex-shrink-0 mt-0.5" size={18} />
+                  <span>
+                    Değişiklikler anında uygulanır, yeniden giriş yapmanız
+                    gerekmez
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle2 className="flex-shrink-0 mt-0.5" size={18} />
+                  <span>
+                    SUPER_ADMIN tüm organizasyonlardan bildirimleri görür
+                  </span>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Save Button - Fixed Bottom */}
+      {/* Save Button - Fixed Bottom - ENHANCED */}
       <div className="sticky bottom-6 z-10">
-        <div className="bg-white rounded-xl shadow-xl border-2 border-gray-200 p-4">
+        <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border-2 border-gray-200 p-6">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-gray-100 rounded-lg">
