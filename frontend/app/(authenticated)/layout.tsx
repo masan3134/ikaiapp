@@ -41,6 +41,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import { useAuthStore } from "@/lib/store/authStore";
 import { OrganizationProvider } from "@/contexts/OrganizationContext";
 import { OnboardingGuard } from "@/components/OnboardingGuard";
+import { Toaster } from "react-hot-toast";
 
 // Dynamic import to avoid SSR issues (uses localStorage/hooks)
 const NotificationBell = dynamic(
@@ -375,6 +376,30 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           </div>
         </OnboardingGuard>
       </OrganizationProvider>
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: '#363636',
+            color: '#fff',
+          },
+          success: {
+            duration: 3000,
+            iconTheme: {
+              primary: '#10b981',
+              secondary: '#fff',
+            },
+          },
+          error: {
+            duration: 5000,
+            iconTheme: {
+              primary: '#ef4444',
+              secondary: '#fff',
+            },
+          },
+        }}
+      />
     </ProtectedRoute>
   );
 }
