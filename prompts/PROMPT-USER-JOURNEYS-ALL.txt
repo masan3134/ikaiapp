@@ -1,0 +1,13 @@
+W1: docs/workflow/tasks/USER-JOURNEY-W1-USER.md → login test-user@test-org-1.com → sidebar(7 visible 6 hidden) → dashboard widgets → CV view(READ-ONLY) → AI chat → profile → notifications → RBAC(6 URL deny) → 8 screenshots
+
+W2: docs/workflow/tasks/USER-JOURNEY-W2-HR.md → login test-hr_specialist@test-org-2.com → sidebar check → create job → upload 10 CVs → wizard 5-step(5 CVs ~20s) → candidate mgmt → reports → team view → RBAC(5 URL 3 API deny) → PRO limits(50/200/10) → 13 screenshots
+
+W3: docs/workflow/tasks/USER-JOURNEY-W3-MANAGER.md → login test-manager@test-org-1.com → DEPT ISOLATION(Engineering ONLY!) → candidates(dept only) → offer approval → dept reports → job comment → team(dept) → cross-dept RBAC(MUST deny) → 7 screenshots
+
+W4: docs/workflow/tasks/USER-JOURNEY-W4-ADMIN.md → login test-admin@test-org-2.com → sidebar(full org) → user mgmt(create/edit/delete/role) → org settings → billing(PRO plan) → usage limits → all-dept reports → RBAC(no SUPER) → 9 screenshots
+
+W5: docs/workflow/tasks/USER-JOURNEY-W5-SUPER.md → login info@gaiai.ai/23235656 → multi-org view(ALL orgs) → system health → queue mgmt → global analytics → DB health → API monitor → RBAC(EVERYTHING) → 10 screenshots
+
+W6: docs/workflow/tasks/USER-JOURNEY-W6-CROSS.md → ALL 5 roles → 5 dashboard compare → design audit(identify patterns) → integration(HR→MGR→ADM workflow) → performance(all pages) → public pages(landing/pricing) → error aggregation → design unification plan
+
+ALL: headless:true + browser.close() + errorCount=0 + real user simulation

@@ -1,0 +1,26 @@
+W2, görev %35 - HEART SURGERY! Generic page test değil, REAL HR JOURNEY lazım!
+
+YAPMADIN (%65 EKSİK):
+1. CV: 10 PDF yükle, görüntüle, sil (ADIM 2)
+2. WIZARD: 5 adım TAM flow - iş ilanı seç, CV yükle, ayarla, önizle, sonuçları gör (ADIM 3)
+3. ADAY: Detay aç, not ekle, durum değiştir (ADIM 4)
+4. RAPOR: Pipeline oluştur, CSV eksport (ADIM 5)
+5. TAKIM: Liste gör, read-only verify (ADIM 6)
+6. RBAC URL: 5 URL test /admin /org /billing /health /users (ADIM 7.1)
+7. RBAC API: 3 admin API → 403 (ADIM 7.2)
+8. KULLANIM: Widget 50/200/10 verify (ADIM 8)
+9. DASHBOARD: 6 widget say (ADIM 1.2)
+10. SIDEBAR: 8 görünür + 4 gizli (ADIM 1.1)
+11. AI CHAT: Gemini test < 5s
+
+SEN YAPTIN (KORUYACAĞIN %35):
+✅ Console: 0 error
+✅ CRUD test
+✅ Bug fix
+
+Sen button'lara tıkladın, WORKFLOW yapmadın!
+
+Task: docs/workflow/tasks/USER-JOURNEY-W2-HR.md
+Playwright headless, screenshots, GERÇEK HR gibi!
+
+5 saat hedef - BAŞLA!

@@ -1,0 +1,19 @@
+W1, görev %62 - EKSIK! MOD verification FAILED. REDO zorunlu.
+
+YAPMADIĞIN (KRİTİK):
+1. CV Analiz - /analyses sayfası, detay, skorlar (ADIM 2.1-2.3)
+2. AI Chat - Gemini test, yanıt < 5s (ADIM 3.1-3.2)
+3. API RBAC - playwright fetch POST /job-postings → 403 (ADIM 6.2)
+4. Performance - load time ölç < 2s (ADIM 8.1)
+5. Sidebar count - 7 görünür + 6 gizli say (ADIM 1.2)
+
+KORUYACAĞIN (İYİ):
+✅ Console errors: 0
+✅ Profile rename
+✅ Frontend RBAC
+
+Task: docs/workflow/tasks/USER-JOURNEY-W1-USER.md
+Report: docs/reports/e2e-test-w1-user-COMPREHENSIVE-FINAL.md (güncelle)
+Playwright headless, screenshots, tam detay!
+
+BAŞLA ŞİMDİ - 90 dakika hedef.

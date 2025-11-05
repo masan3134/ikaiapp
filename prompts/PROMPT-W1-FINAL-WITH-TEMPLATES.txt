@@ -1,0 +1,35 @@
+W1, görev %62 EKSIK - REDO gerekli. HAZIR TEMPLATE var, kullan!
+
+✅ HAZIR TEMPLATE:
+scripts/templates/e2e-user-journey-template.py
+- 10 test otomatik (login, sidebar, CV analiz, AI chat, profil, RBAC, performance)
+- Playwright headless
+- Screenshots otomatik
+- JSON result
+Çalıştır: python3 scripts/templates/e2e-user-journey-template.py > test-outputs/w1-auto.txt
+
+YAPMADIĞIN (%38 EKSİK):
+1. CV Analiz - /analyses sayfa, detay, skorlar ← TEMPLATE VAR!
+2. AI Chat - Gemini test, < 5s ← TEMPLATE VAR!
+3. API RBAC - POST /job-postings → 403 ← TEMPLATE VAR!
+4. Performance - load times < 2s ← TEMPLATE VAR!
+5. Sidebar - 7 görünür say ← TEMPLATE VAR!
+
+KORUYACAĞIN (%62):
+✅ Console: 0
+✅ Profile rename
+✅ Frontend RBAC
+
+YENİ YAKLAŞIM:
+1. Template'i çalıştır (10 dakika)
+2. Eksik kalan testleri manuel ekle
+3. Report güncelle
+
+BACKEND HAZIR:
+- API: 142 endpoint (docs/api/ENDPOINT-MAP-COMPREHENSIVE.md)
+- Credentials: docs/CREDENTIALS.md
+- Health: ✅ Backend + Frontend running
+
+Task: docs/workflow/tasks/USER-JOURNEY-W1-USER.md
+Guide: docs/E2E-TEST-TEMPLATES-GUIDE.md
+90 dakika hedef - BAŞLA!

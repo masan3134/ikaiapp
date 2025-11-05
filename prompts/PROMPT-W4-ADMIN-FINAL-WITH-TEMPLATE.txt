@@ -1,0 +1,55 @@
+W4, görev %70 - Admin Workflows EKSİK! HAZIR TEMPLATE var!
+
+✅ HAZIR TEMPLATE:
+scripts/templates/e2e-admin-journey-template.py
+- 10 test otomatik (login, user CRUD, org settings, billing, analytics, job postings, candidates, team, RBAC)
+- 🔴 USER CRUD automatic attempt!
+- 🔴 ORG SETTINGS automatic update!
+- Screenshots otomatik
+- JSON result
+Çalıştır: python3 scripts/templates/e2e-admin-journey-template.py > test-outputs/w4-admin-auto.txt
+
+YAPMADIĞIN (%30 EKSİK):
+1. USER CRUD ← TEMPLATE BAŞLATIR!
+   - Create user (email, role, dept)
+   - Assign role
+   - Delete user
+   - PostgreSQL verify
+
+2. ORG SETTINGS ← TEMPLATE BAŞLATIR!
+   - Update org name, industry
+   - Branding (logo, color)
+   - Timezone change
+
+3. BILLING & USAGE:
+   - Plan limits verify
+   - Usage tracking (50/200/10)
+
+4. ORG-WIDE ANALYTICS:
+   - All departments data
+   - Cross-dept reports
+
+KORUYACAĞIN (%70):
+✅ Console: 1 (OK)
+✅ Pages visited
+✅ Screenshots
+
+YENİ YAKLAŞIM:
+1. Template çalıştır (20 dakika)
+2. User CRUD complete (if template partial)
+3. Billing detail verify
+4. Analytics org-wide verify
+5. Report güncelle
+
+BACKEND HAZIR:
+- API: POST /api/v1/users (create)
+- API: PATCH /api/v1/users/:id (update role)
+- API: DELETE /api/v1/users/:id (delete)
+- API: PATCH /api/v1/organization (settings)
+- API: GET /api/v1/billing (usage)
+- Credentials: docs/CREDENTIALS.md
+- Health: ✅ Running
+
+Task: docs/workflow/tasks/USER-JOURNEY-W4-ADMIN.md (varsa, yoksa create)
+Guide: docs/E2E-TEST-TEMPLATES-GUIDE.md
+3-4 saat - BAŞLA!

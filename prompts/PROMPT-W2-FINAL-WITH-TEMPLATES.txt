@@ -1,0 +1,44 @@
+W2, görev %35 - HEART SURGERY! HAZIR TEMPLATE var, kullan!
+
+✅ HAZIR TEMPLATE:
+scripts/templates/e2e-hr-journey-template.py
+- 13 test otomatik (login, sidebar, job posting, CV, wizard, candidate, reports, team, RBAC, AI chat)
+- Playwright headless
+- Screenshots otomatik
+- JSON result + workflow steps
+Çalıştır: python3 scripts/templates/e2e-hr-journey-template.py > test-outputs/w2-auto.txt
+
+YAPMADIĞIN (%65 EKSİK):
+1. CV: 10 PDF yükle, görüntüle, sil ← TEMPLATE BAŞLANGIÇ VAR!
+2. WIZARD: 5 adım FULL flow ← TEMPLATE BAŞLANGIÇ VAR!
+3. ADAY: Detay, not ekle, durum değiştir ← TEMPLATE VAR!
+4. RAPOR: Pipeline, CSV eksport ← TEMPLATE VAR!
+5. TAKIM: Read-only verify ← TEMPLATE VAR!
+6. RBAC URL: 5 URL test ← TEMPLATE VAR!
+7. RBAC API: 3 admin API → 403 ← TEMPLATE VAR!
+8. KULLANIM: 50/200/10 verify ← TEMPLATE VAR!
+9. DASHBOARD: 6 widget say ← TEMPLATE VAR!
+10. SIDEBAR: 8 görünür + 4 gizli ← TEMPLATE VAR!
+
+KORUYACAĞIN (%35):
+✅ Console: 0
+✅ CRUD test
+✅ Bug fix
+
+YENİ YAKLAŞIM:
+1. Template'i çalıştır (20 dakika)
+2. Wizard 5-step flow manuel tamamla
+3. CV upload 10 PDF test ekle
+4. Report güncelle - REAL HR WORKFLOW!
+
+BACKEND HAZIR:
+- API: 142 endpoint (docs/api/ENDPOINT-MAP-COMPREHENSIVE.md)
+- Job Posting: POST /api/v1/job-postings
+- Wizard: POST /api/v1/wizard (5 steps)
+- CV: POST /api/v1/candidates/upload
+- Credentials: docs/CREDENTIALS.md
+- Health: ✅ Backend + Frontend running
+
+Task: docs/workflow/tasks/USER-JOURNEY-W2-HR.md
+Guide: docs/E2E-TEST-TEMPLATES-GUIDE.md
+4-5 saat hedef - BAŞLA!

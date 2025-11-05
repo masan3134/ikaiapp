@@ -1,0 +1,53 @@
+============================================================
+Task 2.1: Login as Org 1 HR Specialist
+============================================================
+✅ Logged in: True
+
+============================================================
+Task 2.2: Get Job Posting ID (Junior Frontend Developer)
+============================================================
+Total job postings visible: 2
+✅ Job found:
+   ID: 5815de9f-5c59-426d-a837-8c96060f9a31
+   Title: Junior Frontend Developer
+   Organization ID: 7ccc7b62-af0c-4161-9231-c36aa06ac6dc
+
+============================================================
+Task 2.3: Upload 5 CVs for Analysis
+============================================================
+[1/5] Uploading cv-01-high-match.txt...
+   ❌ Failed: 400
+   Error: {"error":"Validation Error","errors":[{"field":"jobPostingId","message":"Gecerli bir is ilani IDsi gereklidir."},{"field":"candidateIds","message":"En az bir aday secilmelidir."}]}
+[2/5] Uploading cv-02-good-match.txt...
+   ❌ Failed: 400
+   Error: {"error":"Validation Error","errors":[{"field":"jobPostingId","message":"Gecerli bir is ilani IDsi gereklidir."},{"field":"candidateIds","message":"En az bir aday secilmelidir."}]}
+[3/5] Uploading cv-03-medium-match.txt...
+   ❌ Failed: 400
+   Error: {"error":"Validation Error","errors":[{"field":"jobPostingId","message":"Gecerli bir is ilani IDsi gereklidir."},{"field":"candidateIds","message":"En az bir aday secilmelidir."}]}
+[4/5] Uploading cv-04-low-match.txt...
+   ❌ Failed: 400
+   Error: {"error":"Validation Error","errors":[{"field":"jobPostingId","message":"Gecerli bir is ilani IDsi gereklidir."},{"field":"candidateIds","message":"En az bir aday secilmelidir."}]}
+[5/5] Uploading cv-05-poor-match.txt...
+   ❌ Failed: 400
+   Error: {"error":"Validation Error","errors":[{"field":"jobPostingId","message":"Gecerli bir is ilani IDsi gereklidir."},{"field":"candidateIds","message":"En az bir aday secilmelidir."}]}
+
+✅ Total analyses created: 0
+
+============================================================
+Task 2.4: Wait for Analysis Queue Processing
+============================================================
+⏳ Waiting 60 seconds for queue to process...
+Checking analysis statuses...
+
+============================================================
+Task 2.5: Review Analysis Results & Match Scores
+============================================================
+Total analyses for this job: 0
+
+📊 Analysis Results for "Junior Frontend Developer":
+--------------------------------------------------------------------------------
+Rank   Candidate Name            Match Score     Status      
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+❌ No analyses found! Exiting.

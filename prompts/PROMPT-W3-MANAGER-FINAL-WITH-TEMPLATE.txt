@@ -1,0 +1,47 @@
+W3, görev %75 - Department Isolation DOĞRULANMADI! HAZIR TEMPLATE var!
+
+✅ HAZIR TEMPLATE:
+scripts/templates/e2e-manager-journey-template.py
+- 9 test otomatik (login, dept isolation, candidates, offers, team, analytics, job postings, RBAC)
+- 🔴 DEPARTMENT ISOLATION automatic verify!
+- PostgreSQL + API verification
+- Screenshots otomatik
+- JSON result
+Çalıştır: python3 scripts/templates/e2e-manager-journey-template.py > test-outputs/w3-manager-auto.txt
+
+YAPMADIĞIN (%25 EKSİK):
+1. DEPARTMENT ISOLATION VERIFY ← TEMPLATE YAPAR!
+   - Engineering ONLY candidates
+   - Engineering ONLY offers
+   - Engineering ONLY team
+   - PostgreSQL query verify
+
+2. OFFER APPROVAL WORKFLOW:
+   - Dept offer approve/reject action
+   - Cross-dept blocked test
+
+3. REAL DATA:
+   - Widget count verify
+   - Analytics dept-only data
+
+KORUYACAĞIN (%75):
+✅ Console: 0
+✅ RBAC URLs
+✅ Screenshots
+
+YENİ YAKLAŞIM:
+1. Template çalıştır (15 dakika)
+2. Offer approval manuel ekle
+3. Analytics verify ekle
+4. Report güncelle
+
+BACKEND HAZIR:
+- API: /api/v1/candidates (dept filter)
+- API: /api/v1/offers (dept filter)
+- API: /api/v1/team (dept filter)
+- Credentials: docs/CREDENTIALS.md
+- Health: ✅ Running
+
+Task: docs/workflow/tasks/USER-JOURNEY-W3-MANAGER.md
+Guide: docs/E2E-TEST-TEMPLATES-GUIDE.md
+3-4 saat - BAŞLA!

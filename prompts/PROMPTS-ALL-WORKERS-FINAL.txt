@@ -1,0 +1,134 @@
+=================================================================
+🚀 TÜM WORKER PROMPTLARI - COPY-PASTE READY
+=================================================================
+
+=================================================================
+W1: USER - TEMPLATE READY ✅
+=================================================================
+W1, görev %62 EKSIK - TEMPLATE HAZIR!
+
+✅ TEMPLATE:
+python3 scripts/templates/e2e-user-journey-template.py > test-outputs/w1-auto.txt
+
+YAPMADIĞIN:
+- CV Analiz görüntüleme
+- AI Chat (Gemini < 5s)
+- API RBAC (POST /job-postings → 403)
+- Performance (< 2s)
+- Sidebar count (7 görünür)
+
+Task: docs/workflow/tasks/USER-JOURNEY-W1-USER.md
+90 dakika - BAŞLA!
+
+=================================================================
+W2: HR_SPECIALIST - TEMPLATE READY ✅
+=================================================================
+W2, görev %35 - TEMPLATE HAZIR!
+
+✅ TEMPLATE:
+python3 scripts/templates/e2e-hr-journey-template.py > test-outputs/w2-auto.txt
+
+YAPMADIĞIN:
+- CV upload (10 PDF)
+- 5-step wizard FULL flow
+- Aday detail workflow
+- Raporlar
+- Team view
+- RBAC (URL + API)
+
+Task: docs/workflow/tasks/USER-JOURNEY-W2-HR.md
+4-5 saat - BAŞLA!
+
+=================================================================
+W3: MANAGER - TEMPLATE READY ✅
+=================================================================
+W3, görev %75 - TEMPLATE HAZIR!
+
+✅ TEMPLATE:
+python3 scripts/templates/e2e-manager-journey-template.py > test-outputs/w3-auto.txt
+
+🔴 DEPARTMENT ISOLATION automatic verify!
+
+YAPMADIĞIN:
+- Department isolation verify (Engineering ONLY!)
+- Offer approval workflow
+- Team dept-only verify
+- Analytics dept-only
+
+Task: docs/workflow/tasks/USER-JOURNEY-W3-MANAGER.md
+3-4 saat - BAŞLA!
+
+=================================================================
+W4: ADMIN - TEMPLATE READY ✅
+=================================================================
+W4, görev %70 - TEMPLATE HAZIR!
+
+✅ TEMPLATE:
+python3 scripts/templates/e2e-admin-journey-template.py > test-outputs/w4-auto.txt
+
+🔴 USER CRUD + ORG SETTINGS automatic attempt!
+
+YAPMADIĞIN:
+- User CRUD (create, assign, delete)
+- Org settings update
+- Billing & usage view
+- Org-wide analytics
+
+Task: docs/workflow/tasks/USER-JOURNEY-W4-ADMIN.md
+3-4 saat - BAŞLA!
+
+=================================================================
+W5: SUPER_ADMIN - TEMPLATE READY ✅
+=================================================================
+W5, EN BAŞTAN başla - TEMPLATE HAZIR!
+
+✅ TEMPLATE:
+python3 scripts/templates/e2e-superadmin-journey-template.py > test-outputs/w5-auto.txt
+
+🔴 MULTI-ORG + SYSTEM HEALTH automatic verify!
+
+YAPILACAK:
+- Multi-org management
+- System health (6 services)
+- Queue monitoring
+- User management (system-wide)
+- Analytics (system-wide)
+- Cross-org access test
+
+Task: Yeni baştan, full test!
+3-4 saat - BAŞLA!
+
+=================================================================
+W6: CROSS-ROLE - TEMPLATE READY ✅
+=================================================================
+W6, EN BAŞTAN başla - TEMPLATE HAZIR!
+
+✅ TEMPLATE:
+python3 scripts/templates/e2e-crossrole-journey-template.py > test-outputs/w6-auto.txt
+
+🔴 MULTI-ROLE WORKFLOW + ISOLATION automatic verify!
+
+YAPILACAK:
+- Role escalation test (USER → ADMIN blocked)
+- Organization isolation (Org 1 ≠ Org 2)
+- Department isolation (MANAGER → Engineering only)
+- Multi-role workflow (HR → MANAGER → ADMIN)
+- Permission boundaries (5 roles)
+- Cross-role data access test
+
+Task: Multi-role interaction testing!
+3-4 saat - BAŞLA!
+
+=================================================================
+📊 ÖZET
+=================================================================
+
+✅ 6/6 TEMPLATE READY!
+✅ Backend: 142+ endpoint mapped, running
+✅ Playwright: Installed, headless ready
+✅ Credentials: docs/CREDENTIALS.md
+
+BAŞLAT KOMUTU (her worker için ayrı session):
+cat prompts/PROMPTS-ALL-WORKERS-FINAL.txt
+
+=================================================================
