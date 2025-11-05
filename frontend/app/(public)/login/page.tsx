@@ -73,14 +73,15 @@ export default function LoginPage() {
           const org = data.data;
 
           // Redirect based on onboarding status
+          // Use window.location to avoid Next.js prefetch race conditions
           if (org.onboardingCompleted) {
-            router.push("/dashboard");
+            window.location.href = "/dashboard";
           } else {
-            router.push("/onboarding");
+            window.location.href = "/onboarding";
           }
         } else {
           // Fallback to dashboard if org fetch fails
-          router.push("/dashboard");
+          window.location.href = "/dashboard";
         }
       }
     } catch (err: any) {
