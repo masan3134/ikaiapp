@@ -48,11 +48,10 @@ router.post('/:id/chat', trackRequest, chatRateLimiter, hrManagers, async (req, 
       });
     }
 
-    // SUPER_ADMIN can access all analyses across all orgs
-    // ADMIN can access all analyses in their org
-    // Others can only access their own analyses
+    // RBAC: SUPER_ADMIN, ADMIN, MANAGER, HR_SPECIALIST can access all analyses in org
+    // USER can only access their own analyses
     const userRole = req.user.role;
-    const canAccessAllInOrg = ['ADMIN', 'SUPER_ADMIN'].includes(userRole);
+    const canAccessAllInOrg = ['ADMIN', 'SUPER_ADMIN', 'MANAGER', 'HR_SPECIALIST'].includes(userRole);
 
     if (!canAccessAllInOrg && analysis.userId !== req.user.id) {
       return res.status(403).json({
@@ -117,9 +116,9 @@ router.get('/:id/history', hrManagers, async (req, res) => {
       return res.status(404).json({ error: 'Analysis not found' });
     }
 
-    // Access control
+    // RBAC: SUPER_ADMIN, ADMIN, MANAGER, HR_SPECIALIST can access all analyses in org
     if (analysis.userId !== req.user.id &&
-        !['ADMIN', 'SUPER_ADMIN'].includes(req.user.role)) {
+        !['ADMIN', 'SUPER_ADMIN', 'MANAGER', 'HR_SPECIALIST'].includes(req.user.role)) {
       return res.status(403).json({ error: 'Forbidden' });
     }
 
@@ -180,9 +179,9 @@ router.get('/:id/chat-stats', hrManagers, async (req, res) => {
       return res.status(404).json({ error: 'Analysis not found' });
     }
 
-    // SUPER_ADMIN and ADMIN can access all analyses, others only their own
+    // SUPER_ADMIN, ADMIN, and MANAGER can access all analyses in org, others only their own
     if (analysis.userId !== req.user.id &&
-        !['ADMIN', 'SUPER_ADMIN'].includes(req.user.role)) {
+        !['ADMIN', 'SUPER_ADMIN', 'MANAGER'].includes(req.user.role)) {
       return res.status(403).json({ error: 'Forbidden' });
     }
 
