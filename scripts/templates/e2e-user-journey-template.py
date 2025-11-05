@@ -61,9 +61,20 @@ def run_user_journey():
         # Set default timeout
         page.set_default_timeout(TIMEOUT)
 
-        # Console error tracking
+        # Console error tracking (filter out expected errors)
         console_errors = []
-        page.on("console", lambda msg: console_errors.append(msg.text) if msg.type == "error" else None)
+        def track_console_error(msg):
+            if msg.type == "error":
+                error_text = msg.text
+                # Ignore expected 403 errors from RBAC tests
+                if "403" in error_text or "Forbidden" in error_text:
+                    return
+                # Ignore Next.js RSC prefetch errors (development mode)
+                if "Failed to fetch RSC payload" in error_text:
+                    return
+                console_errors.append(error_text)
+
+        page.on("console", track_console_error)
 
         try:
             print("="*70)
