@@ -269,6 +269,255 @@ MOD → USER (short):
 
 ---
 
+## 👥 WORKER COORDINATION SYSTEM (MULTI-DEVELOPER MODE)
+
+**Senaryo:** 6 worker paralel çalışıyor (W1-W6), tıpkı gerçek bir development team gibi!
+
+**🚨 CRITICAL: Prevent file conflicts, maintain hot reload, everyone knows their identity!**
+
+### Identity System
+
+**Every session starts with identity:**
+```
+User: "sen modsun"
+MOD: ✅ Identity: MASTER CLAUDE (Coordinator)
+
+User: "sen W1'sin"
+W1: ✅ Identity: WORKER 1 (Executor)
+    Working on: [task assigned by MOD]
+    Files locked: [list]
+
+User: "sen W3'sün"
+W3: ✅ Identity: WORKER 3 (Executor)
+    Working on: [task assigned by MOD]
+    Files locked: [list]
+```
+
+**Identity Rules:**
+- ✅ ALWAYS know your identity (MOD or W1-W6)
+- ✅ State identity in first message
+- ✅ Reference identity in commits
+- ✅ Track which files you're editing
+
+### File Locking Protocol (Conflict Prevention)
+
+**Location:** `/tmp/worker-locks.json`
+
+**Format:**
+```json
+{
+  "locks": {
+    "frontend/components/dashboard/user/RecentActivity.tsx": {
+      "worker": "W1",
+      "locked_at": "2025-11-05T10:30:00Z",
+      "task": "Add RecentActivity widget",
+      "status": "in_progress"
+    },
+    "backend/src/routes/userRoutes.js": {
+      "worker": "W3",
+      "locked_at": "2025-11-05T10:31:00Z",
+      "task": "Add user stats endpoint",
+      "status": "in_progress"
+    }
+  }
+}
+```
+
+**Worker Workflow:**
+
+**Step 1: Before editing ANY file**
+```bash
+# Check if file is locked
+cat /tmp/worker-locks.json | grep "my-file.tsx"
+
+# If locked by another worker → STOP, report to MOD
+# If not locked → Proceed to Step 2
+```
+
+**Step 2: Lock the file**
+```bash
+# Add lock to worker-locks.json
+# Include: worker ID, timestamp, task, file path
+```
+
+**Step 3: Work on file**
+```bash
+# Edit, test, commit (1 file = 1 commit)
+# Hot reload still works (nodemon/Next.js watching)
+```
+
+**Step 4: Release lock after commit**
+```bash
+# Remove lock from worker-locks.json
+# File now available for others
+```
+
+**MOD Workflow:**
+
+**Task Assignment:**
+```
+MOD checks worker-locks.json
+MOD assigns W1: "frontend/components/dashboard/user/RecentActivity.tsx"
+MOD assigns W2: "frontend/components/dashboard/admin/SystemHealth.tsx"
+MOD assigns W3: "backend/src/routes/userRoutes.js"
+
+✅ NO OVERLAP = NO CONFLICTS
+```
+
+**Monitoring:**
+```bash
+# MOD periodically checks locks
+cat /tmp/worker-locks.json
+
+# If lock > 30 minutes → Check worker progress
+# If worker stuck → Reassign or help
+```
+
+### Hot Reload Protection
+
+**Rules:**
+- ✅ Dev servers ALWAYS running (backend:8102, frontend:8103)
+- ✅ Workers NEVER restart servers
+- ✅ Workers commit frequently → Hot reload picks up changes
+- ❌ NO manual server restarts (kills hot reload!)
+- ❌ NO simultaneous edits to same file
+
+**Build Policy:**
+```
+Production build: ONLY when MOD explicitly requests
+Test runs: Each worker in their own test scope
+Hot reload: ALWAYS active, NEVER interrupted
+```
+
+### Parallel Work Example
+
+**MOD assigns 3 parallel tasks:**
+
+**W1 Task:**
+```
+File: frontend/components/dashboard/user/RecentActivity.tsx
+Task: Add RecentActivity widget
+Lock: W1 locks file in worker-locks.json
+Work: Edit → Test → Commit → Release lock
+Hot reload: Frontend auto-reloads after commit ✅
+```
+
+**W2 Task:**
+```
+File: frontend/components/dashboard/admin/SystemHealth.tsx
+Task: Add SystemHealth widget
+Lock: W2 locks file in worker-locks.json
+Work: Edit → Test → Commit → Release lock
+Hot reload: Frontend auto-reloads after commit ✅
+```
+
+**W3 Task:**
+```
+File: backend/src/routes/userRoutes.js
+Task: Add /api/v1/users/stats endpoint
+Lock: W3 locks file in worker-locks.json
+Work: Edit → Test → Commit → Release lock
+Hot reload: Backend (nodemon) auto-reloads after commit ✅
+```
+
+**Result:**
+- ✅ 3 workers work simultaneously
+- ✅ NO file conflicts (different files)
+- ✅ Hot reload works for all
+- ✅ Each commit triggers auto-reload
+- ✅ User sees progress in real-time
+
+### Conflict Resolution
+
+**Scenario: W2 wants to edit file locked by W1**
+
+```
+W2: Checks worker-locks.json
+W2: Sees "RecentActivity.tsx locked by W1"
+W2 → USER: "❌ File locked by W1, waiting or need reassignment?"
+USER → MOD: "W1'in görevi ne durumda?"
+MOD: Checks W1 progress
+MOD → USER: "W1 5 dakikada bitiyor" OR "W1'e yardım gerekiyor"
+USER decides: Wait or reassign
+```
+
+**Auto-unlock Policy:**
+- Lock > 60 minutes → Considered stale
+- MOD can force-unlock if worker is stuck
+- Worker must update lock timestamp periodically
+
+### Communication Examples
+
+**Worker Starting Work:**
+```
+W1 → USER (via MOD):
+"🔒 RecentActivity.tsx lock aldım
+Başlıyorum, ~15 dakika"
+```
+
+**Worker Finishing Work:**
+```
+W1 → USER (via MOD):
+"✅ RecentActivity.tsx bitti
+🔓 Lock release edildi
+Commit: abc123"
+```
+
+**MOD Coordinating:**
+```
+MOD → USER:
+"📊 Worker status:
+- W1: RecentActivity.tsx (in progress, 10 min)
+- W2: SystemHealth.tsx (in progress, 5 min)
+- W3: userRoutes.js (completed ✅)"
+```
+
+### Identity Verification (Commit Messages)
+
+**Every commit MUST include worker identity:**
+
+```bash
+# W1 commits
+git commit -m "feat(dashboard): Add RecentActivity widget [W1]"
+
+# W3 commits
+git commit -m "feat(api): Add user stats endpoint [W3]"
+
+# MOD commits
+git commit -m "docs(workflow): Update task assignments [MOD]"
+```
+
+**Benefits:**
+- ✅ Git history shows who did what
+- ✅ Easy to track worker contributions
+- ✅ Conflict resolution easier (know who to ask)
+
+### Real-World Developer Simulation
+
+**This system makes workers behave like real developers:**
+
+1. **Check availability** → Read worker-locks.json
+2. **Reserve resource** → Lock file
+3. **Do work** → Edit, test, verify
+4. **Commit** → 1 file = 1 commit (with identity)
+5. **Release** → Unlock file
+6. **Coordinate** → Report to MOD, get new task
+
+**MOD behaves like Tech Lead:**
+- Assigns tasks based on availability
+- Monitors progress via locks
+- Resolves conflicts
+- Verifies completed work
+- Coordinates team
+
+**User behaves like Product Owner:**
+- Sees short status updates
+- Tracks overall progress
+- Makes decisions on conflicts
+- Reviews final results
+
+---
+
 ## ⚠️ STRICT RULES
 
 **Rule 1: NEVER GIVE UP** - 3 errors → Ask Gemini
@@ -597,10 +846,14 @@ grep -r "keyword" docs/ --include="*.md"
 
 ## 📋 VERSION HISTORY
 
-**v17.0 (2025-11-05):** 🔌 **MCP-POWERED + TWO-LAYER COMMUNICATION**
+**v17.0 (2025-11-05):** 🔌 **MCP-POWERED + TWO-LAYER COMMUNICATION + WORKER COORDINATION**
 - ✅ **8 MCP Integration:** PostgreSQL, Docker, Playwright, Code Analysis, Gemini, filesystem, sequentialthinking, puppeteer
 - ✅ **24/24 Test Success:** 100% pass rate across all MCPs (3 levels each)
 - ✅ **Two-Layer System:** User iletişim (KISA) + Arka plan çalışma (FULL DETAY) ayrıldı
+- ✅ **Worker Coordination:** File locking protocol, identity system, conflict prevention
+- ✅ **Multi-Developer Mode:** 6 workers paralel çalışabilir (tıpkı gerçek team gibi!)
+- ✅ **Hot Reload Protection:** Dev servers always running, workers never restart
+- ✅ **Identity System:** Her worker kimliğini bilir (W1-W6), commits include identity
 - ✅ **Tamper-Proof Verification:** MCP outputs = structured JSON (manipüle edilemez)
 - ✅ **16 New Rules:** MOD (4 rules) + WORKER (12 rules) - MCP mandatory usage
 - ✅ **Comprehensive Docs:** MCP-USAGE-GUIDE.md (936 lines), test summary (500+ lines)
@@ -611,13 +864,17 @@ grep -r "keyword" docs/ --include="*.md"
   - MOD verify time: 20 min → 5 min (4x faster)
   - Worker honesty: Enforced (MCP outputs can't be faked)
   - User communication: ALWAYS short (3-5 lines), background work: ALWAYS full detail
+  - Parallel work: 6 workers can work simultaneously without conflicts
+  - Hot reload: NEVER interrupted, always active
+  - File conflicts: PREVENTED via worker-locks.json
 - **Files:**
-  - CLAUDE.md: Two-Layer Communication System (+85 lines)
+  - CLAUDE.md: Two-Layer Communication + Worker Coordination System (+250 lines)
   - MCP-USAGE-GUIDE.md (8 MCPs, 936 lines)
   - MOD-PLAYBOOK.md: v2.3 (+4 MCP rules)
   - WORKER-PLAYBOOK.md: v3.0 (+12 MCP rules)
   - ASANMOD-CORE.md: v17.0 (Rule 6: MCP-First)
   - Test summary: 24/24 PASS documented
+  - /tmp/worker-locks.json: File locking coordination file
 
 **v16.0 (2025-11-04):** 🚀 **TEMPLATE-BASED ASANMOD - 50x FASTER COORDINATION**
 - ✅ **ASANMOD-CORE.md:** Universal system (100 lines, replaces 8,000!)
