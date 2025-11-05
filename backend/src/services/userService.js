@@ -176,7 +176,7 @@ class UserService {
     }
 
     if (role) {
-      if (!['USER', 'ADMIN'].includes(role)) {
+      if (!['USER', 'ADMIN', 'HR_SPECIALIST', 'MANAGER', 'SUPER_ADMIN'].includes(role)) {
         throw new Error('Geçersiz rol');
       }
       updateData.role = role;
