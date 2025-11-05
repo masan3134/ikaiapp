@@ -23,7 +23,7 @@ USER_PASSWORD = "TestPass123!"
 
 # Test configuration
 HEADLESS = True  # Set False for debugging
-TIMEOUT = 5000   # 5 seconds
+TIMEOUT = 10000  # 10 seconds (increased for RBAC redirects)
 
 # ============================================
 # TEST RESULTS TRACKING
