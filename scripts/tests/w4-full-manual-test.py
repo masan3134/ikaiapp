@@ -173,7 +173,7 @@ class FullManualTest:
                     if link.is_visible(timeout=1000):
                         link.click()
                         self.results["buttons_clicked"] += 1
-                        time.sleep(2)
+                        time.sleep(1)
                         found = True
                         break
                 except:
@@ -181,16 +181,17 @@ class FullManualTest:
 
             if not found:
                 # Try direct URL - ADMIN uses /team route (not /users)
+                print("   ℹ️ No navigation link found, using direct URL")
                 self.page.goto("http://localhost:8103/team", wait_until="networkidle")
 
-                # Wait for LoadingSkeleton to disappear (animate-pulse class)
-                try:
-                    self.page.wait_for_selector('.animate-pulse', state='detached', timeout=15000)
-                    print("   ✅ LoadingSkeleton disappeared, data loaded")
-                except:
-                    print("   ⚠️ LoadingSkeleton timeout, checking table anyway")
+            # ALWAYS wait for LoadingSkeleton to disappear (whether clicked link or direct URL)
+            try:
+                self.page.wait_for_selector('.animate-pulse', state='detached', timeout=15000)
+                print("   ✅ LoadingSkeleton disappeared, data loaded")
+            except:
+                print("   ⚠️ LoadingSkeleton timeout, checking table anyway")
 
-                time.sleep(1)  # Small buffer after skeleton disappears
+            time.sleep(1)  # Small buffer after skeleton disappears
 
             self.take_screenshot("03-users-list")
             self.results["pages_visited"].append("User Management")
