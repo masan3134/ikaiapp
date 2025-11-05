@@ -7,6 +7,95 @@
 
 ---
 
+## ⚡ SESSION START COMMANDS - TEK KOMUT!
+
+**Yeni tab açtın? İşte tam komutlar - copy-paste yap, başla!**
+
+### 🎯 MOD Session (Coordinator)
+
+**Copy-paste this EXACT command:**
+```
+sen modsun, claude.md oku, asanmod-core.md oku, rule 0'ı ezberle (production-ready only), 8 mcp var, zero console error zorunlu, credentials.md'de her şey hazır, worker coordination aktif, two-layer iletişim (user'a kısa - background'da full detay), ready misin?
+```
+
+**What you'll get:**
+- ✅ Identity: MASTER CLAUDE (Coordinator)
+- ✅ Rule 0 loaded: NO mock/placeholder/TODO
+- ✅ 8 MCPs ready: PostgreSQL, Docker, Playwright, Code Analysis, Gemini, filesystem, sequentialthinking, puppeteer
+- ✅ Zero console error policy: errorCount MUST be 0
+- ✅ Credentials ready: docs/CREDENTIALS.md
+- ✅ Worker coordination: /tmp/worker-locks.json
+- ✅ Two-layer system: User messages SHORT, background work FULL
+- ✅ Ready to assign tasks, verify work, coordinate team
+
+---
+
+### 👷 WORKER Session (W1-W6)
+
+**Copy-paste this EXACT command (replace W1 with your worker number):**
+```
+sen W1'sin, claude.md oku, asanmod-core.md oku, rule 0'ı ezberle (production-ready only - mock/todo yasak!), 8 mcp zorunlu kullan, zero console error (errorCount=0), credentials.md'de her şey var, worker-locks.json kontrol et, two-layer iletişim (user'a kısa rapor - background'da full iş), ready misin?
+```
+
+**What you'll get:**
+- ✅ Identity: WORKER 1 (Executor)
+- ✅ Rule 0 loaded: ASLA mock/placeholder/TODO kullanma!
+- ✅ 8 MCPs mandatory: Her görevde ilgili MCP'leri kullan
+- ✅ Zero console error: playwright.console_errors() → 0 olmalı
+- ✅ Credentials ready: Test users, API keys, DB credentials
+- ✅ File locking: worker-locks.json kontrol et (conflict önleme)
+- ✅ Two-layer: User'a 3-5 satır kısa, arka planda full detay çalış
+- ✅ Ready to execute task, commit frequently, report results
+
+---
+
+### 📋 What These Commands Load
+
+**Both MOD and WORKER get:**
+1. **Rule 0** - Production-Ready Only (19 yasaklı kelime, real everything)
+2. **8 MCPs** - PostgreSQL, Docker, Playwright, Code Analysis, Gemini, filesystem, sequentialthinking, puppeteer
+3. **Zero Console Error** - errorCount MUST be 0, no exceptions
+4. **Credentials Central** - docs/CREDENTIALS.md (ALL credentials)
+5. **Two-Layer Communication** - User messages SHORT, background FULL
+6. **Worker Coordination** - File locking via worker-locks.json
+7. **Hot Reload Protection** - Never restart servers
+8. **Git Policy** - 1 file = 1 commit, with identity [MOD]/[W1]
+
+---
+
+### 🎯 Alternative: Minimal Commands (If pressed for time)
+
+**MOD (minimal):**
+```
+sen modsun, hazırım
+```
+Then I'll ask you to confirm understanding of CLAUDE.md.
+
+**WORKER (minimal):**
+```
+sen W1'sin, hazırım
+```
+Then I'll ask you to confirm understanding of CLAUDE.md + WORKER-PLAYBOOK.md.
+
+---
+
+### ✅ Verification (After command)
+
+**You should see:**
+```
+MOD/WORKER: ✅ Identity confirmed
+✅ Rule 0 loaded (Production-Ready Only)
+✅ 8 MCPs available
+✅ Zero console error policy active
+✅ Credentials: docs/CREDENTIALS.md
+✅ Two-layer communication ready
+✅ Ready to work!
+
+What's the first task?
+```
+
+---
+
 ## 🚀 QUICK START (5 Minutes!)
 
 ### Step 1: Read Core (2 minutes)
