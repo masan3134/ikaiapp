@@ -164,9 +164,10 @@ export default function ProfilePage() {
         </div>
 
         <div className="px-8 pb-8">
-          <div className="flex flex-col md:flex-row items-start md:items-end gap-6 -mt-16 relative">
-            {/* Avatar */}
-            <div className="relative group">
+          {/* Avatar + Info Container - FIXED LAYOUT */}
+          <div className="flex flex-col md:flex-row items-center md:items-end gap-8 -mt-16 relative">
+            {/* Avatar Section */}
+            <div className="relative group shrink-0">
               <div className="w-32 h-32 rounded-3xl bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center text-white text-5xl font-bold shadow-2xl ring-4 ring-white">
                 {formData.firstName?.[0]?.toUpperCase() ||
                   formData.lastName?.[0]?.toUpperCase() ||
@@ -178,20 +179,25 @@ export default function ProfilePage() {
               </button>
             </div>
 
-            {/* Info */}
-            <div className="flex-1 pt-20 md:pt-0 md:pb-4">
-              <h1 className="text-4xl font-bold text-gray-900 mb-3">
+            {/* Info Section - CLEAN LAYOUT */}
+            <div className="flex-1 w-full md:pb-4 text-center md:text-left">
+              {/* Name */}
+              <h1 className="text-4xl font-bold text-gray-900 mb-4">
                 {formData.firstName || formData.lastName
                   ? `${formData.firstName || ""} ${formData.lastName || ""}`.trim()
                   : "İsimsiz Kullanıcı"}
               </h1>
-              <p className="text-gray-600 flex items-center gap-2 mb-4 text-lg">
-                <Mail size={20} className="text-blue-500" />
-                <span>{profile?.email}</span>
-              </p>
-              <div className="flex flex-wrap items-center gap-3">
+
+              {/* Email - FIXED POSITION */}
+              <div className="flex items-center justify-center md:justify-start gap-2 mb-5">
+                <Mail size={20} className="text-blue-500 shrink-0" />
+                <span className="text-gray-600 text-lg font-medium">{profile?.email}</span>
+              </div>
+
+              {/* Badges - CLEAN ALIGNMENT */}
+              <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
                 <span
-                  className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold shadow-md ${
+                  className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold shadow-lg ${
                     profile?.role === "SUPER_ADMIN"
                       ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white"
                       : profile?.role === "ADMIN"
@@ -205,7 +211,7 @@ export default function ProfilePage() {
                   {profile?.role}
                 </span>
                 {profile?.isActive ? (
-                  <span className="px-4 py-2 rounded-xl bg-green-100 text-green-700 text-sm font-bold ring-2 ring-green-200 flex items-center gap-1.5">
+                  <span className="px-4 py-2 rounded-xl bg-green-100 text-green-700 text-sm font-bold ring-2 ring-green-200 flex items-center gap-2">
                     <CheckCircle2 size={16} />
                     Aktif
                   </span>
