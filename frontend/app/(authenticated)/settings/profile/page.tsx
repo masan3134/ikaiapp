@@ -155,49 +155,49 @@ export default function ProfilePage() {
   ];
 
   return (
-    <div className="space-y-8">
-      {/* Profile Header Card - Ultra Modern */}
-      <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-200/50 overflow-hidden">
-        {/* Gradient Header Background */}
-        <div className="h-32 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 relative overflow-hidden">
+    <div className="space-y-4">
+      {/* Profile Header Card - COMPACT */}
+      <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-gray-200/50 overflow-hidden">
+        {/* Gradient Header - SMALLER */}
+        <div className="h-20 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 relative overflow-hidden">
           <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMSIgb3BhY2l0eT0iMC4xIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-20"></div>
         </div>
 
-        <div className="px-8 pb-8">
-          {/* Avatar + Info Container - FIXED LAYOUT */}
-          <div className="flex flex-col md:flex-row items-center md:items-end gap-8 -mt-16 relative">
-            {/* Avatar Section */}
+        <div className="px-6 pb-6">
+          {/* Avatar + Info - COMPACT */}
+          <div className="flex flex-col md:flex-row items-center md:items-end gap-6 -mt-12 relative">
+            {/* Avatar - SMALLER */}
             <div className="relative group shrink-0">
-              <div className="w-32 h-32 rounded-3xl bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center text-white text-5xl font-bold shadow-2xl ring-4 ring-white">
+              <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center text-white text-4xl font-bold shadow-xl ring-4 ring-white">
                 {formData.firstName?.[0]?.toUpperCase() ||
                   formData.lastName?.[0]?.toUpperCase() ||
                   authUser?.email?.[0]?.toUpperCase() ||
                   "U"}
               </div>
-              <button className="absolute bottom-2 right-2 p-3 bg-white rounded-xl shadow-xl border-2 border-gray-200 hover:bg-blue-50 hover:border-blue-300 transition-all group-hover:scale-110 duration-300">
-                <Camera size={20} className="text-blue-600" />
+              <button className="absolute bottom-1 right-1 p-2 bg-white rounded-lg shadow-lg border-2 border-gray-200 hover:bg-blue-50 hover:border-blue-300 transition-all">
+                <Camera size={16} className="text-blue-600" />
               </button>
             </div>
 
-            {/* Info Section - CLEAN LAYOUT */}
-            <div className="flex-1 w-full md:pb-4 text-center md:text-left">
-              {/* Name */}
-              <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            {/* Info - COMPACT */}
+            <div className="flex-1 w-full md:pb-2 text-center md:text-left">
+              {/* Name - SMALLER */}
+              <h1 className="text-2xl font-bold text-gray-900 mb-2">
                 {formData.firstName || formData.lastName
                   ? `${formData.firstName || ""} ${formData.lastName || ""}`.trim()
                   : "İsimsiz Kullanıcı"}
               </h1>
 
-              {/* Email - FIXED POSITION */}
-              <div className="flex items-center justify-center md:justify-start gap-2 mb-5">
-                <Mail size={20} className="text-blue-500 shrink-0" />
-                <span className="text-gray-600 text-lg font-medium">{profile?.email}</span>
+              {/* Email - COMPACT */}
+              <div className="flex items-center justify-center md:justify-start gap-2 mb-3">
+                <Mail size={16} className="text-blue-500 shrink-0" />
+                <span className="text-gray-600 text-sm font-medium">{profile?.email}</span>
               </div>
 
-              {/* Badges - CLEAN ALIGNMENT */}
-              <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
+              {/* Badges - SMALLER */}
+              <div className="flex flex-wrap items-center justify-center md:justify-start gap-2">
                 <span
-                  className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold shadow-lg ${
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold shadow-md ${
                     profile?.role === "SUPER_ADMIN"
                       ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white"
                       : profile?.role === "ADMIN"
@@ -207,22 +207,22 @@ export default function ProfilePage() {
                           : "bg-gradient-to-r from-gray-500 to-slate-500 text-white"
                   }`}
                 >
-                  <Shield size={16} />
+                  <Shield size={14} />
                   {profile?.role}
                 </span>
                 {profile?.isActive ? (
-                  <span className="px-4 py-2 rounded-xl bg-green-100 text-green-700 text-sm font-bold ring-2 ring-green-200 flex items-center gap-2">
-                    <CheckCircle2 size={16} />
+                  <span className="px-3 py-1.5 rounded-lg bg-green-100 text-green-700 text-xs font-bold flex items-center gap-1.5">
+                    <CheckCircle2 size={14} />
                     Aktif
                   </span>
                 ) : (
-                  <span className="px-4 py-2 rounded-xl bg-red-100 text-red-700 text-sm font-bold ring-2 ring-red-200">
-                    ✗ Pasif
+                  <span className="px-3 py-1.5 rounded-lg bg-red-100 text-red-700 text-xs font-bold">
+                    Pasif
                   </span>
                 )}
                 {formData.position && (
-                  <span className="px-4 py-2 rounded-xl bg-blue-100 text-blue-700 text-sm font-bold ring-2 ring-blue-200 flex items-center gap-1.5">
-                    <Briefcase size={16} />
+                  <span className="px-3 py-1.5 rounded-lg bg-blue-100 text-blue-700 text-xs font-bold flex items-center gap-1.5">
+                    <Briefcase size={14} />
                     {formData.position}
                   </span>
                 )}
@@ -230,14 +230,12 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="mt-8 space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Form - COMPACT */}
+          <form onSubmit={handleSubmit} className="mt-4 space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-3">
-                  <div className="p-1.5 bg-blue-100 rounded-lg">
-                    <User size={16} className="text-blue-600" />
-                  </div>
+                <label className="flex items-center gap-2 text-xs font-bold text-gray-700 mb-2">
+                  <User size={14} className="text-blue-600" />
                   Ad *
                 </label>
                 <input
@@ -247,15 +245,13 @@ export default function ProfilePage() {
                     setFormData({ ...formData, firstName: e.target.value })
                   }
                   placeholder="Adınızı girin"
-                  className="w-full px-5 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all hover:border-gray-300 text-gray-900 font-medium"
+                  className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-sm"
                 />
               </div>
 
               <div>
-                <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-3">
-                  <div className="p-1.5 bg-blue-100 rounded-lg">
-                    <User size={16} className="text-blue-600" />
-                  </div>
+                <label className="flex items-center gap-2 text-xs font-bold text-gray-700 mb-2">
+                  <User size={14} className="text-blue-600" />
                   Soyad *
                 </label>
                 <input
@@ -265,45 +261,43 @@ export default function ProfilePage() {
                     setFormData({ ...formData, lastName: e.target.value })
                   }
                   placeholder="Soyadınızı girin"
-                  className="w-full px-5 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all hover:border-gray-300 text-gray-900 font-medium"
+                  className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-sm"
+                />
+              </div>
+
+              <div>
+                <label className="flex items-center gap-2 text-xs font-bold text-gray-700 mb-2">
+                  <Briefcase size={14} className="text-purple-600" />
+                  Pozisyon
+                </label>
+                <input
+                  type="text"
+                  value={formData.position}
+                  onChange={(e) =>
+                    setFormData({ ...formData, position: e.target.value })
+                  }
+                  placeholder="İK Müdürü"
+                  className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all text-sm"
                 />
               </div>
             </div>
 
-            <div>
-              <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-3">
-                <div className="p-1.5 bg-purple-100 rounded-lg">
-                  <Briefcase size={16} className="text-purple-600" />
-                </div>
-                Pozisyon
-              </label>
-              <input
-                type="text"
-                value={formData.position}
-                onChange={(e) =>
-                  setFormData({ ...formData, position: e.target.value })
-                }
-                placeholder="Örn: İK Müdürü, İK Uzmanı, Platform Sahibi"
-                className="w-full px-5 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all hover:border-gray-300 text-gray-900 font-medium"
-              />
-            </div>
-
-            <div className="flex flex-col sm:flex-row justify-end gap-4 pt-8 border-t-2 border-gray-100">
+            <div className="flex flex-col sm:flex-row justify-end gap-3 pt-4 border-t border-gray-100">
               <button
                 type="button"
                 onClick={loadData}
                 disabled={saving}
-                className="flex items-center justify-center gap-2 px-8 py-4 border-2 border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all disabled:opacity-50 font-bold shadow-sm hover:shadow-md"
+                className="flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all disabled:opacity-50 font-medium text-sm"
               >
-                <RefreshCw size={20} />
-                Değişiklikleri Geri Al
+                <RefreshCw size={16} />
+                Geri Al
               </button>
-              <Button type="submit" loading={saving} disabled={saving} size="lg" className="px-8 py-4">
+              <Button type="submit" loading={saving} disabled={saving} className="px-4 py-2">
                 {saving ? (
                   "Kaydediliyor..."
                 ) : (
                   <>
-                    <Save size={20} />
+                    <Save size={16} />
                     Profili Kaydet
                   </>
                 )}
@@ -313,26 +307,15 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* Activity Stats - Premium Grid */}
+      {/* Activity Stats - COMPACT */}
       <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-gray-200/50 overflow-hidden">
-        <div className="p-6 border-b border-gray-200/50">
-          <div className="flex items-center gap-3">
-            <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl shadow-lg">
-              <TrendingUp className="text-white" size={24} />
-            </div>
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900">
-                Aktivite İstatistikleriniz
-              </h2>
-              <p className="text-gray-600 mt-1">
-                Platformdaki toplam aktiviteniz
-              </p>
-            </div>
-          </div>
+        <div className="px-4 py-3 border-b border-gray-200/50 flex items-center gap-2">
+          <TrendingUp className="text-blue-600" size={18} />
+          <h2 className="text-lg font-bold text-gray-900">Aktivite</h2>
         </div>
 
-        <div className="p-6">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+        <div className="p-4">
+          <div className="grid grid-cols-5 gap-3">
             {activityStats.map((stat) => {
               const Icon = stat.icon;
 
@@ -340,22 +323,16 @@ export default function ProfilePage() {
                 <Link
                   key={stat.label}
                   href={stat.href}
-                  className={`group relative bg-gradient-to-br ${stat.gradient} rounded-2xl p-6 text-white hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 overflow-hidden`}
+                  className={`group relative bg-gradient-to-br ${stat.gradient} rounded-xl p-3 text-white hover:shadow-lg transition-all duration-300 overflow-hidden`}
                 >
                   <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                   <div className="relative">
-                    <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl w-fit mb-4 shadow-lg">
-                      <Icon size={24} />
-                    </div>
-                    <p className="text-4xl font-bold mb-2">
+                    <Icon size={16} className="mb-2 opacity-80" />
+                    <p className="text-2xl font-bold mb-1">
                       {stat.value}
                     </p>
-                    <p className="text-white/90 font-medium flex items-center justify-between">
+                    <p className="text-white/80 text-xs font-medium">
                       {stat.label}
-                      <ArrowRight
-                        size={16}
-                        className="opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all"
-                      />
                     </p>
                   </div>
                 </Link>
@@ -365,44 +342,39 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* Account Info & Quick Links Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Account Info */}
+      {/* Account Info & Quick Links - COMPACT GRID */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* Account Info - COMPACT */}
         <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-gray-200/50 overflow-hidden">
-          <div className="p-6 border-b border-gray-200/50 bg-gradient-to-r from-blue-50 to-purple-50">
-            <h3 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
-              <div className="p-2 bg-blue-500 rounded-xl">
-                <User className="w-5 h-5 text-white" />
-              </div>
-              Hesap Bilgileri
-            </h3>
-            <p className="text-gray-600 mt-1 ml-12">Hesabınızın detay bilgileri</p>
+          <div className="px-4 py-3 border-b border-gray-200/50 flex items-center gap-2">
+            <User className="text-blue-600" size={18} />
+            <h3 className="text-lg font-bold text-gray-900">Hesap Bilgileri</h3>
           </div>
-          <div className="p-6 space-y-4">
-            <div className="flex justify-between items-center p-5 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl border-2 border-blue-200/50 hover:shadow-lg transition-all">
-              <span className="text-sm font-bold text-gray-700 flex items-center gap-2">
-                <Mail size={18} className="text-blue-500" />
+          <div className="p-4 space-y-2">
+            <div className="flex justify-between items-center p-3 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg border border-blue-200/50 transition-all">
+              <span className="text-xs font-bold text-gray-700 flex items-center gap-2">
+                <Mail size={16} className="text-blue-500" />
                 E-posta
               </span>
-              <span className="text-sm font-bold text-gray-900">
+              <span className="text-xs font-bold text-gray-900">
                 {profile?.email}
               </span>
             </div>
-            <div className="flex justify-between items-center p-5 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border-2 border-purple-200/50 hover:shadow-lg transition-all">
-              <span className="text-sm font-bold text-gray-700 flex items-center gap-2">
-                <Hash size={18} className="text-purple-500" />
+            <div className="flex justify-between items-center p-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg border border-purple-200/50 transition-all">
+              <span className="text-xs font-bold text-gray-700 flex items-center gap-2">
+                <Hash size={16} className="text-purple-500" />
                 Kullanıcı ID
               </span>
-              <span className="text-xs font-mono text-gray-600 bg-white px-3 py-1.5 rounded-lg border-2 border-gray-200 shadow-sm">
+              <span className="text-xs font-mono text-gray-600 bg-white px-2 py-1 rounded-lg border border-gray-200 shadow-sm">
                 {profile?.id?.slice(0, 8)}...
               </span>
             </div>
-            <div className="flex justify-between items-center p-5 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border-2 border-green-200/50 hover:shadow-lg transition-all">
-              <span className="text-sm font-bold text-gray-700 flex items-center gap-2">
-                <CalendarDays size={18} className="text-green-500" />
+            <div className="flex justify-between items-center p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200/50 transition-all">
+              <span className="text-xs font-bold text-gray-700 flex items-center gap-2">
+                <CalendarDays size={16} className="text-green-500" />
                 Kayıt Tarihi
               </span>
-              <span className="text-sm font-bold text-gray-900">
+              <span className="text-xs font-bold text-gray-900">
                 {profile?.createdAt
                   ? new Date(profile.createdAt).toLocaleDateString("tr-TR", {
                       year: "numeric",
@@ -412,89 +384,84 @@ export default function ProfilePage() {
                   : "-"}
               </span>
             </div>
-            <div className="flex justify-between items-center p-5 bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl border-2 border-amber-200/50 hover:shadow-lg transition-all">
-              <span className="text-sm font-bold text-gray-700 flex items-center gap-2">
-                <Sparkles size={18} className="text-amber-500" />
+            <div className="flex justify-between items-center p-3 bg-gradient-to-r from-amber-50 to-orange-50 rounded-lg border border-amber-200/50 transition-all">
+              <span className="text-xs font-bold text-gray-700 flex items-center gap-2">
+                <Sparkles size={16} className="text-amber-500" />
                 Hesap Durumu
               </span>
               {profile?.isActive ? (
-                <span className="text-sm font-bold text-green-600 flex items-center gap-2">
-                  <CheckCircle2 size={18} />
+                <span className="text-xs font-bold text-green-600 flex items-center gap-2">
+                  <CheckCircle2 size={16} />
                   Aktif
                 </span>
               ) : (
-                <span className="text-sm font-bold text-red-600">Pasif</span>
+                <span className="text-xs font-bold text-red-600">Pasif</span>
               )}
             </div>
           </div>
         </div>
 
-        {/* Quick Links */}
+        {/* Quick Links - COMPACT */}
         <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-gray-200/50 overflow-hidden">
-          <div className="p-6 border-b border-gray-200/50 bg-gradient-to-r from-purple-50 to-pink-50">
-            <h3 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
-              <div className="p-2 bg-purple-500 rounded-xl">
-                <Sparkles className="w-5 h-5 text-white" />
-              </div>
-              Hızlı Bağlantılar
-            </h3>
-            <p className="text-gray-600 mt-1 ml-12">Diğer ayar sayfalarına git</p>
+          <div className="px-4 py-3 border-b border-gray-200/50 flex items-center gap-2">
+            <Sparkles className="text-purple-600" size={18} />
+            <h3 className="text-lg font-bold text-gray-900">Hızlı Bağlantılar</h3>
           </div>
-          <div className="p-6 space-y-4">
+          <div className="p-4 space-y-2">
             <Link
               href="/settings/security"
-              className="flex items-center justify-between p-5 rounded-xl bg-gradient-to-r from-blue-50 to-cyan-50 border-2 border-blue-200/50 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group"
+              className="flex items-center justify-between p-3 rounded-lg bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-200/50 hover:shadow-lg transition-all group"
             >
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-blue-500 rounded-xl shadow-lg group-hover:scale-110 transition-transform">
-                  <Shield className="text-white" size={22} />
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-500 rounded-lg shadow group-hover:scale-105 transition-transform">
+                  <Shield className="text-white" size={16} />
                 </div>
                 <div>
-                  <span className="font-bold text-gray-900 block text-lg">Güvenlik Ayarları</span>
+                  <span className="font-bold text-gray-900 block text-sm">Güvenlik Ayarları</span>
                   <span className="text-xs text-gray-600">Şifre ve oturum yönetimi</span>
                 </div>
               </div>
               <ArrowRight
-                className="text-blue-500 group-hover:translate-x-2 transition-all"
-                size={22}
+                className="text-blue-500 group-hover:translate-x-1 transition-all"
+                size={16}
               />
             </Link>
 
             <Link
               href="/settings/notifications"
-              className="flex items-center justify-between p-5 rounded-xl bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-200/50 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group"
+              className="flex items-center justify-between p-3 rounded-lg bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200/50 hover:shadow-lg transition-all group"
             >
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-purple-500 rounded-xl shadow-lg group-hover:scale-110 transition-transform">
-                  <Bell className="text-white" size={22} />
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-purple-500 rounded-lg shadow group-hover:scale-105 transition-transform">
+                  <Bell className="text-white" size={16} />
                 </div>
                 <div>
-                  <span className="font-bold text-gray-900 block text-lg">Bildirim Tercihleri</span>
+                  <span className="font-bold text-gray-900 block text-sm">Bildirim Tercihleri</span>
                   <span className="text-xs text-gray-600">15 bildirim türü ayarları</span>
                 </div>
               </div>
               <ArrowRight
-                className="text-purple-500 group-hover:translate-x-2 transition-all"
-                size={22}
+                className="text-purple-500 group-hover:translate-x-1 transition-all"
+                size={16}
               />
             </Link>
 
             <Link
               href="/settings/organization"
-              className="flex items-center justify-between p-5 rounded-xl bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200/50 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group"
+              className="flex items-center justify-between p-3 rounded-lg bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200/50 hover:shadow-lg transition-all group"
             >
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-green-500 rounded-xl shadow-lg group-hover:scale-110 transition-transform">
-                  <Briefcase className="text-white" size={22} />
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-green-500 rounded-lg shadow group-hover:scale-105 transition-transform">
+                  <Briefcase className="text-white" size={16} />
                 </div>
                 <div>
-                  <span className="font-bold text-gray-900 block text-lg">Şirket Ayarları</span>
+                  <span className="font-bold text-gray-900 block text-sm">Şirket Ayarları</span>
                   <span className="text-xs text-gray-600">Organizasyon ve marka</span>
                 </div>
               </div>
               <ArrowRight
-                className="text-green-500 group-hover:translate-x-2 transition-all"
-                size={22}
+                className="text-green-500 group-hover:translate-x-1 transition-all"
+                size={16}
               />
             </Link>
           </div>
