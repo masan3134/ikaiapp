@@ -709,14 +709,14 @@ router.get('/database-stats', superAdminOnly, async (req, res) => {
   try {
     const stats = await prisma.$queryRaw`
       SELECT
-        (SELECT COUNT(*) FROM "User") as total_users,
-        (SELECT COUNT(*) FROM "Organization") as total_orgs,
-        (SELECT COUNT(*) FROM "JobPosting") as total_jobs,
-        (SELECT COUNT(*) FROM "Candidate") as total_candidates,
-        (SELECT COUNT(*) FROM "Analysis") as total_analyses,
-        (SELECT COUNT(*) FROM "Offer") as total_offers,
-        (SELECT COUNT(*) FROM "Interview") as total_interviews,
-        (SELECT COUNT(*) FROM "Notification") as total_notifications,
+        (SELECT COUNT(*) FROM "users") as total_users,
+        (SELECT COUNT(*) FROM "organizations") as total_orgs,
+        (SELECT COUNT(*) FROM "job_postings") as total_jobs,
+        (SELECT COUNT(*) FROM "candidates") as total_candidates,
+        (SELECT COUNT(*) FROM "analysis_results") as total_analyses,
+        (SELECT COUNT(*) FROM "job_offers") as total_offers,
+        (SELECT COUNT(*) FROM "interviews") as total_interviews,
+        (SELECT COUNT(*) FROM "notifications") as total_notifications,
         pg_size_pretty(pg_database_size(current_database())) as db_size
     `;
 
