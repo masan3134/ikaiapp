@@ -86,18 +86,18 @@ function OrganizationSettingsPage() {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Organization Branding */}
-      <Card>
-        <div className="flex items-center gap-3 mb-6 pb-4 border-b-2 border-gray-100">
-          <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg shadow-md">
-            <Building2 className="text-white" size={24} />
+    <div className="space-y-8">
+      {/* Organization Branding - GLASSMORPHISM */}
+      <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-200/50 p-8">
+        <div className="flex items-center gap-4 mb-8 pb-6 border-b-2 border-gray-100">
+          <div className="p-4 bg-gradient-to-br from-blue-500 to-purple-500 rounded-2xl shadow-xl">
+            <Building2 className="text-white" size={28} />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-gray-900">
+            <h2 className="text-2xl font-bold text-gray-900">
               Organizasyon Bilgileri
             </h2>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-600 font-medium">
               Şirketinizin temel bilgilerini güncelleyin
             </p>
           </div>
@@ -108,9 +108,9 @@ function OrganizationSettingsPage() {
           <div>
             <label
               htmlFor="name"
-              className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2"
+              className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-3"
             >
-              <Building2 size={16} className="text-blue-600" />
+              <Building2 size={18} className="text-blue-600" />
               Organizasyon Adı *
             </label>
             <input
@@ -120,7 +120,7 @@ function OrganizationSettingsPage() {
               onChange={(e) =>
                 setFormData({ ...formData, name: e.target.value })
               }
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all hover:border-gray-300"
+              className="w-full px-5 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all hover:border-gray-300 text-gray-900 font-medium"
               placeholder="Şirket adınızı girin"
               required
             />
@@ -132,9 +132,9 @@ function OrganizationSettingsPage() {
             <div>
               <label
                 htmlFor="logo"
-                className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2"
+                className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-3"
               >
-                <Sparkles size={16} className="text-purple-600" />
+                <Sparkles size={18} className="text-purple-600" />
                 Logo URL
               </label>
               <div className="flex gap-3">
@@ -146,7 +146,7 @@ function OrganizationSettingsPage() {
                     setFormData({ ...formData, logo: e.target.value })
                   }
                   placeholder="https://example.com/logo.png"
-                  className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all hover:border-gray-300"
+                  className="flex-1 px-5 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all hover:border-gray-300 text-gray-900 font-medium"
                 />
                 {formData.logo && (
                   <div className="relative w-12 h-12 rounded-lg border-2 border-gray-200 overflow-hidden bg-white shadow-sm">
@@ -167,9 +167,9 @@ function OrganizationSettingsPage() {
             <div>
               <label
                 htmlFor="primaryColor"
-                className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2"
+                className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-3"
               >
-                <Palette size={16} className="text-pink-600" />
+                <Palette size={18} className="text-pink-600" />
                 Ana Renk
               </label>
               <div className="flex gap-3 items-center">
@@ -180,7 +180,7 @@ function OrganizationSettingsPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, primaryColor: e.target.value })
                   }
-                  className="h-12 w-16 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition-all"
+                  className="h-14 w-16 rounded-xl border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition-all shadow-md"
                 />
                 <input
                   type="text"
@@ -188,7 +188,7 @@ function OrganizationSettingsPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, primaryColor: e.target.value })
                   }
-                  className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-all hover:border-gray-300 font-mono"
+                  className="flex-1 px-5 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-all hover:border-gray-300 font-mono text-gray-900 font-bold"
                   pattern="^#[0-9A-Fa-f]{6}$"
                   placeholder="#3B82F6"
                 />
@@ -206,9 +206,9 @@ function OrganizationSettingsPage() {
             <div>
               <label
                 htmlFor="industry"
-                className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2"
+                className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-3"
               >
-                <Building2 size={16} className="text-green-600" />
+                <Building2 size={18} className="text-green-600" />
                 Sektör
               </label>
               <select
@@ -217,7 +217,7 @@ function OrganizationSettingsPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, industry: e.target.value })
                 }
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all hover:border-gray-300 bg-white"
+                className="w-full px-5 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all hover:border-gray-300 text-gray-900 font-medium"
               >
                 <option value="">Seçiniz</option>
                 <option value="technology">💻 Teknoloji</option>
@@ -234,9 +234,9 @@ function OrganizationSettingsPage() {
             <div>
               <label
                 htmlFor="size"
-                className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2"
+                className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-3"
               >
-                <Users size={16} className="text-orange-600" />
+                <Users size={18} className="text-orange-600" />
                 Şirket Büyüklüğü
               </label>
               <select
@@ -245,7 +245,7 @@ function OrganizationSettingsPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, size: e.target.value })
                 }
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all hover:border-gray-300 bg-white"
+                className="w-full px-5 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all hover:border-gray-300 text-gray-900 font-medium"
               >
                 <option value="">Seçiniz</option>
                 <option value="1-10">👥 1-10 çalışan</option>
@@ -280,19 +280,19 @@ function OrganizationSettingsPage() {
             </Button>
           </div>
         </form>
-      </Card>
+      </div>
 
-      {/* Plan & Usage */}
-      <Card>
-        <div className="flex items-center gap-3 mb-6 pb-4 border-b-2 border-gray-100">
-          <div className="p-3 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg shadow-md">
-            <Crown className="text-white" size={24} />
+      {/* Plan & Usage - GLASSMORPHISM */}
+      <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-200/50 p-8">
+        <div className="flex items-center gap-4 mb-8 pb-6 border-b-2 border-gray-100">
+          <div className="p-4 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl shadow-xl">
+            <Crown className="text-white" size={28} />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-gray-900">
+            <h2 className="text-2xl font-bold text-gray-900">
               Abonelik ve Kullanım
             </h2>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-600 font-medium">
               Planınız ve aylık kullanım durumunuz
             </p>
           </div>
@@ -453,99 +453,7 @@ function OrganizationSettingsPage() {
             </div>
           </div>
         )}
-      </Card>
-
-      {/* Branding Section */}
-      <Card>
-        <div className="flex items-center gap-3 mb-6 pb-4 border-b-2 border-gray-100">
-          <div className="p-3 bg-gradient-to-br from-pink-500 to-rose-500 rounded-lg shadow-md">
-            <Palette className="text-white" size={24} />
-          </div>
-          <div>
-            <h2 className="text-xl font-bold text-gray-900">Marka Kimliği</h2>
-            <p className="text-sm text-gray-600">Logo ve renk ayarlarınız</p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Industry */}
-          <div>
-            <label
-              htmlFor="industry"
-              className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2"
-            >
-              <Building2 size={16} className="text-green-600" />
-              Sektör
-            </label>
-            <select
-              id="industry"
-              value={formData.industry}
-              onChange={(e) =>
-                setFormData({ ...formData, industry: e.target.value })
-              }
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all hover:border-gray-300 bg-white"
-            >
-              <option value="">Seçiniz</option>
-              <option value="technology">💻 Teknoloji</option>
-              <option value="finance">💰 Finans</option>
-              <option value="healthcare">🏥 Sağlık</option>
-              <option value="education">📚 Eğitim</option>
-              <option value="retail">🛒 Perakende</option>
-              <option value="manufacturing">🏭 İmalat</option>
-              <option value="other">🔧 Diğer</option>
-            </select>
-          </div>
-
-          {/* Size */}
-          <div>
-            <label
-              htmlFor="size"
-              className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2"
-            >
-              <Users size={16} className="text-orange-600" />
-              Şirket Büyüklüğü
-            </label>
-            <select
-              id="size"
-              value={formData.size}
-              onChange={(e) =>
-                setFormData({ ...formData, size: e.target.value })
-              }
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all hover:border-gray-300 bg-white"
-            >
-              <option value="">Seçiniz</option>
-              <option value="1-10">👥 1-10 çalışan</option>
-              <option value="11-50">👨‍👩‍👧 11-50 çalışan</option>
-              <option value="51-200">👨‍👩‍👧‍👦 51-200 çalışan</option>
-              <option value="201-500">🏢 201-500 çalışan</option>
-              <option value="501+">🏙️ 501+ çalışan</option>
-            </select>
-          </div>
-        </div>
-
-        {/* Submit (for branding section) */}
-        <div className="flex flex-col sm:flex-row justify-end gap-3 pt-6 border-t-2 border-gray-100 mt-6">
-          <button
-            type="button"
-            onClick={resetForm}
-            disabled={saving}
-            className="flex items-center justify-center gap-2 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-all disabled:opacity-50 font-medium shadow-sm"
-          >
-            <RefreshCw size={18} />
-            Geri Al
-          </button>
-          <Button onClick={handleSubmit} loading={saving} size="lg">
-            {saving ? (
-              "Kaydediliyor..."
-            ) : (
-              <>
-                <Save size={18} />
-                Kaydet
-              </>
-            )}
-          </Button>
-        </div>
-      </Card>
+      </div>
     </div>
   );
 }
