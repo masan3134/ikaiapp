@@ -13,21 +13,31 @@ interface WithRoleProtectionOptions {
 /**
  * Higher-Order Component to add role-based protection to pages
  *
- * Usage:
+ * Usage (both formats supported):
  * ```tsx
- * const ProtectedPage = withRoleProtection(MyPage, {
- *   allowedRoles: [UserRole.ADMIN, UserRole.SUPER_ADMIN]
+ * // Option 1: Array (shorthand)
+ * export default withRoleProtection(MyPage, ["ADMIN", "SUPER_ADMIN"]);
+ *
+ * // Option 2: Object (with options)
+ * export default withRoleProtection(MyPage, {
+ *   allowedRoles: ["ADMIN", "SUPER_ADMIN"],
+ *   redirectTo: "/dashboard",
+ *   fallback: <Loading />
  * });
- * export default ProtectedPage;
  * ```
  *
  * @param Component - Page component to protect
- * @param options - Protection options
+ * @param optionsOrRoles - Protection options object OR array of allowed roles
  */
 export function withRoleProtection<P extends object>(
   Component: React.ComponentType<P>,
-  options: WithRoleProtectionOptions
+  optionsOrRoles: WithRoleProtectionOptions | AllowedRoles
 ) {
+  // Normalize input: if array, convert to options object
+  const options: WithRoleProtectionOptions = Array.isArray(optionsOrRoles)
+    ? { allowedRoles: optionsOrRoles }
+    : optionsOrRoles;
+
   const ProtectedComponent = (props: P) => {
     return (
       <RoleGuard
