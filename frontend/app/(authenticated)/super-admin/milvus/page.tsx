@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Database } from "lucide-react";
 import { withRoleProtection } from "@/lib/hoc/withRoleProtection";
 import apiClient from "@/lib/services/apiClient";
+import toast from "react-hot-toast";
 
 function SuperAdminMilvusPage() {
   const [data, setData] = useState(null);
@@ -10,9 +11,17 @@ function SuperAdminMilvusPage() {
 
   useEffect(() => {
     apiClient.get("/api/v1/super-admin/milvus-stats").then(r => {
-      if (r.data.success) setData(r.data.data);
+      if (r.data.success) {
+        setData(r.data.data);
+      } else {
+        toast.error(r.data.message || "Milvus istatistikleri yüklenemedi");
+      }
       setLoading(false);
-    }).catch(e => { console.error(e); setLoading(false); });
+    }).catch(e => {
+      console.error(e);
+      toast.error("Milvus istatistikleri yüklenirken hata oluştu");
+      setLoading(false);
+    });
   }, []);
 
   if (loading) return <div className="p-12 text-center">Yükleniyor...</div>;
