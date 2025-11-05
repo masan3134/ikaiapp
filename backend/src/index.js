@@ -213,7 +213,6 @@ apiV1Router.use('/analytics', analyticsRoutes);
 
 // PHASE 4: Super Admin Dashboard
   const superAdminRoutes = require('./routes/superAdminRoutes');
-  const { authenticateToken } = require('./middleware/auth');
   const { requireSuperAdmin } = require('./middleware/superAdmin');
 
 // NEW FEATURE: Job Offer System (Phase 1 + 2 + 3)
