@@ -26,6 +26,27 @@ function SuperAdminSettingsPage() {
   }, []);
 
   const handleSave = async () => {
+    // Validation
+    if (!data?.general?.platformName || data.general.platformName.trim() === "") {
+      toast.error("Platform adı boş olamaz");
+      return;
+    }
+
+    if (data.general.platformName.length < 3) {
+      toast.error("Platform adı en az 3 karakter olmalıdır");
+      return;
+    }
+
+    if (data.general.platformName.length > 50) {
+      toast.error("Platform adı en fazla 50 karakter olabilir");
+      return;
+    }
+
+    if (!data?.general?.timezone || data.general.timezone.trim() === "") {
+      toast.error("Zaman dilimi seçilmelidir");
+      return;
+    }
+
     setSaving(true);
     try {
       const res = await apiClient.post("/api/v1/super-admin/settings", data);
@@ -56,8 +77,37 @@ function SuperAdminSettingsPage() {
       </div>
       <div className="bg-white p-6 rounded border">
         <div className="grid grid-cols-2 gap-6">
-          <div><label className="block text-sm font-medium mb-2">Platform Adı</label><input type="text" value={data.general?.platformName || ""} onChange={e => setData({...data, general: {...data.general, platformName: e.target.value}})} className="w-full px-4 py-2 border rounded-lg" /></div>
-          <div><label className="block text-sm font-medium mb-2">Zaman Dilimi</label><select value={data.general?.timezone || ""} onChange={e => setData({...data, general: {...data.general, timezone: e.target.value}})} className="w-full px-4 py-2 border rounded-lg"><option>Europe/Istanbul</option><option>UTC</option></select></div>
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Platform Adı <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              required
+              minLength={3}
+              maxLength={50}
+              value={data.general?.platformName || ""}
+              onChange={e => setData({...data, general: {...data.general, platformName: e.target.value}})}
+              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+              placeholder="IKAI HR Platform"
+            />
+            <p className="text-xs text-gray-500 mt-1">3-50 karakter arasında olmalıdır</p>
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Zaman Dilimi <span className="text-red-500">*</span>
+            </label>
+            <select
+              required
+              value={data.general?.timezone || ""}
+              onChange={e => setData({...data, general: {...data.general, timezone: e.target.value}})}
+              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+            >
+              <option value="">Seçiniz</option>
+              <option value="Europe/Istanbul">Europe/Istanbul</option>
+              <option value="UTC">UTC</option>
+            </select>
+          </div>
         </div>
       </div>
     </div>
