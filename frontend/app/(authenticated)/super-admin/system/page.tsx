@@ -27,7 +27,7 @@ function SuperAdminSystemPage() {
   }, []);
 
   if (loading) return <div className="p-12 text-center">Yükleniyor...</div>;
-  if (!data) return null;
+  if (!data) return <div className="p-12 text-center text-gray-500">Veri yüklenemedi</div>;
 
   const services = [
     {

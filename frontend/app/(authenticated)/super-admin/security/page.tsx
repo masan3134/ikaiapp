@@ -129,7 +129,7 @@ function SuperAdminSecurityPage() {
     );
   }
 
-  if (!data) return null;
+  if (!data) return <div className="p-12 text-center text-gray-500">Veri yüklenemedi</div>;
 
   return (
     <div className="space-y-6">
