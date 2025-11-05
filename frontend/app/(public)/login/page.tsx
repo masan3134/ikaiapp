@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuthStore } from "@/lib/store/authStore";
+import apiClient from "@/lib/utils/apiClient";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -58,31 +59,22 @@ export default function LoginPage() {
       // Login first
       await login(email, password);
 
-      // Check onboarding status
-      const token = localStorage.getItem("auth_token");
-      if (token) {
-        const res = await fetch(
-          "http://localhost:8102/api/v1/organizations/me",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+      // Check onboarding status using apiClient (works in browser)
+      try {
+        const response = await apiClient.get("/api/v1/organizations/me");
+        const org = response.data.data;
 
-        if (res.ok) {
-          const data = await res.json();
-          const org = data.data;
-
-          // Redirect based on onboarding status
-          // Use window.location to avoid Next.js prefetch race conditions
-          if (org.onboardingCompleted) {
-            window.location.href = "/dashboard";
-          } else {
-            window.location.href = "/onboarding";
-          }
-        } else {
-          // Fallback to dashboard if org fetch fails
+        // Redirect based on onboarding status
+        // Use window.location to avoid Next.js prefetch race conditions
+        if (org.onboardingCompleted) {
           window.location.href = "/dashboard";
+        } else {
+          window.location.href = "/onboarding";
         }
+      } catch (orgError) {
+        // Fallback to dashboard if org fetch fails
+        console.error("Org fetch error:", orgError);
+        window.location.href = "/dashboard";
       }
     } catch (err: any) {
       // useAuthStore zaten hata durumunu yönetiyor.
