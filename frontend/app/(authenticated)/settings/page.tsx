@@ -17,6 +17,13 @@ export default function SettingsPage() {
 
   const settingsCategories = [
     {
+      name: "Genel Bakış",
+      description: "Dashboard ve hızlı erişim",
+      path: "/settings/overview",
+      icon: <SettingsIcon className="w-6 h-6 text-blue-600" />,
+      available: true,
+    },
+    {
       name: "Profil Ayarları",
       description: "Kişisel bilgiler ve profil fotoğrafı",
       path: "/settings/profile",
