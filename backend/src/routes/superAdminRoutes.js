@@ -1109,19 +1109,18 @@ router.get('/users', superAdminOnly, async (req, res) => {
  */
 router.get('/security-settings', superAdminOnly, async (req, res) => {
   try {
-    // Get recent login attempts (last 24h)
-    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-
-    const recentLogins = await prisma.user.count({
-      where: { lastLoginAt: { gte: oneDayAgo } }
-    });
-
     // Get security stats
     const [totalUsers, activeUsers, inactiveUsers] = await Promise.all([
       prisma.user.count(),
       prisma.user.count({ where: { isActive: true } }),
       prisma.user.count({ where: { isActive: false } })
     ]);
+
+    // Get recent registrations (last 24h) as proxy for activity
+    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const recentLogins = await prisma.user.count({
+      where: { createdAt: { gte: oneDayAgo } }
+    });
 
     return res.json({
       success: true,
