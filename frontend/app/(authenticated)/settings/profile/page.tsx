@@ -240,6 +240,8 @@ export default function ProfilePage() {
                 </label>
                 <input
                   type="text"
+                  name="firstName"
+                  id="firstName"
                   value={formData.firstName}
                   onChange={(e) =>
                     setFormData({ ...formData, firstName: e.target.value })
@@ -256,6 +258,8 @@ export default function ProfilePage() {
                 </label>
                 <input
                   type="text"
+                  name="lastName"
+                  id="lastName"
                   value={formData.lastName}
                   onChange={(e) =>
                     setFormData({ ...formData, lastName: e.target.value })
@@ -272,6 +276,8 @@ export default function ProfilePage() {
                 </label>
                 <input
                   type="text"
+                  name="position"
+                  id="position"
                   value={formData.position}
                   onChange={(e) =>
                     setFormData({ ...formData, position: e.target.value })
