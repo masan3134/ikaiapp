@@ -1,77 +1,5 @@
-import axios from "axios";
 import { UserRole } from "@/lib/constants/roles";
-
-// Get API URL with browser-side override for Docker internal hostnames
-const getAPIURL = () => {
-  const envURL = process.env.NEXT_PUBLIC_API_URL;
-
-  // If running in browser and env URL uses Docker internal hostname, use localhost
-  if (typeof window !== "undefined" && envURL?.includes("ikai-backend")) {
-    return "http://localhost:8102";
-  }
-
-  // Otherwise use env URL or fallback to localhost
-  return envURL || "http://localhost:8102";
-};
-
-const API_URL = getAPIURL();
-
-// Create axios instance with default config
-const apiClient = axios.create({
-  baseURL: API_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
-  withCredentials: true,
-});
-
-// Request interceptor to add token to all requests
-apiClient.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem("auth_token");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-
-// Response interceptor to handle 401 errors and suppress expected 503 errors
-apiClient.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      // Clear token and redirect to login
-      localStorage.removeItem("auth_token");
-      localStorage.removeItem("auth_user");
-      if (
-        typeof window !== "undefined" &&
-        !window.location.pathname.includes("/login")
-      ) {
-        window.location.href = "/login";
-      }
-    }
-
-    // Suppress console errors for expected 503 errors on AI Chat endpoints
-    if (error.response?.status === 503) {
-      const url = error.config?.url || "";
-      if (
-        url.includes("/chat-stats") ||
-        url.includes("/prepare-chat") ||
-        url.includes("/chat")
-      ) {
-        // This is an expected service unavailable error for AI Chat
-        // Suppress the console error but still reject the promise
-        error.suppressConsoleError = true;
-      }
-    }
-
-    return Promise.reject(error);
-  }
-);
+import apiClient from "@/lib/utils/apiClient"; // Use shared apiClient
 
 export interface User {
   id: string;
@@ -131,13 +59,17 @@ export async function login(
   email: string,
   password: string
 ): Promise<AuthResponse> {
+  console.log("[authService] login() called");  // DEBUG
   try {
+    console.log("[authService] Posting to /api/v1/auth/login");  // DEBUG
     const response = await apiClient.post<AuthResponse>("/api/v1/auth/login", {
       email,
       password,
     });
+    console.log("[authService] Login API response received");  // DEBUG
     return response.data;
   } catch (error: any) {
+    console.error("[authService] Login API error:", error);  // DEBUG
     throw (
       error.response?.data || {
         error: "Network Error",
