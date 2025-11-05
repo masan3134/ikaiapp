@@ -1,7 +1,7 @@
 # 👷 Worker Claude Playbook - Complete Guide
 
-**Version:** 2.3 (AsanMod v15.7 - W6 Lessons Learned)
-**Last Updated:** 2025-11-04
+**Version:** 3.0 (AsanMod v17 - MCP Integration + 12 New Rules)
+**Last Updated:** 2025-11-05
 **Your Role:** WORKER CLAUDE (Executor)
 
 > **This is your ONLY file to read. Everything you need is here.**
@@ -1267,6 +1267,387 @@ If you must edit shared file (AppLayout, shared routes):
 6. Announce done: "AppLayout edit committed"
 
 This prevents file conflicts, protects all workers, maintains order.
+```
+
+### Rule 17: MCP Usage (MANDATORY) 🔌
+
+```
+🚨 CRITICAL: EVERY task MUST use relevant MCPs!
+
+MCP = Model Context Protocol (Verified, tamper-proof tools)
+
+8 MCP Categories:
+
+1. PostgreSQL MCP (Database):
+postgres.count({table: "users"})
+postgres.verify_exists({table: "users", where: "...", params: [...]})
+postgres.query({sql: "...", params: [...]})
+
+2. Docker MCP (Services):
+docker.health() → Services OK?
+docker.logs({container: "ikai-backend", tail: 50})
+docker.stats({container: "ikai-backend"})
+
+3. Playwright MCP (Frontend):
+playwright.navigate({url: "http://localhost:8103/...", screenshot: true})
+playwright.console_errors({url: "..."})
+playwright.check_element({url: "...", selector: "..."})
+
+4. Code Analysis MCP (Quality):
+code_analysis.typescript_check()
+code_analysis.eslint_check()
+code_analysis.build_check()
+
+5. Gemini Search MCP (Solutions):
+gemini_search.error_solution({error: "...", context: "..."})
+gemini_search.quick_answer({question: "..."})
+
+6. filesystem MCP (File Operations):
+filesystem.read_file({path: "/absolute/path/to/file"})
+filesystem.list_directory({path: "/absolute/path"})
+filesystem.find_files({directory: "/path", pattern: "Widget.tsx"})
+
+7. sequentialthinking MCP (Reasoning):
+→ Automatic activation for complex tasks
+→ No direct tool calls needed
+
+8. puppeteer MCP (Lightweight Browser):
+puppeteer.navigate({url: "http://localhost:8103/...", screenshot: true})
+puppeteer.console_errors({url: "..."}) → Playwright fallback
+puppeteer.check_element({url: "...", selector: "..."})
+
+MANDATORY Workflow:
+
+Task Start:
+1. docker.health() → All OK? (BLOCKER if not)
+
+Error Encountered:
+2. gemini_search.error_solution({error: "..."}) → Get solution first
+
+Work Phase:
+3. (Write code, edit files...)
+
+Pre-Commit:
+4. code_analysis.typescript_check() → 0 errors? (BLOCKER)
+5. code_analysis.build_check() → exitCode: 0? (BLOCKER)
+
+Frontend Testing:
+6. playwright.navigate({url: "http://localhost:8103/..."})
+7. playwright.console_errors({url: "..."}) → 0 errors? (BLOCKER)
+
+Database Verification:
+8. postgres.count({table: "users"}) → Expected count?
+
+Task End:
+9. docker.health() → Still OK?
+
+CRITICAL WARNINGS:
+
+⚠️ PostgreSQL: LOWERCASE table names!
+❌ table: "User" → ERROR
+✅ table: "users" → SUCCESS
+
+⚠️ Playwright: Use localhost URLs!
+❌ url: "http://ikai-frontend:3000"
+✅ url: "http://localhost:8103"
+
+⚠️ MCP Output: PASTE EXACT OUTPUT to proof.txt!
+
+NO MCP = TASK REJECTED
+```
+
+### Rule 18: Fail Fast on Exit Code 1 (CRITICAL) ⚠️
+
+```
+🚨 Exit code 1 = STOP immediately!
+
+Exit Codes:
+0 = SUCCESS → Continue
+1 = FAILED → STOP, FIX, RETRY
+
+Common Scenarios:
+
+Scenario 1: Build Failed
+code_analysis.build_check()
+→ {exitCode: 1, errors: 50}
+→ ❌ STOP! Fix errors first!
+→ DON'T commit, DON'T continue!
+
+Scenario 2: TypeScript Failed
+code_analysis.typescript_check()
+→ {exitCode: 1, errorCount: 5}
+→ ❌ STOP! Fix type errors!
+
+Scenario 3: Docker Unhealthy
+docker.health()
+→ {container: "ikai-backend", healthy: false}
+→ ❌ STOP! Check logs, fix backend!
+
+WRONG Behavior:
+code_analysis.build_check()
+→ {exitCode: 1}
+Worker: "Build check done ✅" (LIES!)
+Worker: Continues to next task (WRONG!)
+
+RIGHT Behavior:
+code_analysis.build_check()
+→ {exitCode: 1, errors: 50}
+Worker: "❌ Build failed, 50 errors detected"
+Worker: Reads errors
+Worker: Fixes errors
+Worker: Re-runs build check
+→ {exitCode: 0}
+Worker: "✅ Build success, continuing..."
+
+Exit Code 1 = BLOCKER
+Don't pretend it passed!
+```
+
+### Rule 19: 3-Strike Error Protocol (MANDATORY) 🎯
+
+```
+🚨 3 errors = STOP, ask for help!
+
+Protocol:
+
+Strike 1:
+- Error encountered
+- gemini_search.error_solution({error: "...", context: "..."})
+- Read solution
+- Try fix
+
+Strike 2:
+- Still error (different or same)
+- gemini_search.error_solution() with MORE context
+- Try different approach
+
+Strike 3:
+- Still error
+- ❌ STOP! Don't waste tokens!
+- Report to MOD/User:
+  "❌ 3 attempts failed
+  Error: [exact error]
+  Tried: [solution 1], [solution 2]
+  Need help!"
+
+DON'T:
+- Keep trying blindly (wastes tokens!)
+- Skip gemini search (user asked first = bad!)
+- Give up after 1 error (try at least 3 times!)
+
+Token Efficiency:
+- 3 gemini searches = ~1,500 tokens
+- Better than asking user immediately!
+```
+
+### Rule 20: Pre-Commit Checks (ZERO TOLERANCE) ✅
+
+```
+🚫 ZERO TOLERANCE: Pre-commit checks MANDATORY!
+
+Frontend Pre-Commit:
+1. code_analysis.typescript_check() → 0 errors (BLOCKER)
+2. code_analysis.eslint_check() → 0 errors (warnings OK)
+3. code_analysis.build_check() → exitCode: 0 (BLOCKER)
+4. playwright.console_errors() → errorCount: 0 (BLOCKER)
+
+Backend Pre-Commit:
+1. code_analysis.typescript_check() → 0 errors (BLOCKER)
+2. docker.logs() → No new errors
+
+ANY BLOCKER = NO COMMIT
+
+Example:
+✅ TypeScript: 0 errors
+✅ ESLint: 0 errors, 2 warnings
+❌ Build: exitCode 1
+→ FIX BUILD FIRST, then commit!
+
+No shortcuts, no exceptions!
+```
+
+### Rule 21: Console Error Zero Tolerance (FRONTEND) 🖥️
+
+```
+🚫 Frontend rule: 0 console errors!
+
+playwright.console_errors({url: "..."})
+→ {errorCount: 0} ✅ OK
+→ {errorCount: 1+} ❌ FIX ALL!
+
+NO EXCEPTIONS:
+- "It's just a warning" → FIX
+- "Doesn't affect functionality" → FIX
+- "From a library" → SUPPRESS or FIX
+
+Console errors = Unprofessional
+```
+
+### Rule 22: Container Health Sandwich (MANDATORY) 🥪
+
+```
+🥪 Health check BEFORE and AFTER!
+
+Task Start:
+docker.health() → All healthy?
+if NOT → STOP, report
+
+Task Work:
+(your code...)
+
+Task End:
+docker.health() → Still healthy?
+if NOT → YOU BROKE IT! Fix or report
+
+"Sandwich Rule" protects system!
+```
+
+### Rule 23: Database Isolation Testing (SECURITY) 🔒
+
+```
+🔒 Multi-tenant = Isolation MANDATORY!
+
+Every DB operation:
+postgres.query({
+  sql: "SELECT * FROM users WHERE organizationId = $1",
+  params: [orgId]
+})
+→ Verify ALL results have same orgId!
+
+No cross-org data leak!
+```
+
+### Rule 24: Screenshot Evidence (FRONTEND) 📸
+
+```
+📸 Frontend change = Screenshot REQUIRED!
+
+When:
+- New page
+- Widget added
+- UI change
+- RBAC change
+
+How:
+playwright.navigate({url: "...", screenshot: true})
+→ Screenshot: /tmp/playwright-screenshots/screenshot-XXX.png
+→ PASTE path to proof.txt
+
+Visual proof for Mod!
+```
+
+### Rule 25: Localhost vs Docker Context (CRITICAL) 🌐
+
+```
+🌐 CRITICAL: Know where code runs!
+
+Browser (Playwright tests):
+✅ http://localhost:8103
+❌ http://ikai-frontend:3000
+
+Backend API calls (inside Docker):
+✅ http://ikai-backend:3000
+❌ http://localhost:3000
+
+Frontend code (browser runs it):
+✅ http://localhost:8102/api/...
+❌ http://ikai-backend:3000/api/...
+
+Backend code (Docker runs it):
+✅ http://ikai-backend:3000
+✅ http://ikai-postgres:5432
+
+Wrong context = Connection refused!
+```
+
+### Rule 26: Resource-Aware Testing (PERFORMANCE) ⚡
+
+```
+⚡ Playwright is EXPENSIVE!
+
+FAST (use freely):
+- PostgreSQL MCP: ~100ms
+- Docker MCP: Instant
+
+SLOW (use sparingly):
+- Playwright MCP: ~2s startup, 500MB memory
+
+Batch Playwright operations:
+❌ 5 separate navigate calls (10s)
+✅ 1 navigate + console_errors (2.1s)
+```
+
+### Rule 27: Structured Proof Format (MANDATORY) 📋
+
+```
+📋 proof.txt MUST be structured!
+
+Format:
+=== Task Info ===
+Task: ...
+Worker: W1
+Date: 2025-11-05
+
+=== Pre-Task Health ===
+docker.health()
+{paste output}
+
+=== Work Done ===
+Files: ...
+Commits: ...
+
+=== TypeScript Check ===
+code_analysis.typescript_check()
+{paste output}
+
+=== Build Check ===
+code_analysis.build_check()
+{paste output}
+Exit Code: 0 ✅
+
+=== Browser Test ===
+playwright.navigate(...)
+{paste output}
+
+=== Console Errors ===
+playwright.console_errors(...)
+{errorCount: 0} ✅
+
+=== Screenshot ===
+/tmp/playwright-screenshots/screenshot-XXX.png
+
+=== Database Verify ===
+postgres.count(...)
+{paste output}
+
+=== Post-Task Health ===
+docker.health()
+{paste output}
+
+=== Summary ===
+✅ All checks passed
+✅ 0 errors
+✅ Build successful
+
+STRUCTURED = Easy to verify!
+```
+
+### Rule 28: PostgreSQL Table Naming (DATABASE) 🗄️
+
+```
+🗄️ ALWAYS lowercase + plural!
+
+Prisma Model → Database Table:
+- User → users
+- Organization → organizations
+- JobPosting → job_postings
+
+MCP Calls:
+✅ postgres.count({table: "users"})
+❌ postgres.count({table: "User"})
+
+ERROR if wrong:
+relation "User" does not exist
 ```
 
 ---

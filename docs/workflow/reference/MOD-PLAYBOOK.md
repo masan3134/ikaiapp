@@ -1,7 +1,7 @@
 # 🎯 Mod Claude Playbook - Complete Guide
 
-**Version:** 2.2 (AsanMod v15.6 - Python First)
-**Last Updated:** 2025-11-04
+**Version:** 2.3 (AsanMod v17 - MCP Integration + 4 New Rules)
+**Last Updated:** 2025-11-05
 **Your Role:** MASTER CLAUDE (Coordinator & Verifier)
 
 > **This is your ONLY file to read. Everything you need is here.**
@@ -601,6 +601,405 @@ Emergency (Must restart NOW):
 4. MOD coordinates recovery
 
 This prevents chaos, protects worker progress, maintains stability.
+```
+
+### Rule 13: MCP-First Verification (MANDATORY) 🔌
+
+```
+🚨 CRITICAL: ALWAYS use MCP for verification!
+
+OLD Verification Protocol (DEPRECATED):
+❌ python3 -c "import psycopg2..." | grep count
+❌ curl http://localhost:8103/page
+❌ Manual grep/find commands
+
+NEW Verification Protocol (MANDATORY):
+✅ postgres.count({table: "users", where: "organizationId = $1"})
+✅ playwright.navigate({url: "http://localhost:8103/page"})
+✅ docker.health()
+✅ code_analysis.typescript_check()
+✅ gemini_search.error_solution({error: "..."})
+
+MCP Benefits:
+- Structured output (JSON)
+- Can't be manually edited
+- Re-runnable by you
+- Consistent format
+- Tamper-proof
+
+Verification Workflow:
+
+Worker Reports:
+=== Database Verify ===
+postgres.count({table: "users"})
+{count: 20}
+
+You Verify:
+1. Read worker's proof.txt
+2. Copy MCP command
+3. Run same MCP
+4. Compare outputs:
+   Worker: {count: 20}
+   Mod: {count: 20}
+   → ✅ MATCH = VERIFIED
+
+If No Match:
+Worker: {count: 20}
+Mod: {count: 5}
+→ ❌ WORKER LIED or MADE MISTAKE
+→ Task REJECTED, redo required
+
+8 MCP Categories:
+
+1. PostgreSQL MCP (Database):
+postgres.count({table: "users"})
+postgres.verify_exists({table: "users", where: "email = $1", params: ["..."]})
+postgres.query({sql: "SELECT...", params: [...]})
+
+2. Docker MCP (Services):
+docker.health() → All containers OK?
+docker.logs({container: "ikai-backend", tail: 50}) → Check errors
+docker.stats({container: "ikai-backend"}) → CPU/Memory
+
+3. Playwright MCP (Frontend):
+playwright.navigate({url: "http://localhost:8103/..."}) → Page loads?
+playwright.console_errors({url: "..."}) → 0 errors?
+playwright.check_element({selector: "..."}) → Visible?
+
+4. Code Analysis MCP (Quality):
+code_analysis.typescript_check() → 0 errors?
+code_analysis.eslint_check() → Warnings acceptable, errors NOT
+code_analysis.build_check() → Exit code 0?
+
+5. Gemini Search MCP (Solutions):
+gemini_search.error_solution({error: "...", context: "..."})
+gemini_search.quick_answer({question: "..."})
+
+6. filesystem MCP (File Operations):
+filesystem.read_file({path: "/absolute/path/to/file"})
+filesystem.list_directory({path: "/absolute/path"})
+filesystem.find_files({directory: "/path", pattern: "Widget.tsx"})
+
+7. sequentialthinking MCP (Reasoning):
+→ Automatic activation for complex tasks
+→ No direct tool calls needed
+
+8. puppeteer MCP (Lightweight Browser):
+puppeteer.navigate({url: "http://localhost:8103/...", screenshot: true})
+puppeteer.console_errors({url: "..."}) → Playwright fallback
+puppeteer.check_element({url: "...", selector: "..."})
+
+CRITICAL WARNINGS:
+
+⚠️ PostgreSQL: LOWERCASE table names!
+❌ table: "User" → ERROR
+✅ table: "users" → SUCCESS
+
+⚠️ Playwright: Use localhost URLs!
+❌ url: "http://ikai-frontend:3000"
+✅ url: "http://localhost:8103"
+
+⚠️ Code Analysis: Exit code matters!
+Exit code 0 = SUCCESS
+Exit code 1 = FAILED
+
+Spot-Check Sampling:
+
+You don't need to re-run EVERY MCP.
+Pick 2-3 critical ones per worker.
+
+Example Spot-Check (W1 adds widget):
+1. postgres.count() → Match?
+2. playwright.console_errors() → Match?
+3. code_analysis.build_check() → Match?
+
+If 3/3 match → 100% confidence → ✅ VERIFIED
+If 2/3 match → 66% confidence → ⚠️ Investigate mismatch
+If 1/3 match → 33% confidence → ❌ REJECT TASK
+
+NO MCP = NO VERIFICATION
+Worker provides manual output only → ❌ REJECT
+```
+
+### Rule 14: Exit Code Interpretation (CRITICAL) ⚙️
+
+```
+🚨 CRITICAL: Exit code determines task success!
+
+Exit Codes:
+0 = SUCCESS (command completed successfully)
+1 = FAILED (command failed with error)
+2+ = SPECIFIC ERROR (depends on tool)
+
+Common Confusion:
+
+MCP Test Success vs Task Success:
+
+Scenario 1: Build Check
+code_analysis.build_check()
+→ Output: {status: "failed", exitCode: 1, output: "50 errors"}
+→ MCP Test: ✅ SUCCESS (MCP detected errors correctly)
+→ Task Status: ❌ FAILED (build has errors)
+
+Scenario 2: TypeScript Check
+code_analysis.typescript_check()
+→ Output: {status: "success", exitCode: 0, errorCount: 0}
+→ MCP Test: ✅ SUCCESS
+→ Task Status: ✅ SUCCESS
+
+Verification Protocol:
+
+Worker Reports:
+=== Build Check ===
+code_analysis.build_check()
+{status: "failed", exitCode: 1}
+
+Your Analysis:
+1. MCP worked? ✅ YES (returned structured output)
+2. Build succeeded? ❌ NO (exitCode: 1)
+3. Task complete? ❌ NO (build must succeed)
+4. Action: REJECT task, worker must fix build
+
+Another Example:
+
+Worker Reports:
+=== Docker Logs ===
+docker.logs({container: "ikai-backend"})
+Exit code: 0
+Output: "Error: Cannot read property 'id' of undefined"
+
+Your Analysis:
+1. MCP worked? ✅ YES (logs retrieved)
+2. Backend clean? ❌ NO (error in logs)
+3. Task complete? ❌ NO (backend has errors)
+4. Action: REJECT task, worker must fix error
+
+Exit Code Checklist:
+
+✅ code_analysis.build_check() → exitCode: 0 required
+✅ code_analysis.typescript_check() → exitCode: 0 required
+✅ docker.health() → all healthy: true required
+✅ playwright.console_errors() → errorCount: 0 required
+✅ postgres.count() → returns count (always succeeds)
+
+Critical for Verification:
+
+Don't confuse "MCP worked" with "task succeeded"!
+
+MCP returns structured data = MCP SUCCESS
+Task has exit code 0 / no errors = TASK SUCCESS
+
+Both must be true for verification to pass.
+```
+
+### Rule 15: Resource-Aware MCP Usage (PERFORMANCE) ⚡
+
+```
+⚡ PERFORMANCE: Some MCPs are expensive, use wisely!
+
+MCP Performance Profiles:
+
+FAST (Use Freely):
+- PostgreSQL MCP: ~100ms startup, Low memory
+- Docker MCP: Instant startup, Low memory
+  → Use as much as needed
+
+MEDIUM (Use Moderately):
+- Gemini Search MCP: 1-5s response, Low memory
+- Code Analysis MCP: ~500ms startup, Medium memory
+  → Use when needed, don't spam
+
+SLOW (Use Sparingly):
+- Playwright MCP: ~2s startup, ~500MB memory
+  → First call: 2 seconds (Chromium launch)
+  → Subsequent calls: Fast (browser reused)
+  → Memory: HIGH (keep browser running)
+
+Resource-Aware Verification:
+
+Scenario: Verify W1's widget addition
+
+Option A (WASTEFUL):
+1. playwright.navigate({url: "/dashboard"}) → 2s
+2. playwright.check_element({selector: ".widget-1"}) → 2s
+3. playwright.check_element({selector: ".widget-2"}) → 2s
+4. playwright.check_element({selector: ".widget-3"}) → 2s
+Total: 8 seconds, 500MB memory
+
+Option B (EFFICIENT):
+1. playwright.navigate({url: "/dashboard"}) → 2s (launches browser)
+2. playwright.console_errors({url: "/dashboard"}) → fast (reuses browser)
+3. postgres.count({table: "widgets"}) → 100ms
+Total: 2.1 seconds, 500MB memory
+
+Best Practices:
+
+PostgreSQL MCP:
+✅ Use for every database verification
+✅ Fast enough to run multiple times
+✅ No performance concern
+
+Docker MCP:
+✅ Use for health checks (instant)
+✅ Use for log checks (fast)
+✅ No performance concern
+
+Playwright MCP:
+⚠️ Batch operations when possible
+⚠️ Combine navigate + console_errors
+❌ Don't test every single element separately
+✅ Use one navigate call per page
+
+Code Analysis MCP:
+✅ Run once per task (pre-commit)
+❌ Don't run multiple times unnecessarily
+⚠️ Build check is slowest (~30s)
+
+Gemini Search MCP:
+✅ Use for error solutions (1-5s acceptable)
+❌ Don't use for general research (use docs instead)
+⚠️ Response length affects time (brief < detailed)
+
+Verification Strategy:
+
+High-Value, Low-Cost:
+1. postgres.count() → Verify data
+2. docker.health() → Verify services
+3. code_analysis.typescript_check() → Verify code quality
+
+Medium-Value, Medium-Cost:
+4. playwright.console_errors() → Verify frontend errors
+
+Low-Priority, High-Cost:
+5. playwright.navigate() with screenshot → Only if critical
+
+Token vs Time Trade-off:
+
+Old method (Manual):
+- 5,000 tokens (Python scripts, curl commands)
+- 0 seconds MCP time
+- HIGH token cost
+
+New method (MCP):
+- 500 tokens (MCP calls)
+- 5 seconds MCP time
+- LOW token cost
+
+Trade 5 seconds for 4,500 tokens saved = WORTH IT
+```
+
+### Rule 16: Build Verification Before Merge (QUALITY GATE) 🚫
+
+```
+🚫 ZERO TOLERANCE: Production must be error-free!
+
+Pre-Merge Checklist (MANDATORY):
+
+When Worker reports "task complete" for production:
+
+Frontend Changes:
+1. code_analysis.typescript_check() → exitCode: 0 required ✅
+2. code_analysis.eslint_check() → 0 errors (warnings OK) ✅
+3. code_analysis.build_check() → exitCode: 0 required ✅
+4. playwright.console_errors() → errorCount: 0 required ✅
+5. docker.health() → all healthy required ✅
+
+Backend Changes:
+1. code_analysis.typescript_check() → exitCode: 0 required ✅
+2. docker.logs({container: "ikai-backend"}) → No new errors ✅
+3. postgres.count() → Data consistent (if DB change) ✅
+4. docker.health() → all healthy required ✅
+
+ANY Blocker = NO MERGE:
+
+Scenario 1: Build Failed
+code_analysis.build_check()
+→ {exitCode: 1, errors: 50}
+→ ❌ BLOCKER → NO MERGE
+→ Action: Create fix task, assign to worker
+
+Scenario 2: Console Errors
+playwright.console_errors()
+→ {errorCount: 3}
+→ ❌ BLOCKER → NO MERGE
+→ Action: Fix all console errors first
+
+Scenario 3: TypeScript Errors
+code_analysis.typescript_check()
+→ {errorCount: 2}
+→ ❌ BLOCKER → NO MERGE
+→ Action: Fix type errors first
+
+ESLint Exception:
+
+code_analysis.eslint_check()
+→ {errors: 0, warnings: 5}
+→ ✅ WARNINGS OK (not blocker)
+→ Action: Can merge, warnings acceptable
+
+→ {errors: 2, warnings: 0}
+→ ❌ ERRORS NOT OK (blocker)
+→ Action: Fix errors first
+
+Verification Protocol:
+
+Worker: "Task complete"
+
+You:
+1. Run pre-merge checklist
+2. Document results:
+
+=== Pre-Merge Verification ===
+✅ TypeScript: 0 errors
+✅ ESLint: 0 errors, 3 warnings (OK)
+✅ Build: Success (exitCode: 0)
+✅ Console: 0 errors
+✅ Docker: All healthy
+
+Decision: ✅ APPROVED FOR MERGE
+
+Or:
+
+=== Pre-Merge Verification ===
+✅ TypeScript: 0 errors
+✅ ESLint: 0 errors
+❌ Build: FAILED (exitCode: 1, 50 prerender errors)
+❌ Console: 3 errors
+✅ Docker: All healthy
+
+Decision: ❌ REJECTED - 2 blockers
+Action: Create fix task for W1
+1. Fix prerender errors (context provider)
+2. Fix console errors
+Re-verify after fix.
+
+Production Quality Standards:
+
+Zero Tolerance for:
+- TypeScript errors
+- ESLint errors
+- Build failures (exitCode 1)
+- Console errors
+- Failing tests
+- Broken services
+
+Acceptable:
+- ESLint warnings (not errors)
+- TODO comments (if documented)
+- Known issues (if tracked)
+
+Quality Gate:
+
+Feature Branch → Main Branch:
+1. All checks pass ✅
+2. Build succeeds ✅
+3. No console errors ✅
+4. Docker healthy ✅
+→ Merge allowed ✅
+
+ANY check fails → Merge blocked ❌
+
+This ensures production is always stable.
 ```
 
 ---
