@@ -15,6 +15,9 @@ function SuperAdminUsersPage() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const limit = 20;
 
   // Modal states
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -29,19 +32,24 @@ function SuperAdminUsersPage() {
 
   useEffect(() => {
     loadUsers();
-  }, [search]);
+  }, [search, page]);
 
   const loadUsers = async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams();
       if (search) params.append("search", search);
+      params.append("page", page.toString());
+      params.append("limit", limit.toString());
 
       const res = await apiClient.get(`/api/v1/super-admin/users?${params.toString()}`);
 
       if (res.data.success) {
         setUsers(res.data.data.users);
         setStats(res.data.data.stats);
+        // Calculate total pages
+        const total = res.data.data.stats?.total || 0;
+        setTotalPages(Math.ceil(total / limit));
       } else {
         toast.error(res.data.message || "Kullanıcılar yüklenemedi");
       }
@@ -333,6 +341,60 @@ function SuperAdminUsersPage() {
                 </div>
               </div>
             ))}
+          </div>
+        )}
+
+        {/* Pagination */}
+        {!loading && users.length > 0 && totalPages > 1 && (
+          <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-200">
+            <div className="text-sm text-gray-600">
+              Sayfa {page} / {totalPages} (Toplam {stats?.total || 0} kullanıcı)
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setPage(p => Math.max(1, p - 1))}
+                disabled={page === 1}
+                className="px-3 py-1.5 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Önceki
+              </button>
+              {[...Array(totalPages)].map((_, i) => {
+                const pageNum = i + 1;
+                // Show first page, last page, current page, and pages around current
+                if (
+                  pageNum === 1 ||
+                  pageNum === totalPages ||
+                  (pageNum >= page - 1 && pageNum <= page + 1)
+                ) {
+                  return (
+                    <button
+                      key={pageNum}
+                      onClick={() => setPage(pageNum)}
+                      className={`px-3 py-1.5 rounded-lg ${
+                        page === pageNum
+                          ? "bg-red-600 text-white"
+                          : "border border-gray-300 hover:bg-gray-50"
+                      }`}
+                    >
+                      {pageNum}
+                    </button>
+                  );
+                } else if (
+                  (pageNum === page - 2 && page > 3) ||
+                  (pageNum === page + 2 && page < totalPages - 2)
+                ) {
+                  return <span key={pageNum} className="px-2">...</span>;
+                }
+                return null;
+              })}
+              <button
+                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                disabled={page === totalPages}
+                className="px-3 py-1.5 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Sonraki
+              </button>
+            </div>
           </div>
         )}
       </div>
