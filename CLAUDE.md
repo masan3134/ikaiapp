@@ -520,6 +520,146 @@ git commit -m "docs(workflow): Update task assignments [MOD]"
 
 ## ⚠️ STRICT RULES
 
+## 🚨 RULE 0: PRODUCTION-READY ONLY - ABSOLUTE LAW (NEVER FORGET!)
+
+**THE GOLDEN RULE - Bu kural MOD ve WORKER'ın hafızasından ASLA silinmez!**
+
+### FORBIDDEN WORDS - YASAKLI KELİMELER
+
+**Bu kelimeleri ASLA kullanma, ASLA yaz:**
+
+❌ **mock** - YASAK!
+❌ **placeholder** - YASAK!
+❌ **TODO** - YASAK!
+❌ **FIXME** - YASAK!
+❌ **coming soon** - YASAK!
+❌ **will implement** - YASAK!
+❌ **later** - YASAK!
+❌ **yakında** - YASAK!
+❌ **sonra yapılacak** - YASAK!
+❌ **geçici** - YASAK!
+❌ **temporary** - YASAK!
+❌ **stub** - YASAK!
+❌ **fake** - YASAK!
+❌ **dummy** - YASAK!
+❌ **sample** - YASAK!
+❌ **example data** - YASAK!
+❌ **test implementation** - YASAK!
+❌ **for now** - YASAK!
+❌ **hardcoded** - YASAK! (unless explicitly required)
+
+### MANDATORY IMPLEMENTATION
+
+**Her zaman:**
+✅ **REAL API calls** - Gerçek backend endpoint'ler
+✅ **REAL pages** - Gerçek, çalışan sayfalar
+✅ **REAL data** - Database'den gerçek veri
+✅ **REAL functionality** - Tam çalışan özellikler
+✅ **PRODUCTION-READY code** - Deploy edilebilir kod
+✅ **COMPLETE implementation** - Eksik iş yok
+✅ **WORKING features** - Test edilmiş, çalışan özellikler
+
+### EXAMPLES
+
+**❌ WRONG (ASLA YAPMA!):**
+```typescript
+// TODO: Implement real API call
+const data = mockData; // Placeholder
+
+// Coming soon: Real authentication
+function login() {
+  return { success: true }; // Fake response
+}
+
+// Will implement later
+const users = []; // Empty, yakında doldurulacak
+```
+
+**✅ RIGHT (HER ZAMAN BÖYLE!):**
+```typescript
+// Real API call with error handling
+const response = await apiClient.get('/api/v1/users');
+const data = response.data;
+
+// Real authentication with database
+async function login(email: string, password: string) {
+  const user = await prisma.user.findUnique({ where: { email } });
+  if (!user) throw new Error('User not found');
+  const valid = await bcrypt.compare(password, user.password);
+  if (!valid) throw new Error('Invalid password');
+  return createSession(user);
+}
+
+// Real data from database
+const users = await prisma.user.findMany({
+  where: { organizationId: req.user.organizationId }
+});
+```
+
+### ENFORCEMENT
+
+**MOD Policy:**
+- If MOD sees ANY forbidden word → ❌ REJECT task immediately
+- Worker must redo with REAL implementation
+- No exceptions, no "just for testing"
+
+**WORKER Policy:**
+- Before completing task → grep code for forbidden words
+- If found → FIX before reporting
+- "Task done" = 100% production-ready, no placeholders
+
+**Verification:**
+```bash
+# Check for forbidden words before commit
+grep -r "TODO\|FIXME\|placeholder\|mock\|fake\|dummy" . --include="*.ts" --include="*.tsx"
+# Result MUST be empty!
+```
+
+### WHY THIS RULE EXISTS
+
+**Problem:**
+- Placeholders pile up → Technical debt
+- "Temporary" code becomes permanent
+- Mock data hides real bugs
+- TODO never gets done
+
+**Solution:**
+- Force complete implementation NOW
+- Real code = Real testing
+- Production-ready from day 1
+- No debt accumulation
+
+### REAL-WORLD SCENARIO
+
+**User:** "W1, add user profile page"
+
+**❌ BAD Worker:**
+```
+W1: "✅ Profile page bitti!"
+Code:
+  const user = { name: "Mock User" }; // TODO: Get from API
+  <div>Coming soon: Real data</div>
+```
+MOD: ❌ REJECTED - Mock data, TODO found!
+
+**✅ GOOD Worker:**
+```
+W1: "✅ Profile page bitti!"
+Code:
+  const user = await apiClient.get(`/api/v1/users/${userId}`);
+  if (!user) return <NotFound />;
+  return <ProfileView user={user} />;
+Test: playwright.console_errors() → 0 ✅
+Proof: Real data from database, no placeholders
+```
+MOD: ✅ VERIFIED - Production-ready!
+
+---
+
+**THIS IS THE FOUNDATION. NEVER FORGET!**
+
+---
+
 **Rule 1: ZERO CONSOLE ERROR TOLERANCE** 🚨 - SIFIR konsol hatası zorunlu! MOD ve WORKER konsol hatası varken "tamam" diyemez. playwright.console_errors() veya puppeteer.console_errors() → errorCount MUST be 0. Hiç istisna yok!
 **Rule 2: CREDENTIALS CENTRAL** 📋 - TÜM credentials tek yerde: `docs/CREDENTIALS.md`. Env vars, test users, API keys, database credentials - hiçbir şey aranmaz, hepsi hazır!
 **Rule 3: NEVER GIVE UP** - 3 errors → Ask Gemini
@@ -848,7 +988,10 @@ grep -r "keyword" docs/ --include="*.md"
 
 ## 📋 VERSION HISTORY
 
-**v17.0 (2025-11-05):** 🔌 **MCP-POWERED + TWO-LAYER COMMUNICATION + WORKER COORDINATION**
+**v17.0 (2025-11-05):** 🔌 **MCP-POWERED + TWO-LAYER COMMUNICATION + WORKER COORDINATION + RULE 0**
+- ✅ **RULE 0: PRODUCTION-READY ONLY** - ABSOLUTE LAW! Mock/placeholder/TODO YASAK! Real API, real pages, real data zorunlu. 19 yasaklı kelime. Hafızadan asla silinmez!
+- ✅ **ZERO CONSOLE ERROR TOLERANCE** - errorCount MUST be 0, hiç istisna yok!
+- ✅ **CREDENTIALS CENTRAL** - docs/CREDENTIALS.md → Tüm credentials tek yerde (500+ lines)
 - ✅ **8 MCP Integration:** PostgreSQL, Docker, Playwright, Code Analysis, Gemini, filesystem, sequentialthinking, puppeteer
 - ✅ **24/24 Test Success:** 100% pass rate across all MCPs (3 levels each)
 - ✅ **Two-Layer System:** User iletişim (KISA) + Arka plan çalışma (FULL DETAY) ayrıldı
@@ -861,6 +1004,9 @@ grep -r "keyword" docs/ --include="*.md"
 - ✅ **Comprehensive Docs:** MCP-USAGE-GUIDE.md (936 lines), test summary (500+ lines)
 - ✅ **Performance Categorized:** FAST (PostgreSQL, Docker), MEDIUM (Code Analysis, Gemini), SLOW (Playwright, puppeteer)
 - **Impact:**
+  - **CODE QUALITY:** 100% production-ready (NO mock/placeholder/TODO)
+  - **CONSOLE ERRORS:** ZERO tolerance (errorCount MUST be 0)
+  - **CREDENTIALS:** Tek yerde, hiçbir şey aranmaz
   - Verification reliability: 70% → 95%
   - Token usage: 5K → 500 per task (90% reduction)
   - MOD verify time: 20 min → 5 min (4x faster)
@@ -869,8 +1015,10 @@ grep -r "keyword" docs/ --include="*.md"
   - Parallel work: 6 workers can work simultaneously without conflicts
   - Hot reload: NEVER interrupted, always active
   - File conflicts: PREVENTED via worker-locks.json
+  - Technical debt: ZERO (no placeholders allowed)
 - **Files:**
-  - CLAUDE.md: Two-Layer Communication + Worker Coordination System (+250 lines)
+  - CLAUDE.md: Rule 0 (Production-Ready Only) + Two-Layer + Worker Coordination (+400 lines total)
+  - docs/CREDENTIALS.md: Central credentials repository (500+ lines, ALL credentials)
   - MCP-USAGE-GUIDE.md (8 MCPs, 936 lines)
   - MOD-PLAYBOOK.md: v2.3 (+4 MCP rules)
   - WORKER-PLAYBOOK.md: v3.0 (+12 MCP rules)
