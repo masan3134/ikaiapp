@@ -1,14 +1,20 @@
 const { PrismaClient } = require('@prisma/client');
 const { validationResult } = require('express-validator');
 const { hashPassword, comparePassword, generateToken } = require('../utils/auth');
+const crypto = require('crypto');
 
 const prisma = new PrismaClient();
 
 // Redis client will be injected
 let redisClient;
+let emailQueue; // BullMQ email queue
 
 function setRedisClient(client) {
   redisClient = client;
+}
+
+function setEmailQueue(queue) {
+  emailQueue = queue;
 }
 
 const SESSION_TTL = 7 * 24 * 60 * 60; // 7 days in seconds
@@ -44,6 +50,10 @@ async function register(req, res) {
 
     const hashedPassword = await hashPassword(password);
 
+    // Generate email verification token
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+    const verificationExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+
     const organization = await prisma.organization.create({
       data: {
         name: `${email.split('@')[0]}'s Organization`,
@@ -63,25 +73,162 @@ async function register(req, res) {
         email,
         password: hashedPassword,
         role: 'USER',
-        organizationId: organization.id
+        organizationId: organization.id,
+        emailVerified: false,
+        verificationToken,
+        verificationExpiry
       },
       select: {
         id: true,
         email: true,
         role: true,
         organizationId: true,
+        emailVerified: true,
         createdAt: true
       }
     });
 
-    // Generate JWT token
-    const token = generateToken(user.id, user.role);
+    // Send email verification email
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:8103';
+    const verificationUrl = `${frontendUrl}/verify-email?token=${verificationToken}`;
+
+    if (emailQueue) {
+      try {
+        await emailQueue.add('generic-email', {
+          type: 'generic',
+          data: {
+            to: email,
+            subject: 'Email Doğrulama - İKAI HR Platform',
+            html: `
+              <!DOCTYPE html>
+              <html>
+              <head>
+                <style>
+                  body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                  .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                  .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 10px 10px 0 0; text-align: center; }
+                  .content { background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px; }
+                  .button { background: #667eea; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; display: inline-block; margin: 20px 0; }
+                  .footer { text-align: center; color: #6c757d; margin-top: 30px; font-size: 14px; }
+                </style>
+              </head>
+              <body>
+                <div class="container">
+                  <div class="header">
+                    <h1>✉️ Email Doğrulama</h1>
+                  </div>
+                  <div class="content">
+                    <p>Merhaba,</p>
+                    <p><strong>İKAI HR Platform</strong>'a hoş geldiniz!</p>
+                    <p>Hesabınızı aktifleştirmek için lütfen aşağıdaki butona tıklayarak email adresinizi doğrulayın:</p>
+                    <div style="text-align: center;">
+                      <a href="${verificationUrl}" class="button">Email Adresimi Doğrula</a>
+                    </div>
+                    <p>Alternatif olarak, aşağıdaki linki tarayıcınıza kopyalayabilirsiniz:</p>
+                    <p style="background: white; padding: 15px; border-radius: 6px; word-break: break-all; font-size: 12px;">
+                      ${verificationUrl}
+                    </p>
+                    <p style="margin-top: 30px; color: #666;">
+                      <strong>Not:</strong> Bu link 24 saat geçerlidir.
+                    </p>
+                    <p>Eğer bu hesabı siz oluşturmadıysanız, bu e-postayı görmezden gelebilirsiniz.</p>
+                  </div>
+                  <div class="footer">
+                    <p>Bu e-posta İKAI HR sistemi tarafından otomatik oluşturulmuştur.</p>
+                    <p>© 2025 İKAI - AI-Powered HR Platform</p>
+                  </div>
+                </div>
+              </body>
+              </html>
+            `
+          }
+        });
+        console.log(`✉️ Verification email queued for: ${email}`);
+      } catch (emailError) {
+        console.error('Email queue error:', emailError);
+        // Don't fail registration if email fails
+      }
+    } else {
+      console.warn('⚠️ Email queue not available, verification email not sent');
+    }
+
+    // Return success (NO token until email verified)
+    res.status(201).json({
+      message: 'Registration successful! Please check your email to verify your account.',
+      email: user.email,
+      emailVerified: false,
+      requiresVerification: true
+    });
+  } catch (error) {
+    console.error('Registration error:', error);
+    res.status(500).json({
+      error: 'Internal Server Error',
+      message: 'Failed to register user'
+    });
+  }
+}
+
+/**
+ * Verify Email
+ * GET /api/auth/verify-email/:token
+ */
+async function verifyEmail(req, res) {
+  try {
+    const { token } = req.params;
+
+    if (!token) {
+      return res.status(400).json({
+        error: 'Bad Request',
+        message: 'Verification token is required'
+      });
+    }
+
+    // Find user by verification token
+    const user = await prisma.user.findUnique({
+      where: { verificationToken: token }
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        error: 'Not Found',
+        message: 'Invalid or expired verification token'
+      });
+    }
+
+    // Check if token is expired
+    if (user.verificationExpiry && new Date() > user.verificationExpiry) {
+      return res.status(400).json({
+        error: 'Bad Request',
+        message: 'Verification token has expired. Please request a new one.'
+      });
+    }
+
+    // Check if already verified
+    if (user.emailVerified) {
+      return res.status(200).json({
+        message: 'Email already verified',
+        alreadyVerified: true
+      });
+    }
+
+    // Update user: set emailVerified = true, clear token
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        emailVerified: true,
+        verificationToken: null,
+        verificationExpiry: null
+      }
+    });
+
+    // Generate JWT token now that email is verified
+    const jwtToken = generateToken(user.id, user.role);
 
     // Store session in Redis
     if (redisClient && redisClient.isOpen) {
       try {
         const sessionData = JSON.stringify({
-          token,
+          token: jwtToken,
           userId: user.id,
           email: user.email,
           role: user.role,
@@ -90,21 +237,27 @@ async function register(req, res) {
         await redisClient.setEx(`session:${user.id}`, SESSION_TTL, sessionData);
       } catch (redisError) {
         console.error('Redis session storage error:', redisError);
-        // Continue even if Redis fails
       }
     }
 
-    // Return user and token
-    res.status(201).json({
-      message: 'User registered successfully',
-      user,
-      token
+    console.log(`✅ Email verified for: ${user.email}`);
+
+    // Return success with token
+    res.status(200).json({
+      message: 'Email verified successfully!',
+      user: {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+        emailVerified: true
+      },
+      token: jwtToken
     });
   } catch (error) {
-    console.error('Registration error:', error);
+    console.error('Email verification error:', error);
     res.status(500).json({
       error: 'Internal Server Error',
-      message: 'Failed to register user'
+      message: 'Failed to verify email'
     });
   }
 }
@@ -146,6 +299,16 @@ async function login(req, res) {
       return res.status(401).json({
         error: 'Unauthorized',
         message: 'Invalid credentials'
+      });
+    }
+
+    // Check if email is verified
+    if (!user.emailVerified) {
+      return res.status(403).json({
+        error: 'Forbidden',
+        message: 'Please verify your email address before logging in. Check your inbox for the verification link.',
+        emailVerified: false,
+        requiresVerification: true
       });
     }
 
@@ -280,7 +443,9 @@ async function refreshToken(req, res) {
 
 module.exports = {
   setRedisClient,
+  setEmailQueue,
   register,
+  verifyEmail,
   login,
   logout,
   me,

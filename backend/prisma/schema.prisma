@@ -98,6 +98,11 @@ model User {
   // Onboarding
   isOnboarded Boolean @default(false)
 
+  // Email Verification
+  emailVerified      Boolean   @default(false)
+  verificationToken  String?   @unique
+  verificationExpiry DateTime?
+
   // Team management (invitations + soft delete)
   invitationToken  String?
   invitationExpiry DateTime?

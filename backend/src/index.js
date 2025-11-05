@@ -24,7 +24,8 @@ const dashboardRoutes = require('./routes/dashboardRoutes');
 const testRoutes = require('./routes/testRoutes');
 const interviewRoutes = require('./routes/interviewRoutes');
 const userRoutes = require('./routes/userRoutes'); // User management (admin only)
-const { setRedisClient } = require('./controllers/authController');
+const { setRedisClient, setEmailQueue } = require('./controllers/authController');
+const { emailQueue } = require('./queues/emailQueue');
 
 // Milvus routes (opsiyonel - dependency varsa yükle)
 let milvusSyncRoutes = null;
@@ -104,8 +105,9 @@ let redisClient;
     await redisClient.connect();
     logger.info('✅ Redis connected');
 
-    // Pass Redis client to auth controller
+    // Pass Redis client and email queue to auth controller
     setRedisClient(redisClient);
+    setEmailQueue(emailQueue);
   } catch (error) {
     logger.error('❌ Redis connection error:', { error: error.message });
   }

@@ -3,6 +3,7 @@ const { body } = require('express-validator');
 const rateLimit = require('express-rate-limit');
 const {
   register,
+  verifyEmail,
   login,
   logout,
   me,
@@ -49,6 +50,7 @@ const loginValidation = [
 
 // Public routes (with rate limiting)
 router.post('/register', authLimiter, registerValidation, register);
+router.get('/verify-email/:token', verifyEmail); // Email verification (no rate limit needed - token-based)
 router.post('/login', authLimiter, loginValidation, login);
 
 // Protected routes (require authentication)
