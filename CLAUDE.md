@@ -1,8 +1,8 @@
 # 🤖 IKAI HR Platform - Development Guide
 
-**Version:** 17.1 - COMPACT (Performance Optimized)
+**Version:** 17.2 - RBAC Pattern Master + MOD Style
 **Updated:** 2025-11-05
-**Size:** 10KB (was 42KB) - 76% reduction
+**Size:** 10KB (compact)
 **Environment:** Docker Isolated (Hot Reload ON)
 **Context:** 1M Tokens - Full detail until 700K
 
@@ -12,12 +12,12 @@
 
 ### 🎯 MOD (Coordinator)
 ```
-sen modsun, claude.md oku, rule 0 ezber (production-ready only), 8 mcp ZORUNLU kullan, zero console error (errorCount=0), credentials.md hazır, ready misin?
+sen modsun, claude.md oku, rule 0 ezber (production-ready only), 8 mcp ZORUNLU kullan, zero console error (errorCount=0), credentials.md hazır, rbac pattern master biliyorum, mod output style (tablo+checklist), ready misin?
 ```
 
 ### 👷 WORKER (W1-W6)
 ```
-sen W1'sin, claude.md oku, rule 0 ezber (mock/todo YASAK!), 8 mcp ZORUNLU kullan, zero console error (errorCount=0), credentials.md hazır, ready misin?
+sen W1'sin, claude.md oku, rule 0 ezber (mock/todo YASAK!), 8 mcp ZORUNLU kullan, zero console error (errorCount=0), credentials.md hazır, rbac pattern master oku, ready misin?
 ```
 
 **After command, you confirm:**
@@ -26,6 +26,7 @@ sen W1'sin, claude.md oku, rule 0 ezber (mock/todo YASAK!), 8 mcp ZORUNLU kullan
 ✅ Rule 0: Production-ready only
 ✅ 8 MCPs: MANDATORY usage
 ✅ Zero console errors (errorCount=0)
+✅ RBAC Pattern Master: Ready (MOD: output style, WORKER: patterns)
 ✅ Ready!
 ```
 
@@ -257,6 +258,11 @@ cat /tmp/worker-locks.json | grep "my-file.tsx"
 **MCP guide:**
 - [`docs/MCP-USAGE-GUIDE.md`](docs/MCP-USAGE-GUIDE.md) - Complete MCP documentation (936 lines)
 
+**RBAC & Security:**
+- [`docs/workflow/RBAC-MULTITENANT-PATTERN-MASTER.md`](docs/workflow/RBAC-MULTITENANT-PATTERN-MASTER.md) - Security blueprint (800+ lines)
+- Copy-paste ready backend, frontend, test patterns
+- 5 roles: SUPER_ADMIN, ADMIN, HR_SPECIALIST, MANAGER, USER
+
 ---
 
 ## 🚀 QUICK REFERENCE
@@ -413,10 +419,11 @@ gemini_search.query("IKAI error: [ERROR]. Solution?")
 2. **Zero Console Errors:** errorCount MUST = 0
 3. **Production-Ready Only:** No mock/placeholder/TODO
 4. **Independent Verification:** MOD re-runs commands
-5. **Two-Layer Communication:** User SHORT, background FULL
+5. **Two-Layer Communication:** User SHORT (tablo+checklist), background FULL
 6. **1 File = 1 Commit:** Immediate commits
 7. **Worker Coordination:** File locking active
 8. **Credentials Central:** All in docs/CREDENTIALS.md
+9. **RBAC Pattern Master:** Security blueprint mandatory
 
 ---
 
