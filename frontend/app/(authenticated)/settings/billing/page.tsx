@@ -92,31 +92,31 @@ function BillingPage() {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Current Usage Overview */}
-      <Card>
-        <div className="flex items-center gap-3 mb-6 pb-4 border-b-2 border-gray-100">
-          <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg shadow-md">
-            <BarChart3 className="text-white" size={24} />
+    <div className="space-y-8">
+      {/* Current Usage Overview - GLASSMORPHISM */}
+      <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-200/50 p-8">
+        <div className="flex items-center gap-4 mb-8 pb-6 border-b-2 border-gray-100">
+          <div className="p-4 bg-gradient-to-br from-blue-500 to-purple-500 rounded-2xl shadow-xl">
+            <BarChart3 className="text-white" size={28} />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-gray-900">
+            <h2 className="text-2xl font-bold text-gray-900">
               Aylık Kullanım Durumu
             </h2>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-600 font-medium">
               Mevcut ay için kullanım istatistikleriniz
             </p>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Analyses */}
-          <div className="p-6 bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-200 rounded-xl hover:shadow-lg transition-all">
+          {/* Analyses - ENHANCED */}
+          <div className="p-6 bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-300 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
             <div className="flex items-center gap-3 mb-4">
-              <div className="p-2.5 bg-blue-500 rounded-lg shadow-md">
-                <BarChart3 className="text-white" size={20} />
+              <div className="p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg">
+                <BarChart3 className="text-white" size={22} />
               </div>
-              <p className="font-bold text-blue-800">Analizler</p>
+              <p className="font-bold text-blue-900 text-lg">Analizler</p>
             </div>
             <div className="flex items-baseline gap-2 mb-3">
               <span className="text-4xl font-bold text-gray-900">
@@ -145,13 +145,13 @@ function BillingPage() {
             </p>
           </div>
 
-          {/* CVs */}
-          <div className="p-6 bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl hover:shadow-lg transition-all">
+          {/* CVs - ENHANCED */}
+          <div className="p-6 bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-300 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
             <div className="flex items-center gap-3 mb-4">
-              <div className="p-2.5 bg-green-500 rounded-lg shadow-md">
-                <Sparkles className="text-white" size={20} />
+              <div className="p-3 bg-gradient-to-br from-green-500 to-green-600 rounded-xl shadow-lg">
+                <Sparkles className="text-white" size={22} />
               </div>
-              <p className="font-bold text-green-800">CV Yüklemeleri</p>
+              <p className="font-bold text-green-900 text-lg">CV Yüklemeleri</p>
             </div>
             <div className="flex items-baseline gap-2 mb-3">
               <span className="text-4xl font-bold text-gray-900">
@@ -178,13 +178,13 @@ function BillingPage() {
             </p>
           </div>
 
-          {/* Users */}
-          <div className="p-6 bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-xl hover:shadow-lg transition-all">
+          {/* Users - ENHANCED */}
+          <div className="p-6 bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-300 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
             <div className="flex items-center gap-3 mb-4">
-              <div className="p-2.5 bg-purple-500 rounded-lg shadow-md">
-                <Crown className="text-white" size={20} />
+              <div className="p-3 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl shadow-lg">
+                <Crown className="text-white" size={22} />
               </div>
-              <p className="font-bold text-purple-800">Kullanıcılar</p>
+              <p className="font-bold text-purple-900 text-lg">Kullanıcılar</p>
             </div>
             <div className="flex items-baseline gap-2 mb-3">
               <span className="text-4xl font-bold text-gray-900">
@@ -233,15 +233,15 @@ function BillingPage() {
             </div>
           </div>
         )}
-      </Card>
+      </div>
 
-      {/* Plan Cards */}
+      {/* Plan Cards - PREMIUM */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* FREE Plan */}
         <div
-          className={`bg-white rounded-xl shadow-md border-2 p-6 transition-all hover:shadow-xl ${
+          className={`bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border-2 p-8 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 ${
             usage.plan === "FREE"
-              ? "border-blue-400 ring-4 ring-blue-100"
+              ? "border-blue-500 ring-4 ring-blue-100"
               : "border-gray-200"
           }`}
         >
@@ -296,15 +296,15 @@ function BillingPage() {
           )}
         </div>
 
-        {/* PRO Plan */}
+        {/* PRO Plan - PREMIUM */}
         <div
-          className={`bg-white rounded-xl shadow-md border-2 p-6 relative transition-all hover:shadow-xl ${
+          className={`bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border-2 p-8 relative transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 ${
             usage.plan === "PRO"
-              ? "border-blue-400 ring-4 ring-blue-100"
-              : "border-blue-200"
+              ? "border-blue-500 ring-4 ring-blue-100"
+              : "border-blue-300"
           }`}
         >
-          <div className="absolute -top-3 right-6 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-xs font-bold px-4 py-1.5 rounded-full shadow-lg">
+          <div className="absolute -top-4 right-6 bg-gradient-to-r from-blue-500 via-blue-600 to-indigo-600 text-white text-sm font-bold px-5 py-2 rounded-full shadow-xl">
             ⭐ ÖNERİLEN
           </div>
           <div className="flex items-center gap-3 mb-4">
@@ -367,11 +367,11 @@ function BillingPage() {
           )}
         </div>
 
-        {/* ENTERPRISE Plan */}
+        {/* ENTERPRISE Plan - PREMIUM */}
         <div
-          className={`bg-white rounded-xl shadow-md border-2 p-6 transition-all hover:shadow-xl ${
+          className={`bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border-2 p-8 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 ${
             usage.plan === "ENTERPRISE"
-              ? "border-purple-400 ring-4 ring-purple-100"
+              ? "border-purple-500 ring-4 ring-purple-100"
               : "border-gray-200"
           }`}
         >
@@ -437,12 +437,13 @@ function BillingPage() {
         </div>
       </div>
 
-      {/* Feature Comparison */}
-      <Card
-        title="Plan Karşılaştırması"
-        subtitle="Tüm plan özelliklerini detaylı inceleyin"
-      >
-        <div className="overflow-x-auto">
+      {/* Feature Comparison - GLASSMORPHISM */}
+      <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-200/50 p-8">
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold text-gray-900">Plan Karşılaştırması</h2>
+          <p className="text-sm text-gray-600 font-medium mt-2">Tüm plan özelliklerini detaylı inceleyin</p>
+        </div>
+        <div className="overflow-x-auto rounded-2xl border-2 border-gray-200">
           <table className="w-full">
             <thead>
               <tr className="border-b-2 border-gray-200 bg-gray-50">
@@ -513,24 +514,29 @@ function BillingPage() {
             </tbody>
           </table>
         </div>
-      </Card>
+      </div>
 
-      {/* Contact CTA */}
-      <div className="bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 border-2 border-purple-200 rounded-xl p-8 text-center shadow-md">
-        <h3 className="text-2xl font-bold text-gray-900 mb-2">
-          Sorularınız mı var?
-        </h3>
-        <p className="text-gray-700 mb-6 max-w-2xl mx-auto">
-          Planlar hakkında daha fazla bilgi almak veya özel bir teklif için
-          bizimle iletişime geçin
-        </p>
-        <a
-          href="mailto:info@gaiai.ai"
-          className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all font-bold shadow-lg hover:shadow-xl"
-        >
-          <Mail size={20} />
-          Bize Ulaşın
-        </a>
+      {/* Contact CTA - ULTRA MODERN */}
+      <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-3xl shadow-2xl">
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMwLTkuOTQtOC4wNi0xOC0xOC0xOCIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjEiIG9wYWNpdHk9Ii4xIi8+PC9nPjwvc3ZnPg==')] opacity-20"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>
+
+        <div className="relative p-12 text-center">
+          <h3 className="text-3xl font-bold text-white mb-4">
+            Sorularınız mı var?
+          </h3>
+          <p className="text-white/90 text-lg mb-8 max-w-2xl mx-auto font-medium">
+            Planlar hakkında daha fazla bilgi almak veya özel bir teklif için
+            bizimle iletişime geçin
+          </p>
+          <a
+            href="mailto:info@gaiai.ai"
+            className="inline-flex items-center gap-3 px-10 py-5 bg-white text-purple-600 rounded-2xl hover:bg-gray-50 transition-all font-bold text-lg shadow-2xl hover:shadow-3xl hover:-translate-y-1 duration-300"
+          >
+            <Mail size={24} />
+            Bize Ulaşın
+          </a>
+        </div>
       </div>
     </div>
   );
