@@ -7,10 +7,14 @@ const ROUTE_PERMISSIONS: Record<string, string[]> = {
   '/super-admin': ['SUPER_ADMIN'],
   '/admin': ['SUPER_ADMIN'], // /admin redirects - SUPER_ADMIN only
 
-  // Job postings - HR staff and above
+  // Job postings - HR staff and above (including list view)
+  '/job-postings': ['HR_SPECIALIST', 'MANAGER', 'ADMIN', 'SUPER_ADMIN'],
   '/job-postings/new': ['HR_SPECIALIST', 'MANAGER', 'ADMIN', 'SUPER_ADMIN'],
   '/job-postings/create': ['HR_SPECIALIST', 'MANAGER', 'ADMIN', 'SUPER_ADMIN'],
   '/job-postings/edit': ['HR_SPECIALIST', 'MANAGER', 'ADMIN', 'SUPER_ADMIN'],
+
+  // Email templates - HR staff and above
+  '/email-templates': ['HR_SPECIALIST', 'MANAGER', 'ADMIN', 'SUPER_ADMIN'],
 
   // Candidates - HR staff and above
   '/candidates': ['HR_SPECIALIST', 'MANAGER', 'ADMIN', 'SUPER_ADMIN'],
