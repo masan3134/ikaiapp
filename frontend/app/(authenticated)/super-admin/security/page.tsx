@@ -33,23 +33,50 @@ function SuperAdminSecurityPage() {
     }
   };
 
-  const handleToggle = (category: "authentication" | "accessControl", field: string) => {
+  const handleToggle = async (category: "authentication" | "accessControl", field: string) => {
     setSaving(true);
 
     // Update local state immediately (optimistic update)
+    const newValue = !data[category][field];
     setData((prev: any) => ({
       ...prev,
       [category]: {
         ...prev[category],
-        [field]: !prev[category][field]
+        [field]: newValue
       }
     }));
 
-    // Simulate API call (in real implementation, would call backend)
-    setTimeout(() => {
+    try {
+      // Save to backend
+      const res = await apiClient.post("/api/v1/super-admin/security-settings", data);
+
+      if (res.data.success) {
+        toast.success(`${field} ayarı güncellendi`);
+      } else {
+        // Revert on error
+        setData((prev: any) => ({
+          ...prev,
+          [category]: {
+            ...prev[category],
+            [field]: !newValue
+          }
+        }));
+        toast.error(res.data.message || "Ayar kaydedilemedi");
+      }
+    } catch (error: any) {
+      console.error("Toggle error:", error);
+      // Revert on error
+      setData((prev: any) => ({
+        ...prev,
+        [category]: {
+          ...prev[category],
+          [field]: !newValue
+        }
+      }));
+      toast.error("Ayar kaydedilirken hata oluştu");
+    } finally {
       setSaving(false);
-      toast.success(`${field} ayarı güncellendi`);
-    }, 300);
+    }
   };
 
   if (loading) {
