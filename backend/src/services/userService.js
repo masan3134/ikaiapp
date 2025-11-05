@@ -39,7 +39,7 @@ class UserService {
               jobPostings: true,
               candidates: true,
               analyses: true,
-              createdOffers: true
+              offersCreated: true
             }
           }
         }
@@ -75,7 +75,7 @@ class UserService {
             jobPostings: true,
             candidates: true,
             analyses: true,
-            createdOffers: true
+            offersCreated: true
           }
         }
       }
