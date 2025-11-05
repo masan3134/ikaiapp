@@ -18,8 +18,8 @@ const ROUTE_PERMISSIONS: Record<string, string[]> = {
   // Analysis wizard - HR staff and above
   '/wizard': ['HR_SPECIALIST', 'MANAGER', 'ADMIN', 'SUPER_ADMIN'],
 
-  // Analyses - HR staff and above (for viewing past analyses)
-  '/analyses': ['HR_SPECIALIST', 'MANAGER', 'ADMIN', 'SUPER_ADMIN'],
+  // Analyses - REMOVED restriction, all authenticated users can view (read-only for USER)
+  // '/analyses': ['HR_SPECIALIST', 'MANAGER', 'ADMIN', 'SUPER_ADMIN'], // OLD - Too restrictive
 
   // Offers - HR staff and above
   '/offers': ['HR_SPECIALIST', 'MANAGER', 'ADMIN', 'SUPER_ADMIN'],

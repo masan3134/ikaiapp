@@ -46,11 +46,11 @@ router.post('/',
   createAnalysis
 );
 
-// Get all analyses for current user
-router.get('/', hrManagers, getAllAnalyses);
+// Get all analyses for current user (ALL users can view, read-only for USER role)
+router.get('/', [authenticateToken, enforceOrganizationIsolation], getAllAnalyses);
 
-// Get analysis by ID with results
-router.get('/:id', hrManagers, getAnalysisById);
+// Get analysis by ID with results (ALL users can view)
+router.get('/:id', [authenticateToken, enforceOrganizationIsolation], getAnalysisById);
 
 router.delete('/:id', adminOnly, deleteAnalysis);
 
