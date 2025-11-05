@@ -112,6 +112,26 @@ CRITICAL:
 NO MCP = NO VERIFICATION
 ```
 
+### Rule 7: RBAC & Multi-Tenant
+```
+🔒 Security = Follow the pattern master!
+
+When adding features:
+✅ Read: RBAC-MULTITENANT-PATTERN-MASTER.md
+✅ Copy backend pattern (auth + org isolation)
+✅ Copy frontend pattern (role protection)
+✅ Copy test pattern (RBAC matrix)
+
+5 Roles:
+- SUPER_ADMIN: All orgs
+- ADMIN: Own org
+- HR_SPECIALIST: Own org
+- MANAGER: Own dept only
+- USER: Self only
+
+Reference: docs/workflow/RBAC-MULTITENANT-PATTERN-MASTER.md
+```
+
 ---
 
 ## 📁 System Structure
