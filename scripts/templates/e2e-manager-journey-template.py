@@ -251,10 +251,10 @@ def run_manager_journey():
                         }}
                     }});
                     const response = await res.json();
-                    const data = response.data || [];
+                    const data = response.data?.users || [];
                     return {{
                         total: data.length || 0,
-                        departments: [...new Set(data.map(u => u.department))]
+                        departments: [...new Set(data.map(u => u.department).filter(Boolean))]
                     }};
                 }}
             """)
