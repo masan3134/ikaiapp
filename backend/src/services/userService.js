@@ -32,6 +32,7 @@ class UserService {
           id: true,
           email: true,
           role: true,
+          organizationId: true,
           createdAt: true,
           updatedAt: true,
           _count: {
@@ -68,6 +69,7 @@ class UserService {
         id: true,
         email: true,
         role: true,
+        organizationId: true,
         createdAt: true,
         updatedAt: true,
         _count: {
