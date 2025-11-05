@@ -1,0 +1,297 @@
+[
+  {
+    "role": "USER",
+    "email": "test-user@test-org-1.com",
+    "success": true,
+    "stats": {
+      "totalMessages": 6,
+      "errors": 0,
+      "warnings": 0
+    },
+    "consoleMessages": [
+      {
+        "type": "verbose",
+        "text": "[DOM] Input elements should have autocomplete attributes (suggested: \"current-password\"): (More info: https://goo.gl/9p2vKq) %o",
+        "url": "http://localhost:8103/login"
+      },
+      {
+        "type": "info",
+        "text": "%cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold",
+        "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js",
+        "lineNumber": 38559
+      },
+      {
+        "type": "log",
+        "text": "[IKAI] Axios error interceptor configured",
+        "url": "webpack-internal:///(app-pages-browser)/./lib/utils/axiosErrorInterceptor.ts",
+        "lineNumber": 32
+      },
+      {
+        "type": "log",
+        "text": "[IKAI] Error tracking initialized",
+        "url": "webpack-internal:///(app-pages-browser)/./components/ClientInitializer.tsx",
+        "lineNumber": 22
+      },
+      {
+        "type": "log",
+        "text": "[IKAI] Axios error interceptor configured",
+        "url": "webpack-internal:///(app-pages-browser)/./lib/utils/axiosErrorInterceptor.ts",
+        "lineNumber": 32
+      },
+      {
+        "type": "log",
+        "text": "[IKAI] Error tracking initialized",
+        "url": "webpack-internal:///(app-pages-browser)/./components/ClientInitializer.tsx",
+        "lineNumber": 22
+      }
+    ],
+    "consoleErrors": [],
+    "consoleWarnings": []
+  },
+  {
+    "role": "HR_SPECIALIST",
+    "email": "test-hr_specialist@test-org-2.com",
+    "success": true,
+    "stats": {
+      "totalMessages": 8,
+      "errors": 2,
+      "warnings": 0
+    },
+    "consoleMessages": [
+      {
+        "type": "verbose",
+        "text": "[DOM] Input elements should have autocomplete attributes (suggested: \"current-password\"): (More info: https://goo.gl/9p2vKq) %o",
+        "url": "http://localhost:8103/login"
+      },
+      {
+        "type": "info",
+        "text": "%cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold",
+        "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js",
+        "lineNumber": 38559
+      },
+      {
+        "type": "log",
+        "text": "[IKAI] Axios error interceptor configured",
+        "url": "webpack-internal:///(app-pages-browser)/./lib/utils/axiosErrorInterceptor.ts",
+        "lineNumber": 32
+      },
+      {
+        "type": "log",
+        "text": "[IKAI] Error tracking initialized",
+        "url": "webpack-internal:///(app-pages-browser)/./components/ClientInitializer.tsx",
+        "lineNumber": 22
+      },
+      {
+        "type": "log",
+        "text": "[IKAI] Axios error interceptor configured",
+        "url": "webpack-internal:///(app-pages-browser)/./lib/utils/axiosErrorInterceptor.ts",
+        "lineNumber": 32
+      },
+      {
+        "type": "log",
+        "text": "[IKAI] Error tracking initialized",
+        "url": "webpack-internal:///(app-pages-browser)/./components/ClientInitializer.tsx",
+        "lineNumber": 22
+      },
+      {
+        "type": "error",
+        "text": "[HR DASHBOARD] Load error: JSHandle@error",
+        "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/app-index.js",
+        "lineNumber": 32
+      },
+      {
+        "type": "error",
+        "text": "[HR DASHBOARD] Load error: JSHandle@error",
+        "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/app-index.js",
+        "lineNumber": 32
+      }
+    ],
+    "consoleErrors": [
+      {
+        "type": "error",
+        "text": "[HR DASHBOARD] Load error: JSHandle@error",
+        "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/app-index.js",
+        "lineNumber": 32
+      },
+      {
+        "type": "error",
+        "text": "[HR DASHBOARD] Load error: JSHandle@error",
+        "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/app-index.js",
+        "lineNumber": 32
+      }
+    ],
+    "consoleWarnings": []
+  },
+  {
+    "role": "MANAGER",
+    "email": "test-manager@test-org-1.com",
+    "success": true,
+    "stats": {
+      "totalMessages": 8,
+      "errors": 2,
+      "warnings": 0
+    },
+    "consoleMessages": [
+      {
+        "type": "verbose",
+        "text": "[DOM] Input elements should have autocomplete attributes (suggested: \"current-password\"): (More info: https://goo.gl/9p2vKq) %o",
+        "url": "http://localhost:8103/login"
+      },
+      {
+        "type": "info",
+        "text": "%cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold",
+        "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js",
+        "lineNumber": 38559
+      },
+      {
+        "type": "log",
+        "text": "[IKAI] Axios error interceptor configured",
+        "url": "webpack-internal:///(app-pages-browser)/./lib/utils/axiosErrorInterceptor.ts",
+        "lineNumber": 32
+      },
+      {
+        "type": "log",
+        "text": "[IKAI] Error tracking initialized",
+        "url": "webpack-internal:///(app-pages-browser)/./components/ClientInitializer.tsx",
+        "lineNumber": 22
+      },
+      {
+        "type": "log",
+        "text": "[IKAI] Axios error interceptor configured",
+        "url": "webpack-internal:///(app-pages-browser)/./lib/utils/axiosErrorInterceptor.ts",
+        "lineNumber": 32
+      },
+      {
+        "type": "log",
+        "text": "[IKAI] Error tracking initialized",
+        "url": "webpack-internal:///(app-pages-browser)/./components/ClientInitializer.tsx",
+        "lineNumber": 22
+      },
+      {
+        "type": "error",
+        "text": "[MANAGER DASHBOARD] Load error: JSHandle@error",
+        "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/app-index.js",
+        "lineNumber": 32
+      },
+      {
+        "type": "error",
+        "text": "[MANAGER DASHBOARD] Load error: JSHandle@error",
+        "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/app-index.js",
+        "lineNumber": 32
+      }
+    ],
+    "consoleErrors": [
+      {
+        "type": "error",
+        "text": "[MANAGER DASHBOARD] Load error: JSHandle@error",
+        "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/app-index.js",
+        "lineNumber": 32
+      },
+      {
+        "type": "error",
+        "text": "[MANAGER DASHBOARD] Load error: JSHandle@error",
+        "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/app-index.js",
+        "lineNumber": 32
+      }
+    ],
+    "consoleWarnings": []
+  },
+  {
+    "role": "ADMIN",
+    "email": "test-admin@test-org-2.com",
+    "success": true,
+    "stats": {
+      "totalMessages": 6,
+      "errors": 0,
+      "warnings": 0
+    },
+    "consoleMessages": [
+      {
+        "type": "verbose",
+        "text": "[DOM] Input elements should have autocomplete attributes (suggested: \"current-password\"): (More info: https://goo.gl/9p2vKq) %o",
+        "url": "http://localhost:8103/login"
+      },
+      {
+        "type": "info",
+        "text": "%cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold",
+        "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js",
+        "lineNumber": 38559
+      },
+      {
+        "type": "log",
+        "text": "[IKAI] Axios error interceptor configured",
+        "url": "webpack-internal:///(app-pages-browser)/./lib/utils/axiosErrorInterceptor.ts",
+        "lineNumber": 32
+      },
+      {
+        "type": "log",
+        "text": "[IKAI] Error tracking initialized",
+        "url": "webpack-internal:///(app-pages-browser)/./components/ClientInitializer.tsx",
+        "lineNumber": 22
+      },
+      {
+        "type": "log",
+        "text": "[IKAI] Axios error interceptor configured",
+        "url": "webpack-internal:///(app-pages-browser)/./lib/utils/axiosErrorInterceptor.ts",
+        "lineNumber": 32
+      },
+      {
+        "type": "log",
+        "text": "[IKAI] Error tracking initialized",
+        "url": "webpack-internal:///(app-pages-browser)/./components/ClientInitializer.tsx",
+        "lineNumber": 22
+      }
+    ],
+    "consoleErrors": [],
+    "consoleWarnings": []
+  },
+  {
+    "role": "SUPER_ADMIN",
+    "email": "info@gaiai.ai",
+    "success": true,
+    "stats": {
+      "totalMessages": 6,
+      "errors": 0,
+      "warnings": 0
+    },
+    "consoleMessages": [
+      {
+        "type": "verbose",
+        "text": "[DOM] Input elements should have autocomplete attributes (suggested: \"current-password\"): (More info: https://goo.gl/9p2vKq) %o",
+        "url": "http://localhost:8103/login"
+      },
+      {
+        "type": "info",
+        "text": "%cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold",
+        "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js",
+        "lineNumber": 38559
+      },
+      {
+        "type": "log",
+        "text": "[IKAI] Axios error interceptor configured",
+        "url": "webpack-internal:///(app-pages-browser)/./lib/utils/axiosErrorInterceptor.ts",
+        "lineNumber": 32
+      },
+      {
+        "type": "log",
+        "text": "[IKAI] Error tracking initialized",
+        "url": "webpack-internal:///(app-pages-browser)/./components/ClientInitializer.tsx",
+        "lineNumber": 22
+      },
+      {
+        "type": "log",
+        "text": "[IKAI] Axios error interceptor configured",
+        "url": "webpack-internal:///(app-pages-browser)/./lib/utils/axiosErrorInterceptor.ts",
+        "lineNumber": 32
+      },
+      {
+        "type": "log",
+        "text": "[IKAI] Error tracking initialized",
+        "url": "webpack-internal:///(app-pages-browser)/./components/ClientInitializer.tsx",
+        "lineNumber": 22
+      }
+    ],
+    "consoleErrors": [],
+    "consoleWarnings": []
+  }
+]
