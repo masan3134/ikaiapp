@@ -182,14 +182,10 @@ class FullManualTest:
             if not found:
                 # Try direct URL - ADMIN uses /team route (not /users)
                 self.page.goto("http://localhost:8103/team", wait_until="networkidle")
-                time.sleep(5)  # Wait longer for async data load
+                time.sleep(8)  # Wait 8s for async data + LoadingSkeleton
 
             self.take_screenshot("03-users-list")
             self.results["pages_visited"].append("User Management")
-
-            # Check if user list is visible (wait up to 15s for async data)
-            # Wait for LoadingSkeleton to disappear first
-            time.sleep(2)
             user_list = self.page.locator('table, [role="table"]').first
             if user_list.is_visible(timeout=15000):
                 print("   ✅ User list visible")
