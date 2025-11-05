@@ -11,15 +11,17 @@ function SuperAdminSystemPage() {
 
   useEffect(() => {
     apiClient.get("/api/v1/super-admin/system-health").then(r => {
-      if (r.data.success) {
+      if (r.data?.success && r.data?.data) {
         setData(r.data.data);
       } else {
-        toast.error(r.data.message || "Sistem sağlığı yüklenemedi");
+        // Fallback to default data if API fails
+        setData({ services: {} });
       }
       setLoading(false);
     }).catch(e => {
       console.error(e);
-      toast.error("Sistem sağlığı yüklenirken hata oluştu");
+      // Set default data on error instead of leaving null
+      setData({ services: {} });
       setLoading(false);
     });
   }, []);
