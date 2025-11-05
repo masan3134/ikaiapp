@@ -132,6 +132,27 @@ When adding features:
 Reference: docs/workflow/RBAC-MULTITENANT-PATTERN-MASTER.md
 ```
 
+### Rule 8: MCP Task Mapping (MANDATORY!)
+```
+🔧 Her görev = Doğru MCP ZORUNLU!
+
+Browser test    → playwright / puppeteer (MANDATORY)
+Dosya oku/yaz   → filesystem (MANDATORY)
+Docker kontrol  → docker (MANDATORY)
+Database query  → postgres (MANDATORY)
+Build/TypeScript → code_analysis (MANDATORY)
+Web search      → gemini_search (MANDATORY)
+
+❌ YASAK: Manuel terminal (cat, grep, docker ps, psql)
+❌ YASAK: Native tools (Edit, Write, Read - bunlar deprecated!)
+✅ ZORUNLU: İlgili MCP kullan
+
+ENFORCEMENT:
+- MOD rejects if MCP not used
+- WORKER must prove MCP usage (output in report)
+- No MCP = No verification = Task FAILED
+```
+
 ---
 
 ## 📁 System Structure

@@ -415,7 +415,7 @@ gemini_search.query("IKAI error: [ERROR]. Solution?")
 
 ## 💡 CORE PRINCIPLES
 
-1. **MCP-First:** Use MCPs for EVERYTHING (not optional!)
+1. **MCP Task Mapping:** Browser→playwright, File→filesystem, DB→postgres, Build→code_analysis (MANDATORY!)
 2. **Zero Console Errors:** errorCount MUST = 0
 3. **Production-Ready Only:** No mock/placeholder/TODO
 4. **Independent Verification:** MOD re-runs commands
@@ -424,6 +424,7 @@ gemini_search.query("IKAI error: [ERROR]. Solution?")
 7. **Worker Coordination:** File locking active
 8. **Credentials Central:** All in docs/CREDENTIALS.md
 9. **RBAC Pattern Master:** Security blueprint mandatory
+10. **No Native Tools:** Edit/Write/Read deprecated → Use filesystem MCP!
 
 ---
 
