@@ -23,6 +23,10 @@ function SuperAdminUsersPage() {
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<any>(null);
 
+  // Bulk selection
+  const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
+  const [bulkLoading, setBulkLoading] = useState(false);
+
   useEffect(() => {
     loadUsers();
   }, [search]);
@@ -46,6 +50,67 @@ function SuperAdminUsersPage() {
       toast.error("Kullanıcılar yüklenirken hata oluştu");
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Bulk selection handlers
+  const handleSelectAll = () => {
+    if (selectedUserIds.length === users.length) {
+      setSelectedUserIds([]);
+    } else {
+      setSelectedUserIds(users.map((u: any) => u.id));
+    }
+  };
+
+  const handleSelectUser = (userId: string) => {
+    if (selectedUserIds.includes(userId)) {
+      setSelectedUserIds(selectedUserIds.filter(id => id !== userId));
+    } else {
+      setSelectedUserIds([...selectedUserIds, userId]);
+    }
+  };
+
+  const handleBulkAction = async (action: "activate" | "deactivate" | "delete") => {
+    if (selectedUserIds.length === 0) {
+      toast.error("Lütfen en az bir kullanıcı seçin");
+      return;
+    }
+
+    const confirmMessages = {
+      activate: `${selectedUserIds.length} kullanıcı aktif edilecek. Emin misiniz?`,
+      deactivate: `${selectedUserIds.length} kullanıcı pasif edilecek. Emin misiniz?`,
+      delete: `${selectedUserIds.length} kullanıcı SİLİNECEK! Bu işlem geri alınamaz. Emin misiniz?`
+    };
+
+    if (!confirm(confirmMessages[action])) {
+      return;
+    }
+
+    setBulkLoading(true);
+
+    try {
+      const res = await apiClient.post("/api/v1/super-admin/users/bulk-action", {
+        action,
+        userIds: selectedUserIds
+      });
+
+      if (res.data.success) {
+        const actionNames = {
+          activate: "aktif edildi",
+          deactivate: "pasif edildi",
+          delete: "silindi"
+        };
+        toast.success(`${res.data.data.count} kullanıcı ${actionNames[action]}!`);
+        setSelectedUserIds([]);
+        loadUsers();
+      } else {
+        toast.error(res.data.message || "İşlem başarısız oldu");
+      }
+    } catch (error: any) {
+      console.error("Bulk action error:", error);
+      toast.error(error.response?.data?.message || "İşlem sırasında hata oluştu");
+    } finally {
+      setBulkLoading(false);
     }
   };
 
@@ -132,18 +197,82 @@ function SuperAdminUsersPage() {
           </button>
         </div>
 
+        {/* Bulk Actions Bar */}
+        {selectedUserIds.length > 0 && (
+          <div className="flex items-center justify-between p-4 bg-blue-50 border border-blue-200 rounded-lg mb-4">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium text-blue-900">
+                {selectedUserIds.length} kullanıcı seçildi
+              </span>
+              <button
+                onClick={handleSelectAll}
+                className="text-xs text-blue-600 hover:text-blue-800 underline"
+              >
+                Seçimi Temizle
+              </button>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => handleBulkAction("activate")}
+                disabled={bulkLoading}
+                className="px-3 py-1.5 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 disabled:opacity-50"
+              >
+                Aktif Et
+              </button>
+              <button
+                onClick={() => handleBulkAction("deactivate")}
+                disabled={bulkLoading}
+                className="px-3 py-1.5 bg-yellow-600 text-white text-sm rounded-lg hover:bg-yellow-700 disabled:opacity-50"
+              >
+                Pasif Et
+              </button>
+              <button
+                onClick={() => handleBulkAction("delete")}
+                disabled={bulkLoading}
+                className="px-3 py-1.5 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 disabled:opacity-50"
+              >
+                {bulkLoading ? "İşleniyor..." : "Sil"}
+              </button>
+            </div>
+          </div>
+        )}
+
         {loading ? (
           <div className="text-center py-12 text-gray-500">Yükleniyor...</div>
         ) : users.length === 0 ? (
           <div className="text-center py-12 text-gray-500">Kullanıcı bulunamadı</div>
         ) : (
           <div className="space-y-3">
+            {/* Select All Header */}
+            <div className="flex items-center gap-3 p-3 bg-gray-100 rounded-lg">
+              <input
+                type="checkbox"
+                checked={selectedUserIds.length === users.length && users.length > 0}
+                onChange={handleSelectAll}
+                className="w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-red-500"
+              />
+              <span className="text-sm font-medium text-gray-700">
+                {selectedUserIds.length === users.length && users.length > 0
+                  ? "Tümünün Seçimini Kaldır"
+                  : "Tümünü Seç"}
+              </span>
+            </div>
+
             {users.map((user) => (
               <div
                 key={user.id}
                 className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200 hover:border-red-300 transition-colors"
               >
                 <div className="flex items-center gap-4">
+                  {/* Checkbox */}
+                  <input
+                    type="checkbox"
+                    checked={selectedUserIds.includes(user.id)}
+                    onChange={() => handleSelectUser(user.id)}
+                    className="w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-red-500"
+                    onClick={(e) => e.stopPropagation()}
+                  />
+
                   <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
                     <Users className="w-5 h-5 text-red-600" />
                   </div>
