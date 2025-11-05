@@ -182,6 +182,14 @@ const apiV1Router = express.Router();
 // Mount v1 routes
 apiV1Router.use('/auth', authRoutes);
 apiV1Router.use('/users', userRoutes); // User management (admin only)
+
+// Profile endpoint (alias for /users/me) - all authenticated users
+const userController = require('./controllers/userController');
+const { authenticateToken } = require('./middleware/auth');
+const { enforceOrganizationIsolation } = require('./middleware/organizationIsolation');
+apiV1Router.get('/profile', [authenticateToken, enforceOrganizationIsolation], userController.getCurrentUser);
+apiV1Router.patch('/profile', [authenticateToken, enforceOrganizationIsolation], userController.updateCurrentUser);
+
 apiV1Router.use('/job-postings', jobPostingRoutes);
 apiV1Router.use('/candidates', candidateRoutes);
 apiV1Router.use('/analyses', analysisRoutes);
