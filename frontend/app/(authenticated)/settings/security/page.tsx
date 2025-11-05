@@ -110,53 +110,59 @@ export default function SecurityPage() {
   }, []);
 
   return (
-    <div className="space-y-6">
-      {/* Security Status Banner */}
-      <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl p-6 shadow-sm">
-        <div className="flex items-start gap-4">
-          <div className="p-3 bg-green-500 rounded-lg shadow-md">
-            <Shield className="text-white" size={28} />
-          </div>
-          <div className="flex-1">
-            <h3 className="text-xl font-bold text-green-900 mb-2">
-              Hesabınız Güvende ✓
-            </h3>
-            <p className="text-green-700 mb-3">
-              Son güvenlik kontrolü: <span className="font-bold">Bugün</span> •
-              Tespit edilen risk: <span className="font-bold">Yok</span>
-            </p>
-            <div className="flex flex-wrap gap-3">
-              <div className="flex items-center gap-2 px-3 py-1.5 bg-green-100 rounded-lg text-sm font-medium text-green-700 border border-green-200">
-                <CheckCircle2 size={14} />
-                <span>Güçlü Şifre</span>
-              </div>
-              <div className="flex items-center gap-2 px-3 py-1.5 bg-green-100 rounded-lg text-sm font-medium text-green-700 border border-green-200">
-                <CheckCircle2 size={14} />
-                <span>Aktif Oturum</span>
+    <div className="space-y-8">
+      {/* Security Status Banner - ULTRA MODERN */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-green-500 via-emerald-500 to-teal-600 rounded-3xl shadow-2xl">
+        {/* Pattern Overlay */}
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMwLTkuOTQtOC4wNi0xOC0xOC0xOCIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjEiIG9wYWNpdHk9Ii4xIi8+PC9nPjwvc3ZnPg==')] opacity-20"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>
+
+        <div className="relative p-8">
+          <div className="flex items-start gap-6">
+            <div className="p-4 bg-white/20 backdrop-blur-xl rounded-2xl shadow-xl border border-white/30">
+              <Shield className="text-white" size={32} />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-3xl font-bold text-white mb-3">
+                Hesabınız Güvende ✓
+              </h3>
+              <p className="text-green-50 mb-4 text-lg">
+                Son güvenlik kontrolü: <span className="font-bold">Bugün</span> •
+                Tespit edilen risk: <span className="font-bold">Yok</span>
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <div className="flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-xl text-sm font-bold text-white border border-white/30 shadow-lg">
+                  <CheckCircle2 size={16} />
+                  <span>Güçlü Şifre</span>
+                </div>
+                <div className="flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-xl text-sm font-bold text-white border border-white/30 shadow-lg">
+                  <CheckCircle2 size={16} />
+                  <span>Aktif Oturum</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Password Change */}
-      <Card>
-        <div className="flex items-center gap-3 mb-6 pb-4 border-b-2 border-gray-100">
-          <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg shadow-md">
-            <Lock className="text-white" size={24} />
+      {/* Password Change - GLASSMORPHISM */}
+      <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-200/50 p-8">
+        <div className="flex items-center gap-4 mb-8 pb-6 border-b-2 border-gray-100">
+          <div className="p-4 bg-gradient-to-br from-blue-500 to-purple-500 rounded-2xl shadow-xl">
+            <Lock className="text-white" size={28} />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-gray-900">Şifre Değiştir</h2>
-            <p className="text-sm text-gray-600">
+            <h2 className="text-2xl font-bold text-gray-900">Şifre Değiştir</h2>
+            <p className="text-sm text-gray-600 font-medium">
               Hesap güvenliğiniz için düzenli olarak şifrenizi değiştirin
             </p>
           </div>
         </div>
 
-        <form onSubmit={handlePasswordChange} className="space-y-5">
+        <form onSubmit={handlePasswordChange} className="space-y-6">
           <div>
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
-              <Key size={16} className="text-blue-600" />
+            <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-3">
+              <Key size={18} className="text-blue-600" />
               Mevcut Şifre
             </label>
             <div className="relative">
@@ -170,7 +176,7 @@ export default function SecurityPage() {
                   })
                 }
                 required
-                className="w-full px-4 py-3 pr-12 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all hover:border-gray-300"
+                className="w-full px-5 py-4 pr-14 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all hover:border-gray-300 text-gray-900 font-medium"
                 placeholder="Mevcut şifrenizi girin"
               />
               <button
@@ -192,10 +198,10 @@ export default function SecurityPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
-                <Lock size={16} className="text-purple-600" />
+              <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-3">
+                <Lock size={18} className="text-purple-600" />
                 Yeni Şifre
               </label>
               <div className="relative">
@@ -210,7 +216,7 @@ export default function SecurityPage() {
                   }
                   required
                   minLength={8}
-                  className="w-full px-4 py-3 pr-12 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all hover:border-gray-300"
+                  className="w-full px-5 py-4 pr-14 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all hover:border-gray-300 text-gray-900 font-medium"
                   placeholder="En az 8 karakter"
                 />
                 <button
@@ -229,8 +235,8 @@ export default function SecurityPage() {
             </div>
 
             <div>
-              <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
-                <CheckCircle2 size={16} className="text-green-600" />
+              <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-3">
+                <CheckCircle2 size={18} className="text-green-600" />
                 Yeni Şifre (Tekrar)
               </label>
               <div className="relative">
@@ -245,7 +251,7 @@ export default function SecurityPage() {
                   }
                   required
                   minLength={8}
-                  className="w-full px-4 py-3 pr-12 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all hover:border-gray-300"
+                  className="w-full px-5 py-4 pr-14 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all hover:border-gray-300 text-gray-900 font-medium"
                   placeholder="Yeni şifrenizi tekrar girin"
                 />
                 <button
@@ -364,17 +370,17 @@ export default function SecurityPage() {
             </Button>
           </div>
         </form>
-      </Card>
+      </div>
 
-      {/* Active Sessions */}
-      <Card>
-        <div className="flex items-center gap-3 mb-6 pb-4 border-b-2 border-gray-100">
-          <div className="p-3 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg shadow-md">
-            <Monitor className="text-white" size={24} />
+      {/* Active Sessions - GLASSMORPHISM */}
+      <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-200/50 p-8">
+        <div className="flex items-center gap-4 mb-8 pb-6 border-b-2 border-gray-100">
+          <div className="p-4 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl shadow-xl">
+            <Monitor className="text-white" size={28} />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-gray-900">Aktif Oturumlar</h2>
-            <p className="text-sm text-gray-600">
+            <h2 className="text-2xl font-bold text-gray-900">Aktif Oturumlar</h2>
+            <p className="text-sm text-gray-600 font-medium">
               Hesabınıza bağlı tüm cihazları görün ve yönetin
             </p>
           </div>
@@ -395,10 +401,10 @@ export default function SecurityPage() {
             sessions.map((session) => (
               <div
                 key={session.id}
-                className={`p-5 rounded-xl border-2 transition-all hover:shadow-md ${
+                className={`p-6 rounded-2xl border-2 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${
                   session.current
-                    ? "bg-gradient-to-br from-green-50 to-emerald-50 border-green-200"
-                    : "bg-white border-gray-200"
+                    ? "bg-gradient-to-br from-green-50 to-emerald-50 border-green-300 shadow-lg"
+                    : "bg-white/50 backdrop-blur-sm border-gray-200 shadow-md"
                 }`}
               >
                 <div className="flex items-start justify-between">
@@ -480,19 +486,19 @@ export default function SecurityPage() {
             </div>
           </div>
         </div>
-      </Card>
+      </div>
 
-      {/* Two-Factor Authentication */}
-      <Card>
-        <div className="flex items-center gap-3 mb-6 pb-4 border-b-2 border-gray-100">
-          <div className="p-3 bg-gradient-to-br from-orange-500 to-red-500 rounded-lg shadow-md">
-            <Key className="text-white" size={24} />
+      {/* Two-Factor Authentication - GLASSMORPHISM */}
+      <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-200/50 p-8">
+        <div className="flex items-center gap-4 mb-8 pb-6 border-b-2 border-gray-100">
+          <div className="p-4 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl shadow-xl">
+            <Key className="text-white" size={28} />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-gray-900">
+            <h2 className="text-2xl font-bold text-gray-900">
               İki Faktörlü Doğrulama (2FA)
             </h2>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-600 font-medium">
               Hesabınıza ekstra bir güvenlik katmanı ekleyin
             </p>
           </div>
@@ -520,40 +526,46 @@ export default function SecurityPage() {
             </div>
           </div>
         </div>
-      </Card>
+      </div>
 
-      {/* Security Tips */}
-      <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-6">
-        <div className="flex gap-4">
-          <div className="flex-shrink-0">
-            <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center shadow-md">
-              <Info className="text-white" size={20} />
+      {/* Security Tips - ULTRA MODERN */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-blue-500 via-cyan-500 to-teal-500 rounded-3xl shadow-2xl">
+        {/* Pattern Overlay */}
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMwLTkuOTQtOC4wNi0xOC0xOC0xOCIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjEiIG9wYWNpdHk9Ii4xIi8+PC9nPjwvc3ZnPg==')] opacity-20"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>
+
+        <div className="relative p-8">
+          <div className="flex gap-6">
+            <div className="flex-shrink-0">
+              <div className="p-4 bg-white/20 backdrop-blur-xl rounded-2xl shadow-xl border border-white/30">
+                <Info className="text-white" size={28} />
+              </div>
             </div>
-          </div>
-          <div className="flex-1">
-            <h4 className="font-bold text-blue-900 mb-3">Güvenlik Önerileri</h4>
-            <ul className="text-sm text-blue-800 space-y-2">
-              <li className="flex items-start gap-2">
-                <CheckCircle2 className="flex-shrink-0 mt-0.5" size={16} />
-                <span>
-                  Şifrenizi düzenli olarak değiştirin (her 3 ayda bir önerilir)
-                </span>
-              </li>
-              <li className="flex items-start gap-2">
-                <CheckCircle2 className="flex-shrink-0 mt-0.5" size={16} />
-                <span>Her hesap için farklı şifre kullanın</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <CheckCircle2 className="flex-shrink-0 mt-0.5" size={16} />
-                <span>Şifrenizi kimseyle paylaşmayın</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <CheckCircle2 className="flex-shrink-0 mt-0.5" size={16} />
-                <span>
-                  Ortak/umumi bilgisayarlarda oturumu her zaman kapatın
-                </span>
-              </li>
-            </ul>
+            <div className="flex-1">
+              <h4 className="text-2xl font-bold text-white mb-4">Güvenlik Önerileri</h4>
+              <ul className="text-sm text-white/90 space-y-3 font-medium">
+                <li className="flex items-start gap-3">
+                  <CheckCircle2 className="flex-shrink-0 mt-0.5" size={18} />
+                  <span>
+                    Şifrenizi düzenli olarak değiştirin (her 3 ayda bir önerilir)
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle2 className="flex-shrink-0 mt-0.5" size={18} />
+                  <span>Her hesap için farklı şifre kullanın</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle2 className="flex-shrink-0 mt-0.5" size={18} />
+                  <span>Şifrenizi kimseyle paylaşmayın</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle2 className="flex-shrink-0 mt-0.5" size={18} />
+                  <span>
+                    Ortak/umumi bilgisayarlarda oturumu her zaman kapatın
+                  </span>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
