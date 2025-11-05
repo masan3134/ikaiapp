@@ -50,33 +50,42 @@ export const SuperAdminDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 p-4">
-      {/* Header COMPACT */}
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 p-4">
+      {/* Header */}
       <SuperAdminHeader platformStats={platformStats.overview} />
 
-      {/* Top Row - 3 Widgets COMPACT */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-        <MultiOrgOverviewWidget data={platformStats.organizations} />
-        <RevenueOverviewWidget data={platformStats.revenue} />
-        <PlatformAnalyticsWidget data={platformStats.analytics} />
-      </div>
+      {/* Modern 2-Column Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Left Column - Main Metrics */}
+        <div className="space-y-6">
+          {/* Organizations & Revenue - Stacked */}
+          <MultiOrgOverviewWidget data={platformStats.organizations} />
+          <RevenueOverviewWidget data={platformStats.revenue} />
 
-      {/* Middle Row - Chart + System Health COMPACT */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
-        <div className="lg:col-span-2">
-          <PlatformGrowthChart data={platformStats.growth} />
+          {/* Organization List */}
+          <OrganizationListWidget
+            data={platformStats.orgList}
+            total={platformStats.organizations.total}
+          />
         </div>
-        <SystemHealthWidget data={platformStats.systemHealth} />
+
+        {/* Right Column - System & Operations */}
+        <div className="space-y-6">
+          {/* Platform Analytics */}
+          <PlatformAnalyticsWidget data={platformStats.analytics} />
+
+          {/* System Health */}
+          <SystemHealthWidget data={platformStats.systemHealth} />
+
+          {/* Queue & Security - Stacked */}
+          <QueueManagementWidget data={platformStats.queues} />
+          <SecurityMonitoringWidget data={platformStats.security} />
+        </div>
       </div>
 
-      {/* Bottom Row - 3 Widgets COMPACT */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <OrganizationListWidget
-          data={platformStats.orgList}
-          total={platformStats.organizations.total}
-        />
-        <QueueManagementWidget data={platformStats.queues} />
-        <SecurityMonitoringWidget data={platformStats.security} />
+      {/* Full Width Chart at Bottom */}
+      <div className="mt-6">
+        <PlatformGrowthChart data={platformStats.growth} />
       </div>
     </div>
   );
