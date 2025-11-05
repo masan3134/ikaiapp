@@ -29,9 +29,54 @@ function SuperAdminMilvusPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Milvus Vektör Veritabanı</h1>
-      <div className="grid grid-cols-4 gap-4">
-        <div className="bg-white p-4 rounded border"><div className="text-2xl font-bold">{data.collections?.length || 0}</div><div className="text-sm text-gray-600">Toplam Collection</div></div>
+      <div>
+        <h1 className="text-2xl font-bold text-gray-900">Milvus Vektör Veritabanı</h1>
+        <p className="text-gray-600 mt-1">Vektör veritabanı durumu ve koleksiyon bilgileri</p>
+      </div>
+
+      {/* Status Card */}
+      <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className={`w-3 h-3 rounded-full ${
+            data.status === 'operational' ? 'bg-green-600' : 'bg-red-600'
+          }`}></div>
+          <span className="text-lg font-semibold">
+            Durum: {data.status === 'operational' ? 'Operasyonel' : 'Sorunlu'}
+          </span>
+        </div>
+
+        {data.note && (
+          <div className="text-sm text-gray-600 bg-blue-50 p-3 rounded-lg border border-blue-200">
+            ℹ️ {data.note}
+          </div>
+        )}
+      </div>
+
+      {/* Collections */}
+      <div>
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Koleksiyonlar ({data.collections?.length || 0})</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {data.collections && data.collections.length > 0 ? (
+            data.collections.map((collection: any) => (
+              <div key={collection.name} className="bg-white rounded-lg border border-gray-200 p-6">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="font-semibold text-gray-900">{collection.name}</h3>
+                  <Database className="w-5 h-5 text-blue-600" />
+                </div>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Tahmini Kayıt:</span>
+                    <span className="font-medium">{collection.estimatedCount || 0}</span>
+                  </div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="col-span-2 text-center py-12 text-gray-500">
+              Henüz koleksiyon bulunamadı
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
