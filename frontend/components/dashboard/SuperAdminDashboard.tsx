@@ -41,8 +41,8 @@ export const SuperAdminDashboard = () => {
 
   if (!platformStats) {
     return (
-      <div className="min-h-screen bg-slate-50 p-6">
-        <div className="max-w-7xl mx-auto text-center py-12">
+      <div className="min-h-screen bg-slate-50 p-4">
+        <div className="max-w-7xl mx-auto text-center py-8">
           <p className="text-slate-600">Dashboard verileri yüklenemedi.</p>
         </div>
       </div>
@@ -50,27 +50,27 @@ export const SuperAdminDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 p-6">
-      {/* Header */}
+    <div className="min-h-screen bg-slate-50 p-4">
+      {/* Header COMPACT */}
       <SuperAdminHeader platformStats={platformStats.overview} />
 
-      {/* Top Row - 3 Widgets */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+      {/* Top Row - 3 Widgets COMPACT */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
         <MultiOrgOverviewWidget data={platformStats.organizations} />
         <RevenueOverviewWidget data={platformStats.revenue} />
         <PlatformAnalyticsWidget data={platformStats.analytics} />
       </div>
 
-      {/* Middle Row - Chart + System Health */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+      {/* Middle Row - Chart + System Health COMPACT */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
         <div className="lg:col-span-2">
           <PlatformGrowthChart data={platformStats.growth} />
         </div>
         <SystemHealthWidget data={platformStats.systemHealth} />
       </div>
 
-      {/* Bottom Row - 3 Widgets */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {/* Bottom Row - 3 Widgets COMPACT */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <OrganizationListWidget
           data={platformStats.orgList}
           total={platformStats.organizations.total}
