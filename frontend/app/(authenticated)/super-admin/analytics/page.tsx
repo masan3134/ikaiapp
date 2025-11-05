@@ -9,15 +9,16 @@ import toast from "react-hot-toast";
 function SuperAdminAnalyticsPage() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [days, setDays] = useState(30);
 
   useEffect(() => {
     loadAnalytics();
-  }, []);
+  }, [days]);
 
   const loadAnalytics = async () => {
     try {
       setLoading(true);
-      const res = await apiClient.get("/api/v1/super-admin/analytics");
+      const res = await apiClient.get(`/api/v1/super-admin/analytics?days=${days}`);
 
       if (res.data.success) {
         setData(res.data.data);
@@ -50,9 +51,22 @@ function SuperAdminAnalyticsPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Sistem Analitikleri</h1>
-        <p className="text-gray-600 mt-1">Platform kullanım metrikleri ve raporları</p>
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Sistem Analitikleri</h1>
+          <p className="text-gray-600 mt-1">Platform kullanım metrikleri ve raporları</p>
+        </div>
+        <select
+          value={days}
+          onChange={(e) => setDays(parseInt(e.target.value))}
+          className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+        >
+          <option value="7">Son 7 Gün</option>
+          <option value="14">Son 14 Gün</option>
+          <option value="30">Son 30 Gün</option>
+          <option value="60">Son 60 Gün</option>
+          <option value="90">Son 90 Gün</option>
+        </select>
       </div>
 
       <div>
