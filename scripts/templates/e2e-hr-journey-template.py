@@ -24,7 +24,7 @@ HR_PASSWORD = "TestPass123!"
 
 # Test configuration
 HEADLESS = True
-TIMEOUT = 5000
+TIMEOUT = 10000  # Increased from 5000 for slow API calls
 
 # Sample CV paths (for upload testing)
 CV_SAMPLES = [
