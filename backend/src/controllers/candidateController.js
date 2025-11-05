@@ -26,8 +26,17 @@ async function getAllCandidates(req, res) {
       // SUPER_ADMIN: ALL candidates from ALL organizations
       where = { isDeleted: false };
 
-    } else if (['ADMIN', 'MANAGER', 'HR_SPECIALIST'].includes(userRole)) {
-      // ADMIN/MANAGER/HR: ALL candidates from their organization
+    } else if (userRole === 'MANAGER') {
+      // MANAGER: Only candidates from their department (department isolation)
+      const userDepartment = req.user.department;
+      where = {
+        organizationId,
+        department: userDepartment, // Department filtering
+        isDeleted: false
+      };
+
+    } else if (['ADMIN', 'HR_SPECIALIST'].includes(userRole)) {
+      // ADMIN/HR: ALL candidates from their organization
       where = {
         organizationId,
         isDeleted: false
@@ -203,11 +212,15 @@ async function uploadCV(req, res) {
     // Get presigned URL for file access
     const fileUrl = await minioService.getFileUrl(userId, sanitizedFileName);
 
+    // Get uploader's department for department isolation
+    const uploaderDepartment = req.user.department;
+
     // Create candidate record (fields will be filled by AI in Phase 4)
     const candidate = await prisma.candidate.create({
       data: {
         userId,
         organizationId,
+        department: uploaderDepartment, // Assign uploader's department
         sourceFileName: originalFileName, // Store original for duplicate check
         fileUrl,
         firstName: '',
@@ -288,8 +301,18 @@ async function getCandidateById(req, res) {
       // SUPER_ADMIN can view any candidate
       // No restriction
 
-    } else if (['ADMIN', 'MANAGER', 'HR_SPECIALIST'].includes(userRole)) {
-      // ADMIN/MANAGER/HR can view candidates from their organization
+    } else if (userRole === 'MANAGER') {
+      // MANAGER can only view candidates from their department
+      const userDepartment = req.user.department;
+      if (candidate.organizationId !== organizationId || candidate.department !== userDepartment) {
+        return res.status(403).json({
+          error: 'Forbidden',
+          message: 'Bu adaya erişim yetkiniz yok (department isolation)'
+        });
+      }
+
+    } else if (['ADMIN', 'HR_SPECIALIST'].includes(userRole)) {
+      // ADMIN/HR can view candidates from their organization
       if (candidate.organizationId !== organizationId) {
         return res.status(403).json({
           error: 'Forbidden',
@@ -352,8 +375,18 @@ async function deleteCandidate(req, res) {
       // SUPER_ADMIN can delete any candidate
       // No restriction
 
-    } else if (['ADMIN', 'MANAGER', 'HR_SPECIALIST'].includes(userRole)) {
-      // ADMIN/MANAGER/HR can delete candidates from their organization
+    } else if (userRole === 'MANAGER') {
+      // MANAGER can only delete candidates from their department
+      const userDepartment = req.user.department;
+      if (candidate.organizationId !== organizationId || candidate.department !== userDepartment) {
+        return res.status(403).json({
+          error: 'Forbidden',
+          message: 'Bu adayı silme yetkiniz yok (department isolation)'
+        });
+      }
+
+    } else if (['ADMIN', 'HR_SPECIALIST'].includes(userRole)) {
+      // ADMIN/HR can delete candidates from their organization
       if (candidate.organizationId !== organizationId) {
         return res.status(403).json({
           error: 'Forbidden',
