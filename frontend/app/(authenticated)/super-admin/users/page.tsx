@@ -1,16 +1,27 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Users, UserPlus, Search, Filter, Shield, Building2 } from "lucide-react";
+import { Users, UserPlus, Search, Filter, Shield, Building2, Eye, Edit2, Trash2 } from "lucide-react";
 import { withRoleProtection } from "@/lib/hoc/withRoleProtection";
 import apiClient from "@/lib/services/apiClient";
 import toast from "react-hot-toast";
+import CreateUserModal from "@/components/super-admin/CreateUserModal";
+import EditUserModal from "@/components/super-admin/EditUserModal";
+import DeleteUserModal from "@/components/super-admin/DeleteUserModal";
+import UserDetailModal from "@/components/super-admin/UserDetailModal";
 
 function SuperAdminUsersPage() {
   const [users, setUsers] = useState([]);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+
+  // Modal states
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<any>(null);
 
   useEffect(() => {
     loadUsers();
@@ -45,7 +56,10 @@ function SuperAdminUsersPage() {
           <h1 className="text-2xl font-bold text-gray-900">Kullanıcı Yönetimi</h1>
           <p className="text-gray-600 mt-1">Tüm sistem kullanıcılarını görüntüleyin ve yönetin</p>
         </div>
-        <button className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
+        <button
+          onClick={() => setShowCreateModal(true)}
+          className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+        >
           <UserPlus className="w-5 h-5" />
           Yeni Kullanıcı
         </button>
@@ -154,11 +168,87 @@ function SuperAdminUsersPage() {
                     </div>
                   </div>
                 </div>
+
+                {/* Action Buttons */}
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => {
+                      setSelectedUser(user);
+                      setShowDetailModal(true);
+                    }}
+                    className="p-2 hover:bg-white rounded-lg transition-colors"
+                    title="Detayları Görüntüle"
+                  >
+                    <Eye className="w-4 h-4 text-gray-600" />
+                  </button>
+                  <button
+                    onClick={() => {
+                      setSelectedUser(user);
+                      setShowEditModal(true);
+                    }}
+                    className="p-2 hover:bg-white rounded-lg transition-colors"
+                    title="Düzenle"
+                  >
+                    <Edit2 className="w-4 h-4 text-blue-600" />
+                  </button>
+                  <button
+                    onClick={() => {
+                      setSelectedUser(user);
+                      setShowDeleteModal(true);
+                    }}
+                    className="p-2 hover:bg-white rounded-lg transition-colors"
+                    title="Sil"
+                  >
+                    <Trash2 className="w-4 h-4 text-red-600" />
+                  </button>
+                </div>
               </div>
             ))}
           </div>
         )}
       </div>
+
+      {/* Modals */}
+      <CreateUserModal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onSuccess={() => {
+          loadUsers();
+        }}
+      />
+
+      <EditUserModal
+        isOpen={showEditModal}
+        onClose={() => {
+          setShowEditModal(false);
+          setSelectedUser(null);
+        }}
+        onSuccess={() => {
+          loadUsers();
+        }}
+        user={selectedUser}
+      />
+
+      <DeleteUserModal
+        isOpen={showDeleteModal}
+        onClose={() => {
+          setShowDeleteModal(false);
+          setSelectedUser(null);
+        }}
+        onSuccess={() => {
+          loadUsers();
+        }}
+        user={selectedUser}
+      />
+
+      <UserDetailModal
+        isOpen={showDetailModal}
+        onClose={() => {
+          setShowDetailModal(false);
+          setSelectedUser(null);
+        }}
+        user={selectedUser}
+      />
     </div>
   );
 }
