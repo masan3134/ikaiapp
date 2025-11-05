@@ -37,6 +37,10 @@ export const useAuthStore = create<AuthState>()(
           localStorage.setItem("auth_token", response.token);
           localStorage.setItem("auth_user", JSON.stringify(response.user));
 
+          // Store user in cookie for middleware (Next.js middleware needs cookies)
+          document.cookie = `user=${encodeURIComponent(JSON.stringify(response.user))}; path=/; max-age=86400`; // 24 hours
+          document.cookie = `token=${encodeURIComponent(response.token)}; path=/; max-age=86400`;
+
           // Track session start for activity tracking
           const now = new Date();
           localStorage.setItem("sessionStartTimestamp", Date.now().toString());
@@ -77,6 +81,10 @@ export const useAuthStore = create<AuthState>()(
           localStorage.setItem("auth_token", response.token);
           localStorage.setItem("auth_user", JSON.stringify(response.user));
 
+          // Store user in cookie for middleware
+          document.cookie = `user=${encodeURIComponent(JSON.stringify(response.user))}; path=/; max-age=86400`;
+          document.cookie = `token=${encodeURIComponent(response.token)}; path=/; max-age=86400`;
+
           set({
             user: response.user,
             token: response.token,
@@ -106,6 +114,10 @@ export const useAuthStore = create<AuthState>()(
           // Clear localStorage
           localStorage.removeItem("auth_token");
           localStorage.removeItem("auth_user");
+
+          // Clear cookies
+          document.cookie = 'user=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+          document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
 
           // Clear session tracking
           localStorage.removeItem("sessionStartTimestamp");
