@@ -325,10 +325,19 @@ class FullManualTest:
             if len(profile_triggers) > 0:
                 print(f"   ✅ Found {len(profile_triggers)} profile/avatar elements")
 
-                # Try clicking first one
+                # Try clicking visible one (desktop has 2: mobile hidden, desktop visible)
                 try:
-                    profile_triggers[0].click()
-                    self.results["buttons_clicked"] += 1
+                    clicked = False
+                    for trigger in profile_triggers:
+                        if trigger.is_visible():
+                            trigger.click()
+                            self.results["buttons_clicked"] += 1
+                            clicked = True
+                            break
+
+                    if not clicked:
+                        raise Exception("No visible avatar found")
+
                     time.sleep(1)
 
                     self.take_screenshot("07-profile-menu")
