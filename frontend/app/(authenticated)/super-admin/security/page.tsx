@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Shield, Lock, Eye, AlertTriangle, CheckCircle } from "lucide-react";
 import { withRoleProtection } from "@/lib/hoc/withRoleProtection";
 import apiClient from "@/lib/services/apiClient";
+import toast from "react-hot-toast";
 
 function SuperAdminSecurityPage() {
   const [data, setData] = useState(null);
@@ -20,9 +21,12 @@ function SuperAdminSecurityPage() {
 
       if (res.data.success) {
         setData(res.data.data);
+      } else {
+        toast.error(res.data.message || "Güvenlik ayarları yüklenemedi");
       }
     } catch (error) {
       console.error("Error loading security settings:", error);
+      toast.error("Güvenlik ayarları yüklenirken hata oluştu");
     } finally {
       setLoading(false);
     }
